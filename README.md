@@ -3,7 +3,7 @@ Moye (知心组件库)
 
 `Moye` 是 ECOM UI 1.1 规范的一个轻量级实现。
 
-[![Build Status](https://travis-ci.org/chriswong/zxui.png?branch=master)](https://travis-ci.org/chriswong/zxui)
+[![Build Status](https://travis-ci.org/ecomfe/Moye.png?branch=master)](https://travis-ci.org/ecomfe/Moye)
 
 
 ### 如何使用
