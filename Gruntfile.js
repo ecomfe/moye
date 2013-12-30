@@ -13,7 +13,8 @@ module.exports = function (grunt) {
 
         clean: {
             before: ['asset', 'bin'],
-            after: ['src/moye']
+            after: ['src/moye'],
+            afterdoc: ['example/css']
         },
         
         jshint: {
@@ -70,6 +71,14 @@ module.exports = function (grunt) {
                 dest: '<%=meta.src.main%>/moye/' + build_prefix,
                 flatten: false,
                 filter: 'isFile',
+            },
+            doc: {
+                expand: true,
+                cwd: 'asset/css',
+                src: '**',
+                dest: 'example/css',
+                flatten: false,
+                filter: 'isFile',               
             }
         },
 
@@ -157,6 +166,13 @@ module.exports = function (grunt) {
                     }
                 }
             }
+        },
+
+        'gh-pages': {
+            options: {
+                base: './'
+            },
+            src: ['doc/api/*', 'example/*', 'src/*/*']
         }
 
     });
@@ -173,16 +189,14 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-jsdoc');
     grunt.loadNpmTasks('grunt-contrib-connect');
     grunt.loadNpmTasks('grunt-contrib-jasmine');
+    grunt.loadNpmTasks('grunt-gh-pages');
 
-
-    // grunt.registerTask('build', 'build AMD modules with prefix( AKA ecomui )', function () {
-    //     grunt.log.ok('build done');
-    // });
 
     grunt.registerTask('base', ['clean:before', 'jshint', 'lesslint', 'less', 'csslint']);
     grunt.registerTask('build', ['base', 'copy:build', 'requirejs:build', 'clean:after']);
     grunt.registerTask('test', ['base', 'connect', 'jasmine:requirejs']);
     grunt.registerTask('cover', ['base', 'connect', 'jasmine:istanbul']);
     grunt.registerTask('default', ['base']);
+    grunt.registerTask('page', ['less', 'copy:doc', 'gh-pages', 'copy:afterdoc']);
 
 }
