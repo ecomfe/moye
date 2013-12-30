@@ -3,7 +3,7 @@ Moye (知心组件库)
 
 `Moye` 是 ECOM UI 1.1 规范的一个轻量级实现。
 
-[![Build Status](https://travis-ci.org/ecomfe/Moye.png?branch=master)](https://travis-ci.org/ecomfe/Moye)
+[![Build Status](https://travis-ci.org/ecomfe/Moye.png?branch=master)](https://travis-ci.org/ecomfe/Moye) [![devDependency Status](https://david-dm.org/ecomfe/Moye/dev-status.png)](https://david-dm.org/ecomfe/Moye#info=devDependencies)
 
 
 ### 如何使用
@@ -21,7 +21,7 @@ Moye (知心组件库)
 
 	npm install
 
-生成文档：
+生成 API 文档：
 
 	grunt jsdoc
     open doc/api/index.html
@@ -65,3 +65,5 @@ Moye (知心组件库)
 - 浮动提示 [FloatTip](http://ecomfe.github.io/Moye/example/FloatTip.html)
 - 图片上传 [PicUploader](http://ecomfe.github.io/Moye/example/PicUploader.html)
 - 星号评级 [Rating](http://ecomfe.github.io/Moye/example/Rating.html)
+- 滚 动 条 [ScrollBar](http://ecomfe.github.io/Moye/example/ScrollBar.html)
+- 图片轮播 [ScrollBar](http://ecomfe.github.io/Moye/example/Slider.html)
