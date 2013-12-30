@@ -170,9 +170,10 @@ module.exports = function (grunt) {
 
         'gh-pages': {
             options: {
-                base: './'
+                base: './',
+                message: 'Auto-generated commit by grunt'
             },
-            src: ['doc/api/*', 'example/*', 'src/*/*']
+            src: ['doc/api/*', 'example/**', 'src/*/*']
         }
 
     });
@@ -197,6 +198,6 @@ module.exports = function (grunt) {
     grunt.registerTask('test', ['base', 'connect', 'jasmine:requirejs']);
     grunt.registerTask('cover', ['base', 'connect', 'jasmine:istanbul']);
     grunt.registerTask('default', ['base']);
-    grunt.registerTask('page', ['less', 'copy:doc', 'gh-pages', 'clean:afterdoc']);
+    grunt.registerTask('page', ['less', 'copy:doc', 'jsdoc', 'gh-pages', 'clean:afterdoc']);
 
 }
