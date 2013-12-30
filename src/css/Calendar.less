@@ -1,0 +1,108 @@
+@cal-prefix: ecl-ui-cal;
+
+.@{cal-prefix} h3,
+.@{cal-prefix}-pre,
+.@{cal-prefix}-next {
+    background: url(http://open.baidu.com/stat/ticket/cal.gif) 0 -19px;
+}
+
+.@{cal-prefix} {
+    position: absolute;
+    border: 1px solid #b5b5b5;
+    background: #fff;
+    text-align: center;
+
+    h3 {
+        margin: 0;
+        padding: 0;
+        text-align: center;
+        line-height: 19px;
+        height: 19px;
+        overflow: hidden;
+        font-size: 14px;
+        background-position: 1px 0;
+        background-repeat: repeat-x;
+        color: #41537b;
+        margin-bottom: 2px;
+        border: 1px solid #c6cede;
+        border-top-color: #e9eff9;
+        border-left-color: #e9eff9;
+    }
+
+    ul {
+        color: #666;
+    }
+
+    li,
+    p a {
+        float: left;
+        width: 25px;
+        font: 12px Arial;
+    }
+
+    p a {
+        color: #000;
+        height: 18px;
+        line-height: 18px;
+        margin-top: 3px;
+        text-decoration: none;
+        outline: none;
+        overflow: hidden;
+
+        &:hover {
+            color: #fff;
+            background: #eb4f03;
+        }
+
+        &.@{cal-prefix}-disabled,
+        &.@{cal-prefix}-disabled:hover {
+            color: #ddd;
+            cursor: not-allowed;
+            background: none;
+        }
+    }
+
+} 
+.@{cal-prefix}-month {
+    float: left;
+    margin: auto 2px;
+    width: 175px;
+    border-left:1px solid #dae2f5;
+
+    .@{cal-prefix}-today {
+        color: red;
+    }
+
+    .@{cal-prefix}-weekend {
+        color: orange;
+    }
+
+    .@{cal-prefix}-checked {
+        color: #fff;
+        background: #3977d2;
+    }
+
+    .@{cal-prefix}-pre-month,
+    .@{cal-prefix}-next-month {
+        color: #999;
+    }
+}
+
+.@{cal-prefix}-pre,
+.@{cal-prefix}-next {
+    width: 5px;
+    height: 9px;
+    font-size: 0;
+    position: absolute;
+    overflow: hidden;
+    top: 6px;
+}
+
+.@{cal-prefix}-pre {
+    left: 6px;
+}
+
+.@{cal-prefix}-next {
+    right: 6px;
+    background-position: 0 -28px;
+}

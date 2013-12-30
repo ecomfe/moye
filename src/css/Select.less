@@ -1,0 +1,108 @@
+@sel-prefix: ecl-ui-sel;
+
+// 选单目标容器
+.@{sel-prefix}-target {
+    text-decoration: none;
+    color: #333333;
+    display: inline-block;
+    padding: 3px 25px 3px 10px;
+    border: 1px solid transparent;
+    _border-color: #654321;
+    _filter: chroma(color=#654321);
+    font-size: 12px;
+    position: relative;
+    cursor: default;
+    margin-left: 5px;
+
+    b {
+        font-weight: 300;        
+    }
+
+    &:hover {
+        border-color: #C9CBCE;
+        background-color: #F7F7F7;
+    }
+
+    i {
+        background: url(http://s1.bdstatic.com/r/www/cache/biz/ecom/hotel/img/icon_sprites.gif) no-repeat 0 -18px;
+        width: 10px;
+        height: 8px;
+        position: absolute;
+        top: 50%;
+        right: 10px;
+        margin-top: -4px;
+        font-size:0;
+    }
+}
+
+// 选单展开时 target 的固定状态
+.@{sel-prefix}-hl,
+.@{sel-prefix}-hl:hover {
+    border-color: #B6B9BD;
+    background-color: #F1F1F1;
+
+    i {
+        background-position: 0 -12px;        
+    }
+}
+
+.@{sel-prefix}-disabled,
+.@{sel-prefix}-disabled:hover
+ {
+    color: #999;
+    cursor: not-allowed;
+    border: 1px solid transparent;
+    background-color: transparent;
+}
+
+// 有选中值时 target 的状态
+.@{sel-prefix}-checked {
+    color: #FF6C00;
+}
+
+// 选单
+.@{sel-prefix} {
+    position: absolute;
+    border: 1px solid #B6B9BD;
+    width: 140px;
+    z-index: 10;
+    left: -1000em;
+    line-height: 30px;
+    font-size: 12px;
+
+    // 选项
+    a {
+        height: 30px;
+        padding: 0 10px;
+        text-decoration: none;
+        display: block;
+        overflow: hidden;
+        color: #333333;
+        cursor: default;
+        background-color: #FFF;
+
+        &:hover {
+            background-color: #F5F5F5;
+        }
+    }
+
+
+    // 有选中值时 target 的状态
+    .@{sel-prefix}-cur {
+        color: #000;
+    }
+
+}
+
+
+.@{sel-prefix}-cols3 {
+    width: 276px;
+    overflow: hidden;
+
+    a {
+        _display: inline;
+        width: 72px;
+        float: left;
+        _zoom: 1;
+    }
+}

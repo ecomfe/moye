@@ -1,0 +1,8 @@
+node_modules
+.grunt
+.DS_Store
+dep
+asset
+doc/api
+test/coverage
+SpecRunner.html

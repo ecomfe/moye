@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>中间页log</title>
+<script src="http://s1.bdstatic.com/r/www/cache/ecom/esl/1-6-8/esl.js"></script>
+</head>
+<body>
+    <div id="area1" class="result-op" data-click="{'a':1, 'srcid': 16873, 'p1':1, 'y':'FD9FFD6B'}">
+        统计区域一：<br />
+        <input type="button" value="无data-click配置" />
+        <input type="button" value="无data-click配置" />
+        <div data-click="{a:2, b: 2}"><input type="button" value="父节点有data-click配置" /></div>
+        <a href="http://www.baidu.com/?a=b&amp;c=d" target="_blank"  data-click="{a:3, c: 2}">baidu - 当前节点有data-click配置</a>
+    </div>
+
+
+    <div class="result-op" data-click="{'x':1, 'srcid': 16874, 'p1':2, 'y':'FD9FFD6C', 'mod': 'area2'}">
+        统计区域二：<br />
+        <input type="button" value="配置data-nolog=1" data-nolog="1" />
+        <div data-click="{x:2, y: 2}"><input type="button" value="配置x=2 y=2" /></div>
+        <a href="http://www.baidu.com" target="_blank"  data-click="{x:3, y: 2}">baidu - 配置x=3, y=2</a>
+    </div>
+
+    <input class="result-op" data-click="{x:2, y: 2}" type="button" value="无父节点的点击" />
+
+<script>
+(function () {
+    require.config({
+      baseUrl: '../src/ui'
+    });
+
+    require(['log'], function (log) {
+        log.config({data:{a: 0, e: 1, y: 'x'}})
+        log.start();
+
+        log.live({
+            area1: function (json) {
+                console.log(json);
+            }
+        })
+    });
+
+})();
+</script>
+</body>
+</html>

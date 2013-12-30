@@ -1,0 +1,70 @@
+{
+  "name": "Moye",
+  "version": "0.6.0",
+  "description": "知心UI组件库",
+  "devDependencies": {
+    "grunt": "~0.4.0",
+    "grunt-contrib-clean": "~0.4.1",
+    "grunt-contrib-jshint": "~0.4.3",
+    "grunt-contrib-less": "~0.5.0",
+    "grunt-contrib-csslint": "~0.1.2",
+    "grunt-contrib-requirejs": "~0.4.0",
+    "grunt-contrib-uglify": "~0.1.2",
+    "grunt-contrib-concat": "~0.1.1",
+    "grunt-contrib-watch": "~0.3.1",
+    "grunt-jsdoc": "~0.3.2",
+    "grunt-contrib-jasmine": "~0.4.2",
+    "grunt-template-jasmine-requirejs": "~0.1.1",
+    "grunt-contrib-connect": "~0.3.0",
+    "grunt-contrib-qunit": "~0.2.1",
+    "grunt-template-jasmine-istanbul": "~0.2.3",
+    "grunt-lesslint": "~0.15.0",
+    "grunt-contrib-copy": "~0.5.0"
+  },
+  "main": "src/ui/lib.js",
+  "directories": {
+    "doc": "doc",
+    "example": "example"
+  },
+  "scripts": {
+    "doc": "grunt jsdoc",
+    "test": "grunt test"
+  },
+  "repository": "git://github.com/ecomfe/Moye.git",
+  "bugs": "https://github.com/ecomfe/Moye/issues",
+  "keywords": [
+    "javascript",
+    "UI"
+  ],
+  "maintainers": [
+    {
+      "name": "chris",
+      "email": "wfsr@foxmail.com"
+    }
+  ],
+  "contributors": [
+    {
+      "name": "hushicai",
+      "email": "bluthcy@gmail.com"
+    },
+    {
+      "name": "jinzhubaofu",
+      "email": "jinzhubaofu@gmail.com"
+    },
+    {
+      "name": "kekee000",
+      "email": "kekee000@gmail.com"
+    },
+    {
+      "name": "plhyc1216",
+      "email": "plhyc11081216@gmail.com"
+    },
+    {
+      "name": "Virola",
+      "email": "virola@foxmail.com"
+    }
+  ],
+  "license": "BSD",
+  "readmeFilename": "README.md",
+  "gitHead": "dd5a15426b0aad6fc2dfe264b3a8d130e582c024"
+}

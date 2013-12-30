@@ -1,0 +1,103 @@
+//
+// 栅格化样式生成
+//
+// 当 n 小于 100 时，n 作栅格数处理，否则按总宽度处理。
+// 
+// @param n {number} 栅格数量
+// @param A {number} + {unit} 每格像素宽度
+// @param i {number} + {unit} 每格中的间隙像素宽度
+// @param prefix {string=} 生成的样式前缀，默认不带前缀
+//
+.grid(@n: 32, @A: 31px, @i: 12px, @prefix: ~"") when (@n < 100) {
+    @gap:     @i;
+    @solid:   (@A - @i);
+    @columns: @n;
+    @W:       (@A * @columns) - @gap;
+
+
+    .gridX (@solid, @gap) {
+        .spanX (@index) when (@index < @n + 1) {
+            .span@{index} {
+                .span(@index);
+            }
+            .spanX(@index + 1);
+        }
+
+        .offsetX (@index) when (@index < @n) {
+            .offset@{index} {
+                .offset(@index);
+            }
+            .offsetX(@index + 1);
+        }
+
+        .offset (@columns) {
+            margin-left: ((@solid + @gap) * @columns + @gap);
+        }
+
+        .span (@columns) {
+            width: ((@solid + @gap) * @columns - @gap);
+        }
+
+        .span {
+            float: left;
+            min-height: 1px;
+            margin-left: @gap;
+        }
+
+        .spanX (1);
+        .offsetX (1);
+
+      }
+
+    .@{prefix}grid {
+        width: @W;
+        margin-left: auto;
+        margin-right: auto;
+
+        .row {
+            margin-left: -@gap;
+            *zoom: 1;
+
+            &:before,
+            &:after {
+                content: '';
+                display: table;
+            }
+
+            &:after {
+                clear: both;
+            }
+        }
+
+        .gridX(@solid, @gap);
+    }
+}
+
+// n >　100 时按总宽度处理，自动计算总列数（不保证适合）
+.grid(@n, @A: 31px, @i: 12px, @prefix: ~"") when (@n >= 100) {
+    .grid(((@n + @i) / @A), @A, @i, @prefix);
+}
+
+//
+// 大搜索页栅格
+//
+// .grid(24, 23px, 17px);
+// .grid(535, 23px, 17px);
+
+//
+// 微购中间页
+//
+// .grid(38, 32px, 16px);
+// .grid(1200, 32px, 16px);
+
+//
+// 其它中间页
+//
+// .grid(32, 31px, 12px);
+// .grid(980, 31px, 12px);
+
+//
+// 一站式中心页
+//
+// .grid(24, 40px, 20px);
+// .grid(980, 40px, 20px);

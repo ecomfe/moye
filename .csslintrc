@@ -1,0 +1,9 @@
+{
+    "underscore-property-hack": false,
+    "star-property-hack": false,
+    "qualified-headings": false,
+    "unique-headings": false,
+    "outline-none": false,
+    "box-model": false,
+    "display-property-grouping": false
+}

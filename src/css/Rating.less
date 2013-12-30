@@ -1,0 +1,21 @@
+@rating-prefix: ecl-ui-rating;
+.@{rating-prefix} {}
+.@{rating-prefix}-stars {
+    
+}
+.@{rating-prefix}-star {
+    display: inline-block;
+    *display: inline;
+    *zoom: 1;
+    list-style: none;
+    cursor: pointer;
+}
+.@{rating-prefix}-star-on {
+    color: red;
+}
+
+.@{rating-prefix}-disabled {
+    .@{rating-prefix}-star {
+        cursor: default;
+    }
+}

@@ -1,0 +1,117 @@
+@slider-prefix: ecl-ui-slider;
+
+@slider-width: 423px; //slider宽度
+@slider-height: 638px; //slider高度
+@slider-z-index: 1; //slider按钮层级
+
+@switch-btn-width: 40px; //切换按钮宽度
+@switch-btn-height: 40px; //切换按钮高度
+
+.@{slider-prefix} {
+    position: relative;
+    width: @slider-width;
+    height: @slider-height;
+    
+    //舞台
+    &-stage {
+        position: relative;
+        _width: @slider-width;
+        height: @slider-height;
+        overflow: hidden;
+        white-space: nowrap;
+    }
+
+    &-item {
+        width: @slider-width;
+        height: @slider-height;
+    }
+
+    //向前和向后按钮
+    &-prev, 
+    &-next {
+        position: absolute;
+        width: @switch-btn-width;
+        height: @switch-btn-height;
+        top: @slider-height/2 - @switch-btn-height/2;
+        font: bolder ~'24px/@{switch-btn-height}' '';
+        text-align: center;
+        color: #FFF;
+        background: #CCC;
+        background: rgba(204, 204, 204, 0.7);
+        left: 2px;
+        z-index: @slider-z-index + 10;
+        -webkit-user-select:none;
+        -moz-user-select:none;
+        -ms-user-select:none;
+        user-select:none;
+        border-radius: 10px;
+        cursor: pointer;
+    }
+
+    &-next {
+        left: auto;
+        right: 2px;
+    }
+
+    &-prev:hover, 
+    &-next:hover {
+        background: #DDD;
+    }
+
+    &-prev-disable, 
+    &-next-disable {
+        display:none;
+    }
+
+    //索引按钮
+    &-index {
+        position: absolute;
+        bottom: -20px;
+        left: @slider-width/2 - 40;
+        z-index: @slider-z-index;
+        cursor: pointer;
+
+        i {
+            width: 10px;
+            height: 10px;
+            font-size:0;
+            display:inline-block;
+            margin-right: 10px;
+            border-radius:10px;
+            background: #CCC;
+            -webkit-transition:all 0.3s 0 linear;
+            -moz-transition:all 0.3s 0 linear;
+            -ms-transition:all 0.3s 0 linear;
+            -o-transition:all 0.3s 0 linear;
+            transition:all 0.3s 0 linear;
+        }
+
+        & &-selected {
+            width: 16px;
+        }
+    }
+
+
+    //slider 垂直动画样式
+    &-stage-vertical{
+        white-space: normal;
+    }
+
+    &-stage-vertical &-item{
+        float: left;
+    }
+
+    //透明度动画class
+    &-stage-abs &-item{
+        position: absolute;
+    }
+
+    &-cover{
+        z-index: @slider-z-index;
+    }
+
+    &-top{
+        z-index: @slider-z-index + 1;
+    }
+
+}

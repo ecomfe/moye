@@ -1,0 +1,76 @@
+@scrollbar-prefix: ecl-ui-scrollbar;
+
+@scrollbar-width: 500px;
+@scrollbar-height: 300px;
+
+@scrollbar-thumb-size: 10px;
+
+//禁止选择文本
+.@{scrollbar-prefix}-noselect {
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+    cursor: default;
+}
+
+.@{scrollbar-prefix} {
+    width: @scrollbar-width;
+    border: 2px solid #DDD;
+
+    &-panel {
+        margin-right:10px;
+        height: @scrollbar-height;
+        overflow: hidden;
+    }
+
+    &-track {
+        float: right;
+        width: @scrollbar-thumb-size;
+        height: @scrollbar-height;
+        position: relative;
+        background: #EEE;
+    }
+
+    &-thumb {
+        *font-size:0;
+        position: absolute;
+        top:0;
+        width: @scrollbar-thumb-size;
+        height: @scrollbar-thumb-size*3;
+        background: #333;
+        cursor: default;
+    }
+
+    &-noscroll &-track{
+        display: none;
+    }
+
+    &-noscroll &-panel{
+        margin-right:0;
+    }
+
+    &-disable &-thumb{
+        background: #EEE;
+    }
+
+    //水平滚动样式
+    &-horizontal &-panel{
+        width: @scrollbar-width;
+        margin-right: 0;
+    }
+
+
+    &-horizontal &-track{
+        float: none;
+        width: @scrollbar-width;
+        height:  @scrollbar-thumb-size;
+    }
+
+    &-horizontal &-thumb{
+        left:0;
+        width: @scrollbar-thumb-size*3;
+        height: @scrollbar-thumb-size;
+    }
+
+}

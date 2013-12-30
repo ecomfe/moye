@@ -1,0 +1,68 @@
+@pager-prefix: ecl-ui-pager;
+
+.@{pager-prefix} {
+    display: inline-block;
+    *display: inline;
+
+    a {
+        float: left;
+        margin: 3px; 
+        text-decoration: none; 
+        border: 1px solid #CCC;
+        overflow: hidden;
+        padding: 2px 5px;
+        color: #03C;
+        font: normal 12px/1.2 Arial, Helvetica, sans-serif;
+        text-align: center;
+
+        em { 
+            vertical-align: middle;
+            border: 5px solid #fff;
+            font-size: 0;
+            margin: auto 3px;
+            *zoom: 1;
+        }
+        &:hover {
+            background-color: #EFF4FA; 
+        }
+        &:hover em {
+            border-color: #EFF4FA; 
+        }
+        &.@{pager-prefix}-ellipsis {
+            border: none;
+        }
+    }
+
+    .@{pager-prefix}-current {
+        font-weight: 700;
+        border: none;    
+        color: #666;
+        cursor: default;
+    }
+
+    .@{pager-prefix}-current:hover,
+    .@{pager-prefix}-ellipsis:hover,
+    .@{pager-prefix}-disabled:hover {
+        background: none;
+        em {
+            border-color: #FFF;
+        }
+    }
+
+    .@{pager-prefix}-prev em,
+    .@{pager-prefix}-prev:hover em {
+        border-right-color: #999; 
+        border-left: none;
+    }
+
+    .@{pager-prefix}-next em,
+    .@{pager-prefix}-next:hover em {
+        border-left-color: #999; 
+        border-right: none;
+    }
+
+    .@{pager-prefix}-disabled {
+        color: #999;
+        cursor: default;
+    }
+}
