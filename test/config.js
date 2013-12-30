@@ -42,11 +42,17 @@ module.exports = function(config) {
       'src/css/*.styl': ['stylus']
     },
 
+    lessPreprocessor: {
+      options: {
+        paths: ['src/css']
+      }
+    },
+
     // optionally, configure the reporter
     coverageReporter: {
       // text-summary | text | html | json | teamcity | cobertura | lcov
       // lcovonly | none | teamcity
-      type : 'html',
+      type : 'text',
       dir : 'test/coverage/'
     },
 
