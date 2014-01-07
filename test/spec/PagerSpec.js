@@ -3,6 +3,7 @@ define(function (require) {
     var Pager = require('ui/Pager');
     
     var pager;
+    var first = Math.random() > 0.5 ? 1 : 0;
 
     beforeEach(function () {
         document.body.insertAdjacentHTML(
@@ -16,7 +17,7 @@ define(function (require) {
             prefix: 'ecl-ui-pager',
             main: lib.q('ecl-ui-pager')[0],
             page: 0,
-            fitst: 0,
+            first: first,
             total: 18
           });
         pager.render();               
@@ -73,7 +74,7 @@ define(function (require) {
             pager.setPage(4);
             pager.render();
             expect(pager.getPage()).toBe(4);
-            expect(pager.main.getElementsByTagName('a')[8].innerHTML)
+            expect(pager.main.getElementsByTagName('a')[8 - first].innerHTML)
                 .toBe('..');
 
             var fireClick = false;
@@ -84,7 +85,7 @@ define(function (require) {
             };
             var onChange = function (json) {
                 fireChange = true;
-                expect(json.page).toBe(
+                expect(json.page - first).toBe(
                     el.parentNode.getAttribute('data-page') | 0
                 );
             };
@@ -124,7 +125,7 @@ define(function (require) {
         });
 
         it('分页逻辑', function () {
-            expect(pager.getPage()).toBe(0);
+            expect(pager.getPage()).toBe(first);
 
             pager.setPage(2);
             pager.render();
@@ -139,7 +140,7 @@ define(function (require) {
             pager.setTotal(1);
             pager.render();
             expect(pager.getTotal()).toBe(1);
-            expect(pager.getPage()).toBe(0);
+            expect(pager.getPage()).toBe(first);
 
             pager.setTotal(10);
             pager.setPage(5);

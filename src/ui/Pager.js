@@ -392,13 +392,12 @@ define(function (require) {
             ) {
                 var first = this.options.first & 1;
 
-                this.setPage(current + first);
                 /**
                  * @event module:Pager#change
                  * @type {Object}
                  * @property {number} page 新的页码
                  */
-                this.fire('change', { page: this.page + first });
+                this.fire('change', { page: current + first });
             }
         }
     });
