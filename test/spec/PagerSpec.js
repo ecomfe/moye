@@ -7,9 +7,7 @@ define(function (require) {
     beforeEach(function () {
         document.body.insertAdjacentHTML(
             'beforeEnd', ''
-                + '<div id="pagerContainer" class="result-op"'
-                + ' data-click="{x:1, srcid: 16874, p1:2, y:\'FD9FFD6C\'}"'
-                + ' style="display:none">'
+                + '<div id="pagerContainer">'
                 +   '<div class="ecl-ui-pager c-clearfix"></div>'
                 + '</div>'
         );
@@ -18,6 +16,7 @@ define(function (require) {
             prefix: 'ecl-ui-pager',
             main: lib.q('ecl-ui-pager')[0],
             page: 0,
+            fitst: 0,
             total: 18
           });
         pager.render();               
@@ -67,13 +66,13 @@ define(function (require) {
             pager.setTotal(10);
             pager.setPage(8);
             pager.render();
-            expect(pager.page).toBe(8);
+            expect(pager.getPage()).toBe(8);
             expect(pager.main.getElementsByTagName('a')[2].innerHTML)
                 .toBe('..');
 
             pager.setPage(4);
             pager.render();
-            expect(pager.page).toBe(4);
+            expect(pager.getPage()).toBe(4);
             expect(pager.main.getElementsByTagName('a')[8].innerHTML)
                 .toBe('..');
 

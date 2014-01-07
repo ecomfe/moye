@@ -49,6 +49,7 @@ define(function (require) {
          * @property {boolean} options.disabled 控件的不可用状态
          * @property {(string | HTMLElement)} options.main 控件渲染容器
          * @property {number} options.page 当前页，第一页从0开始
+         * @property {number} options.first 起始页码，通常值为 0 或 1，默认 0
          * @property {number} options.padding 当页数较多时，首尾显示页码的个数
          * @property {boolean} options.showAlways 是否一直显示分页控件
          * @property {number} options.showCount 当页数较多时，中间显示页码的个数
@@ -71,6 +72,9 @@ define(function (require) {
 
             // 当前页，第一页从0开始
             page: 0,
+
+            // 起始页码
+            first: 0,
 
             // 首尾显示的页码个数
             padding: 1,
@@ -126,6 +130,7 @@ define(function (require) {
             this.total     = options.total | 0;
             this.padding   = options.padding | 0;
             this.page      = 0;
+            options.first  &= 1;
 
             this.setPage(options.page | 0);
 
@@ -148,6 +153,7 @@ define(function (require) {
          * @public
          */
         setPage: function (page) {
+            page -= this.options.first;
             page = Math.max(0, Math.min(page | 0, this.total - 1));
 
             if (page !== this.page) {
@@ -162,7 +168,7 @@ define(function (require) {
          * @public
          */
         getPage: function () {
-            return this.page;
+            return this.page + this.options.first;
         },
 
         /**
@@ -246,8 +252,10 @@ define(function (require) {
             var wing = (showCount - showCount % 2) / 2;
 
             function setNum(i) {
-                html[htmlLength ++] = '<a href="#" data-page="' + (i - 1) + '">'
-                                      + i + '</a>';
+                html[htmlLength ++] = ''
+                    + '<a href="#" data-page="' + (i - 1) + '">'
+                    +   i
+                    + '</a>';
             }
 
             function setSpecial(i, name, disabled) {
@@ -255,10 +263,11 @@ define(function (require) {
                 if (disabled) {
                     klass += ' ' + prefix + 'disabled';
                 }
-                html[htmlLength ++] = '<a href="#" data-page="'
-                                      + i + '" class="' + klass + '">' 
-                                      + (lang[name] || i + 1)
-                                      + '</a>';
+                html[htmlLength ++] = ''
+                    + '<a href="#" data-page="'
+                    +   i + '" class="' + klass + '">' 
+                    +   (lang[name] || i + 1)
+                    + '</a>';
             }
 
             showCount = wing * 2 + 1;
@@ -381,14 +390,15 @@ define(function (require) {
                 && current < this.total
                 && current !== page
             ) {
+                var first = this.options.first & 1;
 
-                this.setPage(current);
+                this.setPage(current + first);
                 /**
                  * @event module:Pager#change
                  * @type {Object}
                  * @property {number} page 新的页码
                  */
-                this.fire('change', { page: this.page });
+                this.fire('change', { page: this.page + first });
             }
         }
     });

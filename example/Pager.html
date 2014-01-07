@@ -8,9 +8,6 @@
 <script src="http://s1.bdstatic.com/r/www/cache/ecom/esl/1-6-8/esl.js"></script>
 </head>
 <body>
-<div id='content_left'><!--左侧最外层div-->
-    <div class="result-op" srcid="16873" id="1" mu="http://baike.baidu.com/view/1758.htm" data-op="{'y':'FD9FFD6B'}">
-
 <div style="text-align:center"><div class="ecl-ui-pager c-clearfix"></div></div>
 <script>
 (function () {
@@ -24,9 +21,10 @@
         var pager = new Pager({
             main: lib.q('ecl-ui-pager')[0],
             page: 0,
+            first: 1,
             total: 10,
             onChange: function (e) {
-              //console.log(e);
+              console.log(e);
             }
         });
 
@@ -41,7 +39,5 @@
 
 })();
 </script>
-</div>
-</div>
 </body>
 </html>
