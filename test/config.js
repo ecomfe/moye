@@ -52,7 +52,7 @@ module.exports = function(config) {
     coverageReporter: {
       // text-summary | text | html | json | teamcity | cobertura | lcov
       // lcovonly | none | teamcity
-      type : 'text',
+      type : 'html',
       dir : 'test/coverage/'
     },
 
@@ -81,7 +81,7 @@ module.exports = function(config) {
     // - Safari (only Mac; has to be installed with `npm install karma-safari-launcher`)
     // - PhantomJS
     // - IE (only Windows; has to be installed with `npm install karma-ie-launcher`)
-    browsers: ['Chrome'/*, 'Firefox', 'Safari', "PhantomJS"*/],
+    browsers: ['Chrome'],
 
 
     // If browser does not capture in given timeout [ms], kill it
@@ -90,10 +90,10 @@ module.exports = function(config) {
 
     // Continuous Integration mode
     // if true, it capture browsers, run tests and exit
-    singleRun: true,
+    singleRun: !false,
 
     plugins: [
-        'karma-jasmine', 'karma-chrome-launcher', "karma-less-preprocessor", "karma-stylus-preprocessor", 'karma-requirejs', 'karma-coverage'
+        'karma-jasmine', 'karma-phantomjs-launcher', "karma-less-preprocessor", "karma-stylus-preprocessor", 'karma-requirejs', 'karma-coverage'
     ]
   });
 };

@@ -1,10 +1,12 @@
 module.exports = function (grunt) {
     
     var build_prefix = grunt.option('prefix') || 'ecomui';
+    var pkg = grunt.file.readJSON('package.json');
+
     grunt.initConfig({
 
         meta: {
-            pkg: grunt.file.readJSON('package.json'),
+            pkg: pkg,
             src: {
                 main: 'src',
                 test: 'test/spec'
@@ -168,6 +170,17 @@ module.exports = function (grunt) {
             }
         },
 
+        karma: {
+            options: {
+                configFile: 'test/config.js',
+                reporters: 'dots',
+                singleRun: true
+            },
+            dev: {
+                browsers: ['PhantomJS']
+            }
+        },
+
         'gh-pages': {
             options: {
                 base: './',
@@ -178,19 +191,13 @@ module.exports = function (grunt) {
 
     });
 
-
-    grunt.loadNpmTasks('grunt-contrib-clean');
-    grunt.loadNpmTasks('grunt-contrib-copy');
-    grunt.loadNpmTasks('grunt-contrib-jshint');
-    grunt.loadNpmTasks('grunt-contrib-less');
-    grunt.loadNpmTasks('grunt-contrib-csslint');
-    grunt.loadNpmTasks('grunt-lesslint');
-    grunt.loadNpmTasks('grunt-contrib-watch');
-    grunt.loadNpmTasks('grunt-contrib-requirejs');
-    grunt.loadNpmTasks('grunt-jsdoc');
-    grunt.loadNpmTasks('grunt-contrib-connect');
-    grunt.loadNpmTasks('grunt-contrib-jasmine');
-    grunt.loadNpmTasks('grunt-gh-pages');
+    Object.keys(pkg.devDependencies).forEach(
+        function (name) {
+            if (name.indexOf('grunt-') === 0) {
+                grunt.loadNpmTasks(name);
+            }
+        }
+    );
 
 
     grunt.registerTask('base', ['clean:before', 'jshint', 'lesslint', 'less', 'csslint']);
