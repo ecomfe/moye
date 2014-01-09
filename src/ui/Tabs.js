@@ -141,7 +141,7 @@ define(function (require) {
          * @return {boolean} 是否允许切换
          * @public
          */
-        /* jshint -W098 */
+        /* jshint unused:false */
         onBeforeChange: function (oldIndex, newIndex) {
             return true;
         },
