@@ -200,6 +200,15 @@ define(function (require) {
      */
     var setTitle = function (data, from, type, tag, path, level) {
         var title = '';
+        var get = function (el) {
+            return (
+                el.getAttribute('data-title')
+                || el.title
+                || el.textContent
+                || el.innerText
+                || ''
+            );
+        };
 
         // 如果是表单元素
         if (type === 'input') {
@@ -216,15 +225,12 @@ define(function (require) {
                 }
             }
             else {
-                title = from.innerHTML || from.value || '';
+                title = get(from) || from.value || '';
             }
         }
         else {
 
-            // 如果是图片，先取其title
-            if (tag === 'img') {
-                title = from.title;
-            }
+            title = get(from);
 
             // title为空，遍历父节点
             if (!title) {
@@ -234,15 +240,15 @@ define(function (require) {
                 while (i > 0) {
                     i--;
                     if (/^a\d*\b/i.test(path[i])) {
-                        url = el.href;
-                        title = el.innerHTML;
+                        data.url = el.href;
+                        title = get(el);
                         break;
                     }
                     else {
                         if(el.className
                             && (/\bOP_LOG_[A-Z]+\b/.test(el.className))
                         ){
-                            title = el.innerHTML;   
+                            title = get(el);   
                             break;
                         }
                         el = el.parentNode;
