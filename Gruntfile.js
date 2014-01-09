@@ -193,7 +193,10 @@ module.exports = function (grunt) {
 
     Object.keys(pkg.devDependencies).forEach(
         function (name) {
-            if (name.indexOf('grunt-') === 0) {
+            if (
+                name.indexOf('grunt-') === 0
+                && name.indexOf('grunt-template') < 0
+            ) {
                 grunt.loadNpmTasks(name);
             }
         }
