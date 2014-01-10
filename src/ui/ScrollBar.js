@@ -1,6 +1,6 @@
 /**
- * Moye (Zhixin UI)
- * Copyright 2014 Baidu Inc. All rights reserved.
+ * ZXUI (Zhixin UI)
+ * Copyright 2013 Baidu Inc. All rights reserved.
  * 
  * @file 滚动条组件
  * @author  mengke01(mengke01@baidu.com)
@@ -82,9 +82,11 @@ define(function (require) {
          * @name module:ScrollBar#options
          * @type {Object}
          * @property {boolean} options.disabled 是否禁用组件
-         * @property {(string | HTMLElement)} options.main 需要滚动的元素
+         * @property {(string | HTMLElement)} options.main 主元素
+         * @property {(string | HTMLElement)} options.panel 需要滚动的元素，
+         *      如果不设则按class规则查找`options.prefix` + `panel`
          * @property {(string | HTMLElement)} options.thumb 滚动条按钮元素
-         * 
+         *      如果不设则按class规则查找`options.prefix` + `thumb` ，并且将thumb父级元素作为track
          * @property {Number} options.wheelspeed 滚动速度，百分比，越大滚动越快
          * @property {string} options.direction 滚动方向
          * @property {string} options.prefix class默认前缀
@@ -98,6 +100,9 @@ define(function (require) {
 
             //组件控制的主元素
             main: '',
+
+            //需要滚动的元素
+            panel: '',
 
             //组件控制的滑动按钮
             thumb: '',
@@ -217,8 +222,13 @@ define(function (require) {
                 percent = 2*this.scrollRatio;
             }
 
-            this.setScrollPercent(this.curPos - percent);
-            lib.preventDefault(e);
+            var percent = this.curPos - percent;
+            this.setScrollPercent(percent);
+            //在滚动范围内取消默认行为
+            if(percent >= 0.005 && percent <= 0.995) {
+                lib.preventDefault(e);
+            }
+            
         },
 
         /**
@@ -239,10 +249,10 @@ define(function (require) {
             }
 
             this.thumb.style[this.xAxis ? 'left' : 'top'] = 
-                (pos * this.trackSize) + 'px';
+                Math.round(pos * this.trackSize) + 'px';
 
-            this.main.parentNode[this.scrollDirection] = 
-                pos * this.mainSize * (1-this.scrollRatio);
+            this.panel[this.scrollDirection] = 
+                Math.round(pos * this.panelSize * (1-this.scrollRatio));
 
             this.curPos = pos;
             var event = {
@@ -265,15 +275,16 @@ define(function (require) {
          * @private
          */
         init: function () {
-            if(!this.options.main || !this.options.thumb) {
-                throw new Error('invalid main or thumb');
+            if(!this.options.main) {
+                throw new Error('invalid main');
             }
 
-            this.disabled = !!this.options.disabled;
+            var opt = this.options;
+            this.disabled = !!opt.disabled;
             this.curPos = 0;
 
             //当前滚动坐标
-            this.xAxis = this.options.direction === 'horizontal';
+            this.xAxis = opt.direction === 'horizontal';
 
             var sizeProp = this.xAxis ? 'Width' : 'Height';
             this.offsetProp = 'offset' + sizeProp;
@@ -282,20 +293,50 @@ define(function (require) {
             this.scrollDirection = 'scroll' + (this.xAxis ? 'Left' : 'Top');
 
             //滚动主元素
-            this.main = lib.g(this.options.main);
+            this.main = lib.g(opt.main);
+
+            //需要滚动的元素
+            if(!opt.panel) {
+                this.panel = lib.q( this.getClass('panel'), this.main)[0];
+            }
+            else {
+                this.panel = lib.g(opt.panel);
+            }
+
             //滚动条按钮
-            this.thumb = lib.g(this.options.thumb);
+            if(!opt.thumb) {
+                this.thumb = lib.q( this.getClass('thumb'), this.main)[0];
+            }
+            else {
+                this.thumb = lib.g(opt.thumb);
+            }
+
             //滚动条
             this.track = this.thumb.offsetParent;
             
             lib.on(this.thumb, 'mousedown', this.onThumbdown);
             lib.on(this.track, 'mouseup', this.onTrackUp);
             lib.on(
-                this.main, 
+                this.panel, 
                 wheelEvent, 
                 this.onMouseWheel
             );
+
+            var me = this;
+            lib.on(this.main, 'mouseenter', 
+                me.onMainEnter = function() {
+                    lib.addClass(me.main, me.getClass('over') );
+                }
+            );
+
+            lib.on(me.main, 'mouseleave', 
+                me.onMainLeave = function() {
+                    lib.removeClass(me.main, me.getClass('over') );
+                }
+            );
+
         },
+
 
 
         /**
@@ -326,7 +367,7 @@ define(function (require) {
             }
             //滚动距离
             else if(pos > 1) {
-                pos = pos / ( this.mainSize *(1 - this.scrollRatio) );
+                pos = pos / ( this.panelSize *(1 - this.scrollRatio) );
             }
             //滚动百分比
             else {
@@ -342,29 +383,27 @@ define(function (require) {
          */
         refresh: function() {
 
-            this.mainSize = this.main[this.scrollProp];
-            this.trackSize = this.track[this.clientProp] 
-                - this.thumb[this.offsetProp];
+            this.panelSize = this.panel[this.scrollProp];
 
             //当前内容的缩放级别
             this.scrollRatio = 
-                this.main.parentNode[this.clientProp]/
-                this.mainSize;
+                this.main[this.clientProp]/
+                this.panelSize;
 
             //设置祖先元素为禁用
-            var container = lib.getAncestorByClass(
-                this.main, this.getClass('')
-            );
-            if(container) {
-                lib[this.scrollRatio >=1 
-                    ? 'addClass' : 'removeClass']
-                    (
-                        container, 
-                        this.getClass('noscroll')
-                    );
-            }
-            
+            lib[this.scrollRatio >=1 
+                ? 'addClass' : 'removeClass']
+                (
+                    this.main, 
+                    this.getClass('noscroll')
+                );
+
+            this.trackSize = this.track[this.clientProp] 
+                - this.thumb[this.offsetProp];
+
             this.scrollTo(this.curPos);
+            this.disabled = this.scrollRatio >= 1;
+            
             return this;
         },
 
@@ -375,8 +414,8 @@ define(function (require) {
          * @public
          */
         render: function () {
-            if(!this.options.main || !this.options.thumb) {
-                throw new Error('invalid main or thumb');
+            if(!this.options.main) {
+                throw new Error('invalid main');
             }
 
             this.refresh();
@@ -392,16 +431,10 @@ define(function (require) {
         setEnabled: function(enabled) {
             var disabled = !enabled;
             //设置祖先元素为禁用
-            var container = lib.getAncestorByClass(
+            lib[ disabled ? 'addClass' : 'removeClass'](
                 this.main, 
-                this.getClass('')
+                this.getClass('disable')
             );
-            if(container) {
-                lib[ disabled ? 'addClass' : 'removeClass'](
-                    container, 
-                    this.getClass('disable')
-                );
-            }
             this.disabled = disabled;
         },
 
@@ -430,11 +463,14 @@ define(function (require) {
             lib.removeClass(document.body, this.getClass('noselect'));
             lib.un(this.thumb, 'mousedown', this.onThumbdown);
             lib.un(this.track, 'mouseup', this.onTrackUp);
-            lib.un(this.main, wheelEvent, this.onMouseWheel);
+            lib.un(this.panel, wheelEvent, this.onMouseWheel);
             lib.un(document, 'mousemove', this.onMousemove);
             lib.un(document, 'mouseup', this.onMouseup);
 
-            this.main = this.thumb = this.track = null;
+            lib.un(this.main, 'mouseenter', this.onMainEnter);
+            lib.un(this.main, 'mouseleave', this.onMainLeave);
+
+            this.main = this.panel = this.thumb = this.track = null;
 
             this.parent('dispose');
         }
