@@ -90,6 +90,9 @@ define(function (require) {
          * @property {Number} options.wheelspeed 滚动速度，百分比，越大滚动越快
          * @property {string} options.direction 滚动方向
          * @property {string} options.prefix class默认前缀
+         * @property {string} options.mode 使用的模式(`scroll` or `position`)，
+         *      scrollTop模式or style.top模式
+         *      使用的css是不一样的,默认scrollTop模式
          * 
          * @private
          */
@@ -114,7 +117,10 @@ define(function (require) {
             direction: 'vertical',
 
             // 控件class前缀，同时将作为main的class之一
-            prefix: 'ecl-ui-scrollbar'
+            prefix: 'ecl-ui-scrollbar',
+
+            //使用的模式，scrollTop模式or style.top模式，使用的css是不一样的
+            mode: ''
         },
 
         /**
@@ -248,11 +254,17 @@ define(function (require) {
                 pos = 1;
             }
 
-            this.thumb.style[this.xAxis ? 'left' : 'top'] = 
+            var axis = this.xAxis ? 'left' : 'top';
+            this.thumb.style[axis] = 
                 Math.round(pos * this.trackSize) + 'px';
 
-            this.panel[this.scrollDirection] = 
-                Math.round(pos * this.panelSize * (1-this.scrollRatio));
+            var top = Math.round(pos * this.panelSize * (1-this.scrollRatio));
+            if(this.posMode) {
+                this.panel.style[axis] =  (-top) + 'px';
+            }
+            else {
+                this.panel[this.scrollDirection] = top;
+            }
 
             this.curPos = pos;
             var event = {
@@ -291,7 +303,8 @@ define(function (require) {
             this.clientProp = 'client' + sizeProp;
             this.scrollProp = 'scroll' + sizeProp;
             this.scrollDirection = 'scroll' + (this.xAxis ? 'Left' : 'Top');
-
+            this.posMode = opt.mode === 'position';
+            
             //滚动主元素
             this.main = lib.g(opt.main);
 

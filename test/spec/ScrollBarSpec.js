@@ -27,8 +27,7 @@ define(function (require) {
            disabled: 0
         });
         scrollbar.render();               
-        
-
+    
     });
 
 
