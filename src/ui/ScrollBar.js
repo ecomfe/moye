@@ -86,14 +86,17 @@ define(function (require) {
          * @property {(string | HTMLElement)} options.panel 需要滚动的元素，
          *      如果不设则按class规则查找`options.prefix` + `panel`
          * @property {(string | HTMLElement)} options.thumb 滚动条按钮元素
-         *      如果不设则按class规则查找`options.prefix` + `thumb` ，并且将thumb父级元素作为track
+         *      如果不设则按class规则查找`options.prefix` + `thumb` ，
+         *      并且将thumb父级元素作为track
          * @property {Number} options.wheelspeed 滚动速度，百分比，越大滚动越快
          * @property {string} options.direction 滚动方向
          * @property {string} options.prefix class默认前缀
          * @property {string} options.mode 使用的模式(`scroll` or `position`)，
          *      scrollTop模式or style.top模式
          *      使用的css是不一样的,默认scrollTop模式
-         * 
+         * @property {boolean} options.preventWheelScroll 
+         *      如果true会始终阻止滚轮滚动页面，及时当前面板已经滚动到头
+         *      此处会防止因面板较短导致的页面频繁滚动
          * @private
          */
         options: {
@@ -120,7 +123,10 @@ define(function (require) {
             prefix: 'ecl-ui-scrollbar',
 
             //使用的模式，scrollTop模式or style.top模式，使用的css是不一样的
-            mode: ''
+            mode: '',
+
+            //如果true会始终阻止滚轮滚动页面，及时当前面板已经滚动到头
+            preventWheelScroll: false
         },
 
         /**
@@ -231,7 +237,10 @@ define(function (require) {
             var percent = this.curPos - percent;
             this.setScrollPercent(percent);
             //在滚动范围内取消默认行为
-            if(percent >= 0.005 && percent <= 0.995) {
+            if(
+                this.options.preventWheelScroll 
+                || (percent >= 0.005 && percent <= 0.995) 
+            ){
                 lib.preventDefault(e);
             }
             
