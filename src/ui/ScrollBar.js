@@ -345,7 +345,7 @@ define(function (require) {
             );
 
             var me = this;
-            lib.on(this.main, 'mouseenter', 
+            lib.on(me.main, 'mouseenter', 
                 me.onMainEnter = function() {
                     lib.addClass(me.main, me.getClass('over') );
                 }
