@@ -14,7 +14,7 @@ define(function (require) {
                 +   '</div>'
                 +   '<div class="ecl-ui-scrollbar-panel" style="width:490px">'
                 +     '<div id="ecl-ui-scrollbar-main" '
-                +       'style="width:490px;height:500px">'
+                +           'style="width:490px;height:500px">'
                 +           '<p>测试文本测试文本测试文本</p>'
                 +           '<p>测试文本测试文本测试文本</p>'
                 +     '</div>'
@@ -23,13 +23,11 @@ define(function (require) {
         );
 
         scrollbar = new ScrollBar({
-           main: lib.g('ecl-ui-scrollbar-main'),
-           thumb: lib.g('ecl-ui-scrollbar-thumb'),
+           main: lib.g('ecl-ui-scrollbar'),
            disabled: 0
         });
         scrollbar.render();               
-        
-
+    
     });
 
 
@@ -46,26 +44,26 @@ define(function (require) {
         });
 
         it('scrollTo', function () {
-            var scrollSize = scrollbar.main.scrollHeight 
-                - scrollbar.main.parentNode.clientHeight;
+            var scrollSize = scrollbar.panel.scrollHeight 
+                - scrollbar.main.clientHeight;
             var trackSize = scrollbar.track.clientHeight
                 - scrollbar.thumb.offsetHeight;
 
             scrollbar.scrollTo('begin');
             expect(scrollbar.thumb.style.top).toBe('0px');
-            expect(scrollbar.main.parentNode.scrollTop).toBe(0);
+            expect(scrollbar.panel.scrollTop).toBe(0);
 
             scrollbar.scrollTo('end');
             expect(scrollbar.thumb.style.top).toBe(trackSize + 'px');
-            expect(scrollbar.main.parentNode.scrollTop).toBe(scrollSize);
+            expect(scrollbar.panel.scrollTop).toBe(scrollSize);
 
             scrollbar.scrollTo('ab');
             expect(scrollbar.thumb.style.top).toBe('0px');
-            expect(scrollbar.main.parentNode.scrollTop).toBe(0);
+            expect(scrollbar.panel.scrollTop).toBe(0);
 
             scrollbar.scrollTo(0.5);
             expect(scrollbar.thumb.style.top).toBe( (trackSize/2) + 'px');
-            expect(scrollbar.main.parentNode.scrollTop).toBe( 
+            expect(scrollbar.panel.scrollTop).toBe( 
                 scrollSize/2 
             );
         });
@@ -84,8 +82,8 @@ define(function (require) {
             lib.g('ecl-ui-scrollbar-main').innerHTML += 
                 lib.g('ecl-ui-scrollbar-main').innerHTML;
 
-            var scrollSize = scrollbar.main.scrollHeight 
-                - scrollbar.main.parentNode.clientHeight;
+            var scrollSize = scrollbar.panel.scrollHeight 
+                - scrollbar.main.clientHeight;
             var trackSize = scrollbar.track.clientHeight
                 - scrollbar.thumb.offsetHeight;
 
@@ -93,19 +91,19 @@ define(function (require) {
 
             scrollbar.scrollTo('begin');
             expect(scrollbar.thumb.style.top).toBe('0px');
-            expect(scrollbar.main.parentNode.scrollTop).toBe(0);
+            expect(scrollbar.panel.scrollTop).toBe(0);
 
             scrollbar.scrollTo('end');
             expect(scrollbar.thumb.style.top).toBe(trackSize + 'px');
-            expect(scrollbar.main.parentNode.scrollTop).toBe(scrollSize);
+            expect(scrollbar.panel.scrollTop).toBe(scrollSize);
 
             scrollbar.scrollTo('ab');
             expect(scrollbar.thumb.style.top).toBe('0px');
-            expect(scrollbar.main.parentNode.scrollTop).toBe(0);
+            expect(scrollbar.panel.scrollTop).toBe(0);
 
             scrollbar.scrollTo(0.5);
             expect(scrollbar.thumb.style.top).toBe( (trackSize/2) + 'px');
-            expect(scrollbar.main.parentNode.scrollTop).toBe( 
+            expect(scrollbar.panel.scrollTop).toBe( 
                 scrollSize/2 
             );
 
@@ -113,20 +111,20 @@ define(function (require) {
 
         it('disable不影响接口调用', function () {
 
-            var scrollSize = scrollbar.main.scrollHeight 
-                - scrollbar.main.parentNode.clientHeight;
+            var scrollSize = scrollbar.panel.scrollHeight 
+                - scrollbar.main.clientHeight;
             var trackSize = scrollbar.track.clientHeight
                 - scrollbar.thumb.offsetHeight;
 
             scrollbar.scrollTo('begin');
             expect(scrollbar.thumb.style.top).toBe('0px');
-            expect(scrollbar.main.scrollTop).toBe(0);
+            expect(scrollbar.panel.scrollTop).toBe(0);
 
             scrollbar.disable();
             scrollbar.scrollTo(0.5);
             //disable 不影响接口调用
             expect(scrollbar.thumb.style.top).toBe( (trackSize/2) + 'px');
-            expect(scrollbar.main.parentNode.scrollTop).toBe( 
+            expect(scrollbar.panel.scrollTop).toBe( 
                 scrollSize/2 
             );
 

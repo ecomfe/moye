@@ -3,23 +3,24 @@
 <head>
 <meta charset="utf-8" />
 <title>ScrollBar</title>
-<link rel="stylesheet" href="css/ScrollBar.css" />
-<script src="http://s1.bdstatic.com/r/www/cache/ecom/esl/1-6-8/esl.js"></script>
+<script src="../dep/esl.js"></script>
+<link rel="stylesheet" type="text/css" href="css/ScrollBar.css" />
 </head>
 <body>
 
-<div class="ecl-ui-scrollbar">
+<div id="ecl-ui-scrollbar" class="ecl-ui-scrollbar ecl-ui-scrollbar-position-mode">
   <div class="ecl-ui-scrollbar-track">
     <i id="ecl-ui-scrollbar-thumb" class="ecl-ui-scrollbar-thumb"></i>
   </div>
   <div class="ecl-ui-scrollbar-panel">
-    <div id="ecl-ui-scrollbar-main">
-      <p style="background:#CCC">
+    <div style="background:#CCC">
+    <div id="ecl-ui-scrollbar-main" class="ecl-ui-scrollbar-main">
+      <div style="background:#CCC">
       猪!你的鼻子有两个孔,感冒时的你还挂着鼻涕牛牛. 
       猪!你有着黑漆漆的眼,望呀望呀望也看不到边. 
       猪!你的耳朵是那么大,呼扇呼扇也听不到我在骂你傻. 
       猪!你的尾巴是卷又卷,原来跑跑跳跳还离不开它 
-      哦~~~ 
+      哦~~~ <div style="position:relative; background:red;width:40px;height: 40px">XXXXXX</div>
 
       猪头猪脑猪身猪尾(yi)巴 
       从来不挑食的乖娃娃 
@@ -29,7 +30,8 @@
       猪!你的肚子是那么鼓,一看就知道受不了生活的苦 
       猪!你的皮肤是那么白,上辈子一定投在那富贵人家 
       哦~~~ 
-    </p>
+    </div>
+    <div>
       传说你的祖先有八钉耙,算命先生说他命中犯桃花 
       见到漂亮姑娘就嘻嘻哈哈 
       不会脸红不会害怕 
@@ -42,18 +44,8 @@
       见到漂亮姑娘就嘻嘻哈哈 
       不会脸红不会害怕 
       你很象她
-
-      猪!你的鼻子有两个孔,感冒时的你还挂着鼻涕牛牛. 
-      猪!你有着黑漆漆的眼,望呀望呀望也看不到边. 
-      猪!你的耳朵是那么大,呼扇呼扇也听不到我在骂你傻. 
-      猪!你的尾巴是卷又卷,原来跑跑跳跳还离不开它 
-      哦~~~ 
-
-      猪头猪脑猪身猪尾(yi)巴 
-      从来不挑食的乖娃娃 
-      每天睡到日晒三杆后 
       从不刷牙从不打架 
-
+    </div>
       猪!你的肚子是那么鼓,一看就知道受不了生活的苦 
       猪!你的皮肤是那么白,上辈子一定投在那富贵人家 
       哦~~~ 
@@ -71,29 +63,32 @@
       不会脸红不会害怕 
       你很象她
     </div>
+    </div>
   </div>
 </div>
 
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 
+<div id="ecl-ui-scrollbar-horizontal" class="ecl-ui-scrollbar ecl-ui-scrollbar-horizontal">
 <div class="ecl-ui-scrollbar ecl-ui-scrollbar-horizontal">
   <div class="ecl-ui-scrollbar-panel">
     <div id="ecl-ui-scrollbar-main1" style="white-space:nowrap">
-      <p style="background:#CCC">
+      <div style="background:#CCC">
+          猪!你的鼻子有两个孔,感冒时的你还挂着鼻涕牛牛. 
+          猪!你有着黑漆漆的眼,望呀望呀望也看不到边. 
+          猪!你的耳朵是那么大,呼扇呼扇也听不到我在骂你傻. 
+          猪!你的尾巴是卷又卷,原来跑跑跳跳还离不开它 
+          哦~~~ 
+     </div>
+      <div>
           猪!你的鼻子有两个孔,感冒时的你还挂着鼻涕牛牛. 
           猪!你有着黑漆漆的眼,望呀望呀望也看不到边. 
           猪!你的耳朵是那么大,呼扇呼扇也听不到我在骂你傻. 
           猪!你的尾巴是卷又卷,原来跑跑跳跳还离不开它 
           哦~~~ 
      </p>
-      <p>
-          猪!你的鼻子有两个孔,感冒时的你还挂着鼻涕牛牛. 
-          猪!你有着黑漆漆的眼,望呀望呀望也看不到边. 
-          猪!你的耳朵是那么大,呼扇呼扇也听不到我在骂你傻. 
-          猪!你的尾巴是卷又卷,原来跑跑跳跳还离不开它 
-          哦~~~ 
-     </p>
+     </div>
     </div>
   </div>
   <div class="ecl-ui-scrollbar-track">
@@ -108,27 +103,25 @@
       baseUrl: '../src/ui'
     });
     require([ 'lib', 'ScrollBar'], function (lib, ScrollBar) {
+      window.lib= lib;
 
       var scrollbar = new ScrollBar({
-        main: lib.g('ecl-ui-scrollbar-main'),
-        thumb: lib.g('ecl-ui-scrollbar-thumb'),
-        disabled: 0
+        main: lib.g('ecl-ui-scrollbar'),
+        disabled: 0,
+        mode: 'position'
       })
       scrollbar.render();
 
       setTimeout(function() {
-        var html = lib.g('ecl-ui-scrollbar-main').innerHTML;
-        lib.g('ecl-ui-scrollbar-main').innerHTML = html + html;
+        var pan = lib.q('ecl-ui-scrollbar-panel', lib.g('ecl-ui-scrollbar'))[0];
+        var html = pan.innerHTML;
+        pan.innerHTML = html + html;
         scrollbar.refresh();
+        scrollbar.scrollTo(0.5);
       }, 1000);
 
-      //scrollbar.disable();
-      //scrollbar.scrollTo(726);
-      //scrollbar.scrollTo('bttom');
-      scrollbar.scrollTo(0.5);
       var scrollbar1 = new ScrollBar({
-        main: lib.g('ecl-ui-scrollbar-main1'),
-        thumb: lib.g('ecl-ui-scrollbar-thumb1'),
+        main: lib.g('ecl-ui-scrollbar-horizontal'),
         direction: 'horizontal'
       })
       scrollbar1.render();
@@ -137,5 +130,6 @@
 
 })();
 </script>
+ 
 </body>
 </html>

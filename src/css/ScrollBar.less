@@ -17,18 +17,20 @@
 .@{scrollbar-prefix} {
     width: @scrollbar-width;
     border: 2px solid #DDD;
+    height: @scrollbar-height;
 
     &-panel {
         margin-right:10px;
+        width: @scrollbar-width - @scrollbar-thumb-size;
         height: @scrollbar-height;
         overflow: hidden;
     }
 
     &-track {
         float: right;
+        position: relative;
         width: @scrollbar-thumb-size;
         height: @scrollbar-height;
-        position: relative;
         background: #EEE;
     }
 
@@ -54,17 +56,37 @@
         background: #EEE;
     }
 
+
+    &-position-mode {
+        position: relative;
+        height: @scrollbar-height;
+        overflow: hidden;
+    }
+
+    &-position-mode &-panel {
+        width: @scrollbar-width - @scrollbar-thumb-size;
+        position: absolute;
+        height: auto;
+    }
+
+    &-position-mode &-track {
+        float: none;
+        position: absolute;
+        right: 0;
+    }
+
     //水平滚动样式
     &-horizontal &-panel{
         width: @scrollbar-width;
         margin-right: 0;
+        height: @scrollbar-height - @scrollbar-thumb-size;
     }
 
 
     &-horizontal &-track{
         float: none;
         width: @scrollbar-width;
-        height:  @scrollbar-thumb-size;
+        height: @scrollbar-thumb-size;
     }
 
     &-horizontal &-thumb{
