@@ -948,6 +948,27 @@ define(function () {
         },
 
         /**
+         * 添加单次事件绑定
+         * 
+         * @public
+         * @param {string=} type 事件类型
+         * @param {Function} listener 要添加绑定的监听器
+         */
+        once: function (type, listener) {
+            if (lib.isFunction(type)) {
+                listener = type;
+                type = '*';
+            }
+
+            var me = this;
+            var realListener = function () {
+                listener.apply(me, arguments);
+                me.un(type, realListener);
+            };
+            this.on.call(me, type, realListener);
+        },
+
+        /**
          * 触发指定事件
          * 
          * @public

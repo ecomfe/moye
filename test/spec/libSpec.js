@@ -343,24 +343,26 @@ define(function (require) {
             Cat.implement(lib.observable);
             var tom = new Cat();
 
-            var firedCatched = false;
-            var global = false;
+            var onCatchRat = jasmine.createSpy('onCatchRat');
+            var onEvent = jasmine.createSpy('onEvent');
+            var onOnceCatchRat = jasmine.createSpy('onOnceCatchRat');
 
-            tom.on('catchRat', function () {
-                firedCatched = true;
-            });
-            tom.on(function () {
-                global = true;
-            });
+            tom.on('catchRat', onCatchRat);
+            tom.once('catchRat', onOnceCatchRat);
+            tom.on(onEvent);
             tom.fire('catchRat');
 
-            expect(firedCatched).toBe(true);
-            expect(global).toBe(true);
+            expect(onCatchRat).toHaveBeenCalled();
+            expect(onOnceCatchRat).toHaveBeenCalled();
+            expect(onEvent).toHaveBeenCalled();
+
+            tom.fire('catchRat');
+            expect(onCatchRat.calls.length).toBe(2);
+            expect(onOnceCatchRat.calls.length).toBe(1);
 
             tom.un('catchRat');
-            firedCatched = false;
             tom.fire('catchRat');
-            expect(firedCatched).toBe(false);
+            expect(onCatchRat.calls.length).toBe(2);
 
         });
 
@@ -438,10 +440,7 @@ define(function (require) {
                 counter++;
 
                 var target = lib.getTarget(e);
-                expect(
-                    target === document.body
-                        || target === link
-                ).toBe(true);
+                expect(target === document.body || target === link).toBe(true);
 
                 if (stopPropagation) {
                     lib.stopPropagation(e);
