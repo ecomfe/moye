@@ -711,13 +711,13 @@ define(function (require) {
             document.body.appendChild(el);
 
             var position = lib.getPosition(el);
-            var marginNleft = parseInt(lib.getStyle(el, 'left'), 10)
-                + parseInt(lib.getStyle(el, 'margin-left'), 10);
-            var marginNtop = parseInt(lib.getStyle(el, 'top'), 10)
-                + parseInt(lib.getStyle(el, 'margin-top'), 10);
+            var marginNleft = parseFloat(lib.getStyle(el, 'left'), 10)
+                + parseFloat(lib.getStyle(el, 'margin-left'), 10);
+            var marginNtop = parseFloat(lib.getStyle(el, 'top'), 10)
+                + parseFloat(lib.getStyle(el, 'margin-top'), 10);
 
-            expect(position.left).toBe(marginNleft);
-            expect(position.top).toBe(marginNtop);
+            expect(position.left.toFixed(2)).toEqual(marginNleft.toFixed(2));
+            expect(position.top.toFixed(2)).toEqual(marginNtop.toFixed(2));
 
             document.body.removeChild(el);
             styleEl.parentNode.removeChild(styleEl);
