@@ -97,6 +97,10 @@ define(function (require) {
          * @property {boolean} options.preventWheelScroll 
          *      如果true会始终阻止滚轮滚动页面，及时当前面板已经滚动到头
          *      此处会防止因面板较短导致的页面频繁滚动
+         * @property {boolean} options.autoThumbSize 
+         *      是否自动调整thumb的高度，以适应滚动内容的大小
+         * @property {boolean} options.minThumbSize 
+         *      自动调整thumb高度时，最小的thumb高度(px)
          * @private
          */
         options: {
@@ -125,8 +129,14 @@ define(function (require) {
             //使用的模式，scrollTop模式or style.top模式，使用的css是不一样的
             mode: '',
 
-            //如果true会始终阻止滚轮滚动页面，及时当前面板已经滚动到头
-            preventWheelScroll: false
+            //如果true会始终阻止滚轮滚动页面，即使当前已经滚动到头
+            preventWheelScroll: false,
+
+            //是否自动调整thumb的高度
+            autoThumbSize: true,
+
+            //最小的thumb高度,px
+            minThumbSize: 30
         },
 
         /**
@@ -420,8 +430,21 @@ define(function (require) {
                     this.getClass('noscroll')
                 );
 
-            this.trackSize = this.track[this.clientProp] 
-                - this.thumb[this.offsetProp];
+            //滑块轨道的大小
+            var trackLen = this.track[this.clientProp];
+
+            if(this.options.autoThumbSize && this.scrollRatio < 1) {
+
+                var thumbSize = Math.max(
+                    this.options.minThumbSize, 
+                    this.scrollRatio * trackLen
+                );
+
+                this.thumb.style[this.xAxis ? 'width' : 'height']
+                    = thumbSize + 'px';
+            }
+
+            this.trackSize = trackLen - this.thumb[this.offsetProp];
 
             this.scrollTo(this.curPos);
             this.disabled = this.scrollRatio >= 1;

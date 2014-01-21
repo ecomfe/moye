@@ -352,7 +352,7 @@ define(function (require) {
                         elements[this.lastIndex], 
                         this.getClass('index-selected')
                     );
-                lib.addClass(
+                elements[this.index] && lib.addClass(
                     elements[this.index], 
                     this.getClass('index-selected')
                 );
