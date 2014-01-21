@@ -14,21 +14,21 @@ Moye (知心组件库)
 
 获取源码：
 
-	$ git clone git://github.com/ecomfe/moye.git
-	$ cd moye
+    $ git clone git://github.com/ecomfe/moye.git
+    $ cd moye
 
 安装依赖：
 
-	$ npm install
+    $ npm install
 
-生成 API 文档：
+生成 API 文档：[在线版入口](http://ecomfe.github.io/moye/doc/api/index.html)
 
-	$ grunt jsdoc
+    $ grunt jsdoc
     $ open doc/api/index.html
 
 单元测试：
 
-	$ grunt test
+    $ grunt test
 
 或者：
     
@@ -36,8 +36,8 @@ Moye (知心组件库)
 
 代码覆盖率：
 
-	$ grunt cover
-	$ open test/coverage/ui/index.html
+    $ grunt cover
+    $ open test/coverage/ui/index.html
 
 或者：
     
@@ -45,8 +45,8 @@ Moye (知心组件库)
 
 查看可用任务：
 
-	$ grunt --help
-	
+    $ grunt --help
+    
 
 ### 目前实现的组件
 
