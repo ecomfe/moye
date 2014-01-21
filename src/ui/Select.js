@@ -198,7 +198,10 @@ define(function (require) {
                 var popup = this.popup = new Popup(this.srcOptions);
                 this.addChild(popup);
 
-                options.datasource && this.fill(options.datasource);
+                if (options.datasource) {
+                    options.isNumber = options.valueUseIndex;
+                    this.fill(options.datasource);
+                }
 
                 popup.on('click', this.onClick);
                 popup.on('beforeShow', this.onBeforeShow);
@@ -375,16 +378,16 @@ define(function (require) {
             var options = this.options;
             var target = this.target;
             var realTarget = this.realTarget;
-            var lastValue = this.lastValue | 0;
+            var lastValue = this.lastValue;
             var selectedClass = options.prefix + '-' + options.selectedClass;
 
             var value  = el.getAttribute('data-value');
-            value = isNaN(parseInt(value, 10)) ? value : (value | 0);
-
             var text = value ? el.innerHTML : this.defaultValue;
-            var shortText = value
+            var shortText = text
                 ? textOverflow(text, options.maxLength, options.ellipsis)
                 : text;
+
+            var typeValue = options.isNumber ? (value | 0) : value;
 
             if (lastItem) {
                 lib.removeClass(lastItem, selectedClass);
@@ -406,7 +409,7 @@ define(function (require) {
                  * @property {Date} shortText 选中项的文字的切割值
                  */
                 this.fire('pick', { 
-                    value: value,
+                    value: typeValue,
                     text: text,
                     shortText: shortText
                 });
@@ -445,7 +448,7 @@ define(function (require) {
                  * @property {Date} shortText 选中项的文字的切割值
                  */
                 this.fire('change', { 
-                    value: value,
+                    value: typeValue,
                     text: text,
                     shortText: shortText
                 });           
@@ -503,9 +506,9 @@ define(function (require) {
          */
         getValue: function (isNumber) {
             var options = this.options;
-            var klass = optioins.prefix + '-' + options.selectedClass;
+            var klass = options.prefix + '-' + options.selectedClass;
             var selected = this.popup.query(klass)[0];
-            var value = selected ? selected.getAttribute('data-value'): '';
+            var value = selected ? selected.getAttribute('data-value') : '';
             isNumber = lib.typeOf(isNumber) === 'boolean'
                 ? isNumber
                 : options.isNumber;
