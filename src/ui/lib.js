@@ -500,7 +500,7 @@ define(function () {
      *             
      * @return {string} 解析结果字符串，其中值将被URI编码
      */
-    lib.toQueryString = lib.object = function toQueryString(object, base){
+    var toQueryString = function (object, base){
         var queryString = [];
 
         forIn(object, function (value, key) {
@@ -531,6 +531,7 @@ define(function () {
 
         return queryString.join('&');
     };
+    lib.toQueryString = lib.object.toQueryString = toQueryString;
 
     /* ========================== lib.string ========================== */
    
