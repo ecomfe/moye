@@ -1879,6 +1879,7 @@ define(function () {
              * 获取目标元素的上一个兄弟元素节点
              * 
              * @param {(HTMLElement | string)} element 目标元素或目标元素的 id
+             * @param {?Function} match 对元素匹配的回调函数
              * 
              * @return {?HTMLElement} 目标元素的上一个兄弟元素节点，查找不到时返回 null
              */
@@ -1892,6 +1893,7 @@ define(function () {
              * 
              * @method module:lib.dom.next
              * @param {(HTMLElement | string)} element 目标元素或目标元素的 id
+             * @param {?Function} match 对元素匹配的回调函数
              * 
              * @return {?HTMLElement} 目标元素的下一个兄弟元素节点，查找不到时返回 null
              */
@@ -1905,6 +1907,7 @@ define(function () {
              * @method module:lib.dom.first
              * @grammar lib.dom.first(element)
              * @param {(HTMLElement | string)} element 目标元素或目标元素的 id
+             * @param {?Function} match 对元素匹配的回调函数
              * @meta standard
              * 
              * @return {?HTMLElement} 目标元素的第一个元素节点，查找不到时返回 null
@@ -1918,6 +1921,7 @@ define(function () {
              * 
              * @method module:lib.dom.last
              * @param {(HTMLElement | string)} element 目标元素或目标元素的 id
+             * @param {?Function} match 对元素匹配的回调函数
              * 
              * @return {?HTMLElement} 目标元素的最后一个元素节点，查找不到时返回 null
              */
@@ -1931,6 +1935,7 @@ define(function () {
              * 
              * @method module:lib.dom.children
              * @param {(HTMLElement | string)} element 目标元素或目标元素的 id
+             * @param {?Function} match 对元素匹配的回调函数
              * 
              * @return {?Array} 目标元素的所有子节点，查找不到时返回 null
              */
