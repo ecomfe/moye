@@ -872,7 +872,14 @@ define(function () {
 
             for (var key in params) {
                 if (hasOwnProperty.call(params, key)) {
-                    newClass.prototype[key] = params[key];
+                    if (lib.isObject(newClass.prototype[key])
+                        && lib.isObject(params)
+                    ) {
+                        lib.extend(newClass.prototype[key], params[key]);
+                    }
+                    else {
+                        newClass.prototype[key] = params[key];
+                    }
                 }
             }
 
