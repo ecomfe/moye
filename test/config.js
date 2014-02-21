@@ -15,10 +15,8 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [
       'src/css/*.less',
-      'src/css/*.styl',
-      'src/css/*.css',
-      {pattern: 'src/*/*.js', included: false},
-      {pattern: 'test/*/*Spec.js', included: false},
+      {pattern: 'src/**/*.js', included: false},
+      {pattern: 'test/**/*Spec.js', included: false},
       'test/main.js'
     ],
 
@@ -37,9 +35,8 @@ module.exports = function(config) {
       // source files, that you wanna generate coverage for
       // do not include tests or libraries
       // (these files will be instrumented by Istanbul)
-      'src/*/*.js': ['coverage'],
-      'src/css/*.less': ['less'],
-      'src/css/*.styl': ['stylus']
+      'src/**/*.js': ['coverage'],
+      'src/css/*.less': ['less']
     },
 
     lessPreprocessor: {
@@ -81,7 +78,7 @@ module.exports = function(config) {
     // - Safari (only Mac; has to be installed with `npm install karma-safari-launcher`)
     // - PhantomJS
     // - IE (only Windows; has to be installed with `npm install karma-ie-launcher`)
-    browsers: ['Chrome'],
+    browsers: ['Chrome', 'Firefox'],
 
 
     // If browser does not capture in given timeout [ms], kill it
@@ -90,10 +87,10 @@ module.exports = function(config) {
 
     // Continuous Integration mode
     // if true, it capture browsers, run tests and exit
-    singleRun: !false,
+    singleRun: false,
 
     plugins: [
-        'karma-jasmine', 'karma-phantomjs-launcher', "karma-less-preprocessor", "karma-stylus-preprocessor", 'karma-requirejs', 'karma-coverage'
+        'karma-jasmine', 'karma-phantomjs-launcher', 'karma-chrome-launcher', 'karma-firefox-launcher', "karma-less-preprocessor", "karma-stylus-preprocessor", 'karma-requirejs', 'karma-coverage'
     ]
   });
 };
