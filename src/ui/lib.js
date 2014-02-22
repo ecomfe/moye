@@ -827,11 +827,10 @@ define(function () {
          * @return {Class} 新的子类
          */
         function extend(superClass, params) {
-            var subClass = lib.newClass();
             var F = function () {};
             F.prototype = superClass.prototype;
 
-            subClass.prototype = new F();
+            var subClass = lib.newClass(new F());
             subClass.prototype.parent = curry(parent, superClass);
 
             subClass.implement(params);
@@ -870,18 +869,20 @@ define(function () {
                 params = params.prototype;
             }
 
-            for (var key in params) {
-                if (hasOwnProperty.call(params, key)) {
-                    if (lib.isObject(newClass.prototype[key])
-                        && lib.isObject(params)
-                    ) {
-                        lib.extend(newClass.prototype[key], params[key]);
-                    }
-                    else {
-                        newClass.prototype[key] = params[key];
-                    }
+            var prototype = newClass.prototype;
+            forIn(params, function (value, key) {
+                if (lib.isObject(prototype[key])
+                    && lib.isObject(value)
+                ) {
+                    prototype[key] = lib.extend(
+                        lib.clone(prototype[key]),
+                        value
+                    );
                 }
-            }
+                else {
+                    prototype[key] = value;
+                }
+            });
 
             return newClass;
         }

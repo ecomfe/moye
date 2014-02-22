@@ -339,6 +339,53 @@ define(function (require) {
             expect(sinbad instanceof Cat).toBe(false);
         });
 
+        it('类继承2', function () {
+            var A = lib.newClass({
+                options: {
+                    a: true
+                }
+            });
+
+            var B = A.extend({
+                options: {
+                    name: 'b',
+                    b: 1
+                }
+            });
+
+            var C = A.extend({
+                options: {
+                    name: 'c'
+                }
+            });
+
+            var a = new A();
+            var b = new B();
+            var c = new C();
+
+            expect(a instanceof A).toBe(true);
+            expect(b instanceof B).toBe(true);
+            expect(b instanceof A).toBe(true);
+            expect(c instanceof C).toBe(true);
+            expect(c instanceof A).toBe(true);
+            expect(c instanceof B).toBe(false);
+
+            expect(a.options).toEqual({a: true});
+            expect(b.options).toEqual(
+                {
+                    a: true,
+                    name: 'b',
+                    b: 1
+                }
+            );
+            expect(c.options).toEqual(
+                {
+                    a: true,
+                    name: 'c'
+                }
+            );
+        });
+
         it('事件实现', function () {
             Cat.implement(lib.observable);
             var tom = new Cat();
