@@ -212,7 +212,7 @@ define(function () {
         function (source, item, from) {
             var length = this.length >>> 0;
             var i = (from < 0) ? Math.max(0, length + from) : from || 0;
-            for (; i < length; i++){
+            for (; i < length; i++) {
                 if (source[i] === item) {
                     return i;
                 }
@@ -355,7 +355,7 @@ define(function () {
                 extend(target[key], value);
             }
             else {
-                 target[key] = value;
+                target[key] = value;
             }
         });
         return target;
@@ -427,7 +427,7 @@ define(function () {
             '\\': '\\\\'
         };
 
-        var escape = function(chr){
+        var escape = function (chr) {
             return special[chr]
                 || '\\u' + ('0000' + chr.charCodeAt(0).toString(16)).slice(-4);
         };
@@ -437,7 +437,7 @@ define(function () {
                 obj = obj.toJSON();
             }
 
-            switch (typeOf(obj)){
+            switch (typeOf(obj)) {
                 case 'string':
                     return '"' + obj.replace(/[\x00-\x1f\\"]/g, escape) + '"';
                 case 'array':
@@ -451,8 +451,11 @@ define(function () {
                         }
                     });
                     return '{' + string + '}';
-                case 'number': case 'boolean': return '' + obj;
-                case 'null': return 'null';
+                case 'number':
+                case 'boolean':
+                    return '' + obj;
+                case 'null':
+                    return 'null';
             }
 
             return null;
@@ -500,7 +503,7 @@ define(function () {
      *             
      * @return {string} 解析结果字符串，其中值将被URI编码
      */
-    var toQueryString = function (object, base){
+    var toQueryString = function (object, base) {
         var queryString = [];
 
         forIn(object, function (value, key) {
@@ -508,7 +511,7 @@ define(function () {
                 key = base + '[' + key + ']';
             }
             var result;
-            switch (typeOf(value)){
+            switch (typeOf(value)) {
                 case 'object':
                     result = toQueryString(value, key);
                     break;
@@ -519,7 +522,7 @@ define(function () {
                         qs[i] = value[i];
                     }
                     result = toQueryString(qs, key);
-                break;
+                    break;
                 default: 
                     result = key + '=' + encodeURIComponent(value);
                     break;
@@ -693,13 +696,13 @@ define(function () {
         Function.bind,
         function (fn, scope) {
             var args = arguments.length > 2 ? slice(arguments, 2) : null,
-                F = function(){};
+                F = function () {};
 
-            var bound = function(){
+            var bound = function () {
                 var context = scope, length = arguments.length;
 
                 // 处理构造函数的 bind
-                if (this instanceof bound){
+                if (this instanceof bound) {
                     F.prototype = fn.prototype;
                     context = new F();
                 }
@@ -819,7 +822,7 @@ define(function () {
 
         /**
          * 扩展生成子类
-         * 
+             * 
          * @inner
          * @param {Class} superClass 父类
          * @param {Object} params 扩展方法集合
@@ -1270,7 +1273,7 @@ define(function () {
         }
     );
 
-    if (!('onmouseenter' in document)){
+    if (!('onmouseenter' in document)) {
 
         var check = function (event) {
             var related = event.relatedTarget;
@@ -1866,8 +1869,8 @@ define(function () {
     var walk = function (element, walk, start, match, all) {
         var el = lib.g(element)[start || walk];
         var elements = [];
-        while (el){
-            if (el.nodeType === 1 && (!match || match(el))){
+        while (el) {
+            if (el.nodeType === 1 && (!match || match(el))) {
                 if (!all) {
                     return el;
                 }

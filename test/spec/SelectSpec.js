@@ -30,9 +30,9 @@ define(function (require) {
             maxLength: 8,
             cols: 2,
             offset: {
-              y: -1
+                y: -1
             }
-          });
+        });
         select.render();
 
         onPick = jasmine.createSpy('onPick');

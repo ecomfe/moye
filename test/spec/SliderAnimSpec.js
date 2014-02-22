@@ -1,9 +1,9 @@
 define(function (require) {
     var lib = require('ui/lib');
     var Anim = require('ui/SliderAnim');
-    
+
     var SliderMock = lib.newClass({
-        initialize: function() {
+        initialize: function () {
             this.stage = {
                 scrollTop: 0,
                 scrollLeft: 0
@@ -28,7 +28,7 @@ define(function (require) {
     afterEach(function () {
         slider = null;
     });
-  
+
     describe('基本接口', function () {
 
         it('控件基本接口', function () {
@@ -53,9 +53,9 @@ define(function (require) {
         it('TimeLine对象基本接口', function () {
             var anim = new Anim.TimeLine(slider, slider.options.animOptions);
             expect(typeof anim.tick).toBe('function');
-            anim.tick = function(percent) {
-                expect(percent>=0).toBe(true);
-                expect(percent<=1).toBe(true);
+            anim.tick = function (percent) {
+                expect(percent >= 0).toBe(true);
+                expect(percent <= 1).toBe(true);
                 anim.dispose();
             };
             anim.switchTo(1, 0);
@@ -63,21 +63,17 @@ define(function (require) {
 
         it('默认动画测试:no', function () {
             var anim = new Anim.anims['no'](
-                slider, 
-                slider.options.animOptions
-            );
+            slider, slider.options.animOptions);
             anim.switchTo(1, 0);
             expect(slider.stage.scrollLeft).toBe(200);
         });
 
         it('滑动门动画测试:slide', function () {
             var anim = new Anim.anims['slide'](
-                slider, 
-                slider.options.animOptions
-            );
+            slider, slider.options.animOptions);
             anim.switchTo(1, 0);
             var a = 1;
-            setTimeout(function(){
+            setTimeout(function () {
                 expect(a).toBe(1);
                 expect(slider.stage.scrollLeft).toBe(200);
             }, 230);
@@ -85,14 +81,12 @@ define(function (require) {
 
         it('滑动门动画测试:slide vertical', function () {
             var anim = new Anim.anims['slide'](
-                slider, 
-                lib.extend(slider.options.animOptions, {
-                    direction: 'vertical'
-                })
-            );
+            slider, lib.extend(slider.options.animOptions, {
+                direction: 'vertical'
+            }));
             anim.switchTo(1, 0);
             var a = 1;
-            setTimeout(function(){
+            setTimeout(function () {
                 expect(a).toBe(1);
                 expect(slider.stage.scrollTop).toBe(200);
             }, 230);

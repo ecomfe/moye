@@ -1,7 +1,7 @@
 /**
  * ZXUI (Zhixin UI)
  * Copyright 2013 Baidu Inc. All rights reserved.
- * 
+ *
  * @file 滚动条组件
  * @author  mengke01(mengke01@baidu.com)
  */
@@ -13,7 +13,7 @@ define(function (require) {
 
     /**
      * 鼠标滚轮事件，firefox命名不同
-     * 
+     *
      * @type {string}
      */
     var wheelEvent = lib.browser.firefox ? 'DOMMouseScroll' : 'mousewheel';
@@ -24,52 +24,48 @@ define(function (require) {
      * @param {string} noSelectClass 使用class设置禁止选择
      * @type {Function}
      */
-    var setTextNoSelect = (function(supportCss) {
+    var setTextNoSelect = (function (supportCss) {
         var selectEvent;
-        return supportCss
-            ? function(enabled, noSelectClass) {
-                lib[
-                enabled 
-                ? 'addClass' 
-                : 'removeClass'
-                ](document.body, noSelectClass);
+        return supportCss ?
+        function (enabled, noSelectClass) {
+            lib[
+            enabled ? 'addClass' : 'removeClass'](document.body, noSelectClass);
+        } : function (enabled) {
+            if (enabled) {
+                selectEvent = document.body.onselectstart;
+                document.body.onselectstart = new Function(
+                    'event.returnValue = false'
+                );
+            } else {
+                document.body.onselectstart = selectEvent;
             }
-            : function(enabled) {
-                if(enabled) {
-                    selectEvent = document.body.onselectstart;
-                    document.body.onselectstart = 
-                        new Function('event.returnValue = false');
-                }
-                else {
-                    document.body.onselectstart = selectEvent;
-                }
-            };
-    })( lib.browser.ie < 9 ? false : true ) ;
+        };
+    })(lib.browser.ie < 9 ? false : true);
 
 
 
     /**
      * 滚动条组件
-     * 
+     *
      * @extends module:ScrollBar
      * @requires lib
      * @requires Control
      * @exports ScrollBar
      * @example
-     * 
+     *
      * var scrollbar = new ScrollBar({
      *     main: lib.g('ecl-ui-scrollbar-main'),
      *     thumb: lib.g('ecl-ui-scrollbar-thumb'),
      *     disabled: 0
      *});
-     * 
-     * 
+     *
+     *
      */
     var ScrollBar = Control.extend(/** @lends module:ScrollBar.prototype */{
 
         /**
          * 控件类型标识
-         * 
+         *
          * @type {string}
          * @override
          * @private
@@ -78,7 +74,7 @@ define(function (require) {
 
         /**
          * 控件配置项
-         * 
+         *
          * @name module:ScrollBar#options
          * @type {Object}
          * @property {boolean} options.disabled 是否禁用组件
@@ -94,12 +90,12 @@ define(function (require) {
          * @property {string} options.mode 使用的模式(`scroll` or `position`)，
          *      scrollTop模式or style.top模式
          *      使用的css是不一样的,默认scrollTop模式
-         * @property {boolean} options.preventWheelScroll 
+         * @property {boolean} options.preventWheelScroll
          *      如果true会始终阻止滚轮滚动页面，及时当前面板已经滚动到头
          *      此处会防止因面板较短导致的页面频繁滚动
-         * @property {boolean} options.autoThumbSize 
+         * @property {boolean} options.autoThumbSize
          *      是否自动调整thumb的高度，以适应滚动内容的大小
-         * @property {boolean} options.minThumbSize 
+         * @property {boolean} options.minThumbSize
          *      自动调整thumb高度时，最小的thumb高度(px)
          * @private
          */
@@ -141,7 +137,7 @@ define(function (require) {
 
         /**
          * 需要绑定 this 的方法名，多个方法以半角逗号分开
-         * 
+         *
          * @type {string}
          * @private
          */
@@ -149,22 +145,21 @@ define(function (require) {
 
         /**
          * 按下导航条的按钮时处理
-         * 
+         *
          * @param {HTMLEvent} e dom事件
          * @private
          */
-        onThumbdown: function(e) {
-            if(this.disabled) {
+        onThumbdown: function (e) {
+            if (this.disabled) {
                 return;
             }
-            setTextNoSelect(true, this.getClass('noselect') );
+            setTextNoSelect(true, this.getClass('noselect'));
 
             this.mouseStart = this.xAxis
-                ? (e.pageX || e.clientX) : (e.pageY||e.clientY);
+                ? (e.pageX || e.clientX)
+                : (e.pageY || e.clientY);
             this.thumbStart = parseInt(
-                this.thumb.style[this.xAxis ? 'left' : 'top'],
-                10
-            ) || 0;
+            this.thumb.style[this.xAxis ? 'left' : 'top'], 10) || 0;
 
             lib.on(document, 'mousemove', this.onMousemove);
             lib.on(document, 'mouseup', this.onMouseup);
@@ -172,38 +167,35 @@ define(function (require) {
 
         /**
          * 拖动时候的事件
-         * 
+         *
          * @param {HTMLEvent} e dom事件
          * @private
          */
-        onMousemove: function(e) {
+        onMousemove: function (e) {
             //如果滚动条可用
-            if(this.scrollRatio < 1) {
+            if (this.scrollRatio < 1) {
 
-                var moveLength = 
-                    ( 
-                        this.xAxis 
-                        ? (e.pageX || e.clientX) 
-                        : (e.pageY || e.clientY) 
+                var moveLength = (
+                    this.xAxis
+                        ? (e.pageX || e.clientX)
+                        : (e.pageY || e.clientY)
                     )
                     - this.mouseStart;
 
                 this.thumbPos = Math.min(
-                    this.trackSize, 
-                    Math.max(0, this.thumbStart + moveLength)
-                );
+                this.trackSize, Math.max(0, this.thumbStart + moveLength));
                 this.setScrollPercent(this.thumbPos / this.trackSize);
             }
         },
 
         /**
          * 拖动结束时的事件
-         * 
+         *
          * @param {HTMLEvent} e dom事件
          * @private
          */
-        onMouseup: function() {
-            setTextNoSelect(false, this.getClass('noselect') );
+        onMouseup: function () {
+            setTextNoSelect(false, this.getClass('noselect'));
 
             lib.un(document, 'mousemove', this.onMousemove);
             lib.un(document, 'mouseup', this.onMouseup);
@@ -211,77 +203,71 @@ define(function (require) {
 
         /**
          * 点击滚动条时的动作
-         * 
+         *
          * @param {HTMLEvent} e dom事件
          * @private
          */
-        onTrackUp: function(e) {
-            if(this.disabled || lib.getTarget(e) !== this.track) {
+        onTrackUp: function (e) {
+            if (this.disabled || lib.getTarget(e) !== this.track) {
                 return;
             }
             var pos = Math.min(
-                this.trackSize, 
-                this.xAxis ? e.offsetX : e.offsetY
-            );
+            this.trackSize, this.xAxis ? e.offsetX : e.offsetY);
             this.setScrollPercent(pos / this.trackSize);
         },
 
         /**
          * 鼠标滚轮事件
-         * 
+         *
          * @param {HTMLEvent} e dom事件
          * @private
          */
-        onMouseWheel: function(e) {
-            if(this.disabled) {
+        onMouseWheel: function (e) {
+            if (this.disabled) {
                 return;
             }
-            var delta = e.wheelDelta ? e.wheelDelta/120 : -e.detail/3;
+            var delta = e.wheelDelta ? e.wheelDelta / 120 : -e.detail / 3;
             var percent = delta * this.options.wheelspeed;
 
             //这里设置最多滚动距离为2屏
-            if(percent * (1 - this.scrollRatio) > 2 * this.scrollRatio) {
-                percent = 2*this.scrollRatio;
+            if (percent * (1 - this.scrollRatio) > 2 * this.scrollRatio) {
+                percent = 2 * this.scrollRatio;
             }
 
             var percent = this.curPos - percent;
             this.setScrollPercent(percent);
             //在滚动范围内取消默认行为
-            if(
-                this.options.preventWheelScroll 
-                || (percent >= 0.005 && percent <= 0.995) 
-            ){
+            if (this.options.preventWheelScroll
+                || (percent >= 0.005 && percent <= 0.995)
+            ) {
                 lib.preventDefault(e);
             }
-            
+
         },
 
         /**
          * 设置滚动的位置
-         * 
+         *
          * @param {Number} pos 设置滚动的位置比例
          * @private
          * @fires module:ScrollBar#event
          */
-        setScrollPercent: function(pos) {
+        setScrollPercent: function (pos) {
 
             //取消舍入误差
-            if(pos < 0.005) {
+            if (pos < 0.005) {
                 pos = 0;
-            }
-            else if( 1 - pos < 0.005 ) {
+            } else if (1 - pos < 0.005) {
                 pos = 1;
             }
 
             var axis = this.xAxis ? 'left' : 'top';
-            this.thumb.style[axis] = 
-                Math.round(pos * this.trackSize) + 'px';
+            this.thumb.style[axis] = Math.round(pos * this.trackSize) + 'px';
 
-            var top = Math.round(pos * this.panelSize * (1-this.scrollRatio));
-            if(this.posMode) {
-                this.panel.style[axis] =  (-top) + 'px';
-            }
-            else {
+            var top = Math.round(pos * this.panelSize * (1 - this.scrollRatio));
+            if (this.posMode) {
+                this.panel.style[axis] = (-top) + 'px';
+            } else {
                 this.panel[this.scrollDirection] = top;
             }
 
@@ -300,18 +286,18 @@ define(function (require) {
 
         /**
          * 控件初始化
-         * 
+         *
          * @param {Object} options 控件配置项
          * @see module:Control#options
          * @private
          */
         init: function () {
-            if(!this.options.main) {
+            if (!this.options.main) {
                 throw new Error('invalid main');
             }
 
             var opt = this.options;
-            this.disabled = !!opt.disabled;
+            this.disabled = !! opt.disabled;
             this.curPos = 0;
 
             //当前滚动坐标
@@ -323,49 +309,40 @@ define(function (require) {
             this.scrollProp = 'scroll' + sizeProp;
             this.scrollDirection = 'scroll' + (this.xAxis ? 'Left' : 'Top');
             this.posMode = opt.mode === 'position';
-            
+
             //滚动主元素
             this.main = lib.g(opt.main);
 
             //需要滚动的元素
-            if(!opt.panel) {
-                this.panel = lib.q( this.getClass('panel'), this.main)[0];
-            }
-            else {
+            if (!opt.panel) {
+                this.panel = lib.q(this.getClass('panel'), this.main)[0];
+            } else {
                 this.panel = lib.g(opt.panel);
             }
 
             //滚动条按钮
-            if(!opt.thumb) {
-                this.thumb = lib.q( this.getClass('thumb'), this.main)[0];
-            }
-            else {
+            if (!opt.thumb) {
+                this.thumb = lib.q(this.getClass('thumb'), this.main)[0];
+            } else {
                 this.thumb = lib.g(opt.thumb);
             }
 
             //滚动条
             this.track = this.thumb.offsetParent;
-            
+
             lib.on(this.thumb, 'mousedown', this.onThumbdown);
             lib.on(this.track, 'mouseup', this.onTrackUp);
             lib.on(
-                this.panel, 
-                wheelEvent, 
-                this.onMouseWheel
-            );
+            this.panel, wheelEvent, this.onMouseWheel);
 
             var me = this;
-            lib.on(me.main, 'mouseenter', 
-                me.onMainEnter = function() {
-                    lib.addClass(me.main, me.getClass('over') );
-                }
-            );
+            lib.on(me.main, 'mouseenter', me.onMainEnter = function () {
+                lib.addClass(me.main, me.getClass('over'));
+            });
 
-            lib.on(me.main, 'mouseleave', 
-                me.onMainLeave = function() {
-                    lib.removeClass(me.main, me.getClass('over') );
-                }
-            );
+            lib.on(me.main, 'mouseleave', me.onMainLeave = function () {
+                lib.removeClass(me.main, me.getClass('over'));
+            });
 
         },
 
@@ -373,12 +350,12 @@ define(function (require) {
 
         /**
          * 根据名字构建的css class名称
-         *  
+         *
          * @param {string} name 模块名字
          * @return {string} 构建的class名称
          * @private
          */
-        getClass: function(name) {
+        getClass: function (name) {
             name = name ? '-' + name : '';
             return this.options.prefix + name;
         },
@@ -390,76 +367,73 @@ define(function (require) {
          * @return {module:ScrollBar} 本对象
          * @public
          */
-        scrollTo: function(pos) {
-            if(pos === 'begin') {
+        scrollTo: function (pos) {
+            if (pos === 'begin') {
                 pos = 0;
-            }
-            else if(pos === 'end') {
+            } else if (pos === 'end') {
                 pos = 1;
             }
             //滚动距离
-            else if(pos > 1) {
-                pos = pos / ( this.panelSize *(1 - this.scrollRatio) );
+            else if (pos > 1) {
+                pos = pos / (this.panelSize * (1 - this.scrollRatio));
             }
             //滚动百分比
             else {
-                pos = pos*1 || 0;
+                pos = pos * 1 || 0;
             }
             this.setScrollPercent(pos);
         },
 
         /**
          * 重新计算滚动比例
-         * 
+         *
          * @return {module:ScrollBar} 本对象
          */
-        refresh: function() {
+        refresh: function () {
 
             this.panelSize = this.panel[this.scrollProp];
 
             //当前内容的缩放级别
-            this.scrollRatio = 
-                this.main[this.clientProp]/
-                this.panelSize;
+            this.scrollRatio = this.main[this.clientProp] / this.panelSize;
 
             //设置祖先元素为禁用
-            lib[this.scrollRatio >=1 
-                ? 'addClass' : 'removeClass']
-                (
-                    this.main, 
-                    this.getClass('noscroll')
-                );
+            lib[
+                this.scrollRatio >= 1
+                ? 'addClass'
+                : 'removeClass'
+            ](this.main, this.getClass('noscroll'));
 
             //滑块轨道的大小
             var trackLen = this.track[this.clientProp];
 
-            if(this.options.autoThumbSize && this.scrollRatio < 1) {
+            if (this.options.autoThumbSize && this.scrollRatio < 1) {
 
                 var thumbSize = Math.max(
-                    this.options.minThumbSize, 
-                    this.scrollRatio * trackLen
-                );
+                this.options.minThumbSize, this.scrollRatio * trackLen);
 
-                this.thumb.style[this.xAxis ? 'width' : 'height']
-                    = thumbSize + 'px';
+                this.thumb.style[
+                    this.xAxis
+                    ? 'width'
+                    : 'height'
+                ] = thumbSize + 'px';
             }
 
             this.trackSize = trackLen - this.thumb[this.offsetProp];
 
             this.scrollTo(this.curPos);
             this.disabled = this.scrollRatio >= 1;
-            
+
             return this;
         },
 
         /**
          * 绘制控件
-         * 
+         *
          * @override
          * @public
          */
         render: function () {
-            if(!this.options.main) {
+            if (!this.options.main) {
                 throw new Error('invalid main');
             }
 
@@ -469,31 +443,29 @@ define(function (require) {
 
         /**
          * 设置是否启用
-         * 
+         *
          * @param {boolean} enabled 是否启用
          * @private
          */
-        setEnabled: function(enabled) {
+        setEnabled: function (enabled) {
             var disabled = !enabled;
             //设置祖先元素为禁用
-            lib[ disabled ? 'addClass' : 'removeClass'](
-                this.main, 
-                this.getClass('disable')
-            );
+            lib[disabled ? 'addClass' : 'removeClass'](
+            this.main, this.getClass('disable'));
             this.disabled = disabled;
         },
 
         /**
          * 设置启用
          */
-        enable: function() {
+        enable: function () {
             this.setEnabled(true);
         },
 
         /**
          * 设置禁用
          */
-        disable: function() {
+        disable: function () {
             this.setEnabled(false);
         },
 
@@ -503,7 +475,7 @@ define(function (require) {
          * @public
          * @fires module:ScrollBar#dispose
          */
-        dispose: function() {
+        dispose: function () {
 
             lib.removeClass(document.body, this.getClass('noselect'));
             lib.un(this.thumb, 'mousedown', this.onThumbdown);

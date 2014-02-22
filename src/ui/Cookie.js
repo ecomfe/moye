@@ -5,7 +5,7 @@
  * @file Cookie 读写模块
  * @author chris(wfsr@foxmail.com)
  */
- define(function (require) {
+define(function (require) {
 
     var lib = require('./lib');
 

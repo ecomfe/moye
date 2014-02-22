@@ -65,7 +65,7 @@ define(function (require) {
          * @see module:LazyImg#options
          * @private
          */
-        initialize: function(options, main) {
+        initialize: function (options, main) {
             options = this.setOptions(options);
             main = this.main = lib.g(options.main) || lib.q(options.main)[0];
             this.imgs = options.imgs
@@ -104,8 +104,8 @@ define(function (require) {
                     var isLessTop = cd.bottom + offset.y <= scroll.y;
 
                     // 如果在可视区域之内
-                    if(!(isOverRight || isOverBottom) 
-                         && !(isLessLeft || isLessTop )
+                    if (!(isOverRight || isOverBottom) 
+                         && !(isLessLeft || isLessTop)
                     ) {
                         img.src = src;
                         img.removeAttribute(_src);

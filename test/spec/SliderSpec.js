@@ -1,7 +1,7 @@
 define(function (require) {
     var lib = require('ui/lib');
     var Slider = require('ui/Slider');
-    
+
     var slider;
 
     beforeEach(function () {
@@ -52,9 +52,9 @@ define(function (require) {
         slider = new Slider({
             prefix: 'ecl-ui-slider',
             main: lib.g('ecl-ui-slider-1')
-          });
-        slider.render();               
-        
+        });
+        slider.render();
+
     });
 
 
@@ -62,7 +62,7 @@ define(function (require) {
         slider.dispose();
         document.body.removeChild(lib.g('slider-container'));
     });
-  
+
     describe('基本接口', function () {
 
 
@@ -114,19 +114,19 @@ define(function (require) {
         });
 
         it('prev', function () {
-            slider.index=0;
+            slider.index = 0;
             slider.prev();
-            expect(slider.index).toBe(slider.count-1);
+            expect(slider.index).toBe(slider.count - 1);
         });
 
         it('next', function () {
-            slider.index=slider.count-1;
+            slider.index = slider.count - 1;
             slider.next();
             expect(slider.index).toBe(0);
         });
 
         it('go', function () {
-            slider.index=slider.count-1;
+            slider.index = slider.count - 1;
             slider.next();
             expect(slider.index).toBe(0);
         });
@@ -139,8 +139,8 @@ define(function (require) {
         });
 
         it('onchange', function () {
-            var a =1;
-            slider.on('change', slider.options.onChange = function(e) {
+            var a = 1;
+            slider.on('change', slider.options.onChange = function (e) {
                 expect(a).toBe(1);
                 expect(e.index).not.toBe(null);
                 expect(e.lastIndex).not.toBe(null);
@@ -152,8 +152,8 @@ define(function (require) {
                 prefix: 'ecl-ui-slider',
                 main: lib.g('ecl-ui-slider-2'),
                 anim: 'no'
-              });
-            defaultSlider.render();    
+            });
+            defaultSlider.render();
             defaultSlider.go(-1);
             defaultSlider.go(1);
             defaultSlider.go(5);
@@ -165,8 +165,8 @@ define(function (require) {
                 prefix: 'ecl-ui-slider',
                 main: lib.g('ecl-ui-slider-2'),
                 anim: 'opacity'
-              });
-            opacitySlider.render();  
+            });
+            opacitySlider.render();
             opacitySlider.go(-1);
             opacitySlider.go(1);
             opacitySlider.go(5);

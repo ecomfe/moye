@@ -112,7 +112,7 @@ define(function (require) {
             };
 
             var els = this.els;
-            for (var key in els){
+            for (var key in els) {
                 if (els.hasOwnProperty(key)) {
 
                     // [HTMLElement, Function, Object]
@@ -144,8 +144,8 @@ define(function (require) {
                     var isOverBottom = cd.top - options.y >= scroll.y + size.y;
                     var isLessLeft = cd.left + cd.width + options.x <= scroll.x;
                     var isLessTop = cd.top + options.y + cd.height <= scroll.y;
-                    if(!(isOverRight || isOverBottom) 
-                         && !(isLessLeft || isLessTop )
+                    if (!(isOverRight || isOverBottom) 
+                         && !(isLessLeft || isLessTop)
                     ) {
                         if (!options.trigger) {
                             data[1](scroll, size, cd, dir, data[0]);
@@ -214,7 +214,7 @@ define(function (require) {
     });
 
     
-    (function (Lazy){
+    (function (Lazy) {
         var lazy;
 
         /**

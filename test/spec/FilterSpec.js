@@ -85,9 +85,9 @@ define(function (require) {
         );
 
         filter = new Filter({
-          prefix: 'ecl-ui-filter',
-          main: lib.q('ecl-ui-filter')[0],
-          groups: 'p'
+            prefix: 'ecl-ui-filter',
+            main: lib.q('ecl-ui-filter')[0],
+            groups: 'p'
         });
         filter.render();
         

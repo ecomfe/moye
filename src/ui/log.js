@@ -245,9 +245,9 @@ define(function (require) {
                         break;
                     }
                     else {
-                        if(el.className
+                        if (el.className
                             && (/\bOP_LOG_[A-Z]+\b/.test(el.className))
-                        ){
+                        ) {
                             title = get(el);   
                             break;
                         }

@@ -267,7 +267,7 @@ define(function (require) {
 
             if (!events && this.triggers) {
                 if (options.showDelay) {
-                    this.showTimer = setTimeout(function (){
+                    this.showTimer = setTimeout(function () {
                         me.show(me.triggers[0]);
                     });
                 }

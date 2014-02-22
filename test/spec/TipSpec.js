@@ -22,8 +22,11 @@ define(function (require) {
             mode: 'over',
             arrow: '1',
             hideDelay: 0,
-            offset: { x: 5, y: 5}
-          });
+            offset: {
+                x: 5,
+                y: 5
+            }
+        });
         tip.render();
         
     });

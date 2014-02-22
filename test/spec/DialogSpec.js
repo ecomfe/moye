@@ -16,16 +16,16 @@ define(function (require) {
             showMask: 1,
             leve: 10,
             skin: 'xxx-dlg'
-          });
+        });
         dialog.render();
-        
+
     });
 
 
     afterEach(function () {
-        dialog.dispose();          
+        dialog.dispose();
     });
-  
+
     describe('基本接口', function () {
 
         it('控件类型', function () {
@@ -35,28 +35,22 @@ define(function (require) {
         });
 
         it('event:show', function () {
-            dialog.on('show', function() {
+            dialog.on('show', function () {
 
                 expect(dialog.main).toBeTruthy();
 
-                expect( 
-                    lib.hasClass(
-                        dialog.main, 
-                        'ecl-ui-dialog-hide'
-                    )
-                ).toBeFalsy();
+                expect(
+                lib.hasClass(
+                dialog.main, 'ecl-ui-dialog-hide')).toBeFalsy();
             });
             dialog.show();
         });
 
         it('event:hide', function () {
-            dialog.on('hide', function() {
-                expect( 
-                    lib.hasClass(
-                        dialog.main, 
-                        'ecl-ui-dialog-hide'
-                    )
-                ).toBeTruthy();
+            dialog.on('hide', function () {
+                expect(
+                lib.hasClass(
+                dialog.main, 'ecl-ui-dialog-hide')).toBeTruthy();
             });
             dialog.hide();
         });
@@ -84,7 +78,7 @@ define(function (require) {
         });
 
         it('event:dispose', function () {
-            dialog.on('dispose', function() {
+            dialog.on('dispose', function () {
                 expect(!!dialog.main).toBeFalsy();
             });
         });

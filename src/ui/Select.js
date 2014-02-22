@@ -19,7 +19,7 @@ define(function (require) {
      * @return {number} 目标字符的字节长度
      * @inner
      */
-    function bLength (str) {
+    function bLength(str) {
         return str.replace(/[^\x00-\xff]/gi, '..').length;
     }
 
@@ -32,7 +32,7 @@ define(function (require) {
      * @return {string} 目标字符串被截取后加上后缀的字符串
      * @inner
      */
-    function textOverflow(str, max, ellipsis){
+    function textOverflow(str, max, ellipsis) {
 
         if (max >= bLength(str)) {
             return str;
@@ -475,7 +475,7 @@ define(function (require) {
 
             var html = [];
             var valueUseIndex = !!this.options.valueUseIndex;
-            for ( var i = 0; i < datasource.length; i++ ) {
+            for (var i = 0; i < datasource.length; i++) {
                 var item = datasource[i];
 
                 if (!lib.isObject(item)) {

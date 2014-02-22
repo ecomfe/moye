@@ -310,15 +310,15 @@ define(function (require) {
             switch (cmd) {
                 case 'prev':
                     this.build(getRange(this.start - size));
-                break;
+                    break;
                 case 'next':
                     this.build(getRange(this.start + size));
-                break;
+                    break;
                 case 'back':
                     this.build(getRange(this.target.innerHTML | 0));
-                break;
+                    break;
                 default:
-                break;
+                    break;
             }
         });
 

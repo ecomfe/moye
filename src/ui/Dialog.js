@@ -1,7 +1,7 @@
 /**
  * Moye (Zhixin UI)
  * Copyright 2014 Baidu Inc. All rights reserved.
- * 
+ *
  * @file 弹框组件
  * @author mengke(mengke01@baidu.com)
  */
@@ -13,38 +13,40 @@ define(function (require) {
 
     /**
      * GUID计数
-     * 
+     *
      * @type {number}
      */
     var counter = 0;
-    
+
     /**
      * 获得GUID的函数
      * @param {string} tag GUID标签
      * @return {string} 一个不重复的guid字符串
-     * 
-     * @inner 
+     *
+     * @inner
      */
+
     function guid(tag) {
         return 'ui-dlg-' + (tag ? tag + '-' : '') + (counter++);
-    }    
+    }
 
     /**
      * 移除当前的元素
-     * 
+     *
      * @param {HTMLDomElement} domElement 当前元素
      * @inner
      */
+
     function remove(domElement) {
         domElement && domElement.parentNode.removeChild(domElement);
     }
-    
+
     /**
      * 对目标字符串进行格式化
      * 从tangram中抽出
      * @see http://1.5.13-tangram.baidu.com.r.bae.baidu.com:8081
      * /api.html#baidu.string.format|tangram
-     * 
+     *
      * @param {string} source 目标字符串
      * @param {(...Object|...string)} opts 提供相应数据的对象或多个字符串
      * @return {string} 格式化后的字符串
@@ -52,20 +54,22 @@ define(function (require) {
      */
     function format(source, opts) {
         source = String(source);
-        var data = Array.prototype.slice.call(arguments,1), 
-            toString = Object.prototype.toString;
-        if(data.length){
-            data = data.length === 1 ? 
-                /* ie 下 Object.prototype.toString.call(null) 
-                    == '[object Object]' */
-                (opts !== null && (
-                    /\[object Array\]|\[object Object\]/
-                    .test(toString.call(opts))) ? opts : data) 
-                : data;
-            return source.replace(/#\{(.+?)\}/g, function (match, key){
+        var data = Array.prototype.slice.call(arguments, 1);
+        var toString = Object.prototype.toString;
+        if (data.length) {
+            // ie 下 Object.prototype.toString.call(null) == '[object Object]'
+            data = data.length === 1
+            ? (
+                opts !== null
+                    && /\[object (Array|Object)\]/.test(toString.call(opts))
+                ? opts
+                : data
+            )
+            : data;
+            return source.replace(/#\{(.+?)\}/g, function (match, key) {
                 var replacer = data[key];
                 // chrome 下 typeof /a/ == 'function'
-                if('[object Function]' === toString.call(replacer)){
+                if ('[object Function]' === toString.call(replacer)) {
                     replacer = replacer(key);
                 }
                 return ('undefined' === typeof replacer ? '' : replacer);
@@ -81,24 +85,25 @@ define(function (require) {
      * @name module:Dialog~Mask
      * @constructor
      */
-    var Mask = function(opts) {
-        this._init(opts);
-    };
+    var Mask = function (opts) {
+            this._init(opts);
+        };
 
 
-    Mask.prototype = /** @lends module:Dialog~Mask.prototype */{
+    Mask.prototype = /** @lends module:Dialog~Mask.prototype */
+    {
 
         constructor: Mask,
 
         /**
          * 初始化函数
-         * 
+         *
          * @private
          * @param {Object} opts 初始化选项
          * @see module:Mask#create
          * @private
          */
-        _init: function(opts) {
+        _init: function (opts) {
             var div = document.createElement('div');
             div.id = opts.id;
             div.className = opts.className;
@@ -107,9 +112,9 @@ define(function (require) {
             this.mask = div;
             Mask.curMasks++;
 
-            if( 6 === lib.browser.ie && !Mask.ie6frame) {
-                Mask.ie6frame = document.createElement(
-                    '<iframe'
+            if (6 === lib.browser.ie && !Mask.ie6frame) {
+                Mask.ie6frame = document.createElement(''
+                    + '<iframe'
                     + ' src="about:blank"'
                     + ' frameborder="0"'
                     + ' style="position:absolute;left:0;top:0;z-index:1;'
@@ -122,45 +127,37 @@ define(function (require) {
 
         /**
          * 重新绘制遮盖层的位置
-         * 参考esui2 
+         * 参考esui2
          * @see https://github.com
          * /erik168/ER/blob/master/src/esui/Mask.js
-         * 
+         *
          * @public
          */
         repaint: function () {
             var width = Math.max(
-                document.documentElement.clientWidth,
-                Math.max(
-                    document.body.scrollWidth,
-                    document.documentElement.scrollWidth
-                    )
-            );
+            document.documentElement.clientWidth, Math.max(
+            document.body.scrollWidth, document.documentElement.scrollWidth));
 
             var height = Math.max(
-                document.documentElement.clientHeight,
-                Math.max(
-                    document.body.scrollHeight,
-                    document.documentElement.scrollHeight
-                    )
-            );
+            document.documentElement.clientHeight, Math.max(
+            document.body.scrollHeight, document.documentElement.scrollHeight));
 
-            this.mask.style.width  = width + 'px';
+            this.mask.style.width = width + 'px';
             this.mask.style.height = height + 'px';
 
-            if(Mask.ie6frame) {
-                Mask.ie6frame.style.width  = width + 'px';
+            if (Mask.ie6frame) {
+                Mask.ie6frame.style.width = width + 'px';
                 Mask.ie6frame.style.height = height + 'px';
             }
         },
 
         /**
          * 显示一个遮罩层
-         * 
+         *
          * @public
          */
-        show: function() {
-            if(Mask.ie6frame) {
+        show: function () {
+            if (Mask.ie6frame) {
                 Mask.ie6frame.style.zIndex = this.mask.style.zIndex - 1;
                 lib.show(Mask.ie6frame);
             }
@@ -169,11 +166,11 @@ define(function (require) {
 
         /**
          * 隐藏一个遮罩层
-         * 
+         *
          * @public
          */
-        hide: function() {
-            if(Mask.ie6frame) {
+        hide: function () {
+            if (Mask.ie6frame) {
                 lib.hide(Mask.ie6frame);
             }
             lib.hide(this.mask);
@@ -181,24 +178,24 @@ define(function (require) {
 
         /**
          * 注销一个遮罩层
-         * 
+         *
          * @public
          */
-        dispose: function() {
+        dispose: function () {
             remove(this.mask);
             Mask.curMasks--;
 
-            if(Mask.curMasks <= 0 && Mask.ie6frame) {
-               remove(Mask.ie6frame);
-               Mask.curMasks = 0;
-               Mask.ie6frame = null;
+            if (Mask.curMasks <= 0 && Mask.ie6frame) {
+                remove(Mask.ie6frame);
+                Mask.curMasks = 0;
+                Mask.ie6frame = null;
             }
         }
     };
 
     /**
      * 当前已经生成的Mask个数
-     * 
+     *
      * @type {number}
      * @private
      */
@@ -206,20 +203,20 @@ define(function (require) {
 
     /**
      * 创建一个遮罩层
-     * 
+     *
      * @param {Object} opts 遮罩选项
      * @param {string} opts.id 编号
      * @param {string} opts.className 类别名称
      * @param {Object} opts.styles 样式集合
      * @return {HTMLElement} 遮罩元素
      */
-    Mask.create = function(opts) {
+    Mask.create = function (opts) {
         return new Mask(opts);
     };
 
     /**
      * 对话框
-     * 
+     *
      * @extends module:Control
      * @requires lib
      * @requires Control
@@ -236,23 +233,23 @@ define(function (require) {
      *     fixed: 1,
      *     showMask: 1,
      *     leve: 10
-     * 
-     *  }).render();    
+     *
+     *  }).render();
      */
-    var Dialog = Control.extend(/** @lends module:Dialog.prototype */{
+    var Dialog = Control.extend( /** @lends module:Dialog.prototype */ {
 
         /**
          * 对话框的遮罩层管理类
-         * 
+         *
          * @name module:Dialog#Mask 遮罩层管理类
-         * 
+         *
          * @type {Object}
          */
         Mask: Mask,
 
         /**
          * 控件类型标识
-         * 
+         *
          * @type {string}
          * @override
          * @private
@@ -261,7 +258,7 @@ define(function (require) {
 
         /**
          * 控件配置项
-         * 
+         *
          * @name module:Dialog#options
          * @type {Object}
          * @property {(string | HTMLElement)} options.main 控件渲染容器
@@ -278,7 +275,6 @@ define(function (require) {
          * @property {string} options.dragable 是否可以拖动,暂未实现
          * @property {string} options.tpl 默认的框架模板
          * @property {string} options.footer 控件脚注
-
          * @private
          */
         options: {
@@ -323,21 +319,21 @@ define(function (require) {
             dragable: 1,
 
             //模板框架
-            tpl:  ''
+            tpl: ''
                 + '<div id="#{id}" ui-type="#{type}" '
-                +   'style="width:#{width};'
+                + 'style="width:#{width};'
                 + 'position:#{position};top:#{top};z-index:#{level}" '
-                +   'class="#{dialogClass}">'
-                +   '<div class="#{closeClass}">×</div>'
-                +   '<div class="#{headerClass}">#{title}</div>'
-                +   '<div class="#{bodyClass}">#{content}</div>'
-                +   '<div class="#{footerClass}">#{footer}</div>'
+                + 'class="#{dialogClass}">'
+                + '<div class="#{closeClass}">×</div>'
+                + '<div class="#{headerClass}">#{title}</div>'
+                + '<div class="#{bodyClass}">#{content}</div>'
+                + '<div class="#{footerClass}">#{footer}</div>'
                 + '</div>'
         },
 
         /**
          * 需要绑定 this 的方法名，多个方法以半角逗号分开
-         * 
+         *
          * @type {string}
          * @private
          */
@@ -345,35 +341,35 @@ define(function (require) {
 
         /**
          * 控件初始化
-         * 
+         *
          * @param {Object} options 控件配置项
          * @see module:Control#options
          * @private
          */
         init: function (options) {
-            this.disabled  = options.disabled;
+            this.disabled = options.disabled;
         },
 
 
         /**
          * 获得指定dialog模块的dom元素
-         *  
+         *
          * @param {string} name 模块名字
          * @return {HTMLElement} 模块的DOM元素
          * @private
          */
-        getDom: function(name) {
-            return lib.q( this.options.prefix + '-' + name, this.main)[0];
+        getDom: function (name) {
+            return lib.q(this.options.prefix + '-' + name, this.main)[0];
         },
 
         /**
          * 根据名字构建的css class名称
-         *  
+         *
          * @param {string} name 模块名字
          * @return {string} 构建的class名称
          * @private
          */
-        getClass: function(name) {
+        getClass: function (name) {
             name = name ? '-' + name : '';
             var skin = this.options.skin;
             return this.options.prefix + name + (skin ? ' ' + skin + name : '');
@@ -381,10 +377,10 @@ define(function (require) {
 
         /**
          * 渲染主框架
-         * 
+         *
          * @private
          */
-        _renderDOM: function() {
+        _renderDOM: function () {
             var opt = this.options;
             var data = {
                 id: this.id,
@@ -410,7 +406,7 @@ define(function (require) {
             this.main = lib.g(this.id);
 
             //如果显示mask，则需要创建mask对象
-            if(this.options.showMask) {
+            if (this.options.showMask) {
                 this.mask = Mask.create({
                     id: 'mask-' + this.id,
                     className: this.getClass('mask'),
@@ -423,14 +419,16 @@ define(function (require) {
 
         /**
          * 绑定组件相关的dom事件
-         * 
+         *
          * @private
          */
-        _bind: function() {
+        _bind: function () {
             var me = this;
             //绑定关闭按钮
-            lib.on(this.getDom('close'), 'click',
-                me.closeHandler = function(e) {
+            lib.on(
+                this.getDom('close'),
+                'click',
+                me.closeHandler = function (e) {
                     me.onHide(e);
                 }
             );
@@ -439,61 +437,61 @@ define(function (require) {
 
         /**
          * 获得头部区域的dom元素
-         * 
+         *
          * @return {HTMLElement} 模块的DOM元素
          * @private
          */
-        getHeaderDom: function() {
+        getHeaderDom: function () {
             return this.getDom('header');
         },
 
         /**
          * 获得内容区域的dom元素
-         * 
+         *
          * @return {HTMLElement} 模块的DOM元素
          * @private
          */
-        getBodyDom: function() {
+        getBodyDom: function () {
             return this.getDom('body');
         },
 
         /**
          * 获得尾部区域的dom元素
-         * 
+         *
          * @return {HTMLElement} 模块的DOM元素
          * @private
          */
-        getFooterDom: function() {
+        getFooterDom: function () {
             return this.getDom('footer');
         },
 
         /**
          * 设置dialog的标题
-         * 
+         *
          * @param {string} content 对话框的标题
          * @public
          */
-        setTitle: function(content) {
+        setTitle: function (content) {
             this.getHeaderDom().innerHTML = content;
         },
 
         /**
-         * 设置dialog的主体内容，可以是HTML内容  
-         * 
+         * 设置dialog的主体内容，可以是HTML内容
+         *
          * @param {string} content 内容字符串
          * @public
          */
-        setContent: function(content) {
+        setContent: function (content) {
             this.getBodyDom().innerHTML = content;
         },
 
         /**
          * 设置dialog的页脚内容
-         * 
+         *
          * @param {string} content 内容字符串
          * @public
          */
-        setFooter: function(content) {
+        setFooter: function (content) {
             this.getFooterDom().innerHTML = content;
         },
 
@@ -501,27 +499,26 @@ define(function (require) {
          * 调整弹窗位置
          * @public
          */
-        adjustPos: function() {
+        adjustPos: function () {
             var left = this.options.left;
             var top = this.options.top;
 
             //如果fixed则需要修正下margin-left
-            if(this.options.fixed) {
+            if (this.options.fixed) {
                 var cssOpt = {
                     left: left,
                     top: top
                 };
 
-                if(!left) {
+                if (!left) {
                     cssOpt.left = '50%';
-                    cssOpt.marginLeft = (-this.main.offsetWidth/2) + 'px';
+                    cssOpt.marginLeft = (-this.main.offsetWidth / 2) + 'px';
                 }
 
-                if(!top) {
+                if (!top) {
                     //这里固定为0.35的位置
                     cssOpt.top = (
-                            lib.getViewHeight() - this.main.offsetHeight
-                        ) * 0.35 + 'px';
+                    lib.getViewHeight() - this.main.offsetHeight) * 0.35 + 'px';
                 }
 
                 lib.setStyles(this.main, cssOpt);
@@ -529,31 +526,28 @@ define(function (require) {
 
             //absolute则需要动态计算left，top使dialog在视窗的指定位置
             else {
-                if(!left) {
+                if (!left) {
                     var scrollLeft = window.pageXOffset
-                        || document.documentElement.scrollLeft 
+                        || document.documentElement.scrollLeft
                         || document.body.scrollLeft;
-                    left = (
-                            scrollLeft
-                            + (lib.getViewWidth() - this.main.offsetWidth)/2
-                        ) + 'px';
+                    left = (scrollLeft
+                        + (lib.getViewWidth()
+                        - this.main.offsetWidth) / 2)
+                        + 'px';
                 }
 
-                if(!top) {
+                if (!top) {
                     var scrollTop = window.pageYOffset
                         || document.documentElement.scrollTop
                         || document.body.scrollTop;
                     //这里固定为0.35的位置
-                    top = (
-                            scrollTop
-                            + (
-                                lib.getViewHeight() - this.main.offsetHeight
-                            ) * 0.35
-                        ) + 'px';
+                    top = (scrollTop
+                        + (lib.getViewHeight() - this.main.offsetHeight) * 0.35)
+                        + 'px';
                 }
 
                 lib.setStyles(this.main, {
-                    position : 'absolute',
+                    position: 'absolute',
                     left: left,
                     top: top
                 });
@@ -568,7 +562,7 @@ define(function (require) {
          * 当视窗大小改变的时候，调整窗口位置
          * @private
          */
-        onResize: function() {
+        onResize: function () {
             var me = this;
             clearTimeout(me.resizeTimer);
             me.resizeTimer = setTimeout(function () {
@@ -581,7 +575,7 @@ define(function (require) {
          * @fires module:Dialog#beforeshow
          * @private
          */
-        onShow: function(e) {
+        onShow: function (e) {
             var me = this;
 
             /**
@@ -589,7 +583,9 @@ define(function (require) {
              * @type {Object}
              * @property {DOMEvent} event 事件源对象
              */
-            me.fire('beforeshow', { event: e });
+            me.fire('beforeshow', {
+                event: e
+            });
             me.show();
         },
 
@@ -598,14 +594,16 @@ define(function (require) {
          * @fires module:Dialog#beforehide
          * @private
          */
-        onHide: function(e) {
+        onHide: function (e) {
 
             /**
              * @event module:Dialog#beforehide
              * @type {Object}
              * @property {DOMEvent} event 事件源对象
              */
-            this.fire('beforehide', { event: e });
+            this.fire('beforehide', {
+                event: e
+            });
             this.hide();
         },
 
@@ -614,7 +612,7 @@ define(function (require) {
          * @public
          * @fires module:Dialog#show
          */
-        show: function() {
+        show: function () {
             var me = this;
 
             lib.on(window, 'resize', me.onResize);
@@ -622,11 +620,9 @@ define(function (require) {
             me.mask && me.mask.show();
 
             //移除hide状态的class
-            lib.each(me.getClass('hide').split(' '), 
-                function(className) {
-                    lib.removeClass(me.main, className);
-                }
-            );
+            lib.each(me.getClass('hide').split(' '), function (className) {
+                lib.removeClass(me.main, className);
+            });
 
             me.adjustPos();
 
@@ -642,20 +638,18 @@ define(function (require) {
         /**
          * 隐藏组件
          * @public
-         * 
+         *
          * @fires module:Dialog#hide
          */
-        hide: function() {
+        hide: function () {
             var me = this;
             me.mask && me.mask.hide();
 
             //添加hide的class
-            lib.each(me.getClass('hide').split(' '), 
-                function(className) {
-                    lib.addClass(me.main, className);
-                }
-            );
-            
+            lib.each(me.getClass('hide').split(' '), function (className) {
+                lib.addClass(me.main, className);
+            });
+
 
             /**
              * @event module:Dialog#hide
@@ -670,7 +664,7 @@ define(function (require) {
 
         /**
          * 绘制控件
-         * 
+         *
          * @override
          * @public
          */
@@ -679,16 +673,16 @@ define(function (require) {
             if (!this.rendered) {
 
                 //TODO IE6浏览器不支持fixed定位
-                if(options.fixed  && 6 === lib.browser.ie) {
-                   options.fixed = 0;
+                if (options.fixed && 6 === lib.browser.ie) {
+                    options.fixed = 0;
                 }
 
                 this.id = guid();
                 this._renderDOM();
 
                 //设置渲染的内容
-                if(options.main) {
-                    var ctl =  lib.g(options.main);
+                if (options.main) {
+                    var ctl = lib.g(options.main);
                     ctl && this.getBodyDom().appendChild(ctl);
                 }
 
@@ -700,12 +694,12 @@ define(function (require) {
 
         /**
          * 销毁，注销事件，解除引用
-         * 
+         *
          * @public
          * @fires module:Dialog#dispose
          * @fires module:Dialog#beforedispose
          */
-        dispose: function() {
+        dispose: function () {
 
             /**
              * @event module:Dialog#beforedispose
@@ -731,7 +725,7 @@ define(function (require) {
     /**
      * 获得guid的函数
      * @see guid
-     * 
+     *
      * @type {string}
      * @static
      */

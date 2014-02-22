@@ -33,8 +33,8 @@ define(function (require) {
                 var isLessTop = cd.bottom <= scroll.y;
 
                 // 如果在可视区域之内
-                if(!(isOverRight || isOverBottom) 
-                     && !(isLessLeft || isLessTop )
+                if (!(isOverRight || isOverBottom) 
+                     && !(isLessLeft || isLessTop)
                 ) {
                     el.innerHTML = '1';
                 }
@@ -42,7 +42,7 @@ define(function (require) {
                 else {
                     remain.push(el);
                 }
-           });
+            });
  
             // 剔除已处理的 DIV
             els = remain;

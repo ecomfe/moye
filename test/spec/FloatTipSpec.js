@@ -22,7 +22,7 @@ define(function (require) {
         var n = lib.g('FloatTipContainer');
         n.parentNode.removeChild(n);
     });
-  
+
     describe('基本接口', function () {
 
         it('show', function () {
@@ -33,21 +33,16 @@ define(function (require) {
         it('hide', function () {
             floatTip.hide();
             floatTip.offsetWidth;
-            expect( 
-                lib.getStyle(floatTip.main, 'display') 
-            ).toBe('none');
+            expect(lib.getStyle(floatTip.main, 'display')).toBe('none');
         });
 
 
         it('setContent', function () {
-            expect(
-                floatTip.getDom('content').innerHTML
-            ).toBe( floatTip.options.content );
+            expect(floatTip.getDom('content').innerHTML)
+            .toBe(floatTip.options.content);
 
             floatTip.setContent('XXXX');
-            expect(
-                floatTip.getDom('content').innerHTML
-            ).toBe( 'XXXX' );
+            expect(floatTip.getDom('content').innerHTML).toBe('XXXX');
 
         });
 
@@ -64,12 +59,8 @@ define(function (require) {
             adjFloatTip.render();
             adjFloatTip.show();
 
-            expect( 
-                lib.getStyle(adjFloatTip.main, 'left' )
-            ).toBe( '20px' );
-            expect(
-                lib.getStyle(adjFloatTip.main, 'top' ) 
-            ).toBe( '40px' );
+            expect(lib.getStyle(adjFloatTip.main, 'left')).toBe('20px');
+            expect(lib.getStyle(adjFloatTip.main, 'top')).toBe('40px');
 
             adjFloatTip.dispose();
         });

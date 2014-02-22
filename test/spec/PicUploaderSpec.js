@@ -2,7 +2,7 @@ define(function (require) {
     var PicUploader = require('ui/PicUploader');
     var lib = require('ui/lib');
     var picUploader;
-    var removeEventCount=0;
+    var removeEventCount = 0;
 
     beforeEach(function () {
 
@@ -36,7 +36,7 @@ define(function (require) {
         it('remove', function () {
 
             picUploader.remove('xxxxxx', 
-                function(removePath, filePath,  index) {
+                function (removePath, filePath,  index) {
                     index;
                     expect(removePath).toBeTruthy();
                 }
@@ -59,11 +59,11 @@ define(function (require) {
 
         it('event:remove', function () {
 
-            picUploader.on('remove', function() {
+            picUploader.on('remove', function () {
                 removeEventCount++;
             });
 
-            picUploader.on('dispose', function() {
+            picUploader.on('dispose', function () {
                 //expect(removeEventCount).toBe(1);
             });
 
@@ -83,7 +83,7 @@ define(function (require) {
 
         it('event:removeAt', function () {
 
-            picUploader.on('remove', function() {
+            picUploader.on('remove', function () {
                 removeEventCount++;
             });
 

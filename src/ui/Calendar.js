@@ -375,7 +375,7 @@ define(function (require) {
                 date.getMonth() + options.monthes - 1,
                 1
             );
-            if ( next) {
+            if (next) {
                 lib[!range
                     || !range.end
                     || this.getYYYYMM(range.end) > this.getYYYYMM(last)
@@ -939,7 +939,7 @@ define(function (require) {
         validate: function () {
             var value = this.target.value;
 
-            if ( value ) {
+            if (value) {
                 var date = this.from(value);
                 if (this.format(date) === value) {
 

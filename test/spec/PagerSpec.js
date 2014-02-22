@@ -19,7 +19,7 @@ define(function (require) {
             page: 0,
             first: first,
             total: 18
-          });
+        });
         pager.render();               
         
     });
