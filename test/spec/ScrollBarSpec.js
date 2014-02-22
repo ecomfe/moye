@@ -9,17 +9,17 @@ define(function (require) {
             'beforeEnd', 
             ''
                 + '<div id="ecl-ui-scrollbar" class="ecl-ui-scrollbar">'
-                + '<div class="ecl-ui-scrollbar-track">'
-                + '<i id="ecl-ui-scrollbar-thumb" '
-                + 'class="ecl-ui-scrollbar-thumb"></i>'
-                + '</div>'
-                + '<div class="ecl-ui-scrollbar-panel" style="width:490px">'
-                + '<div id="ecl-ui-scrollbar-main" '
-                + 'style="width:490px;height:500px">'
-                + '<p>测试文本测试文本测试文本</p>'
-                + '<p>测试文本测试文本测试文本</p>'
-                + '</div>'
-                + '</div>'
+                +   '<div class="ecl-ui-scrollbar-track">'
+                +       '<i id="ecl-ui-scrollbar-thumb" '
+                +           'class="ecl-ui-scrollbar-thumb"></i>'
+                +   '</div>'
+                +   '<div class="ecl-ui-scrollbar-panel" style="width:490px">'
+                +       '<div id="ecl-ui-scrollbar-main" '
+                +           'style="width:490px;height:500px">'
+                +           '<p>测试文本测试文本测试文本</p>'
+                +           '<p>测试文本测试文本测试文本</p>'
+                +       '</div>'
+                +   '</div>'
                 + '</div>'
         );
 
@@ -63,9 +63,9 @@ define(function (require) {
             expect(scrollbar.panel.scrollTop).toBe(0);
 
             scrollbar.scrollTo(0.5);
-            expect(scrollbar.thumb.style.top).toBe((trackSize / 2) + 'px');
-            expect(scrollbar.panel.scrollTop).toBe(
-            scrollSize / 2);
+            expect(scrollbar.thumb.style.top)
+                .toBe(Math.round(trackSize / 2) + 'px');
+            expect(scrollbar.panel.scrollTop).toBe(Math.round(scrollSize / 2));
         });
 
         it('onchange', function () {
@@ -102,9 +102,9 @@ define(function (require) {
             expect(scrollbar.panel.scrollTop).toBe(0);
 
             scrollbar.scrollTo(0.5);
-            expect(scrollbar.thumb.style.top).toBe((trackSize / 2) + 'px');
-            expect(scrollbar.panel.scrollTop).toBe(
-            scrollSize / 2);
+            expect(scrollbar.thumb.style.top)
+                .toBe(Math.round(trackSize / 2) + 'px');
+            expect(scrollbar.panel.scrollTop).toBe(Math.round(scrollSize / 2));
 
         });
 
@@ -122,9 +122,9 @@ define(function (require) {
             scrollbar.disable();
             scrollbar.scrollTo(0.5);
             //disable 不影响接口调用
-            expect(scrollbar.thumb.style.top).toBe((trackSize / 2) + 'px');
-            expect(scrollbar.panel.scrollTop).toBe(
-            scrollSize / 2);
+            expect(scrollbar.thumb.style.top)
+                .toBe(Math.round(trackSize / 2) + 'px');
+            expect(scrollbar.panel.scrollTop).toBe(Math.round(scrollSize / 2));
 
         });
 

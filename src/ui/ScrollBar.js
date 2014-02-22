@@ -276,7 +276,6 @@ define(function (require) {
                 position: pos
             };
 
-            this.options.onChange && this.options.onChange(event);
             /**
              * @event  module:ScrollBar#change
              * @property {Number} position 当前的滚动比例
