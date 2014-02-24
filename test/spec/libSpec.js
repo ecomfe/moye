@@ -175,6 +175,16 @@ define(function (require) {
             output = '-01000';
             expect(lib.pad(input, width)).toBe(output);
         });
+
+        it('substitute', function () {
+            var tpl = 'hello {name}, {time}';
+            var world = 'hello world, ';
+            var todayWorld = 'hello world, today';
+
+            expect(lib.substitute(tpl, {name: 'world'})).toBe(world);
+            expect(lib.substitute(tpl, {name: 'world', time: 'today'}))
+                .toBe(todayWorld);
+        });
     });
 
     describe('function处理', function () {
