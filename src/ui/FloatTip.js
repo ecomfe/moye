@@ -6,7 +6,6 @@
  * @author mengke(mengke01@baidu.com)
  */
 
-
 define(function (require) {
 
     var lib = require('./lib');
@@ -26,7 +25,6 @@ define(function (require) {
      *
      * @inner
      */
-
     function guid(tag) {
         return 'ui-float-tip-' + (tag ? tag + '-' : '') + (counter++);
     }
@@ -44,7 +42,6 @@ define(function (require) {
      * FloatTip.show('上传成功', 2000, function (e) {
      *      console.log('隐藏了');
      * });
-     *
      *
      */
     var FloatTip = Control.extend(/** @lends module:FloatTip.prototype */{
@@ -64,8 +61,8 @@ define(function (require) {
          * @name module:FloatTip#options
          * @type {Object}
          * @property {string} options.prefix class默认前缀
-         * @property {int} options.content 提示内容
-         * @property {int} options.level 提示框层级
+         * @property {string} options.content 提示内容
+         * @property {number} options.level 提示框层级
          * @property {string} options.width 控件的默认宽度
          * @property {string} options.top 控件距视窗上边缘的高度，默认为auto，会使组件相对于视窗垂直居中
          * @property {string} options.left 控件距视窗左边缘的宽度，默认为auto，会使组件相对于视窗水平居中
@@ -99,11 +96,11 @@ define(function (require) {
             //模板框架
             tpl: ''
                 + '<div id="#{id}" type="#{type}"'
-                + ' class="#{tipClass}"'
-                + ' style="width:#{width};position:#{position};'
-                + 'top:#{top};z-index:#{level}">'
-                + '<i class="#{iconClass}"></i>'
-                + '<div class="#{contentClass}">#{content}</div>'
+                +   ' class="#{tipClass}"'
+                +   ' style="width:#{width};position:#{position};'
+                +   'top:#{top};z-index:#{level}">'
+                +   '<i class="#{iconClass}"></i>'
+                +   '<div class="#{contentClass}">#{content}</div>'
                 + '</div>'
         },
 
@@ -146,12 +143,12 @@ define(function (require) {
          * @private
          */
         getDom: function (name, scope) {
-            return lib.q(
-            this.getClass(name), lib.g(scope))[0];
+            return lib.q(this.getClass(name), lib.g(scope))[0];
         },
 
         /**
          * 构造主元素
+         * 
          * @private
          */
         create: function () {
@@ -235,8 +232,8 @@ define(function (require) {
 
                 if (!top) {
                     //这里固定为0.4的位置
-                    cssOpt.top = (
-                    lib.getViewHeight() - this.main.offsetHeight) * 0.4 + 'px';
+                    cssOpt.top = (lib.getViewHeight() - this.main.offsetHeight)
+                        * 0.4 + 'px';
                 }
 
                 lib.setStyles(this.main, cssOpt);
@@ -244,23 +241,17 @@ define(function (require) {
 
             //absolute则需要动态计算left，top使dialog在视窗的指定位置
             else {
-                if (!left) {
-                    var scrollLeft = window.pageXOffset
-                        || document.documentElement.scrollLeft
-                        || document.body.scrollLeft;
-                    left = (scrollLeft
-                        + (lib.getViewWidth() - this.main.offsetWidth) / 2)
-                        + 'px';
+                if (left === '') {
+                    left = (lib.getViewWidth() - this.main.offsetWidth) / 2;
+                    left += lib.getScrollLeft();
+                    left += 'px';
                 }
 
-                if (!top) {
-                    var scrollTop = window.pageYOffset
-                        || document.documentElement.scrollTop
-                        || document.body.scrollTop;
+                if (top === '') {
                     //这里固定为0.35的位置
-                    top = (scrollTop
-                        + (lib.getViewHeight() - this.main.offsetHeight) * 0.4)
-                        + 'px';
+                    top = (lib.getViewHeight() - this.main.offsetHeight) * 0.4;
+                    top += lib.getScrollTop();
+                    top += 'px';
                 }
 
                 lib.setStyles(this.main, {
@@ -274,6 +265,7 @@ define(function (require) {
 
         /**
          * 显示组件
+         * 
          * @public
          */
         show: function () {
@@ -284,6 +276,7 @@ define(function (require) {
 
         /**
          * 隐藏组件
+         * 
          * @public
          */
         hide: function () {
