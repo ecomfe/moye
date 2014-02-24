@@ -131,12 +131,12 @@ define(function (require) {
             //模板框架
             tpl: ''
                 + '<div id="#{id}" class="#{pickerClass} #{curClass}">'
-                + '<div class="#{closeClass}" title="关闭">×</div>'
-                + '<div class="#{picClass}"></div>'
-                + '<div class="#{titleClass}">点击上传</div>'
-                + '<a href="javascript:;" class="#{wrapperClass}">'
-                + '<input type="file" class="#{fileClass}">'
-                + '</a>'
+                +   '<div class="#{closeClass}" title="关闭">×</div>'
+                +   '<div class="#{picClass}"></div>'
+                +   '<div class="#{titleClass}">点击上传</div>'
+                +   '<a href="javascript:;" class="#{wrapperClass}">'
+                +       '<input type="file" class="#{fileClass}">'
+                +   '</a>'
                 + '</div>'
         },
 
