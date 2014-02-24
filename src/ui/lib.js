@@ -650,7 +650,7 @@ define(function () {
      * @param {number} width 补齐后的固定宽度（必须小于32）
      */
     /**
-     * 对目标数字进行0补齐处理
+     * 对目标数字进行 0 补齐处理
      * 
      * @method module:lib.string.pad
      * @param {(number | string)} source 需要补齐的数字或字符串
@@ -668,6 +668,40 @@ define(function () {
                         .slice(-width)
                     )
             );
+    };
+    
+    /**
+     * 使用对象数据替换字符串相应的占位字符
+     * 
+     * @method module:lib.substitute
+     * @param {string} tpl 字符串模板
+     * @param {Object} data 字符串模板
+     * @param {RegExp} regexp 占位符规则，默认是匹配大括号
+     * 
+     * @return {string} 用`data`数据替换`tpl`中占位字符后的字符串
+     */
+    /**
+     * 使用对象数据替换字符串相应的占位字符
+     * 
+     * @param {string} tpl 字符串模板
+     * @param {Object} data 字符串模板
+     * @param {RegExp} regexp 占位符规则
+     * 
+     * @return {string} 用`data`数据替换`tpl`中占位字符后的字符串
+     */
+    lib.substitute = lib.string.substitute = function (tpl, data, regexp) {
+        return String(tpl).replace(
+            regexp || (/\\?\{([^{}]+)\}/g),
+            function (match, name) {
+                var value = data[name];
+                return match.charAt(0) === '\\'
+                    ? match.slice(1)
+                    : (value !== null && typeof value !== 'undefined'
+                        ? value
+                        : ''
+                    );
+            }
+        );
     };
 
     /* ========================== lib.fn ========================== */
