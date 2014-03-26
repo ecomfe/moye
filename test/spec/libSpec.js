@@ -219,6 +219,20 @@ define(function (require) {
 
         });
 
+        it('indexOf', function () {
+            expect(lib.indexOf).toBeDefined();
+            expect(lib.array.indexOf).toBeDefined();
+
+            var input = [1, 2, 3];
+            expect(lib.array.indexOf(input, 2)).toBe(1);
+            expect(lib.array.indexOf(input, 2, -2)).toBe(1);
+
+            var input = [1, '2', 3];
+            expect(lib.array.indexOf(input, '2')).toBe(1);
+            // 查找需要全等
+            expect(lib.array.indexOf(input, 2, -2)).toBe(-1);
+        });
+
     });
 
 
