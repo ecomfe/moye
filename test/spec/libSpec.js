@@ -194,7 +194,7 @@ define(function (require) {
             expect(lib.array.map).toBeDefined();
 
             var input = [1, 2, 3];
-            var iterator = function (n) { return n * 2;};
+            var iterator = function (n) { return n * 2; };
             var output = lib.array.map(input, iterator);
             expect(output).toEqual([2, 4, 6]);
 
