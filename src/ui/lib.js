@@ -210,7 +210,7 @@ define(function () {
     var indexOf = lib.indexOf = lib.array.indexOf = fallback(
         Array.prototype.indexOf,
         function (source, item, from) {
-            var length = this.length >>> 0;
+            var length = source.length >>> 0;
             var i = (from < 0) ? Math.max(0, length + from) : from || 0;
             for (; i < length; i++) {
                 if (source[i] === item) {
