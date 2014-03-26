@@ -187,6 +187,41 @@ define(function (require) {
         });
     });
 
+
+    describe('Array处理', function () {
+        it('map', function () {
+            expect(lib.map).toBeDefined();
+            expect(lib.array.map).toBeDefined();
+
+            var input = [1, 2, 3];
+            var iterator = function (n) { return n * 2;};
+            var output = lib.array.map(input, iterator);
+            expect(output).toEqual([2, 4, 6]);
+
+            input = [1, 2, 3, undefined, 5];
+            output = lib.array.map(input, iterator);
+
+            // output[3] = undefined * 2 是 NaN
+            expect(isNaN(output[3])).toBeTruthy();
+
+            input = [1, 2, 3];
+            input[4] = 5;
+            output = lib.array.map(input, iterator);
+
+            // output[3] 跳过处理保持 undefined
+            expect(output).toEqual([2, 4, 6, undefined, 10]);
+
+            input = { 0: 1, 1: 2, 2: 3, 4: 5, length: 5 };
+            output = lib.array.map(input, iterator);
+
+            // 同上
+            expect(output).toEqual([2, 4, 6, undefined, 10]);
+
+        });
+
+    });
+
+
     describe('function处理', function () {
         it('bind', function () {
             var a = {
