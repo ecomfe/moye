@@ -233,6 +233,19 @@ define(function (require) {
             expect(lib.array.indexOf(input, 2, -2)).toBe(-1);
         });
 
+        it('slice', function () {
+            expect(lib.slice).toBeDefined();
+            expect(lib.array.slice).toBeDefined();
+
+            var input = [1, 2, 3];
+            // 返回的是副本
+            expect(lib.slice(input)).not.toBe(input);
+            expect(lib.slice(input)).toEqual(input);
+
+            expect(lib.slice(input, 1)).toEqual([2, 3]);
+            expect(lib.slice(input, 1, -1)).toEqual([2]);
+        });
+
     });
 
 
