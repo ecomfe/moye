@@ -43,22 +43,18 @@ define(function (require) {
     /**
      * anim对象接口，子类需重写动画相关函数
      *
-     * @extends module:SliderAnim
      * @requires lib
      * @exports SliderAnim
-     * @param {module:Slider} slider slider主对象
      * @example
      * new SliderAnim(slider, animOptions)
-     * @memberof module:Slider
      */
-    var SliderAnim = lib.newClass(/*@lends SliderAnim.prototype*/{
+    var SliderAnim = lib.newClass( /** @lends module:SliderAnim.prototype */ {
 
         /**
          * 初始化函数
          *
          * @param {module:Slider} slider slider主对象
          * @param {Object} options 动画组件选项
-         * @constructor
          */
         initialize: function (slider, options) {
             this.slider = slider;
@@ -68,8 +64,8 @@ define(function (require) {
         /**
          * 切换到指定的索引
          *
-         * @param {Number} index 指定的索引
-         * @param {Number} lastIndex 上一个索引
+         * @param {number} index 指定的索引
+         * @param {number} lastIndex 上一个索引
          * @return {boolean} 是否能够切换成功
          * @protected
          */
@@ -120,17 +116,15 @@ define(function (require) {
     /**
      * 动画算子
      *
-     * @type {Object}
+     * @name module:SliderAnim.easing
      */
     SliderAnim.easing = {
 
         /**
          * easing
-         * get from qwrap
-         * @see http://dev.qwrap.com/resource/js/components/anim/easing.js
          *
-         * @param {Number} p 当前百分比
-         * @return {Number} 算子百分比
+         * @param {number} p 当前百分比
+         * @return {number} 算子百分比
          */
         easing: function (p) {
             if ((p /= 0.5) < 1) {
@@ -142,8 +136,8 @@ define(function (require) {
         /**
          * backIn
          *
-         * @param {Number} p 当前百分比
-         * @return {Number} 算子百分比
+         * @param {number} p 当前百分比
+         * @return {number} 算子百分比
          */
         backIn: function (p) {
             var s = 1.70158;
@@ -153,8 +147,8 @@ define(function (require) {
         /**
          * backOut
          *
-         * @param {Number} p 当前百分比
-         * @return {Number} 算子百分比
+         * @param {number} p 当前百分比
+         * @return {number} 算子百分比
          */
         backOut: function (p) {
             var s = 1.70158;
@@ -164,8 +158,8 @@ define(function (require) {
         /**
          * backBoth
          *
-         * @param {Number} p 当前百分比
-         * @return {Number} 算子百分比
+         * @param {number} p 当前百分比
+         * @return {number} 算子百分比
          */
         backBoth: function (p) {
             var s = 1.70158;
@@ -178,8 +172,8 @@ define(function (require) {
         /**
          * lineer
          *
-         * @param {Number} p 当前百分比
-         * @return {Number} 算子百分比
+         * @param {number} p 当前百分比
+         * @return {number} 算子百分比
          */
         lineer: function (p) {
             return p;
@@ -188,8 +182,8 @@ define(function (require) {
         /**
          * bounce
          *
-         * @param {Number} p 当前百分比
-         * @return {Number} 算子百分比
+         * @param {number} p 当前百分比
+         * @return {number} 算子百分比
          */
         bounce: function (p) {
             if (p < (1 / 2.75)) {
@@ -206,7 +200,7 @@ define(function (require) {
     /**
      * 动画组件列表
      *
-     * @type {Object}
+     * @name module:SliderAnim.anims
      */
     SliderAnim.anims = {};
 
@@ -214,7 +208,7 @@ define(function (require) {
      * 添加动画组件
      *
      * @param {string} name 名字
-     * @param {SliderAnim} Class 动画组件类
+     * @param {module:SliderAnim} Class 动画组件类
      * @return {boolean} 是否添加成功
      */
     SliderAnim.add = function (name, Class) {
@@ -227,14 +221,14 @@ define(function (require) {
 
     /**
      * 按时间线轮播组件基类
-     * @exports SliderAnim.TimeLine
-     * @type {TimeLine}
+     * 
+     * @requires SliderAnim
+     * @name module:SliderAnim~TimeLine
      */
-    var TimeLine = SliderAnim.extend( /*@lends TimeLine.prototype*/ {
+    var TimeLine = SliderAnim.extend( /** @lends module:SliderAnim~TimeLine.prototype */ {
 
         /**
          * 初始化函数
-         * @constructor
          *
          * @param {module:Slider} slider slider对象
          * @param {Object} options 动画配置选项
@@ -255,17 +249,16 @@ define(function (require) {
 
         /**
          * 在切换索引之前的动作
-         * @param {Number} index 指定的索引
-         * @param {Number} lastIndex 上一个索引
+         * @param {number} index 指定的索引
+         * @param {number} lastIndex 上一个索引
          */
-        beforeSwitch: function ( /*index, lastIndex*/ ) {},
+        beforeSwitch: function (index, lastIndex) {},
 
         /**
          * 切换到指定的索引
          *
-         * @param {Number} index 目标索引
-         * @param {Number} lastIndex 上一个索引
-         * @return {boolean} 是否成功切换
+         * @param {number} index 目标索引
+         * @param {number} lastIndex 上一个索引
          */
         switchTo: function (index, lastIndex) {
             this.beforeSwitch(index, lastIndex);
@@ -277,6 +270,7 @@ define(function (require) {
 
         /**
          * 计时器函数
+         * 
          * @private
          */
         timeHandler: function () {
@@ -284,7 +278,8 @@ define(function (require) {
             if (timePast >= this.interval) {
                 this.tick(1);
                 this.timer = 0;
-            } else {
+            }
+            else {
                 this.tick(timePast / this.interval);
                 this.timer = requestAnimationFrame(this.timeHandler);
             }
@@ -316,10 +311,10 @@ define(function (require) {
         /**
          * 当前动画的tick函数，子类需重写此函数
          *
-         * @param {Number} percent 当前动画进行的百分比
+         * @param {number} percent 当前动画进行的百分比
          * @protected
          */
-        tick: function ( /*percent*/ ) {
+        tick: function (percent) {
             //overwrite here
         }
     });
@@ -327,7 +322,7 @@ define(function (require) {
     /**
      * 导出动画基类，方便外层扩展
      *
-     * @type {TimeLine}
+     * @type {module:SliderAnim~TimeLine}
      */
     SliderAnim.TimeLine = TimeLine;
 
@@ -335,12 +330,14 @@ define(function (require) {
 
     /**
      * 基本的轮播效果，无动画切换
+     * 
+     * @name module:SliderAnim.anims.no
      */
-    SliderAnim.add('no', SliderAnim.extend({
+    SliderAnim.add('no', SliderAnim.extend( /** @lends module:SliderAnim.anims.no.prototype */ {
         /**
          * 切换到指定的索引
          *
-         * @param {Number} index 指定的索引
+         * @param {number} index 指定的索引
          * @return {boolean} 是否能够切换成功
          */
         switchTo: function (index) {
@@ -351,18 +348,19 @@ define(function (require) {
 
     /**
      * 滑动门动画组件
+     * 
+     * @name module:SliderAnim.anims.slider
      */
-    SliderAnim.add('slide', TimeLine.extend({
+    SliderAnim.add('slide', TimeLine.extend( /** @lends module:SliderAnim.anims.slide.prototype */ {
 
         /**
          * 初始化函数
-         * @constructor
+         *
+         * 其他选项参考TimeLine的初始化函数
          *
          * @param {module:Slider} slider slider对象
          * @param {string} options.direction 滑动方向，
-         *      `horizontal` or `vertical`
-         *
-         * 其他选项参考TimeLine的初始化函数
+         * `horizontal` or `vertical`
          * @see module:SliderAnim.TimeLine#initialize
          */
         initialize: function (slider, options) {
@@ -374,8 +372,9 @@ define(function (require) {
 
         /**
          * 在切换索引之前的动作
-         * @param {Number} index 指定的索引
-         * @param {Number} lastIndex 上一个索引
+         * 
+         * @param {number} index 指定的索引
+         * @param {number} lastIndex 上一个索引
          */
         beforeSwitch: function (index, lastIndex) {
 
@@ -387,14 +386,17 @@ define(function (require) {
 
                 if (this.isBusy()) {
                     this.curPos = this.slider.stage.scrollTop;
-                } else {
+                }
+                else {
                     this.curPos = stageHeight * lastIndex;
                 }
                 this.targetPos = stageHeight * index;
-            } else {
+            }
+            else {
                 if (this.isBusy()) {
                     this.curPos = this.slider.stage.scrollLeft;
-                } else {
+                }
+                else {
                     this.curPos = stageWidth * lastIndex;
                 }
                 this.targetPos = stageWidth * index;
@@ -404,7 +406,7 @@ define(function (require) {
         /**
          * 当前动画的tick函数，子类基于此设置动画
          *
-         * @param {Number} percent 当前动画进行的百分比
+         * @param {number} percent 当前动画进行的百分比
          * @protected
          */
         tick: function (percent) {
@@ -416,33 +418,38 @@ define(function (require) {
 
     /**
      * 渐变动画组件，通过改变元素的z-index和透明度来改变
+     * 
+     * @name module:SliderAnim.anims.opacity
      */
-    SliderAnim.add('opacity', TimeLine.extend({
+    SliderAnim.add('opacity', TimeLine.extend( /** @lends module:SliderAnim.anims.opacity.prototype */ {
 
         /**
          * 设置目标元素的透明度
          *
          * @param {HTMLElement} element dom元素
-         * @param {Number} opacity 透明度
+         * @param {number} opacity 透明度
          * @private
          */
         setOpacity: function (element, opacity) {
             if (opacity === 1) {
                 element.style.filter = '';
                 element.style.opacity = '';
-            } else if (lib.browser.ie < 9) {
+            }
+            else if (lib.browser.ie < 9) {
                 element.style.filter = ''
                     + 'alpha(opacity='
                     + (100 * opacity)
                     + ')';
-            } else {
+            }
+            else {
                 element.style.opacity = opacity;
             }
         },
 
         /**
          * 在切换索引之前的动作
-         * @param {Number} index 指定的索引
+         * 
+         * @param {number} index 指定的索引
          */
         beforeSwitch: function (index) {
             var childNodes = this.slider.getChildren(
@@ -460,32 +467,26 @@ define(function (require) {
             //还原当前元素
             this.setOpacity(childNodes[this.index], 1);
 
-            //设置当前的元素为cover元素
             // 移出顶层元素
-            lib.removeClass(
-            childNodes[this.index], this.slider.getClass('top'));
+            lib.removeClass(childNodes[this.index], this.slider.getClass('top'));
             //将顶层元素作为背景
-            lib.removeClass(
-            childNodes[this.lastIndex], this.slider.getClass('cover'));
+            lib.removeClass(childNodes[this.lastIndex], this.slider.getClass('cover'));
             //移出背景元素
-            lib.addClass(
-            childNodes[this.index], this.slider.getClass('cover'));
+            lib.addClass(childNodes[this.index], this.slider.getClass('cover'));
 
 
             this.lastIndex = this.index;
 
             //设置当前元素
-            lib.addClass(
-            childNodes[this.index = index], this.slider.getClass('top'));
+            lib.addClass(childNodes[this.index = index], this.slider.getClass('top'));
 
-            this.setOpacity(
-            this.curElement = childNodes[index], 0);
+            this.setOpacity(this.curElement = childNodes[index], 0);
         },
 
         /**
          * 当前动画的tick函数，子类基于此设置动画
          *
-         * @param {Number} percent 当前动画进行的百分比
+         * @param {number} percent 当前动画进行的百分比
          * @protected
          */
         tick: function (percent) {
@@ -498,6 +499,8 @@ define(function (require) {
 
         /**
          * 注销动画
+         * 
+         * @public
          */
         dispose: function () {
             this.curElement = null;
