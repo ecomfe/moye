@@ -11,6 +11,188 @@ define(function (require) {
     var lib = require('./lib');
     var Control = require('./Control');
     var Popup = require('./Popup');
+
+    /**
+     * 私有函数或方法
+     * 
+     * @type {Object}
+     * @namespace
+     * @name module:City~privates
+     */
+    var privates = /** @lends module:City~privates */ {
+
+
+        /**
+         * 构建选单HTML
+         * 
+         * @private
+         */
+        build: function () {
+            var options = this.options;
+            var prefix  = options.prefix;
+            var index   = this.index;
+            var active  = ' class="' + prefix + '-active"';
+            var labels  = [];
+            var panels  = [];
+
+            labels.push('<ul class="' + prefix + '-labels c-clearfix">');
+            panels.push('<ul class="' + prefix + '-panels">');
+
+            var comma = ',';
+            var hideCities = options.hideCities;
+            if (hideCities) {
+                hideCities = comma + hideCities.replace(/\s+/g, '') + comma;
+            }
+
+            var makeLinks = function (cities) {
+                var links = [];
+
+                lib.each(cities.split(comma), function (city) {
+                    if (
+                        !hideCities
+                        || !~hideCities.indexOf(comma + city + comma)
+                    ) {
+                        links.push(''
+                            + '<a href="#" title="' + city + '">'
+                            + city
+                            + '</a>'
+                        );                        
+                    }
+                });
+
+                return links.join('');
+            };
+
+            lib.each(this.tabs, function (tab, i, start) {
+                tab = tab.split('|');
+                start = '<li data-idx="'
+                    + i
+                    + '"'
+                    + (i === index ? active : '');
+                labels.push(start + '>' + tab[0] + '</li>');
+                panels.push(start + '>' + makeLinks(tab[1]) + '</li>');
+            });
+
+            labels.push('</ul>');
+            panels.push('</ul>');
+
+            return labels.join('') + panels.join('');
+        },
+
+        /**
+         * 处理选单点击事件
+         * 
+         * @param {Object} args 从 Popup 传来的事件对象
+         * @fires module:City#click 点击事件
+         * @private
+         */
+        onClick: function (args) {
+            var e = args.event;
+
+            if (!e) {
+                return;
+            }
+            var el     = lib.getTarget(e);
+            var tag    = el.tagName;
+            var target = this.target;
+            var index  = el.getAttribute('data-idx');
+
+            switch (tag) {
+
+                case 'A':
+                    lib.preventDefault(e);
+
+                    if (el.className) {
+                        this.hide();
+                    }
+                    else {
+                        privates.pick.call(this, el);
+                    }
+
+                    break;
+
+                case 'LI':
+
+                    if (index) {
+                        this.change(index);
+                    }
+
+                    break;
+
+                default:
+
+                    if (target) {
+                        target.select();
+                    }
+                    break;
+
+            }
+
+            /**
+             * @event module:City#click
+             * @type {Object}
+             * @property {DOMEvent} event 事件源对象
+             */
+            this.fire('click', args);
+        },
+
+        /**
+         * 转发Popup的onBeforeShow事件
+         * 
+         * @param {Object} arg 事件参数
+         * @fires module:City#beforeShow 显示前事件
+         * @private
+         */
+        onBeforeShow: function (arg) {
+
+            /**
+             * @event module:City#beforeShow
+             * @type {Object}
+             * @property {Event} event 事件源对象
+             */
+            this.fire('beforeShow', arg);
+
+            if (!this.labels) {
+                var popup = this.popup;
+                popup.content = privates.build.call(this);
+                popup.render();
+
+                var main    = this.main;
+                var list    = main.getElementsByTagName('ul');
+                this.labels = list[0].getElementsByTagName('li');
+                this.panels = list[1].getElementsByTagName('li');
+            }
+        },
+        /**
+         * 选择城市
+         * 
+         * @param {HTMLElement} el 点击的当前事件源对象
+         * @fires module:City#pick
+         * @private
+         */
+        pick: function (el) {
+            var value = el.innerHTML;
+            var target = this.target;
+
+            if (target) {
+                if (target.type) {
+                    target.value = value;
+                    target.focus();
+                }
+                else {
+                    target.innerHTML = value;
+                }
+            }
+
+            /**
+             * @event module:City#pick
+             * @type {Object}
+             * @property {string} value 选中的城市
+             */
+            this.fire('pick', { value: value });
+            this.hide();
+        }
+    };
     
     /**
      * 国内城市选择控件
@@ -137,14 +319,17 @@ define(function (require) {
                         + '延安,运城,烟台,银川,宜昌,宜宾,盐城,延吉,玉树,伊宁,伊春,'
                         + '珠海,昭通,张家界,舟山,郑州,中卫,芷江,湛江,中甸,遵义');
             }
+
+            this.bindEvents(privates);
+
         },
 
         /**
          * 填充城市标签数据
          * 
          * @param {(Array | string)} tabs 城市数组，
-         * 每项格式为"标签|城市A,城市B,城市C"当参数为字符类型时仅作为一个城市标签项
-         * @return {City} 当前City实例
+         * 每项格式为 "标签|城市A,城市B,城市C" 当参数为字符类型时仅作为一个城市标签项
+         * @return {module:City} 当前 City 实例
          * @public
          */
         fill: function (tabsOrItem) {
@@ -176,9 +361,10 @@ define(function (require) {
                 this.rendered = true;
 
                 var popup = this.popup = new Popup(this.srcOptions);
+                var bound = this._bound;
 
-                popup.on('click', this.onClick);
-                popup.on('beforeShow', this.onBeforeShow);
+                popup.on('click', lib.bind(bound.onClick, this));
+                popup.on('beforeShow', lib.bind(bound.onBeforeShow, this));
                 
                 this.main = popup.main;
 
@@ -191,143 +377,6 @@ define(function (require) {
 
         },
 
-
-        /**
-         * 构建选单HTML
-         * 
-         * @private
-         */
-        build: function () {
-            var options = this.options;
-            var prefix  = options.prefix;
-            var index   = this.index;
-            var active  = ' class="' + prefix + '-active"';
-            var labels  = [];
-            var panels  = [];
-
-            labels.push('<ul class="' + prefix + '-labels c-clearfix">');
-            panels.push('<ul class="' + prefix + '-panels">');
-
-            var comma = ',';
-            var hideCities = options.hideCities;
-            if (hideCities) {
-                hideCities = comma + hideCities.replace(/\s+/g, '') + comma;
-            }
-
-            var makeLinks = function (cities) {
-                var links = [];
-
-                lib.each(cities.split(comma), function (city) {
-                    if (
-                        !hideCities
-                        || !~hideCities.indexOf(comma + city + comma)
-                    ) {
-                        links.push(''
-                            + '<a href="#" title="' + city + '">'
-                            + city
-                            + '</a>'
-                        );                        
-                    }
-                });
-
-                return links.join('');
-            };
-
-            lib.each(this.tabs, function (tab, i, start) {
-                tab = tab.split('|');
-                start = '<li data-idx="'
-                    + i
-                    + '"'
-                    + (i === index ? active : '');
-                labels.push(start + '>' + tab[0] + '</li>');
-                panels.push(start + '>' + makeLinks(tab[1]) + '</li>');
-            });
-
-            labels.push('</ul>');
-            panels.push('</ul>');
-
-            return labels.join('') + panels.join('');
-        },
-
-        /**
-         * 处理选单点击事件
-         * 
-         * @param {Object} args 从 Popup 传来的事件对象
-         * @fires module:City#click 点击事件
-         * @private
-         */
-        onClick: function (args) {
-            var e = args.event;
-
-            if (!e) {
-                return;
-            }
-            var el     = lib.getTarget(e);
-            var tag    = el.tagName;
-            var target = this.target;
-            var index  = el.getAttribute('data-idx');
-
-            switch (tag) {
-
-                case 'A':
-                    lib.preventDefault(e);
-
-                    this[el.className ? 'hide': 'pick'](el);
-
-                    break;
-
-                case 'LI':
-
-                    if (index) {
-                        this.change(index);
-                    }
-
-                    break;
-
-                default:
-
-                    if (target) {
-                        target.select();
-                    }
-                    break;
-
-            }
-
-            /**
-             * @event module:City#click
-             * @type {Object}
-             * @property {DOMEvent} event 事件源对象
-             */
-            this.fire('click', args);
-        },
-
-        /**
-         * 转发Popup的onBeforeShow事件
-         * 
-         * @param {Object} arg 事件参数
-         * @fires module:City#beforeShow 显示前事件
-         * @private
-         */
-        onBeforeShow: function (arg) {
-
-            /**
-             * @event module:City#beforeShow
-             * @type {Object}
-             * @property {DOMEvent} event 事件源对象
-             */
-            this.fire('beforeShow', arg);
-
-            if (!this.labels) {
-                var popup = this.popup;
-                popup.content = this.build();
-                popup.render();
-
-                var main    = this.main;
-                var list    = main.getElementsByTagName('ul');
-                this.labels = list[0].getElementsByTagName('li');
-                this.panels = list[1].getElementsByTagName('li');
-            }
-        },
 
         /**
          * 动态更新 target
@@ -346,36 +395,6 @@ define(function (require) {
             if (this.popup) {
                 this.popup.target = target;
             }
-        },
-
-        /**
-         * 选择城市
-         * 
-         * @param {HTMLElement} el 点击的当前事件源对象
-         * @fires module:City#pick
-         * @private
-         */
-        pick: function (el) {
-            var value = el.innerHTML;
-            var target = this.target;
-
-            if (target) {
-                if (target.type) {
-                    target.value = value;
-                    target.focus();
-                }
-                else {
-                    target.innerHTML = value;
-                }
-            }
-
-            /**
-             * @event module:City#pick
-             * @type {Object}
-             * @property {string} value 选中的城市
-             */
-            this.fire('pick', { value: value });
-            this.hide();
         },
 
         /**
@@ -421,7 +440,7 @@ define(function (require) {
              * @type {Object}
              * @property {?HTMLElement=} target 触发显示浮层的节点
              */
-            this.fire('show', {target: target});
+            this.fire('show', { target: target });
 
         },
 
