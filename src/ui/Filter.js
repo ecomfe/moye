@@ -10,145 +10,15 @@ define(function (require) {
 
     var lib = require('./lib');
     var Control = require('./Control');
-    
-
+ 
     /**
-     * 条件过滤器
+     * 私有函数或方法
      * 
-     * @extends module:Control
-     * @requires lib
-     * @requires Control
-     * @exports Filter
-     * @example
-     * var map = {
-     *     '1': [2, 3, 5],
-     *     '2': [1, 2, 4]
-     * }
-     *
-     * new Filter({
-     *   prefix: 'ecl-ui-filter',
-     *   main: me.qq('ecl-ui-filter'),
-     *   groups: 'p',
-     *   
-     *   onChange: function (e) {
-     *      
-     *     // load data
-     *
-     *     // disable or enable items
-     *     if (e.key === 'type') {
-     *         var value = e.value[0];
-     *
-     *         if (map[value]) {
-     *             this.disableItems('special', map[value]);
-     *         }
-     *         else {
-     *             this.enableItems('special');
-     *         }
-     *     }
-     *   }
-     *
-     * }).render();
+     * @type {Object}
+     * @namespace
+     * @name module:Filter~privates
      */
-    var Filter = Control.extend(/** @lends module:Filter.prototype */{
-
-
-        /**
-         * 控件类型标识
-         * 
-         * @type {string}
-         * @override
-         * @private
-         */
-        type: 'Filter',
-
-        /**
-         * 控件配置项
-         * 
-         * @name module:Filter#options
-         * @type {Object}
-         * @property {boolean} options.disabled 控件的不可用状态
-         * @property {(string | HTMLElement)} options.main 控件渲染容器
-         * @property {string} options.prefix 控件class前缀，同时将作为main的class之一
-         * @private
-         */
-        options: {
-
-            // 提示框的不可用状态，默认为false。处于不可用状态的提示框不会出现。
-            disabled: false,
-
-            // 控件渲染主容器
-            main: '',
-
-            // 控件class前缀，同时将作为main的class之一
-            prefix: 'ecl-ui-filter',
-
-            groups: 'p',
-
-            checkedClass: 'checked',
-
-            disabledClass: 'disabled'
-
-        },
-
-        /**
-         * 需要绑定 this 的方法名，多个方法以半角逗号分开
-         * 
-         * @type {string}
-         * @private
-         */
-        binds: 'onClick',
-
-        /**
-         * 控件初始化
-         * 
-         * @param {Object} options 控件配置项
-         * @see module:Filter#options
-         * @private
-         */
-        init: function (options) {
-            this.disabled  = options.disabled;
-
-            this.main = options.main && lib.g(options.main);
-        },
-
-
-        /**
-         * 绘制控件
-         * 
-         * @param {(string= | HTMLElement=)} wrapper 作为组件根元素的DOM节点
-         * @throws 如果控件根元素不存在将抛出异常
-         * @return {module:Filter} 当前实例
-         * @override
-         * @public
-         */
-        render: function (wrapper) {
-            var main    = wrapper && lib.g(wrapper) || this.main;
-            var options = this.options;
-
-            if (!main) {
-                throw new Error('main not found!');
-            }
-
-            if (!this.rendered) {
-                this.rendered = true;
-
-                var groups = this.groups = {};
-
-                lib.each(
-                    main.getElementsByTagName(options.groups),
-                    function (group) {
-
-                        // 以第一个 input 标签的 name 作为 key
-                        var key = group.getElementsByTagName('input')[0].name;
-                        groups[key] = group;
-                    }
-                );
-
-                lib.on(main, 'click', this.onClick);
-            }
-
-            return this;
-        },
+    var privates = /** @lends module:Filter~privates */ {
 
         /**
          * 处理选单点击事件
@@ -267,6 +137,138 @@ define(function (require) {
                     this.fire('change', checkedData);
                 }
             }
+        }
+    };
+
+    /**
+     * 条件过滤器
+     * 
+     * @extends module:Control
+     * @requires lib
+     * @requires Control
+     * @exports Filter
+     * @example
+     * var map = {
+     *     '1': [2, 3, 5],
+     *     '2': [1, 2, 4]
+     * }
+     *
+     * new Filter({
+     *   prefix: 'ecl-ui-filter',
+     *   main: me.qq('ecl-ui-filter'),
+     *   groups: 'p',
+     *   
+     *   onChange: function (e) {
+     *      
+     *     // load data
+     *
+     *     // disable or enable items
+     *     if (e.key === 'type') {
+     *         var value = e.value[0];
+     *
+     *         if (map[value]) {
+     *             this.disableItems('special', map[value]);
+     *         }
+     *         else {
+     *             this.enableItems('special');
+     *         }
+     *     }
+     *   }
+     *
+     * }).render();
+     */
+    var Filter = Control.extend(/** @lends module:Filter.prototype */{
+
+
+        /**
+         * 控件类型标识
+         * 
+         * @type {string}
+         * @override
+         * @private
+         */
+        type: 'Filter',
+
+        /**
+         * 控件配置项
+         * 
+         * @name module:Filter#options
+         * @type {Object}
+         * @property {boolean} options.disabled 控件的不可用状态
+         * @property {(string | HTMLElement)} options.main 控件渲染容器
+         * @property {string} options.prefix 控件class前缀，同时将作为main的class之一
+         * @private
+         */
+        options: {
+
+            // 提示框的不可用状态，默认为false。处于不可用状态的提示框不会出现。
+            disabled: false,
+
+            // 控件渲染主容器
+            main: '',
+
+            // 控件class前缀，同时将作为main的class之一
+            prefix: 'ecl-ui-filter',
+
+            groups: 'p',
+
+            checkedClass: 'checked',
+
+            disabledClass: 'disabled'
+
+        },
+
+        /**
+         * 控件初始化
+         * 
+         * @param {Object} options 控件配置项
+         * @see module:Filter#options
+         * @private
+         */
+        init: function (options) {
+            this.disabled  = options.disabled;
+
+            this.main = options.main && lib.g(options.main);
+            this.bindEvents(privates);
+        },
+
+
+        /**
+         * 绘制控件
+         * 
+         * @param {(string= | HTMLElement=)} wrapper 作为组件根元素的DOM节点
+         * @throws 如果控件根元素不存在将抛出异常
+         * @return {module:Filter} 当前实例
+         * @override
+         * @public
+         */
+        render: function (wrapper) {
+            var main    = wrapper && lib.g(wrapper) || this.main;
+            var options = this.options;
+
+            if (!main) {
+                throw new Error('main not found!');
+            }
+
+            if (!this.rendered) {
+                this.rendered = true;
+
+                var groups = this.groups = {};
+
+                lib.each(
+                    main.getElementsByTagName(options.groups),
+                    function (group) {
+
+                        // 以第一个 input 标签的 name 作为 key
+                        var key = group.getElementsByTagName('input')[0].name;
+                        groups[key] = group;
+                    }
+                );
+
+                lib.on(main, 'click', this._bound.onClick);
+            }
+
+            return this;
         },
 
         /**
