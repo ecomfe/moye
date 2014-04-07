@@ -62,171 +62,13 @@ define(function (require) {
 
 
     /**
-     * 下拉选择菜单
+     * 私有函数或方法
      * 
-     * @extends module:Control
-     * @requires lib
-     * @requires Control
-     * @exports Select
-     * @example
-     *  new Select({
-     *     prefix: 'ecl-ui-sel',
-     *     main: me.qq('ecl-ui-sel'),
-     *     target: me.qq('ecl-ui-sel-holder'),
-     *     offset: {
-     *       y: -1
-     *     },
-     *     onChange: function (arg) {
-     *       window.console && console.log(arg);
-     *     }
-     *   }).render();
+     * @type {Object}
+     * @namespace
+     * @name module:Select~privates
      */
-    var Select = Control.extend(/** @lends module:Select.prototype */{
-
-        /**
-         * 控件类型标识
-         * 
-         * @type {string}
-         * @private
-         */
-        type: 'Select',
-
-        /**
-         * 控件配置项
-         * 
-         * @private
-         * @name module:Select#options
-         * @type {Object}
-         * @property {boolean} options.disabled 控件的不可用状态
-         * @property {(string | HTMLElement)} options.main 控件渲染容器
-         * @property {number} options.maxLength 显示选中值时的限度字节长度
-         * @property {string} options.ellipsis maxLength 限制后的附加的后缀字符
-         * @property {(string | HTMLElement)} options.target 计算选单显示时
-         * 相对位置的目标对象
-         * @property {number} options.cols 选项显示的列数，默认为 1 列
-         * @property {string} options.prefix 控件class前缀，同时将作为main的class之一
-         * @property {string} options.isNumber 控件值的类型是否限制为数字
-         * @property {?Array=} options.datasource 填充下拉项的数据源
-         * 推荐格式 { text: '', value: '' }, 未指定 value 时会根据 valueUseIndex 的
-         * 设置使用 text 或自动索引值，可简写成字符串 '北京, 上海, 广州' 或 
-         * '北京:010, 上海:021, 广州:020'
-         * @property {bool} options.valueUseIndex datasource 未指定 value 时是否
-         * 使用自动索引值
-         */
-        options: {
-
-            // 提示框的不可用状态，默认为false。处于不可用状态的提示框不会出现。
-            disabled: false,
-
-            // 控件渲染主容器
-            main: '',
-
-            // 显示选中值时的限度字节长度
-            maxLength: 16,
-
-            // maxLength 限制后的附加的后缀字符
-            ellipsis: '...',
-
-            // 计算选单显示时相对位置的目标对象
-            target: '',
-
-            // 显示列数
-            cols: 1,
-
-            // 选中项的 class
-            selectedClass: 'cur',
-
-            // 控件class前缀，同时将作为main的class之一
-            prefix: 'ecl-ui-sel',
-
-            // 控件值的类型是否为数字
-            isNumber: true,
-
-            // 数据源
-            datasource: null,
-
-            // datasource 项未指定 value 时
-            valueUseIndex: false
-        },
-
-        /**
-         * 需要绑定 this 的方法名，多个方法以半角逗号分开
-         * 
-         * @type {string}
-         * @private
-         */
-        binds: 'onClick,onBeforeShow,onHide,onDisable,onEnable',
-
-        /**
-         * 控件初始化
-         * 
-         * @param {Object} options 控件配置项
-         * @see module:Select#options
-         * @private
-         */
-        init: function (options) {
-
-            if (!options.target) {
-                throw new Error('invalid target');
-            }
-
-            this.disabled  = options.disabled;
-        },
-
-
-        /**
-         * 绘制控件
-         * 
-         * @return {module:Select} 当前实例
-         * @override
-         * @public
-         */
-        render: function () {
-            var options = this.options;
-
-            if (!this.rendered) {
-                this.rendered = true;
-
-                this.target = lib.g(options.target);
-                this.realTarget = lib.dom.first(this.target) || this.target;
-                this.defaultValue = this.realTarget.innerHTML
-                    || this.realTarget.value
-                    || '';
-
-                this.srcOptions.triggers = [this.target];
-
-                var popup = this.popup = new Popup(this.srcOptions);
-                this.addChild(popup);
-
-                if (options.datasource) {
-                    options.isNumber = options.valueUseIndex;
-                    this.fill(options.datasource);
-                }
-
-                popup.on('click', this.onClick);
-                popup.on('beforeShow', this.onBeforeShow);
-                popup.on('hide', this.onHide);
-
-                popup.render();
-
-                this.on('disable', this.onDisable);
-                this.on('enable', this.onEnable);
-                this.main = popup.main;
-
-                if (options.cols > 1) {
-                    lib.addClass(
-                        this.main,
-                        options.prefix + '-cols' + options.cols
-                    );
-                    //lib.addClass(this.main, 'c-clearfix');
-                }
-            }
-            else {
-                this.popup.render();
-            }
-
-            return this;
-        },
+    var privates = /** @lends module:Select~privates */ {
 
         /**
          * 处理 disable 事件
@@ -235,7 +77,7 @@ define(function (require) {
          * @private
          */
         onDisable: function () {
-            this.popup.disabled = this.disabled;
+            this.popup.disable();
             lib.addClass(this.target, this.options.prefix + '-disabled');
         },
 
@@ -247,7 +89,7 @@ define(function (require) {
          * @private
          */
         onEnable: function () {
-            this.popup.disabled = this.disabled;
+            this.popup.enable();
             lib.removeClass(this.target, this.options.prefix + '-disabled');
         },
 
@@ -261,7 +103,7 @@ define(function (require) {
         onClick: function (args) {
             var e = args.event;
 
-            if (!e || this.disabled) {
+            if (!e || this._disabled) {
                 return;
             }
 
@@ -273,7 +115,7 @@ define(function (require) {
                 case 'A':
                     lib.preventDefault(e);
 
-                    this.pick(el);
+                    privates.pick.call(this, el);
 
                     break;
 
@@ -297,7 +139,7 @@ define(function (require) {
 
             lib.preventDefault(arg.event);
 
-            if (this.disabled) {
+            if (this._disabled) {
                 return;
             }
 
@@ -318,43 +160,6 @@ define(function (require) {
          */
         onHide: function () {
             lib.removeClass(this.target, this.options.prefix + '-hl');
-        },
-
-
-        /**
-         * 显示浮层
-         * 
-         * @param {?HTMLElement=} target 触发显示浮层的节点
-         * @fires module:Select#show 显示事件
-         * @public
-         */
-        show: function (target) {
-
-            this.popup.show();
-
-            /**
-             * @event module:Select#show
-             * @type {object}
-             * @property {?HTMLElement=} target 触发显示浮层的节点
-             */
-            this.fire('show', {target: target});
-
-        },
-
-        /**
-         * 隐藏浮层
-         * 
-         * @fires module:Select#hide 隐藏事件
-         * @public
-         */
-        hide: function () {
-            
-            this.popup.hide();
-
-            /**
-             * @event module:Select#hide
-             */
-            this.fire('hide');
         },
 
         /**
@@ -454,6 +259,204 @@ define(function (require) {
                 });           
             }
 
+        }
+    };
+
+    /**
+     * 下拉选择菜单
+     * 
+     * @extends module:Control
+     * @requires lib
+     * @requires Control
+     * @exports Select
+     * @example
+     *  new Select({
+     *     prefix: 'ecl-ui-sel',
+     *     main: me.qq('ecl-ui-sel'),
+     *     target: me.qq('ecl-ui-sel-holder'),
+     *     offset: {
+     *       y: -1
+     *     },
+     *     onChange: function (arg) {
+     *       window.console && console.log(arg);
+     *     }
+     *   }).render();
+     */
+    var Select = Control.extend(/** @lends module:Select.prototype */{
+
+        /**
+         * 控件类型标识
+         * 
+         * @type {string}
+         * @private
+         */
+        type: 'Select',
+
+        /**
+         * 控件配置项
+         * 
+         * @private
+         * @name module:Select#options
+         * @type {Object}
+         * @property {boolean} options.disabled 控件的不可用状态
+         * @property {(string | HTMLElement)} options.main 控件渲染容器
+         * @property {number} options.maxLength 显示选中值时的限度字节长度
+         * @property {string} options.ellipsis maxLength 限制后的附加的后缀字符
+         * @property {(string | HTMLElement)} options.target 计算选单显示时
+         * 相对位置的目标对象
+         * @property {number} options.cols 选项显示的列数，默认为 1 列
+         * @property {string} options.prefix 控件class前缀，同时将作为main的class之一
+         * @property {string} options.isNumber 控件值的类型是否限制为数字
+         * @property {?Array=} options.datasource 填充下拉项的数据源
+         * 推荐格式 { text: '', value: '' }, 未指定 value 时会根据 valueUseIndex 的
+         * 设置使用 text 或自动索引值，可简写成字符串 '北京, 上海, 广州' 或 
+         * '北京:010, 上海:021, 广州:020'
+         * @property {bool} options.valueUseIndex datasource 未指定 value 时是否
+         * 使用自动索引值
+         */
+        options: {
+
+            // 提示框的不可用状态，默认为false。处于不可用状态的提示框不会出现。
+            disabled: false,
+
+            // 控件渲染主容器
+            main: '',
+
+            // 显示选中值时的限度字节长度
+            maxLength: 16,
+
+            // maxLength 限制后的附加的后缀字符
+            ellipsis: '...',
+
+            // 计算选单显示时相对位置的目标对象
+            target: '',
+
+            // 显示列数
+            cols: 1,
+
+            // 选中项的 class
+            selectedClass: 'cur',
+
+            // 控件class前缀，同时将作为main的class之一
+            prefix: 'ecl-ui-sel',
+
+            // 控件值的类型是否为数字
+            isNumber: true,
+
+            // 数据源
+            datasource: null,
+
+            // datasource 项未指定 value 时
+            valueUseIndex: false
+        },
+
+        /**
+         * 控件初始化
+         * 
+         * @param {Object} options 控件配置项
+         * @see module:Select#options
+         * @private
+         */
+        init: function (options) {
+
+            if (!options.target) {
+                throw new Error('invalid target');
+            }
+
+            this._disabled  = options.disabled;
+            this.bindEvents(privates);
+        },
+
+
+        /**
+         * 绘制控件
+         * 
+         * @return {module:Select} 当前实例
+         * @override
+         * @public
+         */
+        render: function () {
+            var options = this.options;
+
+            if (!this.rendered) {
+                this.rendered = true;
+
+                this.target = lib.g(options.target);
+                this.realTarget = lib.dom.first(this.target) || this.target;
+                this.defaultValue = this.realTarget.innerHTML
+                    || this.realTarget.value
+                    || '';
+
+                this.srcOptions.triggers = [this.target];
+
+                var popup = this.popup = new Popup(this.srcOptions);
+                this.addChild(popup);
+
+                if (options.datasource) {
+                    options.isNumber = options.valueUseIndex;
+                    this.fill(options.datasource);
+                }
+
+                var bound = this._bound;
+                popup.on('click', bound.onClick);
+                popup.on('beforeShow', bound.onBeforeShow);
+                popup.on('hide', bound.onHide);
+
+                popup.render();
+
+                this.on('disable', bound.onDisable);
+                this.on('enable', bound.onEnable);
+                this.main = popup.main;
+
+                if (options.cols > 1) {
+                    lib.addClass(
+                        this.main,
+                        options.prefix + '-cols' + options.cols
+                    );
+                    //lib.addClass(this.main, 'c-clearfix');
+                }
+            }
+            else {
+                this.popup.render();
+            }
+
+            return this;
+        },
+
+        /**
+         * 显示浮层
+         * 
+         * @param {?HTMLElement=} target 触发显示浮层的节点
+         * @fires module:Select#show 显示事件
+         * @public
+         */
+        show: function (target) {
+
+            this.popup.show();
+
+            /**
+             * @event module:Select#show
+             * @type {object}
+             * @property {?HTMLElement=} target 触发显示浮层的节点
+             */
+            this.fire('show', {target: target});
+
+        },
+
+        /**
+         * 隐藏浮层
+         * 
+         * @fires module:Select#hide 隐藏事件
+         * @public
+         */
+        hide: function () {
+            
+            this.popup.hide();
+
+            /**
+             * @event module:Select#hide
+             */
+            this.fire('hide');
         },
 
         /**
@@ -523,7 +526,7 @@ define(function (require) {
          * @public
          */
         reset: function () {
-            this.pick(lib.dom.first(this.main), true);
+            privates.pick.call(this, lib.dom.first(this.main), true);
         }
     });
 
