@@ -16,244 +16,13 @@ define(function (require) {
     var PAGE = lib.page;
 
     /**
-     * 弹出层控件
+     * 私有函数或方法
      * 
-     * @extends module:Control
-     * @requires lib
-     * @requires Control
-     * @exports Popup
-     * @see module:City
-     * @see module:Calendar
+     * @type {Object}
+     * @namespace
+     * @name module:Popup~privates
      */
-    var Popup = Control.extend(/** @lends module:Popup.prototype */{
-
-        /**
-         * 控件类型标识
-         * 
-         * @type {string}
-         * @private
-         */
-        type: 'Popup',
-
-        /**
-         * 控件配置项
-         * 
-         * @name module:Popup#options
-         * @type {Object}
-         * @property {boolean} disabled 控件的不可用状态
-         * @property {(string | HTMLElement)} main 控件渲染容器
-         * @property {(string | HTMLElement)} target 计算弹出层相对位置的目标对象
-         * @property {string | Array.<HTMLElement>} triggers 触发显示弹出层的节点
-         * 当指定了 liveTriggers 时只能用 string 类型指定 class
-         * @property {string | HTMLElement} liveTriggers 动态 triggers 的父元素节点
-         * @property {string} content 提示的内容信息
-         * @property {string} dir 弹出层相对 target 的位置，支持8个方向
-         * 可选值（默认为 bl）：
-         * tr | rt | rb | br | bl | lb | lt | tl | tc | rc | bc | lc
-         * 也可通过在 triggers 上设置 data-popup来指定
-         * @property {string} prefix 控件class前缀，同时将作为main的class之一
-         * @property {Object.<string, number>} offset 弹出层显示的偏移量
-         * @property {number} offset.x x 轴方向偏移量
-         * @property {number} offset.y y轴方向偏移量
-         * @private
-         */
-        options: {
-
-            /**
-             * 提示框的不可用状态，默认为false。处于不可用状态的提示框不会出现。
-             * 
-             * @type {boolean}
-             * @default
-             */
-            disabled: false,
-
-            /**
-             * 控件渲染主容器
-             * 
-             * @type {(string | HTMLElement)}
-             */
-            main: '',
-
-            /**
-             * 计算弹出层相对位置的目标对象
-             * 
-             * @type {(string | HTMLElement)}
-             */
-            target: '',
-
-            /**
-             * 触发显示弹出层的节点class
-             * 
-             * 当指定了 liveTriggers 时只能用 string 类型指定 class
-             * 
-             * @type {string | Array.<HTMLElement>}
-             */
-            triggers: '',
-
-            /**
-             * 动态 triggers 的父元素节点
-             * 
-             * @type {string | HTMLElement}
-             */
-            liveTriggers: '',
-
-            /**
-             * 显示的内容
-             * 
-             * @type {string}
-             */
-            content: '',
-
-            /**
-             * 弹出层显示在 trigger 的相对位置
-             * 
-             * 可选值：tr | rt | rb | br | bl | lb | lt | tl | tc | rc | bc | lc
-             * 也可通过在 triggers 上设置 data-popup来指定
-             * 
-             * @type {string}
-             * @defaultvalue
-             */ 
-            dir: 'bl',
-
-            /**
-             * 控件class前缀，同时将作为main的class之一
-             * 
-             * @type {string}
-             * @defaultvalue
-             */
-            prefix: 'ecl-hotel-ui-popup',
-
-            /**
-             * 浮层显示的偏移量
-             * 
-             * @type {string}
-             */
-            offset: {
-
-                /**
-                 * x 轴方向偏移量
-                 * 
-                 * @type {number}
-                 * @defaultvalue
-                 */
-                x: 0,
-
-                /**
-                 * y 轴方向偏移量
-                 * 
-                 * @type {string}
-                 * @defaultvalue
-                 */
-                y: 0
-            }
-        },
-
-
-        /**
-         * 需要绑定 this 的方法名，多个方法以半角逗号分开
-         * 
-         * @type {string}
-         * @private
-         */
-        binds: 'onResize, onShow, onHide',
-
-        /**
-         * 控件初始化
-         * 
-         * @params {Object} options 配置项
-         * @see module:Popup#options
-         * @private
-         */
-        init: function (options) {
-            this.disabled  = options.disabled;
-            this.content   = options.content;
-
-            if (options.target) {
-                this.target = lib.g(options.target);                
-            }
-
-            var prefix = options.prefix;
-            var main   = this.main = options.main 
-                && lib.g(options.main)
-                || document.createElement('div');
-
-            if (options.main) {
-                lib.addClass(main, prefix);
-            }
-            else {
-                main.className  = prefix;
-                main.style.left = '-2000px';
-            }
-
-            var me       = this;
-            var triggers = options.triggers;
-            var liveTriggers = options.liveTriggers;
-
-            if (liveTriggers) {
-
-                this.liveTriggers = lib.on(
-                    lib.g(liveTriggers),
-                    'click',
-                    me.onShow
-                );
-            }
-            else {
-
-                if (lib.isString(triggers)) {
-                    triggers = lib.q(options.triggers);
-                }
-
-                lib.each(
-                    lib.toArray(triggers),
-                    function (trigger) {
-                        lib.on(trigger, 'click', me.onShow);
-                    }
-                );
-
-                this.triggers = triggers;
-
-            }
-        },
-
-        /**
-         * 绘制控件
-         * 
-         * @fires module:Popup#click 点击事件
-         * @return {module:Popup} 当前实例
-         * @override
-         * @public
-         */
-        render: function () {
-            var main = this.main;
-
-            if (this.content) {
-                main.innerHTML = this.content;
-            }
-
-            if (!this.rendered) {
-                this.rendered = true;
-                document.body.appendChild(main);
-
-                var me = this;
-
-                lib.on(
-                    main,
-                    'click',
-                    function (e) {
-
-                        /**
-                         * @event module:Popup#click
-                         * @type {Object}
-                         * @property {Event} event 事件源对象
-                         */
-                        me.fire('click', { event: e });
-                    }
-                );
-
-            }
-
-            return this;
-        },
+    var privates = /** @lends module:Popup~privates */ {
 
         /**
          * 浏览器可视尺寸改变时处理
@@ -261,11 +30,11 @@ define(function (require) {
          * @private
          */
         onResize: function () {
-            clearTimeout(this.resizeTimer);
+            clearTimeout(this._resizeTimer);
 
             var me = this;
 
-            this.resizeTimer = setTimeout(function () {
+            this._resizeTimer = setTimeout(function () {
                 me.show();
             }, 100);
         },
@@ -281,7 +50,7 @@ define(function (require) {
 
             var oldTarget = this.target;
 
-            if (this.disabled) {
+            if (this._disabled) {
                 return;
             }
 
@@ -289,7 +58,6 @@ define(function (require) {
                 this.hide();
             }
 
-            var me = this;
             var trigger = lib.getTarget(e);
             var liveTriggers = this.liveTriggers;
 
@@ -316,9 +84,10 @@ define(function (require) {
 
             this.trigger = trigger;
 
-            this.timer = setTimeout(function () {
-                lib.on(document, 'click', me.onHide);
-                lib.on(window, 'resize', me.onResize);
+            var bound = this._bound;
+            this._timer = setTimeout(function () {
+                lib.on(document, 'click', bound.onHide);
+                lib.on(window, 'resize', bound.onResize);
             }, 0);
         },
 
@@ -331,49 +100,13 @@ define(function (require) {
             var target = lib.getTarget(e);
             var main   = this.main;
 
-            if (main === target || DOM.contains(main, target)) {
+            if (!main || main === target || DOM.contains(main, target)) {
                 return;
             }
 
             this.hide();
 
-            clearTimeout(this.resizeTimer);
-        },
-
-        /**
-         * 显示浮层
-         * 
-         * @fires module:Popup#show 显示事件
-         * @public
-         */
-        show: function () {
-            this.computePosition();
-
-            /**
-             * @event module:Popup#show
-             */
-            this.fire('show');
-        },
-
-        /**
-         * 隐藏浮层
-         * 
-         * @fires module:Popup#hide 隐藏事件
-         * @public
-         */
-        hide: function () {
-            this.main.style.left = '-2000px';
-
-            /**
-             * @event module:Popup#hide
-             */
-            this.fire('hide');
-
-            lib.un(document, 'click', this.onHide);
-            lib.un(window, 'resize', this.onResize);
-
-            clearTimeout(this.timer);
-            clearTimeout(this.resizeTimer);
+            clearTimeout(this._resizeTimer);
         },
 
         /**
@@ -510,6 +243,278 @@ define(function (require) {
                 }
             );
 
+        }
+    };
+
+    /**
+     * 弹出层控件
+     * 
+     * @extends module:Control
+     * @requires lib
+     * @requires Control
+     * @exports Popup
+     * @see module:City
+     * @see module:Calendar
+     */
+    var Popup = Control.extend(/** @lends module:Popup.prototype */{
+
+        /**
+         * 控件类型标识
+         * 
+         * @type {string}
+         * @private
+         */
+        type: 'Popup',
+
+        /**
+         * 控件配置项
+         * 
+         * @name module:Popup#options
+         * @type {Object}
+         * @property {boolean} disabled 控件的不可用状态
+         * @property {(string | HTMLElement)} main 控件渲染容器
+         * @property {(string | HTMLElement)} target 计算弹出层相对位置的目标对象
+         * @property {string | Array.<HTMLElement>} triggers 触发显示弹出层的节点
+         * 当指定了 liveTriggers 时只能用 string 类型指定 class
+         * @property {string | HTMLElement} liveTriggers 动态 triggers 的父元素节点
+         * @property {string} content 提示的内容信息
+         * @property {string} dir 弹出层相对 target 的位置，支持8个方向
+         * 可选值（默认为 bl）：
+         * tr | rt | rb | br | bl | lb | lt | tl | tc | rc | bc | lc
+         * 也可通过在 triggers 上设置 data-popup来指定
+         * @property {string} prefix 控件class前缀，同时将作为main的class之一
+         * @property {Object.<string, number>} offset 弹出层显示的偏移量
+         * @property {number} offset.x x 轴方向偏移量
+         * @property {number} offset.y y轴方向偏移量
+         * @private
+         */
+        options: {
+
+            /**
+             * 提示框的不可用状态，默认为false。处于不可用状态的提示框不会出现。
+             * 
+             * @type {boolean}
+             * @default
+             */
+            disabled: false,
+
+            /**
+             * 控件渲染主容器
+             * 
+             * @type {(string | HTMLElement)}
+             */
+            main: '',
+
+            /**
+             * 计算弹出层相对位置的目标对象
+             * 
+             * @type {(string | HTMLElement)}
+             */
+            target: '',
+
+            /**
+             * 触发显示弹出层的节点class
+             * 
+             * 当指定了 liveTriggers 时只能用 string 类型指定 class
+             * 
+             * @type {string | Array.<HTMLElement>}
+             */
+            triggers: '',
+
+            /**
+             * 动态 triggers 的父元素节点
+             * 
+             * @type {string | HTMLElement}
+             */
+            liveTriggers: '',
+
+            /**
+             * 显示的内容
+             * 
+             * @type {string}
+             */
+            content: '',
+
+            /**
+             * 弹出层显示在 trigger 的相对位置
+             * 
+             * 可选值：tr | rt | rb | br | bl | lb | lt | tl | tc | rc | bc | lc
+             * 也可通过在 triggers 上设置 data-popup来指定
+             * 
+             * @type {string}
+             * @defaultvalue
+             */ 
+            dir: 'bl',
+
+            /**
+             * 控件class前缀，同时将作为main的class之一
+             * 
+             * @type {string}
+             * @defaultvalue
+             */
+            prefix: 'ecl-hotel-ui-popup',
+
+            /**
+             * 浮层显示的偏移量
+             * 
+             * @type {string}
+             */
+            offset: {
+
+                /**
+                 * x 轴方向偏移量
+                 * 
+                 * @type {number}
+                 * @defaultvalue
+                 */
+                x: 0,
+
+                /**
+                 * y 轴方向偏移量
+                 * 
+                 * @type {string}
+                 * @defaultvalue
+                 */
+                y: 0
+            }
+        },
+
+
+        /**
+         * 控件初始化
+         * 
+         * @params {Object} options 配置项
+         * @see module:Popup#options
+         * @private
+         */
+        init: function (options) {
+            this._disabled  = options.disabled;
+            this.content   = options.content;
+
+            this.bindEvents(privates);
+
+            if (options.target) {
+                this.target = lib.g(options.target);                
+            }
+
+            var prefix = options.prefix;
+            var main   = this.main = options.main 
+                && lib.g(options.main)
+                || document.createElement('div');
+
+            if (options.main) {
+                lib.addClass(main, prefix);
+            }
+            else {
+                main.className  = prefix;
+                main.style.left = '-2000px';
+            }
+
+            var triggers     = options.triggers;
+            var liveTriggers = options.liveTriggers;
+            var bound        = this._bound;
+
+            if (liveTriggers) {
+
+                this.liveTriggers = lib.on(
+                    lib.g(liveTriggers),
+                    'click',
+                    bound.onShow
+                );
+            }
+            else {
+
+                if (lib.isString(triggers)) {
+                    triggers = lib.q(options.triggers);
+                }
+
+                lib.each(
+                    lib.toArray(triggers),
+                    function (trigger) {
+                        lib.on(trigger, 'click', bound.onShow);
+                    }
+                );
+
+                this.triggers = triggers;
+
+            }
+        },
+
+        /**
+         * 绘制控件
+         * 
+         * @fires module:Popup#click 点击事件
+         * @return {module:Popup} 当前实例
+         * @override
+         * @public
+         */
+        render: function () {
+            var main = this.main;
+
+            if (this.content) {
+                main.innerHTML = this.content;
+            }
+
+            if (!this.rendered) {
+                this.rendered = true;
+                document.body.appendChild(main);
+
+                var me = this;
+
+                lib.on(
+                    main,
+                    'click',
+                    function (e) {
+
+                        /**
+                         * @event module:Popup#click
+                         * @type {Object}
+                         * @property {Event} event 事件源对象
+                         */
+                        me.fire('click', { event: e });
+                    }
+                );
+
+            }
+
+            return this;
+        },
+
+        /**
+         * 显示浮层
+         * 
+         * @fires module:Popup#show 显示事件
+         * @public
+         */
+        show: function () {
+            privates.computePosition.call(this);
+
+            /**
+             * @event module:Popup#show
+             */
+            this.fire('show');
+        },
+
+        /**
+         * 隐藏浮层
+         * 
+         * @fires module:Popup#hide 隐藏事件
+         * @public
+         */
+        hide: function () {
+            this.main.style.left = '-2000px';
+
+            /**
+             * @event module:Popup#hide
+             */
+            this.fire('hide');
+
+            var bound = this._bound;
+            lib.un(document, 'click', bound.onHide);
+            lib.un(window, 'resize', bound.onResize);
+
+            clearTimeout(this._timer);
+            clearTimeout(this._resizeTimer);
         }
 
     });
