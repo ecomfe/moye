@@ -147,7 +147,7 @@ module.exports = function (grunt) {
             istanbul: {
                 src: './<%=meta.src.main%>/*/*.js',
                 options: {
-                    specs: ['test/spec/*Spec.js'],
+                    specs: '<%= jasmine.requirejs.options.specs %>',
                     vendor: [],
                     outfile: 'SpecRunner.html',
                     keepRunner: true,
