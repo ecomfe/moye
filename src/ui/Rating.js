@@ -11,132 +11,13 @@ define(function (require) {
     var Control = require('./Control');
 
     /**
-     * 评分组件
-     * TODO: 半星支持
-     *
-     * @extends module:Control
-     * @requires Control
-     * @exports Rating
+     * 私有函数或方法
+     * 
+     * @type {Object}
+     * @namespace
+     * @name module:Rating~privates
      */
-    var Rating = Control.extend(/** @lends module:Rating.prototype */{
-        options: {
-            // 可用性
-            disabled: false,
-
-            // 主元素
-            main: '',
-
-            // class前缀
-            prefix: 'ecl-ui-rating',
-
-            // 最多星星数
-            max: 5,
-
-            // 星级
-            value: 0,
-
-            // 如果需要自定义星星样式，则置为1，然后通过className去控制样式
-            skin: 0
-        },
-
-        /**
-         * 控件类型
-         *
-         * @const
-         * @type {string}
-         */
-        type: 'Rating',
-
-        /**
-         * 需要绑定`this`的方法名，多个方法以半角逗号分开
-         *
-         * @const
-         * @type {string}
-         */
-        binds: 'onClick, onMouseOver, onMouseOut',
-
-        /**
-         * 初始化控件
-         *
-         * @param {Object} options 控件配置项
-         * @see module:Rating#options
-         * @private
-         */
-        init: function (options) {
-            this.main = lib.g(options.main);
-            this.disabled = options.disabled;
-        },
-
-        /**
-         * 绘制控件
-         *
-         * @public
-         */
-        render: function () {
-            var options = this.options;
-
-            if (!this.rendered) {
-                this.rendered = true;
-
-                // 生成星星
-                var html = [];
-                var prefix = options.prefix;
-
-                html.push('<ul class="' + prefix + '-stars">');
-                for (var i = 0; i < options.max; i++) {
-                    html.push(
-                        '<li ',
-                        'class="' + prefix + '-star' + '" ',
-                        'data-value="' + (i + 1) + '"',
-                        '>',
-                        // 默认星星字符
-                        (options.skin ? '' : '☆'),
-                        '</li>'
-                    );
-                }
-                html.push('</ul>');
-                this.main.innerHTML = html.join('');
-
-                this.stars = this.query(prefix + '-star');
-
-                // 绑定事件
-                var me = this;
-
-                lib.each(this.stars, function (star) {
-                    lib.on(star, 'mouseover', me.onMouseOver);
-                    lib.on(star, 'mouseout', me.onMouseOut);
-                    lib.on(star, 'click', me.onClick);
-                });
-            }
-
-            this.resetRating();
-
-            this.disabled && this.disable();
-
-            return this;
-        },
-
-        /**
-         * 启用组件
-         *
-         * @public
-         */
-        enable: function () {
-            lib.removeClass(this.main, this.options.prefix + '-disabled');
-
-            this.parent('enable');
-        },
-
-        /**
-         * 不启用组件
-         *
-         * @public
-         */
-        disable: function () {
-            lib.addClass(this.main, this.options.prefix + '-disabled');
-
-            this.parent('disable');
-        },
+    var privates = /** @lends module:Rating~privates */ {
 
         /**
          * 清洗点亮的星星
@@ -224,8 +105,8 @@ define(function (require) {
 
                 options.value = newValue;
 
-                this.drain();
-                this.resetRating();
+                privates.drain.call(this);
+                privates.resetRating.call(this);
 
                 /**
                  * @event module:Rating#rated
@@ -254,8 +135,8 @@ define(function (require) {
             }
 
             if (lib.hasClass(target, prefix + '-star')) {
-                this.drain();
-                this.fill(target.getAttribute('data-value'));
+                privates.drain.call(this);
+                privates.fill.call(this, target.getAttribute('data-value'));
             }
         },
 
@@ -275,9 +156,133 @@ define(function (require) {
             }
 
             if (lib.hasClass(target, prefix + '-star')) {
-                this.drain();
-                this.resetRating();
+                privates.drain.call(this);
+                privates.resetRating.call(this);
             }
+        }        
+    };
+
+    /**
+     * 评分组件
+     * TODO: 半星支持
+     *
+     * @extends module:Control
+     * @requires Control
+     * @exports Rating
+     */
+    var Rating = Control.extend(/** @lends module:Rating.prototype */{
+
+        options: {
+            // 可用性
+            disabled: false,
+
+            // 主元素
+            main: '',
+
+            // class前缀
+            prefix: 'ecl-ui-rating',
+
+            // 最多星星数
+            max: 5,
+
+            // 星级
+            value: 0,
+
+            // 如果需要自定义星星样式，则置为1，然后通过className去控制样式
+            skin: 0
+        },
+
+        /**
+         * 控件类型
+         *
+         * @const
+         * @type {string}
+         */
+        type: 'Rating',
+
+
+        /**
+         * 初始化控件
+         *
+         * @param {Object} options 控件配置项
+         * @see module:Rating#options
+         * @private
+         */
+        init: function (options) {
+            this.main = lib.g(options.main);
+            this._disabled = options.disabled;
+
+            this.bindEvents(privates);
+        },
+
+        /**
+         * 绘制控件
+         *
+         * @public
+         */
+        render: function () {
+            var options = this.options;
+
+            if (!this.rendered) {
+                this.rendered = true;
+
+                // 生成星星
+                var html = [];
+                var prefix = options.prefix;
+
+                html.push('<ul class="' + prefix + '-stars">');
+                for (var i = 0; i < options.max; i++) {
+                    html.push(
+                        '<li ',
+                        'class="' + prefix + '-star' + '" ',
+                        'data-value="' + (i + 1) + '"',
+                        '>',
+                        // 默认星星字符
+                        (options.skin ? '' : '☆'),
+                        '</li>'
+                    );
+                }
+                html.push('</ul>');
+                this.main.innerHTML = html.join('');
+
+                this.stars = this.query(prefix + '-star');
+
+                // 绑定事件
+                var bound = this._bound;
+                lib.each(this.stars, function (star) {
+                    lib.on(star, 'mouseover', bound.onMouseOver);
+                    lib.on(star, 'mouseout', bound.onMouseOut);
+                    lib.on(star, 'click', bound.onClick);
+                });
+            }
+
+            privates.resetRating.call(this);
+
+            this._disabled && this.disable();
+
+            return this;
+        },
+
+        /**
+         * 启用组件
+         *
+         * @public
+         */
+        enable: function () {
+            lib.removeClass(this.main, this.options.prefix + '-disabled');
+
+            this.parent('enable');
+        },
+
+        /**
+         * 不启用组件
+         *
+         * @public
+         */
+        disable: function () {
+            lib.addClass(this.main, this.options.prefix + '-disabled');
+
+            this.parent('disable');
         },
 
         /**
@@ -286,13 +291,13 @@ define(function (require) {
          * @public
          */
         dispose: function () {
-            var me = this;
+            var bound = this._bound;
 
             // 释放事件
             lib.each(this.stars, function (star) {
-                lib.un(star, 'click', me.onClick);
-                lib.un(star, 'mouseover', me.onMouseOver);
-                lib.un(star, 'mouseout', me.onMouseOut);
+                lib.un(star, 'click', bound.onClick);
+                lib.un(star, 'mouseover', bound.onMouseOver);
+                lib.un(star, 'mouseout', bound.onMouseOut);
             });
 
             delete this.stars;
