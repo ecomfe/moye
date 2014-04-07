@@ -75,6 +75,251 @@ define(function (require) {
     }
 
     /**
+     * 私有函数或方法
+     * 
+     * @type {Object}
+     * @namespace
+     * @name module:PicUploader~privates
+     */
+    var privates = /** @lends module:PicUploader~privates */ {
+
+
+        /**
+         * 根据名字构建的css class名称
+         *
+         * @param {string} name 模块名字
+         * @return {string} 构建的class名称
+         * @private
+         */
+        getClass: function (name) {
+            name = name ? '-' + name : '';
+            return this.options.prefix + name;
+        },
+
+        /**
+         * 获得指定dialog模块的dom元素
+         *
+         * @param {string} name 模块名字
+         * @param {string} scope 查找范围
+         * @return {HTMLElement} 模块的DOM元素
+         * @private
+         */
+        getDom: function (name, scope) {
+            return lib.q(
+            privates.getClass.call(this, name), lib.g(scope))[0];
+        },
+
+        /**
+         * 当点击关闭的时候
+         *
+         * @private
+         * @param {HTMLEvent} e dom事件对象
+         */
+        onCloseClick: function (e) {
+            var target = lib.getTarget(e);
+            var picker = lib.getAncestorByClass(
+            target, privates.getClass.call(this, 'picker'));
+            privates.removePicker.call(this, picker);
+        },
+
+        /**
+         * 当文件选择改变的时候处理函数
+         *
+         * @private
+         * @param {HTMLEvent} e dom事件对象
+         * @fires module:PicUploader#pickerror
+         * @fires module:PicUploader#pick
+         */
+        onFileChange: function (e) {
+
+            var target = lib.getTarget(e);
+            var filePath = target.value;
+
+            if (!filePath) {
+                return;
+            }
+
+            var fileName = filePath.slice(
+            Math.max(
+            filePath.lastIndexOf('/'), filePath.lastIndexOf('\\')) + 1);
+            fileName = fileName.slice(0, fileName.lastIndexOf('.'));
+
+            var picker = lib.getAncestorByClass(
+            target, privates.getClass.call(this, 'picker'));
+
+            var bound = this._bound;
+
+            if (!filePath.match(this.options.fileType)) {
+
+                //IE浏览器不允许设置file.value这里移除之后再创建一个
+                if (lib.browser.ie) {
+                    //这里用cloneNode会出现一堆诡异的问题
+                    // 只能创建新的节点来替换，会损失一部分原始的信息
+                    // 
+                    var newTarget = createFileNode({
+                        className: target.className
+                    });
+
+                    target.parentNode.insertBefore(newTarget, target);
+
+                    //删除事件
+                    lib.un(target, 'change', bound.onFileChange);
+                    target.parentNode.removeChild(target);
+
+                    //重新绑定事件
+                    lib.on(newTarget, 'change', bound.onFileChange);
+
+                }
+                else {
+                    target.value = '';
+                }
+
+                lib.addClass(picker, privates.getClass.call(this, 'error'));
+
+                /**
+                 * @event module:PicUploader#error
+                 * @property {Object} event 事件源对象
+                 * event.fileName {string} 被移除的文件名
+                 */
+                this.fire('pickerror', {
+                    fileName: filePath
+
+                });
+            }
+            else {
+
+                var pic = privates.getDom.call(this, 'pic', picker);
+
+                //支持fileReader则可以提供预览
+                if (supportFileReader) {
+                    getLocalImageData(target.files[0], function (data) {
+                        var img = document.createElement('IMG');
+                        img.src = data;
+                        pic.appendChild(img);
+                        pic = null;
+                    });
+                }
+                //否则只显示文件名字
+                else {
+                    pic.innerHTML = '<em>' + fileName + '</em>';
+                }
+
+                picker.title = fileName;
+                privates.getDom.call(this, 'title', picker).innerHTML = fileName;
+
+                //修改class
+                lib.removeClass(picker, privates.getClass.call(this, 'cur'));
+                lib.removeClass(picker, privates.getClass.call(this, 'error'));
+                lib.addClass(picker, privates.getClass.call(this, 'picked'));
+
+                //解绑事件
+                lib.un(target, 'change', bound.onFileChange);
+
+                this.count++;
+                //如果没有超过限制，则继续生成一个上传框
+                if (this.count < this.options.maxCount) {
+                    privates.create.call(this);
+                }
+
+                /**
+                 * @event module:PicUploader#error
+                 * @param {Object} e 选择文件事件
+                 * @param {string} e.fileName 被移除的文件名
+                 */
+                this.fire('pick', {
+                    fileName: filePath
+                });
+
+            }
+        },
+
+        /**
+         * 移出一个已选择的图片框
+         *
+         * @private
+         * @param {string|HTMLElement} id 选择框元素
+         * @fires module:PicUploader#remove
+         */
+        removePicker: function (id) {
+            var picker = lib.g(id);
+            var fileName = privates.getDom.call(this, 'file', picker).value;
+            var bound = this._bound;
+
+            //解绑事件
+            lib.un(
+            privates.getDom.call(this, 'file', picker), 'change', bound.onFileChange);
+
+            lib.un(
+            privates.getDom.call(this, 'close', picker), 'click', bound.onCloseClick);
+
+            picker.parentNode.removeChild(picker);
+
+            this.count--;
+
+            //如果当前个数小于最大个数减1，则生成一个选择框
+            if (this.count === this.options.maxCount - 1) {
+                privates.create.call(this);
+            }
+
+            /**
+             * @event module:PicUploader#remove
+             * @param {Object} e 事件源对象
+             * @param {string} e.fileName 被移除的文件名
+             */
+            this.fire('remove', {
+                fileName: fileName
+            });
+        },
+
+        /**
+         * 绑定图片选择
+         *
+         * @private
+         * @param {(string|HTMLElement)} id 当前的picker对象
+         */
+        bindPicker: function (id) {
+            var bound = this._bound;
+            //绑定文件选择
+            lib.on(privates.getDom.call(this, 'file', id), 'change', bound.onFileChange);
+
+            //绑定关闭
+            lib.on(privates.getDom.call(this, 'close', id), 'click', bound.onCloseClick);
+        },
+
+        /**
+         * 创建一个上传框
+         * @private
+         */
+        create: function () {
+            var id = guid('picker');
+            var cls = {
+                id: id,
+                pickerClass: privates.getClass.call(this, 'picker'),
+                closeClass: privates.getClass.call(this, 'close'),
+                picClass: privates.getClass.call(this, 'pic'),
+                titleClass: privates.getClass.call(this, 'title'),
+                fileClass: privates.getClass.call(this, 'file'),
+                curClass: privates.getClass.call(this, 'cur'),
+                wrapperClass: privates.getClass.call(this, 'wrapper')
+            };
+
+            //获取HTML
+            var html = this.options.tpl.replace(
+                /#\{([\w-.]+)\}/g,
+                function ($0, $1) {
+                    return cls[$1] || '';
+                }
+            );
+
+            //插入创建的元素，
+            this.options.main.insertAdjacentHTML('beforeend', html);
+
+            privates.bindPicker.call(this, this.curPicker = id);
+        }
+
+    };
+
+    /**
      * 对话框
      *
      * @extends module:Control
@@ -140,13 +385,6 @@ define(function (require) {
                 + '</div>'
         },
 
-        /**
-         * 需要绑定 this 的方法名，多个方法以半角逗号分开
-         *
-         * @type {string}
-         * @private
-         */
-        binds: 'onDisable,onEnable,_closeClick,_fileChange',
 
         /**
          * 当前已经选择的图片框个数
@@ -155,214 +393,6 @@ define(function (require) {
          * @private
          */
         count: 0,
-
-        /**
-         * 当点击关闭的时候
-         *
-         * @private
-         * @param {HTMLEvent} e dom事件对象
-         */
-        _closeClick: function (e) {
-            var target = lib.getTarget(e);
-            var picker = lib.getAncestorByClass(
-            target, this.getClass('picker'));
-            this._removePicker(picker);
-        },
-
-        /**
-         * 当文件选择改变的时候处理函数
-         *
-         * @private
-         * @param {HTMLEvent} e dom事件对象
-         * @fires module:PicUploader#pickerror
-         * @fires module:PicUploader#pick
-         */
-        _fileChange: function (e) {
-
-            var target = lib.getTarget(e);
-            var filePath = target.value;
-
-            if (!filePath) {
-                return;
-            }
-
-            var fileName = filePath.slice(
-            Math.max(
-            filePath.lastIndexOf('/'), filePath.lastIndexOf('\\')) + 1);
-            fileName = fileName.slice(0, fileName.lastIndexOf('.'));
-
-            var picker = lib.getAncestorByClass(
-            target, this.getClass('picker'));
-
-            if (!filePath.match(this.options.fileType)) {
-
-                //IE浏览器不允许设置file.value这里移除之后再创建一个
-                if (lib.browser.ie) {
-                    //这里用cloneNode会出现一堆诡异的问题
-                    // 只能创建新的节点来替换，会损失一部分原始的信息
-                    // 
-                    var newTarget = createFileNode({
-                        className: target.className
-                    });
-
-                    target.parentNode.insertBefore(newTarget, target);
-
-                    //删除事件
-                    lib.un(
-                    target, 'change', this._fileChange);
-                    target.parentNode.removeChild(target);
-
-                    //重新绑定事件
-                    lib.on(
-                    newTarget, 'change', this._fileChange);
-
-                } else {
-                    target.value = '';
-                }
-
-                lib.addClass(picker, this.getClass('error'));
-
-                /**
-                 * @event module:PicUploader#error
-                 * @property {Object} event 事件源对象
-                 * event.fileName {string} 被移除的文件名
-                 */
-                this.fire('pickerror', {
-                    fileName: filePath
-
-                });
-            } else {
-
-                var pic = this.getDom('pic', picker);
-
-                //支持fileReader则可以提供预览
-                if (supportFileReader) {
-                    getLocalImageData(target.files[0], function (data) {
-                        var img = document.createElement('IMG');
-                        img.src = data;
-                        pic.appendChild(img);
-                        pic = null;
-                    });
-                }
-                //否则只显示文件名字
-                else {
-                    pic.innerHTML = '<em>' + fileName + '</em>';
-                }
-
-                picker.title = fileName;
-                this.getDom('title', picker).innerHTML = fileName;
-
-                //修改class
-                lib.removeClass(picker, this.getClass('cur'));
-                lib.removeClass(picker, this.getClass('error'));
-                lib.addClass(picker, this.getClass('picked'));
-
-                //解绑事件
-                lib.un(
-                target, 'change', this._fileChange);
-
-                this.count++;
-                //如果没有超过限制，则继续生成一个上传框
-                if (this.count < this.options.maxCount) {
-                    this.create();
-                }
-
-                /**
-                 * @event module:PicUploader#error
-                 * @param {Object} e 选择文件事件
-                 * @param {string} e.fileName 被移除的文件名
-                 */
-                this.fire('pick', {
-                    fileName: filePath
-                });
-
-            }
-        },
-
-        /**
-         * 移出一个已选择的图片框
-         *
-         * @private
-         * @param {string|HTMLElement} id 选择框元素
-         * @fires module:PicUploader#remove
-         */
-        _removePicker: function (id) {
-            var picker = lib.g(id);
-            var fileName = this.getDom('file', picker).value;
-
-            //解绑事件
-            lib.un(
-            this.getDom('file', picker), 'change', this._fileChange);
-
-            lib.un(
-            this.getDom('close', picker), 'click', this._closeClick);
-
-            picker.parentNode.removeChild(picker);
-
-            this.count--;
-
-            //如果当前个数小于最大个数减1，则生成一个选择框
-            if (this.count === this.options.maxCount - 1) {
-                this.create();
-            }
-
-            /**
-             * @event module:PicUploader:remove
-             * @param {Object} e 事件源对象
-             * @param {string} e.fileName 被移除的文件名
-             */
-            this.fire('remove', {
-                fileName: fileName
-            });
-        },
-
-        /**
-         * 绑定图片选择
-         *
-         * @private
-         * @param {(string|HTMLElement)} id 当前的picker对象
-         */
-        _bindPicker: function (id) {
-            //绑定文件选择
-            lib.on(
-            this.getDom('file', id), 'change', this._fileChange);
-
-            //绑定关闭
-            lib.on(
-            this.getDom('close', id), 'click', this._closeClick);
-        },
-
-        /**
-         * 创建一个上传框
-         * @private
-         */
-        create: function () {
-            var id = guid('picker');
-            var cls = {
-                id: id,
-                pickerClass: this.getClass('picker'),
-                closeClass: this.getClass('close'),
-                picClass: this.getClass('pic'),
-                titleClass: this.getClass('title'),
-                fileClass: this.getClass('file'),
-                curClass: this.getClass('cur'),
-                wrapperClass: this.getClass('wrapper')
-            };
-
-            //获取HTML
-            var html = this.options.tpl.replace(
-                /#\{([\w-.]+)\}/g,
-                function ($0, $1) {
-                    return cls[$1] || '';
-                }
-            );
-
-            //插入创建的元素，
-            this.options.main.insertAdjacentHTML('beforeend', html);
-
-            this._bindPicker(this.curPicker = id);
-        },
-
 
         /**
          * 控件初始化
@@ -376,38 +406,15 @@ define(function (require) {
                 throw new Error('invalid main');
             }
 
-            this.disabled = options.disabled;
+            this.bindEvents(privates);
 
-            if (this.disabled) {
+            this._disabled = options.disabled;
+
+            if (this._disabled) {
                 this.disable();
             }
         },
 
-
-        /**
-         * 根据名字构建的css class名称
-         *
-         * @param {string} name 模块名字
-         * @return {string} 构建的class名称
-         * @private
-         */
-        getClass: function (name) {
-            name = name ? '-' + name : '';
-            return this.options.prefix + name;
-        },
-
-        /**
-         * 获得指定dialog模块的dom元素
-         *
-         * @param {string} name 模块名字
-         * @param {string} scope 查找范围
-         * @return {HTMLElement} 模块的DOM元素
-         * @private
-         */
-        getDom: function (name, scope) {
-            return lib.q(
-            this.getClass(name), lib.g(scope))[0];
-        },
 
         /**
          * 绘制控件
@@ -418,7 +425,7 @@ define(function (require) {
         render: function () {
             if (!this.rendered) {
                 this.id = guid();
-                this.create();
+                privates.create.call(this);
                 this.rendered = true;
             }
 
@@ -430,7 +437,7 @@ define(function (require) {
          *
          * @param {string} filePath 文件路径
          * @return {module:PicUploader} 本对象
-         * @private
+         * @publick
          */
         remove: function (filePath, checker) {
             var me = this;
@@ -440,14 +447,15 @@ define(function (require) {
                 return removePath === filePath;
             };
             lib.each(
-                lib.q(this.getClass('file'),
+                lib.q(privates.getClass.call(this, 'file'),
                 this.options.main),
                 function (item, index) {
                     if (item.value === filePath) {
                         if (checker(item.value, filePath, index)) {
-                            me._removePicker(
-                            lib.getAncestorByClass(
-                            item, me.getClass('picker')));
+                            privates.removePicker.call(
+                                me,
+                                lib.getAncestorByClass(item, privates.getClass.call(me, 'picker'))
+                            );
                         }
                     }
                 }
@@ -455,17 +463,18 @@ define(function (require) {
             return this;
         },
 
+
         /**
          * 根据索引移除图片框
          *
          * @param {number} index 索引
          * @return {module:PicUploader} 本对象
-         * @private
+         * @public
          */
         removeAt: function (index) {
-            var list = lib.q(this.getClass('picker'), this.options.main);
+            var list = lib.q(privates.getClass.call(this, 'picker'), this.options.main);
             if (list[index].id !== this.curPicker) {
-                this._removePicker(list[index]);
+                privates.removePicker.call(this, list[index]);
             }
             return this;
         },
@@ -474,12 +483,13 @@ define(function (require) {
          * 获得已经选择的文件列表
          *
          * @return {Array.<string>} 文件名字列表
+         * @public
          */
         getFileList: function () {
             var me = this;
             var files = [];
             lib.each(
-                lib.q(this.getClass('file'), this.options.main),
+                lib.q(privates.getClass.call(this, 'file'), this.options.main),
                 function (item) {
                     if (item.value.match(me.options.fileType)) {
                         files.push(item.value);
@@ -493,14 +503,15 @@ define(function (require) {
          * 启用组件
          *
          * @return {module:PicUploader} 本对象
+         * @override
          */
         enable: function () {
 
             if (this.curPicker) {
-                lib.removeClass(this.options.main, this.getClass('disabled'));
+                lib.removeClass(this.options.main, privates.getClass.call(this, 'disabled'));
             }
 
-            this.disabled = 0;
+            this._disabled = 0;
 
             return this;
         },
@@ -508,15 +519,16 @@ define(function (require) {
         /**
          * 禁用组件
          *
-         * @return {PicUploader} 本对象
+         * @return {module:PicUploader} 本对象
+         * @override
          */
         disable: function () {
 
             if (this.curPicker) {
-                lib.addClass(this.options.main, this.getClass('disabled'));
+                lib.addClass(this.options.main, privates.getClass.call(this, 'disabled'));
             }
 
-            this.disabled = 1;
+            this._disabled = 1;
 
             return this;
         },
@@ -526,20 +538,23 @@ define(function (require) {
          *
          * @public
          * @fires module:PicUploader#dispose
+         * @override
          */
         dispose: function () {
 
             if (this.curPicker) {
+                var bound = this._bound;
+
                 lib.un(
-                    this.getDom('file', this.curPicker),
+                    privates.getDom.call(this, 'file', this.curPicker),
                     'change',
-                    this._fileChange
+                    bound.onFileChange
                 );
 
                 lib.un(
-                    this.getDom('close', this.curPicker),
+                    privates.getDom.call(this, 'close', this.curPicker),
                     'click',
-                    this._closeClick
+                    bound.onCloseClick
                 );
                 this.curPicker = 0;
             }
