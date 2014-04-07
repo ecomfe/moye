@@ -56,21 +56,24 @@ define(function (require) {
         });
 
         it('title check', function () {
-            expect(dialog.getHeaderDom().innerHTML).toBe('标题');
+            var header = dialog.query('ecl-ui-dialog-header')[0];
+            expect(header.innerHTML).toBe('标题');
             dialog.setTitle('标题1');
-            expect(dialog.getHeaderDom().innerHTML).toBe('标题1');
+            expect(header.innerHTML).toBe('标题1');
         });
 
         it('content check', function () {
-            expect(dialog.getBodyDom().innerHTML).toBe('内容');
+            var body = dialog.query('ecl-ui-dialog-body')[0];
+            expect(body.innerHTML).toBe('内容');
             dialog.setContent('内容1');
-            expect(dialog.getBodyDom().innerHTML).toBe('内容1');
+            expect(body.innerHTML).toBe('内容1');
         });
 
         it('footer check', function () {
-            expect(dialog.getFooterDom().innerHTML).toBe('底部');
+            var footer = dialog.query('ecl-ui-dialog-footer')[0];
+            expect(footer.innerHTML).toBe('底部');
             dialog.setFooter('底部1');
-            expect(dialog.getFooterDom().innerHTML).toBe('底部1');
+            expect(footer.innerHTML).toBe('底部1');
         });
 
         it('mask check', function () {
