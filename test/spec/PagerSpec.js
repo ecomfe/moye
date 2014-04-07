@@ -91,7 +91,7 @@ define(function (require) {
             };
             pager.on('click', onClick);
             pager.on('change', onChange);
-            pager.onChange(null, el);
+            lib.fire(el, 'click');
             pager.un('click', onClick);
             pager.un('change', onChange);
 
@@ -113,8 +113,8 @@ define(function (require) {
             pager.main.appendChild(el);
             pager.on('click', onClick);
             pager.on('change', onChange);
-            pager.onChange(null, pager.main);
-            pager.onChange(null, el);
+            lib.fire(pager.main, 'click');
+            lib.fire(el, 'click');
             pager.un('click', onClick);
             pager.un('change', onChange);
             pager.main.removeChild(el);
