@@ -14,7 +14,7 @@ define(function (require) {
                 +       '<li class="ecl-ui-tabs-selected">UI控件拆分</li>'
                 +       '<li>UI栅格化设计</li>'
                 +       '<li>如何使用</li>'
-                +       '<li>新UI设计规范</li>'
+                +       '<li><em>新UI设计规范</em></li>'
                 +       '<li>再点你也切换不了</li>'
                 +   '</ul>'
                 + '</div>'
@@ -52,7 +52,7 @@ define(function (require) {
                 count++;
             };
             tabs.on('change', onChange);
-            lib.fire(tabs.labels[index], 'click');
+            lib.fire(tabs.labels[index].firstChild, 'click');
             lib.fire(tabs.labels[index], 'click');
 
             expect(count).toBe(1);
