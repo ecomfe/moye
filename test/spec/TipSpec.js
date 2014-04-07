@@ -7,20 +7,19 @@ define(function (require) {
     beforeEach(function () {
         document.body.insertAdjacentHTML(
             'beforeEnd', ''
-                + '<div id="tipContainer" class="result-op"'
-                + ' data-click="{x:1, srcid: 16874, p1:2, y:\'FD9FFD6C\'}"'
-                + ' style="display:none">'
-                +   '<a href="http://www.baidu.com/"'
-                +   '   class="tooltips" data-tooltips="n/a">百度</a>'
-                +   '<a href="http://www.google.com/" class="tooltips"'
-                +   '   style="position:absolute;right:0"'
-                +   '   data-tooltips="rc">谷歌</a>'
+                + '<div id="tipContainer">'
+                +   '<a href="http://www.foo.com/" onclick="return false" class="tooltips" data-tooltips="n/a">'
+                +       '<em>foo</em>'
+                +   '</a>'
+                +   '<a href="http://www.bar.com/" class="tooltips" style="position:absolute;right:0"'
+                +   '   data-tooltips="rc">bar</a>'
                 + '</div>'
         );
 
         tip = new Tip({
             mode: 'over',
             arrow: '1',
+            showDelay: 0,
             hideDelay: 0,
             offset: {
                 x: 5,
@@ -28,6 +27,8 @@ define(function (require) {
             }
         });
         tip.render();
+
+        jasmine.Clock.useMock();
         
     });
 
@@ -45,16 +46,23 @@ define(function (require) {
 
         });
 
-        it('onShow', function () {
-            var links = document.getElementById('tipContainer')
-                .getElementsByTagName('a');
+        it('点击模式', function () {
+            tip.dispose();
+
+            expect(tip.main).toBeUndefined();
+
+            tip = new Tip({
+                mode: 'click',
+                showDelay: 0,
+                hideDelay: 0
+            });
+            tip.render();
+
+            var links = document.getElementById('tipContainer').getElementsByTagName('a');
             var target = links[0];
-            var event = {target: target};
 
             var onBeforeShow = function (json) {
                 expect(json.target).toBe(target);
-                expect(this.current).toBe(target);
-                expect(json.event).toBe(event);
 
                 tip.setTitle('title');
                 tip.setContent('content');
@@ -66,7 +74,8 @@ define(function (require) {
 
             tip.on('beforeShow', onBeforeShow);
             tip.on('hide', onHide);
-            tip.onShow(event);
+
+            lib.fire(target.firstChild, 'click');
 
             expect(tip.isVisible()).toBeTruthy();
             expect(tip.elements.title.innerHTML).toBe('title');
@@ -75,21 +84,91 @@ define(function (require) {
             tip.setTitle();
             expect(tip.elements.title.offsetWidth).toBe(0);
 
-            tip.onHide();
+            lib.fire(target, 'click');
             expect(tip.isVisible()).toBeFalsy();
 
-            tip.onShow({target: target.parentNode});
+            lib.fire(target.parentNode, 'click');
             expect(tip.isVisible()).toBeFalsy();
 
             target = links[1];
-            event.target = target;
-            tip.onShow(event);
+            lib.fire(target, 'click');
 
             tip.un('beforeShow', onBeforeShow);
             tip.un('hide', onHide);
 
         });
 
+        it('hover 模式', function () {
+            var links = document.getElementById('tipContainer').getElementsByTagName('a');
+            var target = links[0];
+
+            var onBeforeShow = function (json) {
+                expect(json.target).toBe(target);
+
+                tip.setTitle('title');
+                tip.setContent('content');
+            };
+
+            var onHide = function () {
+                expect(this.current).toBe(null);
+            };
+
+            tip.on('beforeShow', onBeforeShow);
+            tip.on('hide', onHide);
+
+            lib.fire(target, 'mouseenter');
+
+            expect(tip.isVisible()).toBeTruthy();
+            expect(tip.elements.title.innerHTML).toBe('title');
+            expect(tip.elements.body.innerHTML).toBe('content');
+
+            tip.setTitle();
+            expect(tip.elements.title.offsetWidth).toBe(0);
+
+            lib.fire(target, 'mouseleave');
+            expect(tip.isVisible()).toBeFalsy();
+
+            lib.fire(target.parentNode, 'mouseenter');
+            expect(tip.isVisible()).toBeFalsy();
+
+            target = links[1];
+            lib.fire(target, 'mouseenter');
+
+            tip.un('beforeShow', onBeforeShow);
+            tip.un('hide', onHide);
+
+        });
+
+        it('延迟显示隐藏', function () {
+            tip.dispose();
+
+            expect(tip.main).toBeUndefined();
+
+            var delay = 100;
+
+            tip = new Tip({
+                mode: 'click',
+                showDelay: delay,
+                hideDelay: delay
+            });
+            tip.render();        
+
+            var links = document.getElementById('tipContainer').getElementsByTagName('a');
+            var target = links[0];
+
+            lib.fire(target, 'click');
+
+            expect(tip.isVisible()).toBeFalsy();
+            jasmine.Clock.tick(delay);
+            expect(tip.isVisible()).toBeTruthy();
+
+            lib.fire(target.parentNode, 'click');
+
+            expect(tip.isVisible()).toBeTruthy();
+            jasmine.Clock.tick(delay);
+            expect(tip.isVisible()).toBeFalsy();
+
+        });
     });
 
 });
