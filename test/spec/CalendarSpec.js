@@ -120,8 +120,7 @@ define(function (require) {
             calendar.on('show', onShow);
 
             calendar.target.value = calendar.format(date);
-            calendar.onBeforeShow();
-            calendar.show(calendar.target);
+            lib.fire(calendar.target, 'click');
 
             calendar.un('beforeShow', onBeforeShow);
             calendar.on('show', onShow);
