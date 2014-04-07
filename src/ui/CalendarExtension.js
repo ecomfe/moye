@@ -13,6 +13,77 @@ define(function (require) {
     var Calendar = require('./Calendar');
 
     /**
+     * 私有函数或方法
+     * 
+     * @type {Object}
+     * @namespace
+     * @name module:CalendarExtension~Menu~privates
+     */
+    var menuPrivites = /** @lends module:CalendarExtension~Menu~privates */ {
+
+        /**
+         * 显示前事件处理
+         * 
+         * @param {Event} e DOM 事件源对象
+         * @private
+         */
+        onShow: function (e) {
+            this.show(this.target, true);
+        },
+
+
+        /**
+         * 选择菜单隐藏前处理
+         * 
+         * @param {Event} e DOM 事件源对象
+         * @private
+         */
+        onHide: function (e) {
+            this.hide();
+        },
+
+        /**
+         * 点击事件处理
+         * 
+         * @param {Event} e DOM 事件源对象
+         * @fires CalendarExtension~Menu#click
+         * @fires CalendarExtension~Menu#pick
+         * @private
+         */
+        onClick: function (e) {
+            var target = lib.getTarget(e);
+
+            if (target.tagName === 'A') {
+
+                lib.stopPropagation(e);
+
+                /**
+                 * @event CalendarExtension~Menu#click
+                 * @type {Object}
+                 * @property {HTMLElement} target 当前点击的元素
+                 */
+                this.fire('click', { target: target });
+
+                if (this.check(target)) {
+                    var value = target.innerHTML;
+                    this.target.innerHTML = value;
+                    this.select(value);
+                    this.hide();
+
+                    /**
+                     * @event CalendarExtension~Menu#pick
+                     * @type {Object}
+                     * @property {string} value 当前选中的值
+                     * @property {HTMLElement} target 当前点击的元素
+                     */
+                    this.fire('pick', {value: value, target:  this.target});
+                }
+
+            }
+        }      
+    };
+
+    /**
      * 年月选择菜单
      * 
      * @memberof module:CalendarExtension
@@ -48,14 +119,6 @@ define(function (require) {
         },
 
         /**
-         * 需要绑定 this 的方法名，多个方法以半角逗号分开
-         * 
-         * @type {string}
-         * @private
-         */
-        binds: 'onShow, onHide, onClick',
-
-        /**
          * 控件初始化
          * 
          * @param {Object} options 控件配置项
@@ -65,6 +128,7 @@ define(function (require) {
         init: function (options) {
             var main = this.main = document.createElement('div');
             lib.addClass(main, options.className);
+            this.bindEvents(menuPrivites);
         },
 
         /**
@@ -84,9 +148,10 @@ define(function (require) {
                 this.build(options.start, options.end);
                 this.elements = main.getElementsByTagName('a');
 
-                lib.on(main, 'mouseenter', this.onShow);
-                lib.on(main, 'mouseleave', this.onHide);
-                lib.on(main, 'click', this.onClick);
+                var bound = this._bound;
+                lib.on(main, 'mouseenter', bound.onShow);
+                lib.on(main, 'mouseleave', bound.onHide);
+                lib.on(main, 'click', bound.onClick);
 
                 if (options.target) {
                     this.setTarget(lib.g(options.target));
@@ -154,17 +219,6 @@ define(function (require) {
                 el && lib.addClass(el, klass);
             }
         },
-
-        /**
-         * 显示前事件处理
-         * 
-         * @param {Event} e DOM 事件源对象
-         * @private
-         */
-        onShow: function (/* e */) {
-            this.show(this.target, true);
-        },
-
         /**
          * 显示选择菜单
          * 
@@ -190,17 +244,6 @@ define(function (require) {
             this.select(target.innerHTML | 0);
             lib.show(main);
         },
-
-        /**
-         * 选择菜单隐藏前处理
-         * 
-         * @param {Event} e DOM 事件源对象
-         * @private
-         */
-        onHide: function (/* e */) {
-            this.hide();
-        },
-
         /**
          * 隐藏选择菜单
          * 
@@ -214,51 +257,11 @@ define(function (require) {
          * 检查是否选中可用的数字
          * 
          * @return {boolean} 可用数字点击时返回 true，否则 false
+         * @public
          */
         check: function () {
             return true;
-        },
-
-        /**
-         * 点击事件处理
-         * 
-         * @param {Event} e DOM 事件源对象
-         * @fires CalendarExtension~Menu#click
-         * @fires CalendarExtension~Menu#pick
-         * @private
-         */
-        onClick: function (e) {
-            var target = lib.getTarget(e);
-
-            if (target.tagName === 'A') {
-
-                lib.stopPropagation(e);
-
-                /**
-                 * @event CalendarExtension~Menu#click
-                 * @type {Object}
-                 * @property {HTMLElement} target 当前点击的元素
-                 */
-                this.fire('click', { target: target });
-
-                if (this.check(target)) {
-                    var value = target.innerHTML;
-                    this.target.innerHTML = value;
-                    this.select(value);
-                    this.hide();
-
-                    /**
-                     * @event CalendarExtension~Menu#pick
-                     * @type {Object}
-                     * @property {string} value 当前选中的值
-                     * @property {HTMLElement} target 当前点击的元素
-                     */
-                    this.fire('pick', {value: value, target:  this.target});
-                }
-
-            }
         }
-
     });
 
     /**
@@ -330,70 +333,13 @@ define(function (require) {
     };
 
     /**
-     * Calendar 扩展类
+     * 私有函数或方法
      * 
-     * 增加年份和月份的快速选择跳转
-     * 
-     * @requires lib
-     * @requires Control
-     * @requires Calendar
-     * @exports CalendarExtension
-     * @see module:Calendar
-     * @example
-     * &lt;input type="text" class="input triggers" /&gt;
-     * &lt;input type="button" value="click" class="triggers" /&gt;
-     * 与 Calendar 使用方式一致
-     * new CalendarExtension({
-     *     dateFormat: 'yyyy-MM-dd(WW)',    // W为星期几，WW带周作前缀
-     *     triggers: '.triggers',
-     *     target: '.input'
-     *  }).render();
+     * @type {Object}
+     * @namespace
+     * @name module:CalendarExtension~privates
      */
-    var CalendarExtension = lib.newClass(
-        /** @lends module:CalendarExtension.prototype */{
-
-        /**
-         * 初始化
-         * 
-         * @param {Object} options 透传给 module:Calendar 的配置参数
-         * @see module:Calendar#options
-         * @private
-         */
-        initialize: function (options) {
-            options = options || {};
-            options.lang = options.lang || {};
-            options.lang.title = ''
-              + '<a href="#" data-menu-type="year"'
-              + ' class="{prefix}-menu-year-handler">{year}</a>年'
-              + '<a href="#" data-menu-type="month"'
-              + ' class="{prefix}-menu-month-handler">{month}</a>月';
-
-            this.calendar = new Calendar(options);
-            this.menus = {};
-            lib.binds(this, 'onOver', 'onOut', 'onClick', 'onHide');
-        },
-
-        /**
-         * 绘制控件
-         * 
-         * @return {module:Calendar} module:Calendar 实例
-         * @see module:Calendar#render
-         * @public
-         */
-        render: function () {
-            var calendar = this.calendar;
-            var value = calendar.render.apply(calendar, arguments);
-
-            var main = this.main = calendar.main;
-
-            lib.on(main, 'mouseover', this.onOver);
-            lib.on(main, 'mouseout', this.onOut);
-            lib.on(main, 'click', this.onClick);
-
-            calendar.on('hide', this.onHide);
-
-            return value;
-        },
+    var privates = /** @lends module:CalendarExtension~privates */ {
 
         /**
          * 绘制选择菜单
@@ -444,11 +390,12 @@ define(function (require) {
             var el = lib.getTarget(e);
             var type = el.getAttribute('data-menu-type');
             if (type) {
-                this.renderMenu(el, type);
+                privates.renderMenu.call(this, el, type);
 
                 var main = this.main;
-                lib.un(main, 'mouseover', this.onOver);
-                lib.on(main, 'mouseout', this.onOut);
+                var bound = this._bound;
+                lib.un(main, 'mouseover', bound.onOver);
+                lib.on(main, 'mouseout', bound.onOut);
             }
         },
 
@@ -466,8 +413,9 @@ define(function (require) {
                 menu && menu.hide();
 
                 var main = this.main;
-                lib.on(main, 'mouseover', this.onOver);
-                lib.un(main, 'mouseout', this.onOut);
+                var bound = this._bound;
+                lib.on(main, 'mouseover', bound.onOver);
+                lib.un(main, 'mouseout', bound.onOut);
             }
         },
 
@@ -478,7 +426,7 @@ define(function (require) {
          * @private
          */
         onClick: function (e) {
-            this.onHide(e);
+            privates.onHide.call(this, e);
         },
 
         /**
@@ -487,11 +435,78 @@ define(function (require) {
          * @param {Event} e DOM 事件源对象
          * @private
          */
-        onHide: function (/* e */) {
+        onHide: function (e) {
             this.year && this.year.hide();
             this.month && this.month.hide();
-        }
+        }        
+    };
 
+    /**
+     * Calendar 扩展类
+     * 
+     * 增加年份和月份的快速选择跳转
+     * 
+     * @requires lib
+     * @requires Control
+     * @requires Calendar
+     * @exports CalendarExtension
+     * @see module:Calendar
+     * @example
+     * &lt;input type="text" class="input triggers" /&gt;
+     * &lt;input type="button" value="click" class="triggers" /&gt;
+     * 与 Calendar 使用方式一致
+     * new CalendarExtension({
+     *     dateFormat: 'yyyy-MM-dd(WW)',    // W为星期几，WW带周作前缀
+     *     triggers: '.triggers',
+     *     target: '.input'
+     *  }).render();
+     */
+    var CalendarExtension = lib.newClass(
+        /** @lends module:CalendarExtension.prototype */{
+
+        /**
+         * 初始化
+         * 
+         * @param {Object} options 透传给 module:Calendar 的配置参数
+         * @see module:Calendar#options
+         * @private
+         */
+        initialize: function (options) {
+            options = options || {};
+            options.lang = options.lang || {};
+            options.lang.title = ''
+              + '<a href="#" data-menu-type="year"'
+              + ' class="{prefix}-menu-year-handler">{year}</a>年'
+              + '<a href="#" data-menu-type="month"'
+              + ' class="{prefix}-menu-month-handler">{month}</a>月';
+
+            this.calendar = new Calendar(options);
+            this.menus = {};
+            Control.prototype.bindEvents.call(this, privates);
+        },
+
+        /**
+         * 绘制控件
+         * 
+         * @return {module:Calendar} module:Calendar 实例
+         * @see module:Calendar#render
+         * @public
+         */
+        render: function () {
+            var calendar = this.calendar;
+            var value = calendar.render.apply(calendar, arguments);
+
+            var main = this.main = calendar.main;
+
+            var bound = this._bound;
+            lib.on(main, 'mouseover', bound.onOver);
+            lib.on(main, 'mouseout', bound.onOut);
+            lib.on(main, 'click', bound.onClick);
+
+            calendar.on('hide', bound.onHide);
+
+            return value;
+        }
 
     });
     
