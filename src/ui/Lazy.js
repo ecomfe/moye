@@ -39,48 +39,13 @@ define(function (require) {
     };
 
     /**
-     * 延迟按需加载
+     * 私有函数或方法
      * 
-     * @requires lib
-     * @exports Lazy
+     * @type {Object}
+     * @namespace
+     * @name module:Lazy~privates
      */
-    var Lazy = lib.newClass(/** @lends module:Lazy.prototype*/{
-
-        /**
-         * 控件类型标识
-         * 
-         * @private
-         * @type {string}
-         */
-        type: 'Lazy',
-
-        /**
-         * 初始化
-         * 
-         * @private
-         */
-        initialize: function () {
-
-            // 所有延迟加载的元素集合
-            this.els = {};
-
-            // 手动维护的延迟加载的元素的数量
-            this.count = 0;
-
-            // 延迟计算的时间（毫秒），在此时间内连续的计算需求会被取消
-            this.delay = 100;
-
-            // 滚动条最后的坐标，主要用于判断滚动方向
-            this.lastScroll = {
-                x: lib.getScrollLeft(),
-                y: lib.getScrollTop
-            };
-
-            // 确定方法的上下文 this 是当前实例
-            this.onScroll = lib.bind(this.onScroll, this);
-            this.compute = lib.bind(this.compute, this);
-        },
-
+    var privates = /** @lends module:Lazy~privates */ {
         /**
          * 计算在可视区域内的延迟加载元素
          * 
@@ -165,10 +130,57 @@ define(function (require) {
          * @private
          */
         onScroll: function () {
-            clearTimeout(this.timer);
-            this.timer = setTimeout(this.compute, this.delay);
+            clearTimeout(this._timer);
+            this._timer = setTimeout(this._bound.compute, this.delay);
             this.scrolled = true;
         },
+    };
+
+    /**
+     * 延迟按需加载
+     * 
+     * @requires lib
+     * @exports Lazy
+     */
+    var Lazy = lib.newClass(/** @lends module:Lazy.prototype*/{
+
+        /**
+         * 控件类型标识
+         * 
+         * @private
+         * @type {string}
+         */
+        type: 'Lazy',
+
+        /**
+         * 初始化
+         * 
+         * @private
+         */
+        initialize: function () {
+
+            // 所有延迟加载的元素集合
+            this.els = {};
+
+            // 手动维护的延迟加载的元素的数量
+            this.count = 0;
+
+            // 延迟计算的时间（毫秒），在此时间内连续的计算需求会被取消
+            this.delay = 100;
+
+            // 滚动条最后的坐标，主要用于判断滚动方向
+            this.lastScroll = {
+                x: lib.getScrollLeft(),
+                y: lib.getScrollTop
+            };
+
+            // 确保方法的上下文 this 是当前实例
+            this._bound = {
+                onScroll: lib.bind(privates.onScroll, this),
+                compute: lib.bind(privates.compute, this)
+            };
+        },
+
 
         /**
          * 添加延迟操作的元素
@@ -181,13 +193,14 @@ define(function (require) {
          */
         add: function (el, callback, options) {
             this.els[lib.guid(el)] = [el, callback, options];
+            var onScroll = this._bound.onScroll;
             if (!this.count) {
-                lib.on(window, 'scroll', this.onScroll);
-                lib.on(window, 'resize', this.onScroll);
+                lib.on(window, 'scroll', onScroll);
+                lib.on(window, 'resize', onScroll);
             }
             this.count++;
             if (!this.scrolled) {
-                this.onScroll();
+                onScroll();
             }
             return this;
         },
