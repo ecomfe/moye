@@ -12,6 +12,66 @@ define(function (require) {
     var Lazy = require('./Lazy');
 
     /**
+     * 私有函数或方法
+     * 
+     * @type {Object}
+     * @namespace
+     * @name module:LazyImg~privates
+     */
+    var privates = /** @lends module:LazyImg~privates */ {
+
+        /**
+         * 加载在可视区域的图片
+         * 
+         * @param {Object} scroll 滚动条坐标
+         * @param {Object} size 窗口大小
+         * @private
+         */
+        load: function (scroll, size) {
+            var _src = this.options.src;
+
+            var imgs = [];
+            var offset = this.options.offset;
+
+            lib.each(this.imgs, function (img) {
+                var el = img.parentNode.parentNode;
+                var src = img.getAttribute(_src);
+                if (el.offsetHeight && src) {
+
+                    // 图片的坐标数据
+                    var cd = lib.getPosition(img);
+                    cd.right = cd.left + img.offsetWidth;
+                    cd.bottom = cd.top + img.offsetHeight;
+
+                    var isOverRight = cd.left - offset.x >= scroll.x + size.x;
+                    var isOverBottom = cd.top - offset.y >= scroll.y + size.y;
+                    var isLessLeft = cd.right + offset.x <= scroll.x;
+                    var isLessTop = cd.bottom + offset.y <= scroll.y;
+
+                    // 如果在可视区域之内
+                    if (!(isOverRight || isOverBottom) 
+                         && !(isLessLeft || isLessTop)
+                    ) {
+                        img.src = src;
+                        img.removeAttribute(_src);
+                    }
+                    // 保留在可视区域之外的图片
+                    else {
+                        imgs.push(img);
+                    }
+                }
+            });
+
+            // 剔除已加载的未加载图片元素数组
+            this.imgs = imgs;
+
+            // 如果图片全部加载过，可从监听集合中移除
+            if (!imgs.length) {
+                Lazy.remove(this.main);
+            }
+        }  
+    };
+    /**
      * 图片延迟加载
      * 
      * @requires lib
@@ -71,60 +131,9 @@ define(function (require) {
             this.imgs = options.imgs
                 || lib.toArray(main.getElementsByTagName('img'));
 
-            this.load = lib.bind(this.load, this);
-            Lazy.add(main, this.load, options.offset);
-        },
-
-        /**
-         * 加载在可视区域的图片
-         * 
-         * @param {Object} scroll 滚动条坐标
-         * @param {Object} size 窗口大小
-         * @private
-         */
-        load: function (scroll, size) {
-            var _src = this.options.src;
-
-            var imgs = [];
-            var offset = this.options.offset;
-
-            lib.each(this.imgs, function (img) {
-                var el = img.parentNode.parentNode;
-                var src = img.getAttribute(_src);
-                if (el.offsetHeight && src) {
-
-                    // 图片的坐标数据
-                    var cd = lib.getPosition(img);
-                    cd.right = cd.left + img.offsetWidth;
-                    cd.bottom = cd.top + img.offsetHeight;
-
-                    var isOverRight = cd.left - offset.x >= scroll.x + size.x;
-                    var isOverBottom = cd.top - offset.y >= scroll.y + size.y;
-                    var isLessLeft = cd.right + offset.x <= scroll.x;
-                    var isLessTop = cd.bottom + offset.y <= scroll.y;
-
-                    // 如果在可视区域之内
-                    if (!(isOverRight || isOverBottom) 
-                         && !(isLessLeft || isLessTop)
-                    ) {
-                        img.src = src;
-                        img.removeAttribute(_src);
-                    }
-                    // 保留在可视区域之外的图片
-                    else {
-                        imgs.push(img);
-                    }
-                }
-            });
-
-            // 剔除已加载的未加载图片元素数组
-            this.imgs = imgs;
-
-            // 如果图片全部加载过，可从监听集合中移除
-            if (!imgs.length) {
-                Lazy.remove(this.main);
-            }
-        }        
+            Lazy.add(main, lib.bind(privates.load, this), options.offset);
+        }
+     
     }).implement(lib.configurable);
 
     /**
