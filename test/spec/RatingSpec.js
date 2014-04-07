@@ -17,6 +17,8 @@ define(function (require) {
             value: 1,
             max: 3
         }).render();
+
+        jasmine.Clock.useMock();
     });
 
     afterEach(function () {
@@ -31,14 +33,11 @@ define(function (require) {
 
             expect(result.length).toBe(1);
 
-            expect(
-            rating.stars[0].className).toContain('ecl-ui-rating-star-on');
+            expect(rating.stars[0].className).toContain('ecl-ui-rating-star-on');
 
-            expect(
-            rating.stars[1].className).not.toContain('ecl-ui-rating-star-on');
+            expect(rating.stars[1].className).not.toContain('ecl-ui-rating-star-on');
 
-            expect(
-            rating.stars[2].className).not.toContain('ecl-ui-rating-star-on');
+            expect(rating.stars[2].className).not.toContain('ecl-ui-rating-star-on');
         });
 
         // 鼠标移进星星，预览星级
@@ -48,12 +47,15 @@ define(function (require) {
             lib.fire(rating.stars[rndIndex], 'mouseover');
 
             setTimeout(
+                function () {
+                    var result = lib.q('ecl-ui-rating-star-on', rating.main);
 
-            function () {
-                var result = lib.q('ecl-ui-rating-star-on', rating.main);
+                    expect(result.length).toBe(rndIndex + 1);
+                },
+                0
+            );
+            jasmine.Clock.tick(10);
 
-                expect(result.length).toBe(rndIndex + 1);
-            }, 0);
         });
 
         // // 鼠标移出星星，重置星级为value所指定的星级
@@ -63,12 +65,15 @@ define(function (require) {
             lib.fire(rating.stars[rndIndex], 'mouseout');
 
             setTimeout(
+                function () {
+                    var result = rating.query('ecl-ui-rating-star-on');
 
-            function () {
-                var result = lib.q('ecl-ui-rating-star-on', rating.main);
+                    expect(result.length).toBe(rating.options.value);
+                },
+                0
+            );
 
-                expect(result.length).toBe(rating.options.value);
-            }, 0);
+            jasmine.Clock.tick(10);
         });
 
         // 单击星星
