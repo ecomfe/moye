@@ -24,7 +24,8 @@ define(function (require) {
          * 控件类型标识
          * 
          * @type {string}
-         * @private
+         * @readonly
+         * @public
          */
         type: 'Control',
 
@@ -34,34 +35,26 @@ define(function (require) {
          * @type {boolean}
          * @private
          */
-        disabled: false,
+        _disabled: false,
+
 
         /**
-         * 将实例方法绑定 this
+         * 将事件方法绑定 this
          * 
-         * @param {(Array.<string> | string)} events 类方法名数组
+         * @param {Object.<string, Function>} provider 提供事件方法的对象
          * @protected
          */
-        bindEvents: function (events) {
+        bindEvents: function (provider) {
             var me = this;
+            var bound = this._bound || {};
 
-            if (!events || !events.length) {
-                return;
-            }
-
-            if (typeof events === 'string') {
-                events = events.split(/\s*,\s*/);
-            }
-
-            lib.each(
-                events,
-                function (name, fn) {
-                    fn = name && me[name];
-                    if (fn) {
-                        me[name] = lib.bind(fn, me);
-                    }
+            lib.forIn(provider, function (fn, name) {
+                if (/^on[A-Z]/.test(name)) {
+                    bound[name] = lib.bind(fn, me);
                 }
-            );
+            });
+
+            this._bound = bound;
         },
 
 
@@ -73,8 +66,13 @@ define(function (require) {
          */
         initialize: function (options) {
             options = this.setOptions(options);
-            this.binds && this.bindEvents(this.binds);
-            this.init && this.init(options);
+            if (this.binds) {
+                this.bindEvents(this.binds);
+            }
+            if (this.init) {
+                this.init(options);
+                this.init = null;
+            }
             this.children = [];
         },
 
@@ -104,7 +102,7 @@ define(function (require) {
         /**
          * 通过 className 查找控件容器内的元素
          * 
-         * @see baidu.dom.q
+         * @see lib.q
          * @param {string} className 元素的class，只能指定单一的class，
          * 如果为空字符串或者纯空白的字符串，返回空数组。
          * @return {Array} 获取的元素集合，查找不到或className参数错误时返回空数组
@@ -121,7 +119,7 @@ define(function (require) {
          * @public
          */
         disable: function () {
-            this.disabled = true;
+            this._disabled = true;
 
             /**
              * @event module:Control#disable
@@ -136,7 +134,7 @@ define(function (require) {
          * @public
          */
         enable: function () {
-            this.disabled = false;
+            this._disabled = false;
 
             /**
              * @event module:Control#enable
@@ -151,7 +149,7 @@ define(function (require) {
          * @public
          */
         isDisabled: function () {
-            return this.disabled;
+            return this._disabled;
         },
 
 
@@ -208,7 +206,7 @@ define(function (require) {
          * @param {HTMLElement} wrap 容器DOM元素
          * @public
          */
-        initChildren: function (/* wrap */) {
+        initChildren: function (wrap) {
             throw new Error('not implement initChildren');
         },
 
