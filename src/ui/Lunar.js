@@ -439,208 +439,13 @@ define(function (require) {
     var cache = {};
 
     /**
-     * 1900 - 2100 年间农历控件
+     * 私有函数或方法
      * 
-     * @extends module:Control
-     * @requires lib
-     * @requires Control
-     * @exports Lunar
-     * @example
-     * &lt;div id="lunar"&gt;&lt;/div&gt;
-     * new Lunar({
-     *     main: lib.g('lunar')
-     *  }).render();
+     * @type {Object}
+     * @namespace
+     * @name module:Lunar~privates
      */
-    var Lunar = Control.extend(/** @lends module:Lunar.prototype */{
-
-        /**
-         * 控件类型标识
-         * 
-         * @type {string}
-         * @private
-         */
-        type: 'Lunar',
-
-        /**
-         * 控件配置项
-         * 
-         * @name module:Lunar#options
-         * @see module:Popup#options
-         * @type {Object}
-         * @property {(string | HTMLElement)} main 控件渲染容器
-         * @property {string} prefix 控件class前缀，同时将作为main的class之一
-         * @property {string} dateFormat 日期显示的格式化方式
-         * @property {?Object} range 可选中的日期区间
-         * @property {?string} value 当前选中的日期
-         * @property {Function} process 处理当前显示日历中的每一天，多用于节日样式
-         * process(el, classList, dateString)
-         * 执行时 this 指向当前实例，el 为当前日的dom节点(A标签)，
-         * classList 为 el 即将要应用的class数组引用，dateString 为
-         * yyyy-MM-dd格式的当前日期字符串
-         * @property {number} first 一周的起始日，0为周日，1为周一
-         * @property {Object} lang 预设模板
-         * @property {string} lang.week 对于 '周' 的称呼
-         * @property {string} lang.days 一周对应的显示
-         * @private
-         */
-        options: {
-
-            // 控件渲染主容器
-            main: '',
-
-            // 控件class前缀，同时将作为main的class之一
-            prefix: 'ecl-ui-lunar',
-
-            // 日期显示的格式化方式
-            dateFormat: '',
-
-            // 可选中的日期区间
-            range: {
-                begin: '1900-01-01',
-                end: '2100-12-31'
-            },
-
-            // 当前选中的日期
-            value: '',
-
-            // 处理每一天的样式
-            process: null,
-
-            // 一周的起始日 0为周日，需要对应lang.days的顺序
-            first: 0,
-
-            // 一些模板
-            lang: {
-
-                // 对于 '周' 的称呼
-                week: '周',
-
-                // 星期对应的顺序表示
-                days: '日,一,二,三,四,五,六'
-
-            }
-        },
-
-        /**
-         * 需要绑定 this 的方法名，多个方法以半角逗号分开
-         * 
-         * @type {string}
-         * @private
-         */
-        binds: 'onClick',
-
-        /**
-         * 控件初始化
-         * 
-         * @param {Object} options 控件配置项
-         * @see module:Lunar#options
-         * @private
-         */
-        init: function (options) {
-            this.dateFormat = 
-                options.dateFormat
-                || Lunar.DATE_FORMAT
-                || DATE_FORMAT;
-
-            this.days  = options.lang.days.split(',');
-            this.date  = this.from(options.value);
-            this.value = this.format(this.date);
-            
-            this.setRange(options.range || Lunar.RANGE);
-        },
-
-        /**
-         * 解释日期类型
-         * 
-         * @param {(string | Date)} value 源日期字符串或对象
-         * @param {string} format 日期格式
-         * @return {Date} 解释到的日期对象
-         * @public
-         */
-        from: function (value, format) {
-            format = format || this.dateFormat;
-            if (lib.isString(value)) {
-
-                if (!value) {
-                    return new Date();
-                }
-
-                format = format.split(/[^yMdW]+/i);
-                value  = value.split(/\D+/);
-
-                var map = {};
-
-                for (var i = 0, l = format.length; i < l; i++) {
-                    if (format[i]
-                        && value[i]
-                        && (format[i].length > 1
-                            && value[i].length === format[i].length
-                            || format[i].length === 1
-                           )
-                    ) {
-                        map[format[i].toLowerCase()] = value[i];
-                    }
-                }
-                var year  = map.yyyy
-                    || map.y
-                    || ((map.yy < 50 ? '20' : '19') + map.yy);
-
-                var month = (map.m || map.mm) | 0;
-                var date  = (map.d || map.dd) | 0; 
-                return new Date(year | 0, month - 1, date);
-            }
-
-            return value;
-        },
-
-        /**
-         * 格式化日期
-         * 
-         * @param {Date} date 源日期对象
-         * @param {string=} format 日期格式，默认为当前实例的 dateFormat
-         * @return {string} 格式化后的日期字符串
-         * @public
-         */
-        format: function (date, format) {
-            // 控件不包含时间，所以不存在大小写区别
-            format = (format || this.dateFormat).toLowerCase();
-
-            if (lib.isString(date)) {
-                date = this.from(date);
-            }
-
-            var options = this.options;
-            var first   = options.first;
-            var y       = date.getFullYear();
-            var M       = date.getMonth() + 1;
-            var d       = date.getDate();
-            var week    = date.getDay();
-
-            if (first) {
-                week = (week - 1 + 7) % 7;
-            }
-
-            week = this.days[week];
-
-            var map = {
-                yyyy: y,
-                yy: y % 100,
-                y: y,
-                mm: pad(M),
-                m: M,
-                dd: pad(d),
-                d: d,
-                w: week,
-                ww: options.lang.week + week
-            };
-
-            return format.replace(
-                /y+|M+|d+|W+/gi,
-                function ($0) {
-                    return map[$0] || '';
-                }
-            );
-        },
+    var privates = /** @lends module:Lunar~privates */ {
 
         /**
          * 取得指定日期的 yyyyMM 格式化后字符串值
@@ -656,43 +461,6 @@ define(function (require) {
                 : this.format(this.from(date), 'yyyyMM')
             );
         },
-
-        /**
-         * 绘制控件
-         * 
-         * @return {module:Lunar} 当前实例
-         * @override
-         * @public
-         */
-        render: function () {
-            var options = this.options;
-
-            if (!this.rendered) {
-                this.rendered = true;
-
-                var main = this.main = lib.g(options.main);
-                var prefix = options.prefix;
-                var monthClass = prefix + '-month';
-
-                main.innerHTML = ''
-                    + '<div class="' + monthClass + '"></div>'
-                    + '<a href="#" class="' + prefix + '-pre"></a>'
-                    + '<a href="#" class="' + prefix + '-next"></a>'
-                    + '<a href="#" class="' + prefix + '-go-today">今天</a>'
-                    + '<a href="#" class="' + prefix + '-add-event">添加事件</a>';
-
-                this.monthElement = lib.q(monthClass, main)[0];
-
-                this.build();
-                
-                lib.on(main, 'click', this.onClick);
-                
-                lib.addClass(main, 'c-clearfix');
-            }
-
-            return this;
-        },
-
         /**
          * 构建HTML
          * 
@@ -703,10 +471,10 @@ define(function (require) {
 
             date = new Date((date || this.date).getTime());
 
-            this.monthElement.innerHTML = this.buildMonth(date);
+            this.monthElement.innerHTML = privates.buildMonth.call(this, date);
 
-            this.updateStatus();
-            this.updatePrevNextStatus(date);
+            privates.updateStatus.call(this);
+            privates.updatePrevNextStatus.call(this, date);
 
             /**
              * @event module:Lunar#navigate
@@ -714,7 +482,7 @@ define(function (require) {
              * @property {Date} date 选中的日期对象
              * @property {string} yyyyMM 选中日期的格式化星期
              */
-            this.fire('navigate', {date: date, yyyyMM: this.getYYYYMM(date)});
+            this.fire('navigate', {date: date, yyyyMM: privates.getYYYYMM.call(this, date)});
         },
 
         /**
@@ -732,12 +500,12 @@ define(function (require) {
 
             date = date || this.date || this.from(this.value);
 
-            var dateYYYYMM = this.getYYYYMM(date);
+            var dateYYYYMM = privates.getYYYYMM.call(this, date);
 
             if (prev) {
                 lib[!range 
                     || !range.begin
-                    || this.getYYYYMM(range.begin) < dateYYYYMM
+                    || privates.getYYYYMM.call(this, range.begin) < dateYYYYMM
                         ? 'show' : 'hide'
                 ](prev);
 
@@ -746,7 +514,7 @@ define(function (require) {
             if (next) {
                 lib[!range
                     || !range.end
-                    || this.getYYYYMM(range.end) > dateYYYYMM
+                    || privates.getYYYYMM.call(this, range.end) > dateYYYYMM
                         ? 'show' : 'hide'
                 ](next);
             }
@@ -931,20 +699,20 @@ define(function (require) {
 
                     // 上月操作
                     if (hasClass(el, preClass)) {
-                        this.showPreMonth();
+                        privates.showPreMonth.call(this);
                         stopPropagation(e);
                     }
                     // 下月操作
                     else if (hasClass(el, nextClass)) {
-                        this.showNextMonth();
+                        privates.showNextMonth.call(this);
                         stopPropagation(e);
                     }
                     // 回到今天
                     else if (hasClass(el, goTodayClass)) {
                         var now = new Date();
-                        if (this.getYYYYMM(this.date) !== this.getYYYYMM(now)) {
+                        if (privates.getYYYYMM.call(this, this.date) !== privates.getYYYYMM.call(this, now)) {
                             this.date = now;
-                            this.build();                          
+                            privates.build.call(this);                          
                         }
                     }
                     // 添加事件
@@ -953,7 +721,7 @@ define(function (require) {
                     }
                     // 选取日期
                     else if (!hasClass(el, disClass)) {
-                        this.pick(el, e);
+                        privates.pick.call(this, el, e);
                     }
 
                     break;
@@ -978,7 +746,7 @@ define(function (require) {
         showPreMonth: function () {
             var date = this.date;
             date.setDate(0);
-            this.build(date);
+            privates.build.call(this, date);
         },
 
         /**
@@ -992,7 +760,7 @@ define(function (require) {
             date.setDate(1);
             date.setMonth(date.getMonth() + 1);
 
-            this.build(date);
+            privates.build.call(this, date);
         },
 
         /* jshint boss: true */
@@ -1109,6 +877,239 @@ define(function (require) {
                 date: date,
                 event: event
             });
+        }        
+    };
+
+    /**
+     * 1900 - 2100 年间农历控件
+     * 
+     * @extends module:Control
+     * @requires lib
+     * @requires Control
+     * @exports Lunar
+     * @example
+     * &lt;div id="lunar"&gt;&lt;/div&gt;
+     * new Lunar({
+     *     main: lib.g('lunar')
+     *  }).render();
+     */
+    var Lunar = Control.extend(/** @lends module:Lunar.prototype */{
+
+        /**
+         * 控件类型标识
+         * 
+         * @type {string}
+         * @private
+         */
+        type: 'Lunar',
+
+        /**
+         * 控件配置项
+         * 
+         * @name module:Lunar#options
+         * @see module:Popup#options
+         * @type {Object}
+         * @property {(string | HTMLElement)} main 控件渲染容器
+         * @property {string} prefix 控件class前缀，同时将作为main的class之一
+         * @property {string} dateFormat 日期显示的格式化方式
+         * @property {?Object} range 可选中的日期区间
+         * @property {?string} value 当前选中的日期
+         * @property {Function} process 处理当前显示日历中的每一天，多用于节日样式
+         * process(el, classList, dateString)
+         * 执行时 this 指向当前实例，el 为当前日的dom节点(A标签)，
+         * classList 为 el 即将要应用的class数组引用，dateString 为
+         * yyyy-MM-dd格式的当前日期字符串
+         * @property {number} first 一周的起始日，0为周日，1为周一
+         * @property {Object} lang 预设模板
+         * @property {string} lang.week 对于 '周' 的称呼
+         * @property {string} lang.days 一周对应的显示
+         * @private
+         */
+        options: {
+
+            // 控件渲染主容器
+            main: '',
+
+            // 控件class前缀，同时将作为main的class之一
+            prefix: 'ecl-ui-lunar',
+
+            // 日期显示的格式化方式
+            dateFormat: '',
+
+            // 可选中的日期区间
+            range: {
+                begin: '1900-01-01',
+                end: '2100-12-31'
+            },
+
+            // 当前选中的日期
+            value: '',
+
+            // 处理每一天的样式
+            process: null,
+
+            // 一周的起始日 0为周日，需要对应lang.days的顺序
+            first: 0,
+
+            // 一些模板
+            lang: {
+
+                // 对于 '周' 的称呼
+                week: '周',
+
+                // 星期对应的顺序表示
+                days: '日,一,二,三,四,五,六'
+
+            }
+        },
+
+        /**
+         * 控件初始化
+         * 
+         * @param {Object} options 控件配置项
+         * @see module:Lunar#options
+         * @private
+         */
+        init: function (options) {
+            this.bindEvents(privates);
+
+            this.dateFormat = options.dateFormat || Lunar.DATE_FORMAT || DATE_FORMAT;
+
+            this.days  = options.lang.days.split(',');
+            this.date  = this.from(options.value);
+            this.value = this.format(this.date);
+            
+            this.setRange(options.range || Lunar.RANGE);
+        },
+
+        /**
+         * 解释日期类型
+         * 
+         * @param {(string | Date)} value 源日期字符串或对象
+         * @param {string} format 日期格式
+         * @return {Date} 解释到的日期对象
+         * @public
+         */
+        from: function (value, format) {
+            format = format || this.dateFormat;
+            if (lib.isString(value)) {
+
+                if (!value) {
+                    return new Date();
+                }
+
+                format = format.split(/[^yMdW]+/i);
+                value  = value.split(/\D+/);
+
+                var map = {};
+
+                for (var i = 0, l = format.length; i < l; i++) {
+                    if (format[i]
+                        && value[i]
+                        && (format[i].length > 1
+                            && value[i].length === format[i].length
+                            || format[i].length === 1
+                           )
+                    ) {
+                        map[format[i].toLowerCase()] = value[i];
+                    }
+                }
+                var year  = map.yyyy
+                    || map.y
+                    || ((map.yy < 50 ? '20' : '19') + map.yy);
+
+                var month = (map.m || map.mm) | 0;
+                var date  = (map.d || map.dd) | 0; 
+                return new Date(year | 0, month - 1, date);
+            }
+
+            return value;
+        },
+
+        /**
+         * 格式化日期
+         * 
+         * @param {Date} date 源日期对象
+         * @param {string=} format 日期格式，默认为当前实例的 dateFormat
+         * @return {string} 格式化后的日期字符串
+         * @public
+         */
+        format: function (date, format) {
+            // 控件不包含时间，所以不存在大小写区别
+            format = (format || this.dateFormat).toLowerCase();
+
+            if (lib.isString(date)) {
+                date = this.from(date);
+            }
+
+            var options = this.options;
+            var first   = options.first;
+            var y       = date.getFullYear();
+            var M       = date.getMonth() + 1;
+            var d       = date.getDate();
+            var week    = date.getDay();
+
+            if (first) {
+                week = (week - 1 + 7) % 7;
+            }
+
+            week = this.days[week];
+
+            var map = {
+                yyyy: y,
+                yy: y % 100,
+                y: y,
+                mm: pad(M),
+                m: M,
+                dd: pad(d),
+                d: d,
+                w: week,
+                ww: options.lang.week + week
+            };
+
+            return format.replace(
+                /y+|M+|d+|W+/gi,
+                function ($0) {
+                    return map[$0] || '';
+                }
+            );
+        },
+
+
+        /**
+         * 绘制控件
+         * 
+         * @return {module:Lunar} 当前实例
+         * @override
+         * @public
+         */
+        render: function () {
+            var options = this.options;
+
+            if (!this.rendered) {
+                this.rendered = true;
+
+                var main = this.main = lib.g(options.main);
+                var prefix = options.prefix;
+                var monthClass = prefix + '-month';
+
+                main.innerHTML = ''
+                    + '<div class="' + monthClass + '"></div>'
+                    + '<a href="#" class="' + prefix + '-pre"></a>'
+                    + '<a href="#" class="' + prefix + '-next"></a>'
+                    + '<a href="#" class="' + prefix + '-go-today">今天</a>'
+                    + '<a href="#" class="' + prefix + '-add-event">添加事件</a>';
+
+                this.monthElement = lib.q(monthClass, main)[0];
+
+                privates.build.call(this);
+                
+                lib.on(main, 'click', this._bound.onClick);
+                
+                lib.addClass(main, 'c-clearfix');
+            }
+
+            return this;
         },
 
         /**
@@ -1175,7 +1176,7 @@ define(function (require) {
                 range.end = this.from(end);
             }
             this.range = range;
-            this.rendered &&　this.updatePrevNextStatus();
+            this.rendered &&　privates.updatePrevNextStatus.call(this);
         },
 
         /**
@@ -1187,7 +1188,7 @@ define(function (require) {
         setValue: function (value) {
             this.date = this.from(value);
             this.value = this.format(this.date);
-            this.build();
+            privates.build.call(this);
         }
 
 
