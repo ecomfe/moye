@@ -208,6 +208,7 @@ module.exports = function (grunt) {
     grunt.registerTask('test', ['base', 'connect', 'jasmine:requirejs']);
     grunt.registerTask('cover', ['base', 'connect', 'jasmine:istanbul']);
     grunt.registerTask('default', ['base']);
-    grunt.registerTask('page', ['less', 'copy:doc', 'jsdoc', 'gh-pages', 'clean:afterdoc']);
+    grunt.registerTask('example', ['less', 'copy:doc']);
+    grunt.registerTask('page', ['example', 'jsdoc', 'gh-pages', 'clean:afterdoc']);
 
 }
