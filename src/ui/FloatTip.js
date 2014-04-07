@@ -31,6 +31,74 @@ define(function (require) {
 
 
     /**
+     * 私有函数或方法
+     * 
+     * @type {Object}
+     * @namespace
+     * @name module:FloatTip~privates
+     */
+    var privates = /** @lends module:FloatTip~privates */ {
+
+
+        /**
+         * 根据名字构建的css class名称
+         *
+         * @param {string} name 模块名字
+         * @return {string} 构建的class名称
+         * @private
+         */
+        getClass: function (name) {
+            name = name ? '-' + name : '';
+            return this.options.prefix + name;
+        },
+
+        /**
+         * 获得指定dialog模块的dom元素
+         *
+         * @param {string} name 模块名字
+         * @param {string} scope 查找范围
+         * @return {HTMLElement} 模块的DOM元素
+         * @private
+         */
+        getDom: function (name, scope) {
+            return lib.q(privates.getClass.call(this, name), lib.g(scope))[0];
+        },
+
+        /**
+         * 构造主元素
+         * 
+         * @private
+         */
+        create: function () {
+            var opt = this.options;
+            var cls = {
+                id: this.id,
+                content: opt.content,
+                type: this.type,
+                width: opt.width,
+                top: opt.top,
+                position: opt.fixed ? 'fixed' : 'absolute',
+                tipClass: privates.getClass.call(this) + ' ' + privates.getClass.call(this, 'hide'),
+                iconClass: privates.getClass.call(this, 'icon'),
+                contentClass: privates.getClass.call(this, 'content')
+            };
+
+            //获取HTML
+            var html = this.options.tpl.replace(
+                /#\{([\w-.]+)\}/g,
+                function ($0, $1) {
+                    return cls[$1] || '';
+                }
+            );
+
+            //插入创建的元素，
+            document.body.insertAdjacentHTML('beforeend', html);
+            this.main = lib.g(this.id);
+
+        }        
+    };
+
+    /**
      * 对话框
      *
      * @extends module:Control
@@ -104,87 +172,14 @@ define(function (require) {
                 + '</div>'
         },
 
-        /**
-         * 需要绑定 this 的方法名，多个方法以半角逗号分开
-         *
-         * @type {string}
-         * @private
-         */
-        binds: '',
-
-        /**
-         * 控件初始化
-         *
-         * @param {Object} options 控件配置项
-         * @see module:Control#options
-         * @private
-         */
-        init: function () {},
-
-
-        /**
-         * 根据名字构建的css class名称
-         *
-         * @param {string} name 模块名字
-         * @return {string} 构建的class名称
-         * @private
-         */
-        getClass: function (name) {
-            name = name ? '-' + name : '';
-            return this.options.prefix + name;
-        },
-
-        /**
-         * 获得指定dialog模块的dom元素
-         *
-         * @param {string} name 模块名字
-         * @param {string} scope 查找范围
-         * @return {HTMLElement} 模块的DOM元素
-         * @private
-         */
-        getDom: function (name, scope) {
-            return lib.q(this.getClass(name), lib.g(scope))[0];
-        },
-
-        /**
-         * 构造主元素
-         * 
-         * @private
-         */
-        create: function () {
-            var opt = this.options;
-            var cls = {
-                id: this.id,
-                content: opt.content,
-                type: this.type,
-                width: opt.width,
-                top: opt.top,
-                position: opt.fixed ? 'fixed' : 'absolute',
-                tipClass: this.getClass() + ' ' + this.getClass('hide'),
-                iconClass: this.getClass('icon'),
-                contentClass: this.getClass('content')
-            };
-
-            //获取HTML
-            var html = this.options.tpl.replace(
-                /#\{([\w-.]+)\}/g,
-                function ($0, $1) {
-                    return cls[$1] || '';
-                }
-            );
-
-            //插入创建的元素，
-            document.body.insertAdjacentHTML('beforeend', html);
-            this.main = lib.g(this.id);
-
-        },
 
         /**
          * 设置提示内容
          * @param {string} content 内容字符串
+         * @public
          */
         setContent: function (content) {
-            this.getDom('content').innerHTML = content;
+            privates.getDom.call(this, 'content').innerHTML = content;
         },
 
         /**
@@ -202,7 +197,7 @@ define(function (require) {
                 }
 
                 this.id = guid();
-                this.create();
+                privates.create.call(this);
                 this.rendered = true;
             }
             return this;
@@ -269,7 +264,7 @@ define(function (require) {
          * @public
          */
         show: function () {
-            lib.removeClass(this.main, this.getClass('hide'));
+            lib.removeClass(this.main, privates.getClass.call(this, 'hide'));
             this.adjustPos();
             return this;
         },
@@ -280,7 +275,7 @@ define(function (require) {
          * @public
          */
         hide: function () {
-            lib.addClass(this.main, this.getClass('hide'));
+            lib.addClass(this.main, privates.getClass.call(this, 'hide'));
             return this;
         }
     });
