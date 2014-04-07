@@ -904,31 +904,4 @@ define(function (require) {
         });
     });
 
-// describe('Asynchronous specs', function() {
-
-//   var value, flag;
-
-//   it('should support async execution of test preparation and expectations', 
-//     function(done) {
-
-//     runs(function() {
-//       flag = false;
-//       value = 0;
-
-//       setTimeout(function() {console.log('set');
-//         flag = true;
-//       }, 500);
-//     });
-
-//     waitsFor(function() {console.log('pool');
-//       value++;
-//       return flag;
-//     }, 'The Value should be incremented', 750);
-    
-//     runs(function() {console.log('runs:%s', value);
-//       expect(value).toBeGreaterThan(0);done();
-//     });
-//   });
-// });
-
 });
