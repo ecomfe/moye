@@ -74,7 +74,7 @@ define(function (require) {
         });
 
         it('隐藏城市', function () {
-            city.onBeforeShow();
+            lib.fire(triggers[0], 'click');
             expect(city.panels.length).toBe(5);
 
             expect(
@@ -83,7 +83,7 @@ define(function (require) {
         });
 
         it('onClick', function () {
-            city.popup.onShow({event: city.target});
+            lib.fire(city.target, 'click');
 
             var target = city.labels[1];
             var event = {target: target};
