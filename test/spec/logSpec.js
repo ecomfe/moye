@@ -10,9 +10,8 @@ define(function (require) {
         log.start();
         document.body.insertAdjacentHTML(
             'beforeEnd', ''
-                + '<div id="logContainer" class="result-op"'
-                + ' mu="http://baike.baidu.com/view/1758.htm"'
-                + ' data-click="{x:1, srcid: 16874, p1:2, y:\'FD9FFD6C\'}">'
+                + '<div id="logContainer" class="result-op" mu="http://baike.baidu.com/view/1758.htm"'
+                + ' data-mod="test" data-click="{x:1, srcid: 16874, p1:2, y:\'FD9FFD6C\'}">'
                 +   '<h3>'
                 +       '<a href="http://baike.baidu.com/view/1758.htm">'
                 +           '统计区域二'
@@ -117,6 +116,32 @@ define(function (require) {
             log.on('click', onClick);
             lib.fire(container.getElementsByTagName('div')[0], 'click');
             log.un('click', onClick);
+        });
+
+        it('手动继承，批量填充: fill', function () {
+            var inputs = container.getElementsByTagName('input');
+            var onClick = function (json) {
+                var data = json.data;
+                expect(data.fill).toBe('true');
+            };
+            log.on('click', onClick);
+            log.fill(inputs, { fill: true });
+            lib.fire(inputs[Math.random() * inputs.length | 0], 'click');
+            log.un('click', onClick);
+        });
+
+        it('后期更改: live', function () {
+            log.live({
+                test: function (json) {
+                    json.data.live = 1;
+                }
+            });
+            var onSend = function (json) {
+                expect(~json.url.indexOf('live=1')).toBe(true);
+            };
+            log.on('send', onSend);
+            lib.fire(container.getElementsByTagName('input')[1], 'click');
+            log.un('send', onSend);
         });
 
         it('非法的data-click', function () {
