@@ -68,12 +68,6 @@ define(function (require) {
             expect(onHide).toHaveBeenCalled();
         });
 
-        it('选择：无事件', function () {
-            select.once('pick', onPick);
-            select.pick(select.main.getElementsByTagName('a')[1], true);
-            expect(onPick).not.toHaveBeenCalled();
-        });
-
         it('beforeShow', function () {
             var onBeforeShow = jasmine.createSpy('onBeforeShow');
             select.once('beforeShow', onBeforeShow);
@@ -84,7 +78,7 @@ define(function (require) {
         it('选择：有事件', function () {
             var target = select.main.getElementsByTagName('a')[1];
             select.once('pick', onPick);
-            select.pick(target);
+            lib.fire(target, 'click');
 
             expect(onPick).toHaveBeenCalledWith({
                 value: target.getAttribute('data-value') | 0,
@@ -97,8 +91,6 @@ define(function (require) {
         it('模拟点击', function () {
             var target = select.main.getElementsByTagName('a')[2];
             select.once('pick', onPick);
-            select.onClick({});
-            expect(onPick).not.toHaveBeenCalled();
 
             lib.fire(target, 'click');
             expect(onPick).toHaveBeenCalledWith({
