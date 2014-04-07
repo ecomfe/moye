@@ -81,29 +81,22 @@ define(function (require) {
 
     /**
      * 遮罩层管理类，提供遮罩层的操作函数
-     * @memberof module:Dialog
-     * @name module:Dialog~Mask
-     * @constructor
+     * 
+     * @requires lib
+     * @requires Dialog
+     * @module Mask
      */
-    var Mask = function (opts) {
-            this._init(opts);
-        };
-
-
-    Mask.prototype = /** @lends module:Dialog~Mask.prototype */
-    {
-
-        constructor: Mask,
+    var Mask = lib.newClass( /** @lends module:Mask.prototype */ {
 
         /**
          * 初始化函数
          *
          * @private
          * @param {Object} opts 初始化选项
-         * @see module:Mask#create
+         * @see module:Mask.create
          * @private
          */
-        _init: function (opts) {
+        initialize: function (opts) {
             var div = document.createElement('div');
             div.id = opts.id;
             div.className = opts.className;
@@ -128,9 +121,8 @@ define(function (require) {
         /**
          * 重新绘制遮盖层的位置
          * 参考esui2
-         * @see https://github.com
-         * /erik168/ER/blob/master/src/esui/Mask.js
-         *
+         * 
+         * @see https://github.com/erik168/ER/blob/master/src/esui/Mask.js
          * @public
          */
         repaint: function () {
@@ -191,13 +183,12 @@ define(function (require) {
                 Mask.ie6frame = null;
             }
         }
-    };
+    });
 
     /**
      * 当前已经生成的Mask个数
      *
      * @type {number}
-     * @private
      */
     Mask.curMasks = 0;
 
@@ -212,6 +203,189 @@ define(function (require) {
      */
     Mask.create = function (opts) {
         return new Mask(opts);
+    };
+
+    /**
+     * 私有函数或方法
+     * 
+     * @type {Object}
+     * @namespace
+     * @name module:Dialog~privates
+     */
+    var privates = /** @lends module:Dialog~privates */ {
+
+        /**
+         * 获得指定dialog模块的dom元素
+         *
+         * @param {string} name 模块名字
+         * @return {HTMLElement} 模块的DOM元素
+         * @private
+         */
+        getDom:  function (name) {
+            return lib.q(this.options.prefix + '-' + name, this.main)[0];
+        },
+
+        /**
+         * 根据名字构建的css class名称
+         *
+         * @param {string} name 模块名字
+         * @return {string} 构建的class名称
+         * @private
+         */
+        getClass: function (name) {
+            name = name ? '-' + name : '';
+            var skin = this.options.skin;
+            return this.options.prefix + name + (skin ? ' ' + skin + name : '');
+        },
+
+        /**
+         * 渲染主框架
+         *
+         * @private
+         */
+        renderDOM: function () {
+            var opt = this.options;
+            var data = {
+                id: this.id,
+                type: this.type,
+                width: opt.width,
+                top: opt.top,
+                position: opt.fixed ? 'fixed' : 'absolute',
+                level: opt.level,
+                dialogClass: privates.getClass.call(this),
+                closeClass: privates.getClass.call(this, 'close'),
+                headerClass: privates.getClass.call(this, 'header'),
+                bodyClass: privates.getClass.call(this, 'body'),
+                footerClass: privates.getClass.call(this, 'footer'),
+
+                title: opt.title,
+                content: opt.content,
+                footer: opt.footer
+            };
+
+            //渲染主框架内容
+            var html = format(this.options.tpl, data);
+            document.body.insertAdjacentHTML('beforeEnd', html);
+            this.main = lib.g(this.id);
+
+            //如果显示mask，则需要创建mask对象
+            if (this.options.showMask) {
+                this.mask = Mask.create({
+                    id: 'mask-' + this.id,
+                    className: privates.getClass.call(this, 'mask'),
+                    styles: {
+                        zIndex: this.options.level - 1
+                    }
+                });
+            }
+        },
+
+        /**
+         * 绑定组件相关的dom事件
+         *
+         * @private
+         */
+        bind: function () {
+            //绑定关闭按钮
+            lib.on(
+                privates.getDom.call(this, 'close'),
+                'click',
+                this._bound.onClose
+            );
+
+        },
+
+        /**
+         * 获得头部区域的dom元素
+         *
+         * @return {HTMLElement} 模块的DOM元素
+         * @private
+         */
+        getHeaderDom: function () {
+            return privates.getDom.call(this, 'header');
+        },
+
+        /**
+         * 获得内容区域的dom元素
+         *
+         * @return {HTMLElement} 模块的DOM元素
+         * @private
+         */
+        getBodyDom: function () {
+            return privates.getDom.call(this, 'body');
+        },
+
+        /**
+         * 获得尾部区域的dom元素
+         *
+         * @return {HTMLElement} 模块的DOM元素
+         * @private
+         */
+        getFooterDom: function () {
+            return privates.getDom.call(this, 'footer');
+        },
+
+        /**
+         * 处理关闭窗口
+         * 
+         * @private
+         */
+        onClose: function (e) {
+            privates.onHide.call(this, e);
+        },
+
+        /**
+         * 当视窗大小改变的时候，调整窗口位置
+         * 
+         * @private
+         */
+        onResize: function () {
+            var me = this;
+            clearTimeout(me._resizeTimer);
+            me._resizeTimer = setTimeout(function () {
+                me.adjustPos();
+            }, 100);
+        },
+
+        /**
+         * 当触发展示的时候
+         * 
+         * @fires module:Dialog#beforeshow
+         * @private
+         */
+        onShow: function (e) {
+            var me = this;
+
+            /**
+             * @event module:Dialog#beforeshow
+             * @type {Object}
+             * @property {DOMEvent} event 事件源对象
+             */
+            me.fire('beforeshow', {
+                event: e
+            });
+            me.show();
+        },
+
+        /**
+         * 当触发隐藏的时候
+         * 
+         * @fires module:Dialog#beforehide
+         * @private
+         */
+        onHide: function (e) {
+
+            /**
+             * @event module:Dialog#beforehide
+             * @type {Object}
+             * @property {DOMEvent} event 事件源对象
+             */
+            this.fire('beforehide', {
+                event: e
+            });
+            this.hide();
+        }
+
     };
 
     /**
@@ -237,15 +411,6 @@ define(function (require) {
      *  }).render();
      */
     var Dialog = Control.extend( /** @lends module:Dialog.prototype */ {
-
-        /**
-         * 对话框的遮罩层管理类
-         *
-         * @name module:Dialog#Mask 遮罩层管理类
-         *
-         * @type {Object}
-         */
-        Mask: Mask,
 
         /**
          * 控件类型标识
@@ -320,24 +485,16 @@ define(function (require) {
 
             //模板框架
             tpl: ''
-                + '<div id="#{id}" ui-type="#{type}" '
-                + 'style="width:#{width};'
-                + 'position:#{position};top:#{top};z-index:#{level}" '
-                + 'class="#{dialogClass}">'
-                + '<div class="#{closeClass}">×</div>'
-                + '<div class="#{headerClass}">#{title}</div>'
-                + '<div class="#{bodyClass}">#{content}</div>'
-                + '<div class="#{footerClass}">#{footer}</div>'
+                + '<div id="#{id}" ui-type="#{type}" style="width:#{width};'
+                +  'position:#{position};top:#{top};z-index:#{level}" '
+                +  'class="#{dialogClass}"'
+                + '>'
+                +   '<div class="#{closeClass}">×</div>'
+                +   '<div class="#{headerClass}">#{title}</div>'
+                +   '<div class="#{bodyClass}">#{content}</div>'
+                +   '<div class="#{footerClass}">#{footer}</div>'
                 + '</div>'
         },
-
-        /**
-         * 需要绑定 this 的方法名，多个方法以半角逗号分开
-         *
-         * @type {string}
-         * @private
-         */
-        binds: 'onResize, onShow, onHide',
 
         /**
          * 控件初始化
@@ -347,123 +504,10 @@ define(function (require) {
          * @private
          */
         init: function (options) {
-            this.disabled = options.disabled;
+            this._disabled = options.disabled;
+            this.bindEvents(privates);
         },
 
-
-        /**
-         * 获得指定dialog模块的dom元素
-         *
-         * @param {string} name 模块名字
-         * @return {HTMLElement} 模块的DOM元素
-         * @private
-         */
-        getDom: function (name) {
-            return lib.q(this.options.prefix + '-' + name, this.main)[0];
-        },
-
-        /**
-         * 根据名字构建的css class名称
-         *
-         * @param {string} name 模块名字
-         * @return {string} 构建的class名称
-         * @private
-         */
-        getClass: function (name) {
-            name = name ? '-' + name : '';
-            var skin = this.options.skin;
-            return this.options.prefix + name + (skin ? ' ' + skin + name : '');
-        },
-
-        /**
-         * 渲染主框架
-         *
-         * @private
-         */
-        _renderDOM: function () {
-            var opt = this.options;
-            var data = {
-                id: this.id,
-                type: this.type,
-                width: opt.width,
-                top: opt.top,
-                position: opt.fixed ? 'fixed' : 'absolute',
-                level: opt.level,
-                dialogClass: this.getClass(),
-                closeClass: this.getClass('close'),
-                headerClass: this.getClass('header'),
-                bodyClass: this.getClass('body'),
-                footerClass: this.getClass('footer'),
-
-                title: opt.title,
-                content: opt.content,
-                footer: opt.footer
-            };
-
-            //渲染主框架内容
-            var html = format(this.options.tpl, data);
-            document.body.insertAdjacentHTML('beforeEnd', html);
-            this.main = lib.g(this.id);
-
-            //如果显示mask，则需要创建mask对象
-            if (this.options.showMask) {
-                this.mask = Mask.create({
-                    id: 'mask-' + this.id,
-                    className: this.getClass('mask'),
-                    styles: {
-                        zIndex: this.options.level - 1
-                    }
-                });
-            }
-        },
-
-        /**
-         * 绑定组件相关的dom事件
-         *
-         * @private
-         */
-        _bind: function () {
-            var me = this;
-            //绑定关闭按钮
-            lib.on(
-                this.getDom('close'),
-                'click',
-                me.closeHandler = function (e) {
-                    me.onHide(e);
-                }
-            );
-
-        },
-
-        /**
-         * 获得头部区域的dom元素
-         *
-         * @return {HTMLElement} 模块的DOM元素
-         * @private
-         */
-        getHeaderDom: function () {
-            return this.getDom('header');
-        },
-
-        /**
-         * 获得内容区域的dom元素
-         *
-         * @return {HTMLElement} 模块的DOM元素
-         * @private
-         */
-        getBodyDom: function () {
-            return this.getDom('body');
-        },
-
-        /**
-         * 获得尾部区域的dom元素
-         *
-         * @return {HTMLElement} 模块的DOM元素
-         * @private
-         */
-        getFooterDom: function () {
-            return this.getDom('footer');
-        },
 
         /**
          * 设置dialog的标题
@@ -472,7 +516,7 @@ define(function (require) {
          * @public
          */
         setTitle: function (content) {
-            this.getHeaderDom().innerHTML = content;
+            privates.getHeaderDom.call(this).innerHTML = content;
         },
 
         /**
@@ -482,7 +526,7 @@ define(function (require) {
          * @public
          */
         setContent: function (content) {
-            this.getBodyDom().innerHTML = content;
+            privates.getBodyDom.call(this).innerHTML = content;
         },
 
         /**
@@ -492,7 +536,7 @@ define(function (require) {
          * @public
          */
         setFooter: function (content) {
-            this.getFooterDom().innerHTML = content;
+            privates.getFooterDom.call(this).innerHTML = content;
         },
 
         /**
@@ -557,56 +601,6 @@ define(function (require) {
             this.mask && this.mask.repaint();
         },
 
-
-        /**
-         * 当视窗大小改变的时候，调整窗口位置
-         * @private
-         */
-        onResize: function () {
-            var me = this;
-            clearTimeout(me.resizeTimer);
-            me.resizeTimer = setTimeout(function () {
-                me.adjustPos();
-            }, 100);
-        },
-
-        /**
-         * 当触发展示的时候
-         * @fires module:Dialog#beforeshow
-         * @private
-         */
-        onShow: function (e) {
-            var me = this;
-
-            /**
-             * @event module:Dialog#beforeshow
-             * @type {Object}
-             * @property {DOMEvent} event 事件源对象
-             */
-            me.fire('beforeshow', {
-                event: e
-            });
-            me.show();
-        },
-
-        /**
-         * 当触发隐藏的时候
-         * @fires module:Dialog#beforehide
-         * @private
-         */
-        onHide: function (e) {
-
-            /**
-             * @event module:Dialog#beforehide
-             * @type {Object}
-             * @property {DOMEvent} event 事件源对象
-             */
-            this.fire('beforehide', {
-                event: e
-            });
-            this.hide();
-        },
-
         /**
          * 显示组件
          * @public
@@ -615,12 +609,12 @@ define(function (require) {
         show: function () {
             var me = this;
 
-            lib.on(window, 'resize', me.onResize);
+            lib.on(window, 'resize', this._bound.onResize);
 
             me.mask && me.mask.show();
 
             //移除hide状态的class
-            lib.each(me.getClass('hide').split(' '), function (className) {
+            lib.each(privates.getClass.call(this, 'hide').split(' '), function (className) {
                 lib.removeClass(me.main, className);
             });
 
@@ -646,7 +640,7 @@ define(function (require) {
             me.mask && me.mask.hide();
 
             //添加hide的class
-            lib.each(me.getClass('hide').split(' '), function (className) {
+            lib.each(privates.getClass.call(this, 'hide').split(' '), function (className) {
                 lib.addClass(me.main, className);
             });
 
@@ -657,8 +651,8 @@ define(function (require) {
             me.fire('hide');
 
             //注销resize
-            lib.un(window, 'resize', me.onResize);
-            clearTimeout(me.resizeTimer);
+            lib.un(window, 'resize', this._bound.onResize);
+            clearTimeout(me._resizeTimer);
             return me;
         },
 
@@ -678,15 +672,15 @@ define(function (require) {
                 }
 
                 this.id = guid();
-                this._renderDOM();
+                privates.renderDOM.call(this);
 
                 //设置渲染的内容
                 if (options.main) {
                     var ctl = lib.g(options.main);
-                    ctl && this.getBodyDom().appendChild(ctl);
+                    ctl && privates.getBodyDom.call(this).appendChild(ctl);
                 }
 
-                this._bind();
+                privates.bind.call(this);
                 this.rendered = true;
             }
             return this;
@@ -707,10 +701,11 @@ define(function (require) {
             this.fire('beforedispose');
 
             //注销dom事件
-            lib.un(this.getDom('close'), 'click', this.closeHandler);
-            lib.un(window, 'resize', this.onResize);
+            var bound = this._bound;
+            lib.un(privates.getDom.call(this, 'close'), 'click', bound.onClose);
+            lib.un(window, 'resize', bound.onResize);
 
-            clearTimeout(this.resizeTimer);
+            clearTimeout(this._resizeTimer);
 
             this.mask && this.mask.dispose();
 
@@ -721,6 +716,13 @@ define(function (require) {
 
         }
     });
+
+    /**
+     * 对话框的遮罩层管理类
+     *
+     * @type {Mask}
+     */
+    Dialog.Mask = Mask,
 
     /**
      * 获得guid的函数
