@@ -38,11 +38,12 @@ define(function (require) {
 
 
         it('setContent', function () {
-            expect(floatTip.getDom('content').innerHTML)
+            var contentElement = floatTip.query('ecl-ui-floattip-content')[0];
+            expect(contentElement.innerHTML)
             .toBe(floatTip.options.content);
 
             floatTip.setContent('XXXX');
-            expect(floatTip.getDom('content').innerHTML).toBe('XXXX');
+            expect(contentElement.innerHTML).toBe('XXXX');
 
         });
 
