@@ -22,8 +22,6 @@ define(function (require) {
 
     beforeEach(function () {
         slider = new SliderMock();
-
-        jasmine.Clock.useMock();
     });
 
 
@@ -69,23 +67,28 @@ define(function (require) {
             expect(slider.stage.scrollLeft).toBe(200);
         });
 
-        xit('滑动门动画测试:slide', function () {
+        it('滑动门动画测试:slide', function (done) {
             var anim = new Anim.anims['slide'](slider, slider.options.animOptions);
             anim.switchTo(1, 0);
 
-            jasmine.Clock.tick(2000);
-            expect(slider.stage.scrollLeft).toBe(200);
+
+            setTimeout(function () {
+                expect(slider.stage.scrollLeft).toBe(200);
+                done();
+            }, 230);
         });
 
-        xit('滑动门动画测试:slide vertical', function () {
+        it('滑动门动画测试:slide vertical', function (done) {
             var anim = new Anim.anims['slide'](
             slider, lib.extend(slider.options.animOptions, {
                 direction: 'vertical'
             }));
             anim.switchTo(1, 0);
 
-            jasmine.Clock.tick(2000);
-            expect(slider.stage.scrollTop).toBe(200);
+            setTimeout(function () {
+                expect(slider.stage.scrollTop).toBe(200);
+                done();
+            }, 230);
         });
 
         it('opacity动画测试:opacity', function () {
