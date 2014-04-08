@@ -120,12 +120,37 @@ define(function (require) {
             expect(scrollbar.panel.scrollTop).toBe(0);
 
             scrollbar.disable();
+            expect(lib.hasClass(scrollbar.main, 'ecl-ui-scrollbar-disable')).toBe(true);
             scrollbar.scrollTo(0.5);
             //disable 不影响接口调用
             expect(scrollbar.thumb.style.top)
                 .toBe(Math.round(trackSize / 2) + 'px');
             expect(scrollbar.panel.scrollTop).toBe(Math.round(scrollSize / 2));
 
+            scrollbar.enable();
+            expect(lib.hasClass(scrollbar.main, 'ecl-ui-scrollbar-disable')).toBe(false);
+
+        });
+
+        it('over & out', function () {
+            expect(lib.hasClass(scrollbar.main, 'ecl-ui-scrollbar-over')).toBe(false);
+            lib.fire(scrollbar.main, 'mouseenter');
+            expect(lib.hasClass(scrollbar.main, 'ecl-ui-scrollbar-over')).toBe(true);
+            
+            lib.fire(scrollbar.main, 'mouseleave');
+            expect(lib.hasClass(scrollbar.main, 'ecl-ui-scrollbar-over')).toBe(false);           
+        });
+
+        it('事件', function () {
+            var wheelEvent = lib.browser.firefox ? 'DOMMouseScroll' : 'mousewheel';
+            lib.fire(scrollbar.thumb, 'mousedown');
+            lib.fire(scrollbar.track, 'mouseup');
+            lib.fire(scrollbar.panel, wheelEvent);
+
+            lib.fire(document, 'mousemove');
+            lib.fire(document, 'mouseup');
+
+            expect(1).toBe(1);
         });
 
     });
