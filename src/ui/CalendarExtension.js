@@ -436,8 +436,9 @@ define(function (require) {
          * @private
          */
         onHide: function (e) {
-            this.year && this.year.hide();
-            this.month && this.month.hide();
+            lib.forIn(this.menus, function (menu) {
+                menu.hide();
+            });
         }        
     };
 
@@ -506,6 +507,26 @@ define(function (require) {
             calendar.on('hide', bound.onHide);
 
             return value;
+        },
+
+        /**
+         * 销毁控件
+         * 
+         * @public
+         */
+        dispose: function () {
+            lib.forIn(this.menus, function (menu) {
+                menu.dispose();
+            });
+
+            var main = this.main;
+            var bound = this._bound;
+            lib.un(main, 'mouseover', bound.onOver);
+            lib.un(main, 'mouseout', bound.onOut);
+            lib.un(main, 'click', bound.onClick);
+
+            this.calendar.un('hide', bound.onHide);
+            this.calendar.dispose();
         }
 
     });
