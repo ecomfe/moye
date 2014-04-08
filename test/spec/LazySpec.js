@@ -83,10 +83,10 @@ define(function (require) {
             Lazy.add(main, callback);
 
             main.scrollIntoView();
-            window.scrollTo(0, 10);
+            lib.fire(window, 'scroll');
 
             jasmine.Clock.tick(1000);
-            // expect(callback).toHaveBeenCalled();
+            expect(callback).toHaveBeenCalled();
         });
 
     });
