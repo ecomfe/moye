@@ -66,8 +66,7 @@ define(function (require) {
             this.mouseStart = this.xAxis
                 ? (e.pageX || e.clientX)
                 : (e.pageY || e.clientY);
-            this.thumbStart = parseInt(
-            this.thumb.style[this.xAxis ? 'left' : 'top'], 10) || 0;
+            this.thumbStart = parseInt(this.thumb.style[this.xAxis ? 'left' : 'top'], 10) || 0;
 
             lib.on(document, 'mousemove', this.onMousemove);
             lib.on(document, 'mouseup', this.onMouseup);
@@ -90,8 +89,7 @@ define(function (require) {
                     )
                     - this.mouseStart;
 
-                this.thumbPos = Math.min(
-                this.trackSize, Math.max(0, this.thumbStart + moveLength));
+                this.thumbPos = Math.min(this.trackSize, Math.max(0, this.thumbStart + moveLength));
                 privates.setScrollPercent.call(this, this.thumbPos / this.trackSize);
             }
         },
