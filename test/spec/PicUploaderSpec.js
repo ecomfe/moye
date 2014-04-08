@@ -48,13 +48,11 @@ define(function (require) {
 
             picUploader.disable();
 
-            expect(picUploader.options.main.className)
-                .toBe('ecl-ui-picuploader-disabled');
+            expect(picUploader.options.main.className).toBe('ecl-ui-picuploader-disabled');
 
             picUploader.enable();
 
-            expect(picUploader.options.main.className)
-                .toBe('');
+            expect(picUploader.options.main.className).toBe('');
         });
 
         it('event:remove', function () {
