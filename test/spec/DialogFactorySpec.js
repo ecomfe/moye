@@ -36,6 +36,7 @@ define(function (require) {
                 onCancel.apply(this);
             }
         });
+
     });
 
 
@@ -49,7 +50,48 @@ define(function (require) {
 
     describe('基本接口', function () {
 
-        it('event:confirm', function () {
+        it('create alert', function () {
+
+            var alertDialog = DialogFactory.alert({
+                content: '内容',
+                footer: '底部',
+                width: '600px',
+                title: '标题',
+                top: '50px',
+                left: '',
+                fixed: 1,
+                showMask: 1,
+                leve: 10
+            });
+
+            alertDialog.dispose();
+            expect(!alertDialog.main).toBeTruthy();
+        });
+
+
+        it('create confirm', function () {
+
+            var confirmDialog = DialogFactory.confirm({
+                content: '内容',
+                footer: '底部',
+                width: '600px',
+                title: '标题',
+                top: '50px',
+                left: '',
+                fixed: 1,
+                showMask: 1,
+                leve: 11
+            });
+
+            confirmDialog.dispose();
+            expect(!confirmDialog.main).toBeTruthy();
+
+        });
+
+
+        it('event:confirm,alert dialog', function () {
+
+            confirmCount = 0;
 
             alertDialog.on('confirm', function () {
                 confirmCount++;
@@ -72,10 +114,34 @@ define(function (require) {
                 lib.q('ecl-ui-dialog-confirm-btn', alertDialog.main)[0],
                 'click'
             );
+        });
 
+        it('event:confirm,confirm dialog', function () {
+
+            confirmCount = 0;
+
+            confirmDialog.on('confirm', function () {
+                confirmCount++;
+            });
+
+            confirmDialog.on('dispose', function () {
+                expect(confirmCount).toBe(1);
+            });
+
+            confirmDialog.show();
+
+            expect(lib.q('ecl-ui-dialog-confirm-btn', confirmDialog.main)[0])
+                .toBeTruthy();
+
+            lib.fire(
+                lib.q('ecl-ui-dialog-confirm-btn', confirmDialog.main)[0],
+                'click'
+            );
         });
 
         it('event:cancel', function () {
+
+            cancelCount = 0;
 
             confirmDialog.on('cancel', function () {
                 cancelCount++;

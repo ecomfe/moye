@@ -252,7 +252,9 @@ define(function (require) {
          * @property {Number} options.animOptions.interval 每次动画时间间隔
          * @property {string} options.animOptions.direction 滑动门的滚动方向
          * `horizontal` or `vertical`
-         *
+         * 
+         * @property {boolean} options.animOptions.rollCycle 是否用循环滚模式 
+         *      默认滚动到头会直接滚回去，循环滚会平滑一点
          *
          * @private
          */
@@ -304,7 +306,10 @@ define(function (require) {
                 interval: 200,
 
                 //滑动门的滚动方向
-                direction: ''
+                direction: '',
+
+                //是否用循环滚模式
+                rollCycle: ''
             }
         },
 
@@ -312,7 +317,7 @@ define(function (require) {
          * 控件初始化
          *
          * @param {Object} options 控件配置项
-         * @see module:Pager#options
+         * @see module:Slider#options
          * @private
          */
         init: function (options) {

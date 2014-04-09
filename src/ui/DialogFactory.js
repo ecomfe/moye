@@ -48,7 +48,7 @@ define(function (require) {
 
         //设置取消按钮
         if (opts.cancel) {
-            var id = Dialog.guid('btn');
+            var id = 'btn-' + Math.random();
             var cls = getClass(opts, 'cancel-btn');
             footer += '<a id="' + id + '" href="javascript:;"'
                 + ' class="' + cls + '">'
@@ -60,7 +60,7 @@ define(function (require) {
 
         //设置确定按钮
         if (opts.confirm) {
-            var id = Dialog.guid('btn');
+            var id = 'btn-'  + Math.random();
             var cls = getClass(opts, 'confirm-btn');
             footer = '<button id="' + id + '"' + ' class="' + cls + '">'
                 + (opts.confirmTitle || '确定')

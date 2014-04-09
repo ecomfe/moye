@@ -12,25 +12,6 @@ define(function (require) {
     var Control = require('./Control');
 
     /**
-     * GUID计数
-     *
-     * @type {number}
-     */
-    var counter = 0;
-
-    /**
-     * 获得GUID的函数
-     * @param {string} tag GUID标签
-     * @return {string} 一个不重复的guid字符串
-     *
-     * @inner
-     */
-    function guid(tag) {
-        return 'ui-float-tip-' + (tag ? tag + '-' : '') + (counter++);
-    }
-
-
-    /**
      * 私有函数或方法
      * 
      * @type {Object}
@@ -72,28 +53,33 @@ define(function (require) {
         create: function () {
             var opt = this.options;
             var cls = {
-                id: this.id,
                 content: opt.content,
-                type: this.type,
-                width: opt.width,
-                top: opt.top,
-                position: opt.fixed ? 'fixed' : 'absolute',
-                tipClass: privates.getClass.call(this) + ' ' + privates.getClass.call(this, 'hide'),
                 iconClass: privates.getClass.call(this, 'icon'),
                 contentClass: privates.getClass.call(this, 'content')
             };
 
-            //获取HTML
-            var html = this.options.tpl.replace(
+            //渲染主框架内容
+            var main = this.createElement('div', {
+                'class': privates.getClass.call(this)
+            });
+
+            lib.setStyles(main, {
+                width: opt.width,
+                left: opt.left,
+                top: opt.top,
+                position: opt.fixed ? 'fixed' : 'absolute',
+                zIndex: opt.level
+            });
+
+            main.innerHTML = this.options.tpl.replace(
                 /#\{([\w-.]+)\}/g,
                 function ($0, $1) {
                     return cls[$1] || '';
                 }
             );
 
-            //插入创建的元素，
-            document.body.insertAdjacentHTML('beforeend', html);
-            this.main = lib.g(this.id);
+            document.body.appendChild(main);
+            this.main = main;
 
         }        
     };
@@ -163,13 +149,8 @@ define(function (require) {
 
             //模板框架
             tpl: ''
-                + '<div id="#{id}" type="#{type}"'
-                +   ' class="#{tipClass}"'
-                +   ' style="width:#{width};position:#{position};'
-                +   'top:#{top};z-index:#{level}">'
                 +   '<i class="#{iconClass}"></i>'
                 +   '<div class="#{contentClass}">#{content}</div>'
-                + '</div>'
         },
 
 
@@ -196,7 +177,6 @@ define(function (require) {
                     options.fixed = 0;
                 }
 
-                this.id = guid();
                 privates.create.call(this);
                 this.rendered = true;
             }

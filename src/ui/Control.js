@@ -111,6 +111,24 @@ define(function (require) {
         query: function (className) {
             return lib.q(className, this.main);
         },
+        
+        /**
+         * 创建一个元素，并设置属性
+         * 
+         * @param {string} tagName 标签名
+         * @param {Object=} properties 标签属性
+         * @return {HTMLElement} 创建后的元素
+         */
+        createElement: function (tagName, properties) {
+            tagName = tagName || 'div';
+            var element = document.createElement(tagName);
+
+            for (var prop in properties) {
+                element.setAttribute(prop, properties[prop]);
+            }
+
+            return element;
+        },
 
         /**
          * 设置控件状态为禁用

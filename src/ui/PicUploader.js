@@ -13,25 +13,6 @@ define(function (require) {
     var Control = require('./Control');
 
     /**
-     * GUID计数
-     *
-     * @type {number}
-     */
-    var counter = 0;
-
-    /**
-     * 获得GUID的函数
-     * @param {string} tag GUID标签
-     * @return {string} 一个不重复的guid字符串
-     *
-     * @inner
-     */
-
-    function guid(tag) {
-        return 'ui-pic-uploader-' + (tag ? tag + '-' : '') + (counter++);
-    }
-
-    /**
      * 检查浏览器是否支持FileReader
      *
      * @type {boolean}
@@ -291,30 +272,31 @@ define(function (require) {
          * @private
          */
         create: function () {
-            var id = guid('picker');
             var cls = {
-                id: id,
-                pickerClass: privates.getClass.call(this, 'picker'),
                 closeClass: privates.getClass.call(this, 'close'),
                 picClass: privates.getClass.call(this, 'pic'),
                 titleClass: privates.getClass.call(this, 'title'),
                 fileClass: privates.getClass.call(this, 'file'),
-                curClass: privates.getClass.call(this, 'cur'),
                 wrapperClass: privates.getClass.call(this, 'wrapper')
             };
 
-            //获取HTML
-            var html = this.options.tpl.replace(
+            //渲染主框架内容
+            var picker = this.createElement('div', {
+                'class': privates.getClass.call(this, 'picker') 
+                        + ' ' 
+                        + privates.getClass.call(this, 'cur')
+            });
+
+            this.options.main.appendChild(picker);
+
+            picker.innerHTML = this.options.tpl.replace(
                 /#\{([\w-.]+)\}/g,
                 function ($0, $1) {
                     return cls[$1] || '';
                 }
             );
 
-            //插入创建的元素，
-            this.options.main.insertAdjacentHTML('beforeend', html);
-
-            privates.bindPicker.call(this, this.curPicker = id);
+            privates.bindPicker.call(this, this.curPicker = picker);
         }
 
     };
@@ -375,14 +357,12 @@ define(function (require) {
 
             //模板框架
             tpl: ''
-                + '<div id="#{id}" class="#{pickerClass} #{curClass}">'
                 +   '<div class="#{closeClass}" title="关闭">×</div>'
                 +   '<div class="#{picClass}"></div>'
                 +   '<div class="#{titleClass}">点击上传</div>'
                 +   '<a href="javascript:;" class="#{wrapperClass}">'
                 +       '<input type="file" class="#{fileClass}">'
                 +   '</a>'
-                + '</div>'
         },
 
 
@@ -424,7 +404,6 @@ define(function (require) {
          */
         render: function () {
             if (!this.rendered) {
-                this.id = guid();
                 privates.create.call(this);
                 this.rendered = true;
             }

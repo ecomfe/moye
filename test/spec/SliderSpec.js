@@ -51,7 +51,10 @@ define(function (require) {
 
         slider = new Slider({
             prefix: 'ecl-ui-slider',
-            main: lib.g('ecl-ui-slider-1')
+            main: lib.g('ecl-ui-slider-1'),
+            animOptions: {
+                rollCycle: true
+            }
         });
         slider.render();
 
@@ -145,6 +148,35 @@ define(function (require) {
                 expect(e.index).not.toBe(null);
                 expect(e.lastIndex).not.toBe(null);
             });
+        });
+
+        it('prev click', function (done) {
+            var prevBtn = lib.q('ecl-ui-slider-prev', slider.main)[0];
+            slider.go(1);
+            lib.fire(prevBtn, 'click');
+            setTimeout(function () {
+                expect(slider.index).toBe(0);
+                done();
+            }, 60);
+        });
+        it('next click', function (done) {
+
+            var nextBtn = lib.q('ecl-ui-slider-next', slider.main)[0];
+            slider.go(0);
+            lib.fire(nextBtn, 'click');
+            setTimeout(function () {
+                expect(slider.index).toBe(0);
+                done();
+            }, 60);
+        });
+
+        it('index click', function (done) {
+            var indexBtns = lib.q('ecl-ui-slider-index', slider.main)[0].children;
+            lib.fire(indexBtns[0], 'click');
+            setTimeout(function () {
+                expect(slider.index).toBe(0);
+                done();
+            }, 60);
         });
 
         it('测试default动画', function () {

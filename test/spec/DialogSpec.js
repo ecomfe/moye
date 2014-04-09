@@ -26,13 +26,60 @@ define(function (require) {
         dialog.dispose();
     });
 
+    describe('MASK相关接口', function () {
+        var mask = Dialog.Mask.create({
+            className: 'ecl-ui-dialog-mask',
+            styles: {
+                zIndex: 9
+            }
+        });
+
+        it('mask.hide', function () {
+            mask.hide();
+            expect(mask.mask.style.display).toBe('none');
+        });
+
+        it('mask.show', function () {
+            mask.show();
+            expect(mask.mask.style.display === 'none').toBeFalsy();
+        });
+
+        it('mask.repaint', function () {
+            mask.repaint();
+
+            var width = Math.max(
+            document.documentElement.clientWidth, Math.max(
+            document.body.scrollWidth, document.documentElement.scrollWidth));
+
+            expect(mask.mask.style.width).toBe(width + 'px');
+        });
+
+        it('mask.dispose', function () {
+            mask.dispose();
+            expect(!!mask.mask).toBeTruthy();
+            mask = null;
+        });
+
+    });
+
     describe('基本接口', function () {
 
         it('控件类型', function () {
-
             expect(dialog.type).toBe('Dialog');
-
         });
+
+        it('event:show', function () {
+            dialog.on('show', function () {
+
+                expect(dialog.main).toBeTruthy();
+
+                expect(
+                lib.hasClass(
+                dialog.main, 'ecl-ui-dialog-hide')).toBeFalsy();
+            });
+            dialog.show();
+        });
+
 
         it('event:show', function () {
             dialog.on('show', function () {

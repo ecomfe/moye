@@ -12,25 +12,6 @@ define(function (require) {
     var Control = require('./Control');
 
     /**
-     * GUID计数
-     *
-     * @type {number}
-     */
-    var counter = 0;
-
-    /**
-     * 获得GUID的函数
-     * @param {string} tag GUID标签
-     * @return {string} 一个不重复的guid字符串
-     *
-     * @inner
-     */
-
-    function guid(tag) {
-        return 'ui-dlg-' + (tag ? tag + '-' : '') + (counter++);
-    }
-
-    /**
      * 移除当前的元素
      *
      * @param {HTMLDomElement} domElement 当前元素
@@ -246,13 +227,6 @@ define(function (require) {
         renderDOM: function () {
             var opt = this.options;
             var data = {
-                id: this.id,
-                type: this.type,
-                width: opt.width,
-                top: opt.top,
-                position: opt.fixed ? 'fixed' : 'absolute',
-                level: opt.level,
-                dialogClass: privates.getClass.call(this),
                 closeClass: privates.getClass.call(this, 'close'),
                 headerClass: privates.getClass.call(this, 'header'),
                 bodyClass: privates.getClass.call(this, 'body'),
@@ -264,14 +238,25 @@ define(function (require) {
             };
 
             //渲染主框架内容
-            var html = format(this.options.tpl, data);
-            document.body.insertAdjacentHTML('beforeEnd', html);
-            this.main = lib.g(this.id);
+            var main = this.createElement('div', {
+                'class': privates.getClass.call(this)
+            });
+
+            lib.setStyles(main, {
+                width: opt.width,
+                top: opt.top,
+                position: opt.fixed ? 'fixed' : 'absolute',
+                zIndex: opt.level
+            });
+
+            main.innerHTML = format(this.options.tpl, data);
+
+            document.body.appendChild(main);
+            this.main = main;
 
             //如果显示mask，则需要创建mask对象
             if (this.options.showMask) {
                 this.mask = Mask.create({
-                    id: 'mask-' + this.id,
                     className: privates.getClass.call(this, 'mask'),
                     styles: {
                         zIndex: this.options.level - 1
@@ -485,15 +470,10 @@ define(function (require) {
 
             //模板框架
             tpl: ''
-                + '<div id="#{id}" ui-type="#{type}" style="width:#{width};'
-                +  'position:#{position};top:#{top};z-index:#{level}" '
-                +  'class="#{dialogClass}"'
-                + '>'
-                +   '<div class="#{closeClass}">×</div>'
-                +   '<div class="#{headerClass}">#{title}</div>'
-                +   '<div class="#{bodyClass}">#{content}</div>'
-                +   '<div class="#{footerClass}">#{footer}</div>'
-                + '</div>'
+                + '<div class="#{closeClass}">×</div>'
+                + '<div class="#{headerClass}">#{title}</div>'
+                + '<div class="#{bodyClass}">#{content}</div>'
+                + '<div class="#{footerClass}">#{footer}</div>'
         },
 
         /**
@@ -671,7 +651,6 @@ define(function (require) {
                     options.fixed = 0;
                 }
 
-                this.id = guid();
                 privates.renderDOM.call(this);
 
                 //设置渲染的内容
@@ -722,16 +701,7 @@ define(function (require) {
      *
      * @type {Mask}
      */
-    Dialog.Mask = Mask,
-
-    /**
-     * 获得guid的函数
-     * @see guid
-     *
-     * @type {string}
-     * @static
-     */
-    Dialog.guid = guid;
+    Dialog.Mask = Mask;
 
     return Dialog;
 });
