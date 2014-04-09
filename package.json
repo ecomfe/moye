@@ -1,6 +1,6 @@
 {
   "name": "Moye",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "description": "知心UI组件库",
   "devDependencies": {
     "grunt": "~0.4.0",
