@@ -170,17 +170,6 @@ module.exports = function (grunt) {
             }
         },
 
-        karma: {
-            options: {
-                configFile: 'test/config.js',
-                reporters: 'dots',
-                singleRun: true
-            },
-            dev: {
-                browsers: ['PhantomJS']
-            }
-        },
-
         'gh-pages': {
             options: {
                 base: './',
