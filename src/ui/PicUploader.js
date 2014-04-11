@@ -282,7 +282,7 @@ define(function (require) {
 
             //渲染主框架内容
             var picker = this.createElement('div', {
-                'class': privates.getClass.call(this, 'picker') 
+                'className': privates.getClass.call(this, 'picker') 
                         + ' ' 
                         + privates.getClass.call(this, 'cur')
             });

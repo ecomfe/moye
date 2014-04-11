@@ -60,7 +60,7 @@ define(function (require) {
 
             //渲染主框架内容
             var main = this.createElement('div', {
-                'class': privates.getClass.call(this)
+                'className': privates.getClass.call(this)
             });
 
             lib.setStyles(main, {
