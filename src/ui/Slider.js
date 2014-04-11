@@ -177,7 +177,7 @@ define(function (require) {
                 elements[this.index], this.getClass('index-selected'));
             }
 
-        },
+        }
 
 
     };

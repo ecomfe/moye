@@ -68,8 +68,8 @@ define(function (require) {
                 : (e.pageY || e.clientY);
             this.thumbStart = parseInt(this.thumb.style[this.xAxis ? 'left' : 'top'], 10) || 0;
 
-            lib.on(document, 'mousemove', this.onMousemove);
-            lib.on(document, 'mouseup', this.onMouseup);
+            lib.on(document, 'mousemove', this._bound.onMousemove);
+            lib.on(document, 'mouseup', this._bound.onMouseup);
         },
 
         /**
@@ -103,8 +103,8 @@ define(function (require) {
         onMouseup: function () {
             setTextNoSelect(false, privates.getClass.call(this, 'noselect'));
 
-            lib.un(document, 'mousemove', this.onMousemove);
-            lib.un(document, 'mouseup', this.onMouseup);
+            lib.un(document, 'mousemove', this._bound.onMousemove);
+            lib.un(document, 'mouseup', this._bound.onMouseup);
         },
 
         /**
