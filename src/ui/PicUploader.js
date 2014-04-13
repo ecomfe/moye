@@ -218,11 +218,11 @@ define(function (require) {
          * 移出一个已选择的图片框
          *
          * @private
-         * @param {string|HTMLElement} id 选择框元素
+         * @param {HTMLElement} picker 选择框元素
          * @fires module:PicUploader#remove
          */
-        removePicker: function (id) {
-            var picker = lib.g(id);
+        removePicker: function (picker) {
+
             var fileName = privates.getDom.call(this, 'file', picker).value;
             var bound = this._bound;
 
@@ -286,9 +286,7 @@ define(function (require) {
                         + ' ' 
                         + privates.getClass.call(this, 'cur')
             });
-
-            this.options.main.appendChild(picker);
-
+            
             picker.innerHTML = this.options.tpl.replace(
                 /#\{([\w-.]+)\}/g,
                 function ($0, $1) {
@@ -296,6 +294,7 @@ define(function (require) {
                 }
             );
 
+            this.options.main.appendChild(picker);
             privates.bindPicker.call(this, this.curPicker = picker);
         }
 
@@ -452,7 +451,7 @@ define(function (require) {
          */
         removeAt: function (index) {
             var list = lib.q(privates.getClass.call(this, 'picker'), this.options.main);
-            if (list[index].id !== this.curPicker) {
+            if (list[index] !== this.curPicker) {
                 privates.removePicker.call(this, list[index]);
             }
             return this;
