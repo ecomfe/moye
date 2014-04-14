@@ -133,7 +133,7 @@ define(function (require) {
             clearTimeout(this._timer);
             this._timer = setTimeout(this._bound.compute, this.delay);
             this.scrolled = true;
-        },
+        }
     };
 
     /**

@@ -162,11 +162,9 @@ define(function (require) {
             var removeEventCount = 0;
             picUploader.on('remove', function () {
                 removeEventCount++;
-            });
-
-            picUploader.on('dispose', function () {
                 expect(removeEventCount).toBe(1);
             });
+
             picUploader.removeAt(0);
             
         });

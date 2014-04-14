@@ -134,6 +134,8 @@ define(function (require) {
                     lib.on(document, 'click', bound.onDocClick);
                 }
             }
+            
+            this.current = target;
 
             /**
              * @event module:Tip#beforeShow
@@ -685,6 +687,7 @@ define(function (require) {
             }
 
             privates.computePosition.call(this);
+            this._visible = true;
 
             /**
              * @event module:Tip#show
@@ -720,6 +723,7 @@ define(function (require) {
 
             var arrow = this.elements.arrow;
             main.style.left = - main.offsetWidth - arrow.offsetWidth + 'px';
+            this._visible = false;
 
             this.current = null;
             lib.un(window, 'resize', bound.onResize);
@@ -738,7 +742,7 @@ define(function (require) {
          */
         isVisible: function () {
 
-            return !!this.current;
+            return !!this._visible;
 
         },
 
@@ -801,6 +805,7 @@ define(function (require) {
                 lib.un(document, 'click', bound.onDocClick);
             }
 
+            this.current = null;
             this.parent('dispose');
         }
 
