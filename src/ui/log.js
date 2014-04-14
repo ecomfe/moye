@@ -156,7 +156,7 @@ define(function (require) {
         var tag = from.tagName.toLowerCase();
 
         if (!type
-                && /^a|img|input|button|select|datalist|textarea$/.test(tag)
+                && /^(a|img|input|button|select|datalist|textarea)$/.test(tag)
             ) {
             type = {a: 'link'}[tag] || 'input';
 
