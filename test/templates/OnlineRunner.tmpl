@@ -1,0 +1,62 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Jasmine Spec Runner</title>
+<% css.forEach(function(style){ %>
+  <link rel="stylesheet" type="text/css" href="<%= style %>">
+  <script type="text/javascript" charset="utf-8">
+	  var A = {
+		insertCss: function(cssText){
+			var id = 'moye-ui-style',
+				attr = 'data-for', 
+				tag = 'moye',
+				style = document.getElementById(id);
+			if (!style) {
+				style = document.createElement('style');
+				style.setAttribute('type', 'text/css');
+				style.setAttribute(attr, tag);
+				style.id = id;
+				document.getElementsByTagName('head')[0].appendChild(style);
+			}
+			try {
+				var node = document.createTextNode(cssText);  
+				style.appendChild(node); 
+			} catch ( e ) {
+				if (style.styleSheet) {
+					style.styleSheet.cssText += cssText;
+				}
+			}
+	  }};
+  </script>
+  <script src="http://s1.bdstatic.com/r/www/cache/static/jquery/jquery-1.10.2.min_f2fb5194.js"></script>
+  <script src="http://s1.bdstatic.com/r/www/cache/ecom/esl/1-8-0/esl.js"></script>
+  <script type="text/javascript" charset="utf-8">
+	  require.config({
+		paths: {
+			'ui' : './asset/online/ui',
+			'ui/lib': './asset/online/ui/Control',
+			'test' : './test'
+		}
+	  });
+  </script>
+<% }) %>
+<% with (scripts) { %>
+  <% [].concat(polyfills, jasmine, vendor, helpers, reporters, start).forEach(function(script){ %>
+  <script src="<%= script %>"></script>
+  <% }) %>
+  <script>
+  require([
+  <% [].concat(src, specs).forEach(function(script){ %>
+  "<%= script.replace('.js', '').replace('asset/online/', '') %>",
+  <% }) %>
+  ]);
+  </script>
+<% }; %>
+</head>
+<body>
+<script type="text/javascript" charset="utf-8">
+	require([]);
+</script>
+</body>
+</html>
