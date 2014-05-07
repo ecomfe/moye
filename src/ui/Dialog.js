@@ -693,6 +693,29 @@ define(function (require) {
         },
 
         /**
+         * 调整Dialog大小
+         * 
+         * @param {Number} width 宽度
+         */
+        setWidth: function (width) {
+
+            var me = this;
+
+            if (!me.rendered || width < 1) {
+                return me;
+            }
+
+            lib.setStyles(me.main, {
+                width: width + 'px'
+            });
+
+            me.adjustPos();
+
+            return me;
+
+        },
+
+        /**
          * 销毁，注销事件，解除引用
          *
          * @public
