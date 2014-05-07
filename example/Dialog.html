@@ -77,7 +77,29 @@
             leve: 10
         });
 
+        newdlg.on('hide', function () {
+          clearInterval(timer);
+        });
+
         newdlg.show();
+
+        var width = 600;
+        var dir = -1;
+
+        var timer = setInterval(function () {
+
+          if (dir < 0 && width < 300) {
+            dir = 1;
+          }
+          else if (dir > 0 && width > 600) {
+            dir = -1;
+          }
+
+          width += dir * width * 0.01;
+          newdlg.setWidth(width);
+
+        }, 10);
+
       });
 
 
