@@ -9,6 +9,7 @@
 define(function (require) {
 
     var lib = require('./lib');
+    var config = require('./config');
     var Control = require('./Control');
     var Popup = require('./Popup');
 
@@ -103,7 +104,7 @@ define(function (require) {
             main: '',
 
             // 控件class前缀，同时将作为main的class之一
-            prefix: 'ecl-ui-cal',
+            prefix: config.prefix + '-cal',
 
             // 计算日历显示时相对位置的目标对象
             target: '',

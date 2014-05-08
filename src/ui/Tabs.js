@@ -9,6 +9,7 @@
 define(function (require) {
 
     var lib = require('./lib');
+    var config = require('./config');
     var Control = require('./Control');
     
 
@@ -50,7 +51,7 @@ define(function (require) {
             main: '',
 
             // 控件class前缀，同时将作为main的class之一
-            prefix: 'ecl-ui-tabs',
+            prefix: config.prefix + '-tabs',
 
             // 默认选中项
             selectedIndex: 0

@@ -1,4 +1,6 @@
 define(function (require) {
+    var config = require('ui/config');
+
     var lib = require('ui/lib');
     var Pager = require('ui/Pager');
     
@@ -9,13 +11,13 @@ define(function (require) {
         document.body.insertAdjacentHTML(
             'beforeEnd', ''
                 + '<div id="pagerContainer">'
-                +   '<div class="ecl-ui-pager c-clearfix"></div>'
+                +   '<div class="' + config.prefix + '-pager c-clearfix"></div>'
                 + '</div>'
         );
 
         pager = new Pager({
-            prefix: 'ecl-ui-pager',
-            main: lib.q('ecl-ui-pager')[0],
+            prefix: config.prefix + '-pager',
+            main: lib.q(config.prefix + '-pager')[0],
             page: 0,
             first: first,
             total: 18

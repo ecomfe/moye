@@ -1,4 +1,6 @@
 define(function (require) {
+    var config = require('ui/config');
+
     var lib = require('ui/lib');
     var Slider = require('ui/Slider');
 
@@ -9,13 +11,14 @@ define(function (require) {
             'beforeEnd', ''
                 + '<div id="slider-container">'
 
-                +   '<div id="ecl-ui-slider-1" class="ecl-ui-slider">'
-                +     '<i class="ecl-ui-slider-prev">&lt;</i>'
-                +     '<i class="ecl-ui-slider-next">&gt;</i>'
-                +     '<div class="ecl-ui-slider-index">'
+                +   '<div id="' + config.prefix + '-slider-1" class="'
+                +                           config.prefix + '-slider">'
+                +     '<i class="' + config.prefix + '-slider-prev">&lt;</i>'
+                +     '<i class="' + config.prefix + '-slider-next">&gt;</i>'
+                +     '<div class="' + config.prefix + '-slider-index">'
                 +       '<i></i><i></i><i></i><i></i>'
                 +     '</div>'
-                +     '<div class="ecl-ui-slider-stage">'
+                +     '<div class="' + config.prefix + '-slider-stage">'
                 +       '<img src="http://pic.hefei.cc/newcms'
                 +         '/2012/03/14/13316929284f6005808aa20.jpg">'
                 +       '<img src="http://pic.hefei.cc/newcms'
@@ -27,14 +30,15 @@ define(function (require) {
                 +     '</div>'
                 +   '</div>'
 
-                +   '<div id="ecl-ui-slider-2" class="ecl-ui-slider">'
-                +     '<i class="ecl-ui-slider-prev">&lt;</i>'
-                +     '<i class="ecl-ui-slider-next">&gt;</i>'
-                +     '<div class="ecl-ui-slider-index">'
+                +   '<div id="' + config.prefix + '-slider-2" class="' 
+                +                               config.prefix + '-slider">'
+                +     '<i class="' + config.prefix + '-slider-prev">&lt;</i>'
+                +     '<i class="' + config.prefix + '-slider-next">&gt;</i>'
+                +     '<div class="' + config.prefix + '-slider-index">'
                 +       '<i></i><i></i><i></i><i></i>'
                 +     '</div>'
-                +     '<div class="ecl-ui-slider-stage '
-                +           'ecl-ui-slider-stage-abs">'
+                +     '<div class="' + config.prefix + '-slider-stage '
+                +           config.prefix + '-slider-stage-abs">'
                 +       '<img src="http://pic.hefei.cc/newcms'
                 +         '/2012/03/14/13316929284f6005808aa20.jpg">'
                 +       '<img src="http://pic.hefei.cc/newcms'
@@ -50,8 +54,8 @@ define(function (require) {
         );
 
         slider = new Slider({
-            prefix: 'ecl-ui-slider',
-            main: lib.g('ecl-ui-slider-1')
+            prefix: config.prefix + '-slider',
+            main: lib.g(config.prefix + '-slider-1')
         });
         slider.render();
 
@@ -149,8 +153,8 @@ define(function (require) {
 
         it('测试default动画', function () {
             var defaultSlider = new Slider({
-                prefix: 'ecl-ui-slider',
-                main: lib.g('ecl-ui-slider-2'),
+                prefix: config.prefix + '-slider',
+                main: lib.g(config.prefix + '-slider-2'),
                 anim: 'no'
             });
             defaultSlider.render();
@@ -162,8 +166,8 @@ define(function (require) {
 
         it('测试opacity动画', function () {
             var opacitySlider = new Slider({
-                prefix: 'ecl-ui-slider',
-                main: lib.g('ecl-ui-slider-2'),
+                prefix: config.prefix + '-slider',
+                main: lib.g(config.prefix + '-slider-2'),
                 anim: 'opacity'
             });
             opacitySlider.render();

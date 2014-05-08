@@ -10,6 +10,7 @@
 define(function (require) {
 
     var lib = require('./lib');
+    var config = require('./config');
     var Control = require('./Control');
 
     var DOM = lib.dom;
@@ -121,7 +122,7 @@ define(function (require) {
              * @type {string}
              * @defaultvalue
              */
-            prefix: 'ecl-hotel-ui-popup',
+            prefix: config.prefix + '-popup',
 
             /**
              * 浮层显示的偏移量

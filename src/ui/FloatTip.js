@@ -9,6 +9,7 @@
 define(function (require) {
 
     var lib = require('./lib');
+    var config = require('./config');
     var Control = require('./Control');
 
     /**
@@ -73,7 +74,7 @@ define(function (require) {
         options: {
 
             // 控件class前缀，同时将作为main的class之一
-            prefix: 'ecl-ui-floattip',
+            prefix: config.prefix + '-floattip',
 
             //提示内容
             content: '',

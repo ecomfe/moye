@@ -1,4 +1,6 @@
 define(function (require) {
+    var config = require('ui/config');
+
     var lib = require('ui/lib');
     var Filter = require('ui/Filter');
     
@@ -11,7 +13,8 @@ define(function (require) {
                 + '<div id="filterContainer" class="result-op"'
                 + ' data-click="{x:1, srcid: 16874, p1:2, y:\'FD9FFD6C\'}"'
                 + ' style="display:none">'
-                +   '<form class="ecl-ui-filter" autocomplete="off">'
+                +   '<form class="' + config.prefix + '-filter"'
+                +      'autocomplete="off">'
                 +      '<p>按类型：'
                 +      '    <label>'
                 +      '        <input type="radio"'
@@ -85,8 +88,8 @@ define(function (require) {
         );
 
         filter = new Filter({
-            prefix: 'ecl-ui-filter',
-            main: lib.q('ecl-ui-filter')[0],
+            prefix: config.prefix + '-filter',
+            main: lib.q(config.prefix + '-filter')[0],
             groups: 'p'
         });
         filter.render();

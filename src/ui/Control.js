@@ -9,6 +9,7 @@
 define(function (require) {
 
     var lib = require('./lib');
+    var config = require('./config');
 
     /**
      * 控件基类
@@ -19,6 +20,14 @@ define(function (require) {
      * @exports Control
      */
     var Control = lib.newClass(/** @lends module:Control.prototype */{
+
+        /**
+         * 控件统一版本
+         * 
+         * @type {string}
+         * @public
+         */
+        version: config.version,
 
         /**
          * 控件类型标识

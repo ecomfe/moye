@@ -9,6 +9,7 @@
 define(function (require) {
 
     var lib = require('./lib');
+    var config = require('./config');
     var Control = require('./Control');
 
     /**
@@ -89,7 +90,7 @@ define(function (require) {
             total: 0,
 
             // 控件class前缀，同时将作为main的class之一
-            prefix: 'ecl-ui-pager',
+            prefix: config.prefix + '-pager',
 
             // 分页项不用可时的class定义
             disabledClass: 'disabled',

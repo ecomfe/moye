@@ -1,6 +1,5 @@
 module.exports = function (grunt) {
     
-    var buildPrefix = grunt.option('prefix') || 'ui';
     var pkg = grunt.file.readJSON('package.json');
 
     grunt.initConfig({
@@ -10,28 +9,35 @@ module.exports = function (grunt) {
             src: {
                 main: 'src',
                 test: 'test/spec'
-            }
+            },
+            cssPrefix: 'ecl-ui',
+            buildPrefix: 'ui',
+            version: pkg.version
         },
 
         clean: {
             before: ['asset', 'bin'],
-            after: ['src/moye'],
+            after: ['src/moye', 'asset/moye/css'],
             afterdoc: ['example/css'],
             //真实上线后。lib已经和Control合并，并且paths已经配置lib->Control，所以
             //编译完成后，直接删除lib.js
-            'after-online': ['asset/online/ui/lib.js']
+            'after-online': [
+                'asset/online/ui/lib.js', 
+                'asset/online/ui/config.js',
+                'asset/online/css'
+            ]
         },
         
         jshint: {
             options: grunt.file.readJSON('.jshintrc'),
-            files: ['<%=meta.src.main%>/ui/*.js', '<%=meta.src.test%>/*.js']
+            files: ['<%=meta.src.main%>/moye/*.js', '<%=meta.src.test%>/*.js']
         },
 
         less: {
             compile: {
                 files: [{
                     expand: true,
-                    cwd: 'src/css',
+                    cwd: 'src/moye/css',
                     src: '*.less',
                     dest: 'asset/css',
                     ext: '.css'
@@ -43,7 +49,7 @@ module.exports = function (grunt) {
                 },
                 files: [{
                     expand: true,
-                    cwd: 'src/css',
+                    cwd: 'src/moye/css',
                     src: '*.less',
                     dest: 'asset/online/ui',
                     ext: '.css'
@@ -59,11 +65,11 @@ module.exports = function (grunt) {
         },
 
         lesslint: {
-            src: ['src/**/*.less']
+            src: ['src/moye/**/*.less']
         },
 
         jsdoc : {
-            files: ['src/**/*.js'], 
+            files: ['src/moye/*/*.js'], 
             options: {
                 configure: '.jsdocrc',
                 destination: 'doc/api'
@@ -81,11 +87,19 @@ module.exports = function (grunt) {
         },
 
         copy: {
-            build: {
+            js: {
                 expand: true,
                 cwd: '<%=meta.src.main%>/ui',
                 src: '**',
-                dest: '<%=meta.src.main%>/moye/' + buildPrefix,
+                dest: '<%=meta.src.main%>/moye/ui',
+                flatten: false,
+                filter: 'isFile',
+            },
+            css: {
+                expand: true,
+                cwd: '<%=meta.src.main%>/css',
+                src: '**',
+                dest: '<%=meta.src.main%>/moye/css',
                 flatten: false,
                 filter: 'isFile',
             },
@@ -138,7 +152,7 @@ module.exports = function (grunt) {
                     generateSourceMaps: false,
                     optimize: 'uglify2',
                     modules: [
-                        {name: buildPrefix + '/Control'},
+                        {name: '<%= meta.buildPrefix%>/Control'},
                     ]
                 }
             }
@@ -166,7 +180,7 @@ module.exports = function (grunt) {
                     template: require('grunt-template-jasmine-requirejs'),
                     templateOptions: {
                         requireConfig: {
-                            baseUrl: './<%=meta.src.main%>/',
+                            baseUrl: './<%=meta.src.main%>/moye',
                             urlArgs: '?' + (+new Date).toString(36)
                         }
                     }
@@ -184,7 +198,7 @@ module.exports = function (grunt) {
                 }
             },
             istanbul: {
-                src: './<%=meta.src.main%>/*/*.js',
+                src: './<%=meta.src.main%>/moye/ui/*.js',
                 options: {
                     specs: '<%= jasmine.requirejs.options.specs %>',
                     vendor: [],
@@ -200,7 +214,7 @@ module.exports = function (grunt) {
                         template: require('grunt-template-jasmine-requirejs'),
                         templateOptions: {
                             requireConfig: {
-                                baseUrl: '.grunt/grunt-contrib-jasmine/<%= meta.src.main %>/',
+                                baseUrl: '.grunt/grunt-contrib-jasmine/<%= meta.src.main %>/moye',
                                 urlArgs: '?' + (+new Date).toString(36)
                             }
                         }
@@ -224,6 +238,19 @@ module.exports = function (grunt) {
                     cwd: 'asset/online/ui',
                     src: '*.js'
                 }]
+            }
+        },
+
+        'tmpl': {
+            build: {
+                files:[
+                    {
+                        expand: true,
+                        src: '**/config.*',
+                        cwd: '<%=meta.src.main%>/moye/',
+                        filter: 'isFile',
+                    }
+                ]
             }
         }
 
@@ -258,7 +285,7 @@ module.exports = function (grunt) {
                 content += js;
                 grunt.file.write(filePath, content);
                 grunt.file.delete(cssPath);
-                grunt.log.writeln(filePath + ' join css and js completed.');
+                grunt.log.writeln('join-css-js: ' + filePath);
                 return filePath;
             });
         });
@@ -266,17 +293,31 @@ module.exports = function (grunt) {
     });
 
 
-    grunt.registerTask('base', ['clean:before', 'jshint', 'lesslint', 'less:compile', 'csslint']);
-    grunt.registerTask('base-online', ['clean:before', 'jshint', 'lesslint', 'csslint']);
+    //将文件作为模板处理，变量变量使用meta信息，用于替换一些常量
+    grunt.registerMultiTask('tmpl', 'process file as a template using meta data', function(){
+        this.files.forEach(function(file){
+            file.src.forEach(function(filePath){
+                var meta = grunt.config('meta');
+                var tpl = grunt.file.read(filePath),
+                    content = grunt.util._.template(tpl, meta);
+                grunt.file.write(filePath, content);
+                grunt.log.writeln('tmpl: ' + filePath);
+            });
+        });
+    });
 
-    grunt.registerTask('build', ['base', 'copy:build', 'requirejs:build', 'clean:after']);
+
+    grunt.registerTask('base', ['clean:before', 'copy:js', 'copy:css', 'tmpl', 'jshint', 'lesslint', 'less:compile', 'csslint']);
+    grunt.registerTask('base-online', ['clean:before','copy:js', 'copy:css', 'tmpl', 'jshint', 'lesslint', 'csslint']);
+
+    grunt.registerTask('build', ['base', 'requirejs:build', 'clean:after']);
     grunt.registerTask('test', ['base', 'connect', 'jasmine:requirejs']);
     grunt.registerTask('cover', ['base', 'connect', 'jasmine:istanbul']);
     grunt.registerTask('default', ['base']);
-    grunt.registerTask('example', ['less', 'copy:doc']);
+    grunt.registerTask('example', ['copy', 'tmpl', 'less', 'copy:doc']);
     grunt.registerTask('page', ['example', 'jsdoc', 'gh-pages', 'clean:afterdoc']);
 
-    grunt.registerTask('build-online', ['base-online', 'copy:build', 'requirejs:online', 'less:online',
+    grunt.registerTask('build-online', ['base-online', 'requirejs:online', 'less:online',
                        'join-css-js:online', 'clean:after', 'clean:after-online']);
     grunt.registerTask('test-online', ['build-online', 'connect', 'jasmine:online']);
 }

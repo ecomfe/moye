@@ -10,6 +10,7 @@
 define(function (require) {
 
     var lib = require('./lib');
+    var config = require('./config');
     var Control = require('./Control');
 
     /**
@@ -120,7 +121,7 @@ define(function (require) {
             main: '',
 
             // 控件class前缀，同时将作为main的class之一
-            prefix: 'ecl-ui-picuploader',
+            prefix: config.prefix + '-picuploader',
 
             //最多选择图片的个数
             maxCount: 3,

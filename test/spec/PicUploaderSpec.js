@@ -1,4 +1,6 @@
 define(function (require) {
+    var config = require('ui/config');
+
     var PicUploader = require('ui/PicUploader');
     var lib = require('ui/lib');
     var picUploader;
@@ -49,7 +51,7 @@ define(function (require) {
             picUploader.disable();
 
             expect(picUploader.options.main.className)
-                .toBe('ecl-ui-picuploader-disabled');
+                .toBe(config.prefix + '-picuploader-disabled');
 
             picUploader.enable();
 
@@ -68,7 +70,7 @@ define(function (require) {
             });
 
             var closeBtn = lib.q(
-                'ecl-ui-picuploader-close', 
+                config.prefix + '-picuploader-close', 
                 picUploader.options.main
             )[0];
 

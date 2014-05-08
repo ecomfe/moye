@@ -9,6 +9,7 @@
 define(function (require) {
 
     var lib = require('./lib');
+    var config = require('./config');
     var Control = require('./Control');
 
 
@@ -489,7 +490,7 @@ define(function (require) {
             main: '',
 
             // 控件class前缀，同时将作为main的class之一
-            prefix: 'ecl-ui-lunar',
+            prefix: config.prefix + '-lunar',
 
             // 日期显示的格式化方式
             dateFormat: '',

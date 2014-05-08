@@ -1,4 +1,6 @@
 define(function (require) {
+    var config = require('ui/config');
+
     var lib = require('ui/lib');        
     var Select = require('ui/Select');
     
@@ -9,10 +11,10 @@ define(function (require) {
         document.body.insertAdjacentHTML(
             'beforeEnd', ''
                 + '<div id="selectContainer">'
-                +   '<a href="#" class="ecl-ui-sel-target">'
+                +   '<a href="#" class="' + config.prefix + '-sel-target">'
                 +       '<b>商圈</b><i></i>'
                 +   '</a>'
-                +   '<p class="ecl-ui-sel">'
+                +   '<p class="' + config.prefix + '-sel">'
                 +       '<a href="#" data-value="0">不限</a>'
                 +       '<a href="#" data-value="1">中关村、上地</a>'
                 +       '<a href="#" data-value="2">亚运村</a>'
@@ -24,9 +26,9 @@ define(function (require) {
         );
 
         select = new Select({
-            prefix: 'ecl-ui-sel',
-            main: lib.q('ecl-ui-sel')[0],
-            target: lib.q('ecl-ui-sel-target')[0],
+            prefix: config.prefix + '-sel',
+            main: lib.q(config.prefix + '-sel')[0],
+            target: lib.q(config.prefix + '-sel-target')[0],
             maxLength: 8,
             cols: 2,
             offset: {
@@ -184,13 +186,14 @@ define(function (require) {
             select.dispose();
             var container = lib.g('selectContainer');
             container.innerHTML = ''
-                + '<input class="ecl-ui-sel-target" value="直辖市">';
+                + '<input class="' + config.prefix 
+                + '-sel-target" value="直辖市">';
 
             var cities = '直辖市, 北京, 上海, 天津, 重庆'.split(/\s*,\s*/);
 
             select = new Select({
-                prefix: 'ecl-ui-sel',
-                target: lib.q('ecl-ui-sel-target')[0],
+                prefix: config.prefix + '-sel',
+                target: lib.q(config.prefix + '-sel-target')[0],
                 datasource: cities,
                 valueUseIndex: false,
                 maxLength: 8

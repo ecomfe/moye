@@ -1,4 +1,6 @@
 define(function (require) {
+    var config = require('ui/config');
+
     var lib = require('ui/lib');
     var ScrollBar = require('ui/ScrollBar');
 
@@ -8,13 +10,15 @@ define(function (require) {
         document.body.insertAdjacentHTML(
             'beforeEnd', 
             ''
-                + '<div id="ecl-ui-scrollbar" class="ecl-ui-scrollbar">'
-                +   '<div class="ecl-ui-scrollbar-track">'
-                +       '<i id="ecl-ui-scrollbar-thumb" '
-                +           'class="ecl-ui-scrollbar-thumb"></i>'
+                + '<div id="' + config.prefix + '-scrollbar" class="' 
+                +     config.prefix + '-scrollbar">'
+                +   '<div class="' + config.prefix + '-scrollbar-track">'
+                +       '<i id="' + config.prefix + '-scrollbar-thumb" '
+                +          'class="' + config.prefix + '-scrollbar-thumb"></i>'
                 +   '</div>'
-                +   '<div class="ecl-ui-scrollbar-panel" style="width:490px">'
-                +       '<div id="ecl-ui-scrollbar-main" '
+                +   '<div class="' + config.prefix + '-scrollbar-panel"'
+                +     'style="width:490px">'
+                +       '<div id="' + config.prefix + '-scrollbar-main" '
                 +           'style="width:490px;height:500px">'
                 +           '<p>测试文本测试文本测试文本</p>'
                 +           '<p>测试文本测试文本测试文本</p>'
@@ -24,7 +28,7 @@ define(function (require) {
         );
 
         scrollbar = new ScrollBar({
-            main: lib.g('ecl-ui-scrollbar'),
+            main: lib.g(config.prefix + '-scrollbar'),
             disabled: 0
         });
         scrollbar.render();
@@ -34,7 +38,7 @@ define(function (require) {
 
     afterEach(function () {
         scrollbar.dispose();
-        document.body.removeChild(lib.g('ecl-ui-scrollbar'));
+        document.body.removeChild(lib.g(config.prefix + '-scrollbar'));
     });
 
     describe('基本接口', function () {
@@ -79,8 +83,8 @@ define(function (require) {
 
         it('refresh', function () {
 
-            lib.g('ecl-ui-scrollbar-main').innerHTML +=
-                lib.g('ecl-ui-scrollbar-main').innerHTML;
+            lib.g(config.prefix + '-scrollbar-main').innerHTML +=
+                lib.g(config.prefix + '-scrollbar-main').innerHTML;
 
             var scrollSize = scrollbar.panel.scrollHeight
                 - scrollbar.main.clientHeight;

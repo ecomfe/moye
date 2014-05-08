@@ -8,6 +8,7 @@
 define(function (require) {
 
     var lib = require('./lib');
+    var config = require('./config');
     var Control = require('./Control');
     var Anim = require('./SliderAnim');
 
@@ -142,7 +143,7 @@ define(function (require) {
             onChange: null,
 
             // 控件class前缀，同时将作为main的class之一
-            prefix: 'ecl-ui-slider',
+            prefix: config.prefix + '-slider',
 
             //使用的轮播动画
             anim: 'slide',

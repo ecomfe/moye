@@ -9,6 +9,7 @@
 define(function (require) {
 
     var lib = require('./lib');
+    var config = require('./config');
     var Control = require('./Control');
 
     /**
@@ -120,7 +121,7 @@ define(function (require) {
             direction: 'vertical',
 
             // 控件class前缀，同时将作为main的class之一
-            prefix: 'ecl-ui-scrollbar',
+            prefix: config.prefix + '-scrollbar',
 
             //使用的模式，scrollTop模式or style.top模式，使用的css是不一样的
             mode: '',

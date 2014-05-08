@@ -9,6 +9,7 @@
 define(function (require) {
 
     var lib = require('./lib');
+    var config = require('./config');
     var Control = require('./Control');
     var Popup = require('./Popup');
 
@@ -137,7 +138,7 @@ define(function (require) {
             selectedClass: 'cur',
 
             // 控件class前缀，同时将作为main的class之一
-            prefix: 'ecl-ui-sel',
+            prefix: config.prefix + '-sel',
 
             // 控件值的类型是否为数字
             isNumber: true,

@@ -1,7 +1,7 @@
 node_modules
 .grunt
 .DS_Store
-.swp
+**/*.swp
 dep
 asset
 doc/api

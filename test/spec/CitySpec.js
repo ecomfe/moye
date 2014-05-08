@@ -1,4 +1,6 @@
 define(function (require) {
+    var config = require('ui/config');
+
     var lib = require('ui/lib');
     
     var City = require('ui/City');
@@ -19,7 +21,7 @@ define(function (require) {
 
         triggers = lib.q('city-trigger');
         city = new City({
-            prefix: 'ecl-ui-city',
+            prefix: config.prefix + '-city',
             index: 2,
             dir: 'auto',
             triggers: triggers,
@@ -103,7 +105,7 @@ define(function (require) {
 
                 if (el.tagName === 'LI') {
                     expect(el.getAttribute('data-idx') | 0).toBe(1);
-                    expect(lib.dom.hasClass(el, 'ecl-ui-city-active'))
+                    expect(lib.dom.hasClass(el, config.prefix + '-city-active'))
                         .toBeTruthy();
                 }
                 else if (el.tagName === 'A') {
@@ -138,7 +140,7 @@ define(function (require) {
 
             city.dispose();
             city = new City({
-                prefix: 'ecl-ui-city',
+                prefix: config.prefix + '-city',
                 index: 1,
                 autoFill: false,
                 triggers: triggers,

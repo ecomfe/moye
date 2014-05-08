@@ -8,6 +8,7 @@
 
 define(function (require) {
     var lib = require('./lib');
+    var config = require('./config');
     var Control = require('./Control');
 
     /**
@@ -27,7 +28,7 @@ define(function (require) {
             main: '',
 
             // class前缀
-            prefix: 'ecl-ui-rating',
+            prefix: config.prefix + '-rating',
 
             // 最多星星数
             max: 5,
