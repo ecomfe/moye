@@ -79,7 +79,6 @@ define(function (require) {
          */
         initialize: function (opts) {
             var div = document.createElement('div');
-            div.id = opts.id;
             div.className = opts.className;
             lib.setStyles(div, opts.styles);
             document.body.appendChild(div);
@@ -239,7 +238,7 @@ define(function (require) {
 
             //渲染主框架内容
             var main = this.createElement('div', {
-                'class': privates.getClass.call(this)
+                'className': privates.getClass.call(this)
             });
 
             lib.setStyles(main, {
