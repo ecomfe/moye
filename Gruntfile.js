@@ -21,6 +21,7 @@ module.exports = function (grunt) {
             afterdoc: ['example/css'],
             //真实上线后。lib已经和Control合并，并且paths已经配置lib->Control，所以
             //编译完成后，直接删除lib.js
+            //config同上
             'after-online': [
                 'asset/online/ui/lib.js', 
                 'asset/online/ui/config.js',
