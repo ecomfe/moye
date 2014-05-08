@@ -281,7 +281,7 @@ module.exports = function (grunt) {
                 var cssPath = filePath.replace(/\.js$/, '.css');
                 var js = grunt.file.read(filePath),
                     css = grunt.file.read(cssPath);
-                var content = "A.insertCss(" + JSON.stringify(css) + ");";
+                var content = "A.addCssText(" + JSON.stringify(css) + ");";
                 content += js;
                 grunt.file.write(filePath, content);
                 grunt.file.delete(cssPath);
