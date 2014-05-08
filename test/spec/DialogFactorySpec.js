@@ -1,4 +1,6 @@
 define(function (require) {
+    var config = require('ui/config');
+
     var DialogFactory = require('ui/DialogFactory');
     var lib = require('ui/lib');
     var alertDialog, confirmDialog;
@@ -107,11 +109,13 @@ define(function (require) {
 
             alertDialog.show();
 
-            expect(lib.q('ecl-ui-dialog-confirm-btn', alertDialog.main)[0])
+            expect(lib.q(config.prefix + '-dialog-confirm-btn',
+                         alertDialog.main)[0])
                 .toBeTruthy();
 
             lib.fire(
-                lib.q('ecl-ui-dialog-confirm-btn', alertDialog.main)[0],
+                lib.q(config.prefix + '-dialog-confirm-btn',
+                      alertDialog.main)[0],
                 'click'
             );
         });
@@ -157,11 +161,13 @@ define(function (require) {
 
             confirmDialog.show();
 
-            expect(lib.q('ecl-ui-dialog-cancel-btn', confirmDialog.main)[0])
+            expect(lib.q(config.prefix + '-dialog-cancel-btn',
+                         confirmDialog.main)[0])
                 .toBeTruthy();
 
             lib.fire(
-                lib.q('ecl-ui-dialog-cancel-btn', confirmDialog.main)[0],
+                lib.q(config.prefix + '-dialog-cancel-btn',
+                      confirmDialog.main)[0],
                 'click'
             );
         });

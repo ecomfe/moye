@@ -9,6 +9,7 @@
 define(function (require) {
 
     var lib = require('./lib');
+    var config = require('./config');
     var DOM = lib.dom;
     var PAGE = lib.page;
     var Control = require('./Control');
@@ -457,7 +458,7 @@ define(function (require) {
             content: '',
 
             // 控件class前缀，同时将作为main的class之一
-            prefix: 'ecl-ui-tip',
+            prefix: config.prefix + '-tip',
 
             // 自动绑定本控件功能的class
             triggers: 'tooltips',

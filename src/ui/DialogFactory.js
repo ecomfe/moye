@@ -8,6 +8,7 @@
 define(function (require) {
 
     var lib = require('./lib');
+    var config = require('./config');
     var Dialog = require('./Dialog');
 
     /**
@@ -24,7 +25,7 @@ define(function (require) {
     function getClass(opts, name) {
         name = name ? '-' + name : '';
         var skin = opts.skin;
-        return (opts.prefix || 'ecl-ui-dialog') 
+        return (opts.prefix || (config.prefix + '-dialog')) 
             + name
             + (skin ? ' ' + skin + name : '');
     }

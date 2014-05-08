@@ -9,6 +9,7 @@
 define(function (require) {
 
     var lib = require('./lib');
+    var config = require('./config');
     var Control = require('./Control');
     var Popup = require('./Popup');
 
@@ -250,7 +251,7 @@ define(function (require) {
             target: '',
 
             // 控件class前缀，同时将作为main的class之一
-            prefix: 'ecl-hotel-ui-city',
+            prefix: config.prefix + '-city',
 
             // 默认激活的标签索引
             index: 0,

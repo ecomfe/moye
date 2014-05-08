@@ -1,4 +1,6 @@
 define(function (require) {
+    var config = require('ui/config');
+
     var lib = require('ui/lib');
 
     var Rating = require('ui/Rating');
@@ -10,7 +12,7 @@ define(function (require) {
     beforeEach(function () {
         document.body.insertAdjacentHTML(
             'beforeEnd',
-            '<div class="ecl-ui-rating" id="rating"></div>'
+            '<div class="' + config.prefix + '-rating" id="rating"></div>'
         );
         rating = new Rating({
             main: 'rating',
@@ -29,15 +31,18 @@ define(function (require) {
     describe('评分组件', function () {
         // 点亮第一颗星，其他都不亮
         it('init rating with a value', function () {
-            var result = lib.q('ecl-ui-rating-star-on', rating.main);
+            var result = lib.q(config.prefix + '-rating-star-on', rating.main);
 
             expect(result.length).toBe(1);
 
-            expect(rating.stars[0].className).toContain('ecl-ui-rating-star-on');
+            expect(rating.stars[0].className)
+                .toContain(config.prefix + '-rating-star-on');
 
-            expect(rating.stars[1].className).not.toContain('ecl-ui-rating-star-on');
+            expect(rating.stars[1].className)
+                .not.toContain(config.prefix + '-rating-star-on');
 
-            expect(rating.stars[2].className).not.toContain('ecl-ui-rating-star-on');
+            expect(rating.stars[2].className)
+                .not.toContain(config.prefix + '-rating-star-on');
         });
 
         // 鼠标移进星星，预览星级
@@ -48,7 +53,7 @@ define(function (require) {
 
             setTimeout(
                 function () {
-                    var result = lib.q('ecl-ui-rating-star-on', rating.main);
+                    var result = lib.q(config.prefix + '-rating-star-on', rating.main);
 
                     expect(result.length).toBe(rndIndex + 1);
                 },
@@ -66,7 +71,7 @@ define(function (require) {
 
             setTimeout(
                 function () {
-                    var result = rating.query('ecl-ui-rating-star-on');
+                    var result = rating.query(config.prefix + '-rating-star-on');
 
                     expect(result.length).toBe(rating.options.value);
                 },

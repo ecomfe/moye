@@ -1,4 +1,6 @@
 define(function (require) {
+    var config = require('ui/config');
+
     var lib = require('ui/lib');
     
     var Calendar = require('ui/Calendar');
@@ -94,7 +96,7 @@ define(function (require) {
                 var target = arg.target;
                 expect(target).toBe(calendar.target);
 
-                var checked = calendar.query('ecl-ui-cal-checked')[0];
+                var checked = calendar.query(config.prefix + '-cal-checked')[0];
                 expect(checked.getAttribute('data-date')).toBe(
                     calendar.format(date, 'yyyy-MM-dd')
                 );

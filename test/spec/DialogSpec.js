@@ -1,4 +1,6 @@
 define(function (require) {
+    var config = require('ui/config');
+
     var Dialog = require('ui/Dialog');
     var lib = require('ui/lib');
     var dialog;
@@ -88,7 +90,7 @@ define(function (require) {
 
                 expect(
                 lib.hasClass(
-                dialog.main, 'ecl-ui-dialog-hide')).toBeFalsy();
+                dialog.main, config.prefix + '-dialog-hide')).toBeFalsy();
             });
             dialog.show();
         });
@@ -97,7 +99,7 @@ define(function (require) {
             dialog.on('hide', function () {
                 expect(
                 lib.hasClass(
-                dialog.main, 'ecl-ui-dialog-hide')).toBeTruthy();
+                dialog.main, config.prefix + '-dialog-hide')).toBeTruthy();
             });
             dialog.hide();
         });

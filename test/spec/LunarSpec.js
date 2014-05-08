@@ -1,4 +1,6 @@
 define(function (require) {
+    var config = require('ui/config');
+
     var lib = require('ui/lib');
     
     var Lunar = require('ui/Lunar');
@@ -8,11 +10,11 @@ define(function (require) {
     beforeEach(function () {
         document.body.insertAdjacentHTML(
             'beforeEnd',
-            '<div class="ecl-ui-lunar c-clearfix"></div>'
+            '<div class="' + config.prefix + '-lunar c-clearfix"></div>'
         );
 
         lunar = new Lunar({
-            main: lib.q('ecl-ui-lunar')[0],
+            main: lib.q(config.prefix + '-lunar')[0],
             value: '1981-09-17'
         }).render();
     });
@@ -81,8 +83,8 @@ define(function (require) {
 
             lunar.setRange({begin: '2013-06-01'});
 
-            var prev = lib.q('ecl-ui-lunar-pre', lunar.main)[0];
-            var next = lib.q('ecl-ui-lunar-next', lunar.main)[0];
+            var prev = lib.q(config.prefix + '-lunar-pre', lunar.main)[0];
+            var next = lib.q(config.prefix + '-lunar-next', lunar.main)[0];
             expect(prev.offsetHeight).toBe(0);
 
             lunar.setValue('2013-06-01');

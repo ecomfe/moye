@@ -1,4 +1,6 @@
 define(function (require) {
+    var config = require('ui/config');
+
     var lib = require('ui/lib');        
     var Tabs = require('ui/Tabs');
 
@@ -8,10 +10,11 @@ define(function (require) {
         document.body.insertAdjacentHTML(
             'beforeEnd',
             ''
-                + '<div class="ecl-ui-tabs">'
-                +   '<ul class="ecl-ui-tabs-labels">'
+                + '<div class="' + config.prefix + '-tabs">'
+                +   '<ul class="' + config.prefix + '-tabs-labels">'
                 +       '<li>CSS控件</li>'
-                +       '<li class="ecl-ui-tabs-selected">UI控件拆分</li>'
+                +       '<li class="' + config.prefix 
+                +                   '-tabs-selected">UI控件拆分</li>'
                 +       '<li>UI栅格化设计</li>'
                 +       '<li>如何使用</li>'
                 +       '<li><em>新UI设计规范</em></li>'
@@ -21,7 +24,7 @@ define(function (require) {
         );
 
         tabs = new Tabs({
-            main: lib.q('ecl-ui-tabs')[0],
+            main: lib.q(config.prefix + '-tabs')[0],
             selectedIndex: 0
         }).render();
 
@@ -37,7 +40,8 @@ define(function (require) {
     describe('create a instance', function () {
         
         it('auto compute selectedIndex', function () {
-            var selected = lib.q('ecl-ui-tabs-selected', tabs.main)[0];
+            var selected = lib.q(config.prefix + '-tabs-selected', 
+                                 tabs.main)[0];
             var selectedIndex = selected.getAttribute('data-index') | 0;
             expect(tabs.selectedIndex).toBe(selectedIndex);
         });
