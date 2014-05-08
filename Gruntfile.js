@@ -228,7 +228,7 @@ module.exports = function (grunt) {
                 base: './',
                 message: 'Auto-generated commit by grunt'
             },
-            src: ['doc/api/*', 'example/**', 'src/*/*']
+            src: ['doc/api/*', 'example/**', 'src/moye/*/*']
         },
 
         'join-css-js': {
@@ -314,7 +314,7 @@ module.exports = function (grunt) {
     grunt.registerTask('test', ['base', 'connect', 'jasmine:requirejs']);
     grunt.registerTask('cover', ['base', 'connect', 'jasmine:istanbul']);
     grunt.registerTask('default', ['base']);
-    grunt.registerTask('example', ['copy', 'tmpl', 'less', 'copy:doc']);
+    grunt.registerTask('example', ['copy:js', 'copy:css', 'tmpl', 'less', 'copy:doc']);
     grunt.registerTask('page', ['example', 'jsdoc', 'gh-pages', 'clean:afterdoc']);
 
     grunt.registerTask('build-online', ['base-online', 'requirejs:online', 'less:online',
