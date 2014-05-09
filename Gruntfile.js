@@ -195,7 +195,7 @@ module.exports = function (grunt) {
                     specs: 'test/spec/*Spec.js',
                     vendor: [],
                     host: 'http://localhost:<%= connect.test.options.port %>',
-                    template: 'test/templates/OnlineRunner.tmpl'
+                    template: 'test/template/OnlineRunner.tmpl'
                 }
             },
             istanbul: {
@@ -282,7 +282,7 @@ module.exports = function (grunt) {
                 var cssPath = filePath.replace(/\.js$/, '.css');
                 var js = grunt.file.read(filePath),
                     css = grunt.file.read(cssPath);
-                var content = "A.addCssText(" + JSON.stringify(css) + ");";
+                var content = "require(['ui/lib'], function(lib){lib.addCssText(" + JSON.stringify(css) + ")});";
                 content += js;
                 grunt.file.write(filePath, content);
                 grunt.file.delete(cssPath);
@@ -316,6 +316,7 @@ module.exports = function (grunt) {
     grunt.registerTask('cover', ['base', 'connect', 'jasmine:istanbul']);
     grunt.registerTask('default', ['base']);
     grunt.registerTask('example', ['copy:js', 'copy:css', 'tmpl', 'less', 'copy:doc']);
+    grunt.registerTask('doc', ['example', 'jsdoc', 'clean:afterdoc']);
     grunt.registerTask('page', ['example', 'jsdoc', 'gh-pages', 'clean:afterdoc']);
 
     grunt.registerTask('build-online', ['base-online', 'requirejs:online', 'less:online',
