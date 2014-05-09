@@ -14,10 +14,7 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-      'src/css/*.less',
-      {pattern: 'src/**/*.js', included: false},
-      {pattern: 'test/**/*Spec.js', included: false},
-      'test/main.js'
+      {pattern: 'test/**/libSpec.js', included: false},
     ],
 
 
@@ -78,7 +75,7 @@ module.exports = function(config) {
     // - Safari (only Mac; has to be installed with `npm install karma-safari-launcher`)
     // - PhantomJS
     // - IE (only Windows; has to be installed with `npm install karma-ie-launcher`)
-    browsers: ['Chrome', 'Firefox'],
+    browsers: ['Chrome'],
 
 
     // If browser does not capture in given timeout [ms], kill it
