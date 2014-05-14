@@ -301,6 +301,7 @@ module.exports = function (grunt) {
                 var meta = grunt.config('meta');
                 var tpl = grunt.file.read(filePath),
                     content = grunt.util._.template(tpl, meta);
+                debugger;
                 grunt.file.write(filePath, content);
                 grunt.log.writeln('tmpl: ' + filePath);
             });
