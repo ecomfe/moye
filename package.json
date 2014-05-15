@@ -1,6 +1,6 @@
 {
-  "name": "Moye",
-  "version": "0.7.1",
+  "name": "moye",
+  "version": "0.7.3",
   "description": "知心UI组件库",
   "devDependencies": {
     "grunt": "~0.4.0",
@@ -32,8 +32,8 @@
     "doc": "grunt jsdoc",
     "test": "grunt test"
   },
-  "repository": "git://github.com/ecomfe/Moye.git",
-  "bugs": "https://github.com/ecomfe/Moye/issues",
+  "repository": "git://github.com/ecomfe/moye.git",
+  "bugs": "https://github.com/ecomfe/moye/issues",
   "keywords": [
     "javascript",
     "UI"

@@ -1865,29 +1865,29 @@ define(function () {
      *
      * @method module:lib.addCssText
      *
-     * @param {String} cssText css文本
-     * @return {Boolean} 是否添加成功
+     * @param {string} cssText css文本
+     * @return {boolean} 是否添加成功
      */
     lib.addCssText = function (cssText) {
-        var id = 'moye-style-tag-id',                                                  
-            attr = 'data-for',                                                             
-            tag = 'moye',                                                                  
-            style = document.getElementById(id);                                           
-        if (!style) {                                                                  
-            style = document.createElement('style');                                   
-            style.setAttribute('type', 'text/css');                                    
-            style.setAttribute(attr, tag);                                             
-            style.id = id;                                                             
-            document.getElementsByTagName('head')[0].appendChild(style);               
-        }                                                                              
-        try {                                                                          
-            var node = document.createTextNode(cssText);                               
-            style.appendChild(node);                                                   
+        var id = 'moye-style-tag-id',
+            attr = 'data-for',
+            tag = 'moye',
+            style = document.getElementById(id);
+        if (!style) { 
+            style = document.createElement('style');
+            style.setAttribute('type', 'text/css'); 
+            style.setAttribute(attr, tag);
+            style.id = id;
+            document.getElementsByTagName('head')[0].appendChild(style);
+        } 
+        try {
+            var node = document.createTextNode(cssText);
+            style.appendChild(node);
             return true;
         } catch ( e ) {
-            if (style.styleSheet) {                                                    
+            if (style.styleSheet) { 
                 try {
-                    style.styleSheet.cssText += cssText;                                   
+                    style.styleSheet.cssText += cssText;
                     return true;
                 } catch (e) {
                 }
