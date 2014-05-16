@@ -134,11 +134,11 @@ define(function (require) {
 
             confirmDialog.show();
 
-            expect(lib.q('ecl-ui-dialog-confirm-btn', confirmDialog.main)[0])
+            expect(lib.q(config.prefix + '-dialog-confirm-btn', confirmDialog.main)[0])
                 .toBeTruthy();
 
             lib.fire(
-                lib.q('ecl-ui-dialog-confirm-btn', confirmDialog.main)[0],
+                lib.q(config.prefix + '-dialog-confirm-btn', confirmDialog.main)[0],
                 'click'
             );
         });

@@ -1,5 +1,6 @@
 define(function (require) {
     var lib = require('ui/lib');
+    var config = require('ui/config');
     
     var CalendarExtension = require('ui/CalendarExtension');
     
@@ -36,7 +37,7 @@ define(function (require) {
                 var target = arg.target;
                 expect(target).toBe(calendar.target);
 
-                var checked = calendar.query('ecl-ui-cal-checked')[0];
+                var checked = calendar.query(config.prefix + '-cal-checked')[0];
                 expect(checked.getAttribute('data-date')).toBe(
                     calendar.format(date, 'yyyy-MM-dd')
                 );
@@ -75,7 +76,7 @@ define(function (require) {
             // 先使日历显示
             lib.fire(lib.q('calendar-extension-trigger')[0], 'click');
 
-            var yearMenuHandler = calendar.query('ecl-ui-cal-menu-year-handler')[0];
+            var yearMenuHandler = calendar.query(config.prefix + '-cal-menu-year-handler')[0];
 
             expect(yearMenuHandler).toBeDefined();
 
@@ -98,7 +99,7 @@ define(function (require) {
             // 先使日历显示
             lib.fire(lib.q('calendar-extension-trigger')[0], 'click');
 
-            var monthMenuHandler = calendar.query('ecl-ui-cal-menu-month-handler')[0];
+            var monthMenuHandler = calendar.query(config.prefix + '-cal-menu-month-handler')[0];
 
             expect(monthMenuHandler).toBeDefined();
 

@@ -30,7 +30,7 @@ define(function (require) {
 
     describe('MASK相关接口', function () {
         var mask = Dialog.Mask.create({
-            className: 'ecl-ui-dialog-mask',
+            className: config.prefix + '-dialog-mask',
             styles: {
                 zIndex: 9
             }
@@ -77,7 +77,7 @@ define(function (require) {
 
                 expect(
                 lib.hasClass(
-                dialog.main, 'ecl-ui-dialog-hide')).toBeFalsy();
+                dialog.main, config.prefix + '-dialog-hide')).toBeFalsy();
             });
             dialog.show();
         });
@@ -105,21 +105,21 @@ define(function (require) {
         });
 
         it('title check', function () {
-            var header = dialog.query('ecl-ui-dialog-header')[0];
+            var header = dialog.query(config.prefix + '-dialog-header')[0];
             expect(header.innerHTML).toBe('标题');
             dialog.setTitle('标题1');
             expect(header.innerHTML).toBe('标题1');
         });
 
         it('content check', function () {
-            var body = dialog.query('ecl-ui-dialog-body')[0];
+            var body = dialog.query(config.prefix + '-dialog-body')[0];
             expect(body.innerHTML).toBe('内容');
             dialog.setContent('内容1');
             expect(body.innerHTML).toBe('内容1');
         });
 
         it('footer check', function () {
-            var footer = dialog.query('ecl-ui-dialog-footer')[0];
+            var footer = dialog.query(config.prefix + '-dialog-footer')[0];
             expect(footer.innerHTML).toBe('底部');
             dialog.setFooter('底部1');
             expect(footer.innerHTML).toBe('底部1');

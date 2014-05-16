@@ -1,5 +1,6 @@
 define(function (require) {
     var lib = require('ui/lib');
+    var config = require('ui/config');
     var FloatTip = require('ui/FloatTip');
 
     beforeEach(function () {
@@ -38,7 +39,7 @@ define(function (require) {
 
 
         it('setContent', function () {
-            var contentElement = floatTip.query('ecl-ui-floattip-content')[0];
+            var contentElement = floatTip.query(config.prefix + '-floattip-content')[0];
             expect(contentElement.innerHTML)
             .toBe(floatTip.options.content);
 

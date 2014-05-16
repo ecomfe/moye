@@ -8,9 +8,9 @@ define(function (require) {
 
     beforeEach(function () {
         document.body.insertAdjacentHTML(
-            'beforeEnd', 
+            'beforeEnd',
             ''
-                + '<div id="' + config.prefix + '-scrollbar" class="' 
+                + '<div id="' + config.prefix + '-scrollbar" class="'
                 +     config.prefix + '-scrollbar">'
                 +   '<div class="' + config.prefix + '-scrollbar-track">'
                 +       '<i id="' + config.prefix + '-scrollbar-thumb" '
@@ -124,7 +124,7 @@ define(function (require) {
             expect(scrollbar.panel.scrollTop).toBe(0);
 
             scrollbar.disable();
-            expect(lib.hasClass(scrollbar.main, 'ecl-ui-scrollbar-disable')).toBe(true);
+            expect(lib.hasClass(scrollbar.main, config.prefix + '-scrollbar-disable')).toBe(true);
             scrollbar.scrollTo(0.5);
             //disable 不影响接口调用
             expect(scrollbar.thumb.style.top)
@@ -132,17 +132,17 @@ define(function (require) {
             expect(scrollbar.panel.scrollTop).toBe(Math.round(scrollSize / 2));
 
             scrollbar.enable();
-            expect(lib.hasClass(scrollbar.main, 'ecl-ui-scrollbar-disable')).toBe(false);
+            expect(lib.hasClass(scrollbar.main, config.prefix + '-scrollbar-disable')).toBe(false);
 
         });
 
         it('over & out', function () {
-            expect(lib.hasClass(scrollbar.main, 'ecl-ui-scrollbar-over')).toBe(false);
+            expect(lib.hasClass(scrollbar.main, config.prefix + '-scrollbar-over')).toBe(false);
             lib.fire(scrollbar.main, 'mouseenter');
-            expect(lib.hasClass(scrollbar.main, 'ecl-ui-scrollbar-over')).toBe(true);
-            
+            expect(lib.hasClass(scrollbar.main, config.prefix + '-scrollbar-over')).toBe(true);
+
             lib.fire(scrollbar.main, 'mouseleave');
-            expect(lib.hasClass(scrollbar.main, 'ecl-ui-scrollbar-over')).toBe(false);           
+            expect(lib.hasClass(scrollbar.main, config.prefix + '-scrollbar-over')).toBe(false);
         });
 
         it('事件', function () {

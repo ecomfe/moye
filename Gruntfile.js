@@ -1,5 +1,5 @@
 module.exports = function (grunt) {
-    
+
     var pkg = grunt.file.readJSON('package.json');
 
     grunt.initConfig({
@@ -23,12 +23,12 @@ module.exports = function (grunt) {
             //编译完成后，直接删除lib.js
             //config同上
             'after-online': [
-                'asset/online/ui/lib.js', 
+                'asset/online/ui/lib.js',
                 'asset/online/ui/config.js',
                 'asset/online/css'
             ]
         },
-        
+
         jshint: {
             options: grunt.file.readJSON('.jshintrc'),
             files: ['<%=meta.src.main%>/moye/*.js', '<%=meta.src.test%>/*.js']
@@ -70,7 +70,7 @@ module.exports = function (grunt) {
         },
 
         jsdoc : {
-            files: ['src/moye/*/*.js'], 
+            files: ['src/moye/*/*.js'],
             options: {
                 configure: '.jsdocrc',
                 destination: 'doc/api'
@@ -110,7 +110,7 @@ module.exports = function (grunt) {
                 src: '**',
                 dest: 'example/css',
                 flatten: false,
-                filter: 'isFile',               
+                filter: 'isFile',
             }
         },
 
@@ -244,6 +244,11 @@ module.exports = function (grunt) {
 
         'tmpl': {
             build: {
+                options: {
+                    meta: {
+                        cssPrefix : 'seui'
+                    }
+                },
                 files:[
                     {
                         expand: true,
@@ -296,12 +301,13 @@ module.exports = function (grunt) {
 
     //将文件作为模板处理，变量变量使用meta信息，用于替换一些常量
     grunt.registerMultiTask('tmpl', 'process file as a template using meta data', function(){
+        var _ = grunt.util._;
+        var meta = _.clone(grunt.config('meta'));
+        _.extend(meta, this.options('meta').meta || {});
         this.files.forEach(function(file){
             file.src.forEach(function(filePath){
-                var meta = grunt.config('meta');
                 var tpl = grunt.file.read(filePath),
                     content = grunt.util._.template(tpl, meta);
-                debugger;
                 grunt.file.write(filePath, content);
                 grunt.log.writeln('tmpl: ' + filePath);
             });

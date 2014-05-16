@@ -25,13 +25,13 @@ define(function (require) {
         document.body.removeChild(lib.g('picUploaderContainer'));
         document.body.removeChild(lib.g('picUploaderContainer1'));
     });
-  
+
     describe('基本接口', function () {
 
 
         it('event:pickerror', function () {
             //这里想直接塞入文件不太容易，使用fake的元素来模拟
-            
+
             var uploader = new PicUploader({
                 main: lib.g('picUploaderContainer1'),
                 tpl: ''
@@ -44,8 +44,8 @@ define(function (require) {
             });
             uploader.render();
 
-            var curPan = lib.q('ecl-ui-picuploader-cur', uploader.options.main)[0];
-            var fileBtn = lib.q('ecl-ui-picuploader-file', curPan)[0];
+            var curPan = lib.q(config.prefix + '-picuploader-cur', uploader.options.main)[0];
+            var fileBtn = lib.q(config.prefix + '-picuploader-file', curPan)[0];
             fileBtn.value = '';
             lib.fire(fileBtn, 'change');
 
@@ -90,8 +90,8 @@ define(function (require) {
                 });
                 uploader.render();
 
-                var curPan = lib.q('ecl-ui-picuploader-cur', uploader.options.main)[0];
-                var fileBtn = lib.q('ecl-ui-picuploader-file', curPan)[0];
+                var curPan = lib.q(config.prefix + '-picuploader-cur', uploader.options.main)[0];
+                var fileBtn = lib.q(config.prefix + '-picuploader-file', curPan)[0];
 
                 fileBtn.files = [new Blob(['fakeimg'])];
                 fileBtn.value = 'fakeimg.jpg';
@@ -114,7 +114,7 @@ define(function (require) {
 
         it('remove', function () {
 
-            picUploader.remove('xxxxxx', 
+            picUploader.remove('xxxxxx',
                 function (removePath, filePath,  index) {
                     index;
                     expect(removePath).toBeTruthy();
@@ -148,14 +148,14 @@ define(function (require) {
             });
 
             var closeBtn = lib.q(
-                config.prefix + '-picuploader-close', 
+                config.prefix + '-picuploader-close',
                 picUploader.options.main
             )[0];
 
             expect(closeBtn).toBeTruthy();
 
             lib.fire(
-                closeBtn, 
+                closeBtn,
                 'click'
             );
 
@@ -171,7 +171,7 @@ define(function (require) {
                 expect(removeEventCount).toBe(1);
             });
             picUploader.removeAt(0);
-            
+
         });
     });
 

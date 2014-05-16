@@ -30,7 +30,7 @@ define(function (require) {
                 +     '</div>'
                 +   '</div>'
 
-                +   '<div id="' + config.prefix + '-slider-2" class="' 
+                +   '<div id="' + config.prefix + '-slider-2" class="'
                 +                               config.prefix + '-slider">'
                 +     '<i class="' + config.prefix + '-slider-prev">&lt;</i>'
                 +     '<i class="' + config.prefix + '-slider-next">&gt;</i>'
@@ -155,7 +155,7 @@ define(function (require) {
         });
 
         it('prev click', function (done) {
-            var prevBtn = lib.q('ecl-ui-slider-prev', slider.main)[0];
+            var prevBtn = lib.q(config.prefix + '-slider-prev', slider.main)[0];
             slider.go(1);
             lib.fire(prevBtn, 'click');
             setTimeout(function () {
@@ -165,7 +165,7 @@ define(function (require) {
         });
         it('next click', function (done) {
 
-            var nextBtn = lib.q('ecl-ui-slider-next', slider.main)[0];
+            var nextBtn = lib.q(config.prefix + '-slider-next', slider.main)[0];
             slider.go(0);
             lib.fire(nextBtn, 'click');
             setTimeout(function () {
@@ -175,7 +175,7 @@ define(function (require) {
         });
 
         it('index click', function (done) {
-            var indexBtns = lib.q('ecl-ui-slider-index', slider.main)[0].children;
+            var indexBtns = lib.q(config.prefix + '-slider-index', slider.main)[0].children;
             lib.fire(indexBtns[0], 'click');
             setTimeout(function () {
                 expect(slider.index).toBe(0);
