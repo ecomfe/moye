@@ -30,113 +30,142 @@ define(function (require) {
          */
         onClick: function (e) {
 
+            var me = this;
+
             /**
              * @event module:Filter#click
              * @type {object}
              * @property {Event} event 事件源对象
              */
-            this.fire('click', {event: e});
+            me.fire('click', { event: e });
 
-            var target = lib.getTarget(e);
-            if (target.type) {
+            var $target = $(e.target);
+            var $input  = $target;                 // 这里先将$input默认设定为$target，后面会修正，可以减少一次DOM查找
+            var tagName = $target.prop('tagName');
+            var type    = $target.prop('type');
 
-                // HACK: 如果点击的是 单选按钮，先置为非选中状态
-                if (target.type === 'radio') {
-                    target.checked = false;
-                }
-                
-                target = target.parentNode;
+            // 如果点击的不是INPUT和LABEL那就忽略
+            if (tagName !== 'LABEL' && tagName !== 'INPUT') {
+                return;
             }
 
-            var options = this.options;
+            // 如果直接点击了input，那么我们需要向上选择到它的父结点label
+            if (tagName === 'INPUT') {
+
+                // HACK: 如果点击的是 单选按钮，先置为非选中状态
+                if (type === 'radio') {
+                    $target.prop('checked', false);
+                }
+
+                // 向上选择到label一层
+                $target = $target.parent();
+            }
+            else {
+
+                // 当点击的元素是LABEL，那么要阻止默认。。。
+                // 原理: 当label包含的for属性，或者label中包含中input时，
+                // 当label被点击时，浏览器会自动触发一次input完整真实的click事件
+                // 导致我们在外层监听的click监听事件处理函数被执行两次
+                // 这里可以通过阻止默认事件，来阻止上边描述的事情
+                // 但同时也阻止了浏览器对input状态的自动维护
+                // 好在我们可以自己处理
+                e.preventDefault();
+                $input = $target.find('input');
+            }
+
+            var options = me.options;
             var checkedClass = options.checkedClass;
             var disabledClass = options.disabledClass;
 
-            var input = target.getElementsByTagName('input')[0];
-            var isRadio = input && input.type === 'radio';
-            var hasClass = lib.hasClass;
-            if (target.tagName === 'LABEL'
+            var isRadio = $input.attr('type') === 'radio';
 
-                // 忽略禁止状态的选项
-                && !hasClass(target, disabledClass)
+            // 以下条件时，直接跳过，没有其他效果
+            if (
+                // 如果点击对象不是label
+                $target.prop('tagName') !== 'LABEL'
+
+                // 禁止状态的选项
+                || $target.hasClass(disabledClass)
 
                 // 单选组的第一个选项已选中时的点击忽略
-                && !(isRadio && input.checked)
+                || isRadio && $input.prop('checked')
             ) {
-                // 防止在 label 外 mouseup 导致 radio/checkbox 未选中
-                var isChecked = isRadio
-                    ? true
-                    : !hasClass(target, checkedClass);
-
-                lib.preventDefault(e);
-
-                var group = this.groups[input.name];
-                var checkedItems = lib.q(checkedClass, group);
-                if (isRadio) {
-                    var lastChecked = lib.q(checkedClass, group)[0];
-
-                    if (lastChecked) {
-                        lib.removeClass(lastChecked, checkedClass);
-                    }
-                }
-                else {
-
-                    // 第一个选项（通常叫”不限“或”全部“)的选择具有排他性
-                    var firstItem = group.getElementsByTagName('input')[0];
-                    if (input === firstItem) {
-
-                        // 当单选按钮处理，选择状态不可切换
-                        if (input.checked) {
-                            input.checked = true;
-                            return;
-                        }
-
-                        lib.each(
-                            checkedItems,
-                            function (item) {
-                                lib.removeClass(item, checkedClass);
-
-                                item.getElementsByTagName(
-                                    'input'
-                                )[0].checked = false;
-                            }
-                        );                        
-                    }
-                    else if (firstItem.checked) {
-                        firstItem.checked = false;
-                        lib.removeClass(firstItem.parentNode, checkedClass);
-                    }
-                }
-
-                input.checked =  isChecked;
-
-                // HACK: 当点击单/复选框时会导致两次状态变换
-                setTimeout(function () {
-                    input.checked =  isChecked;
-                }, 0);
-
-                var operation = isChecked ? 'addClass' : 'removeClass';
-                lib[operation](target, checkedClass);
-
-                var checkedData = isRadio
-                    ? {key: input.name, value: [input.value]}
-                    : this.getData(input.name);
-
-                // 比较状态变化
-                var newValue = checkedData.value.join(',');
-                var propertyName = 'data-value';
-                if (group.getAttribute(propertyName) !== newValue) {
-                    group.setAttribute(propertyName, newValue);
-
-                    /**
-                     * @event module:Filter#change
-                     * @type {Object}
-                     * @property {string} key 过滤项的键名
-                     * @property {Array.<string>} value 当前选项组的选中值
-                     */
-                    this.fire('change', checkedData);
-                }
+                return;
             }
+
+            // 我们只按照label上的class中是否包含checked来决定checkbox的值
+            // 防止在 label 外 mouseup 导致 radio/checkbox 未选中
+            var isChecked = isRadio ? true : !$target.hasClass(checkedClass);
+
+            var $group = $(me.groups[$input.attr('name')]);
+            var $checkedItems = $group.find('.' + checkedClass);
+
+            if (isRadio) {
+
+                // 保证选项中只有一个选项被选中
+                $checkedItems.removeClass(checkedClass);
+            }
+            else {
+
+                var tag = me.options.allTag;
+
+                // 属性`data-all`的值如果与options.allTag相同，那么此INPUT为`全部`
+                // 对此INPUT选择具有排他性
+                if ($target.attr('data-all')) {
+
+                    // 当单选按钮处理，选择状态不可切换
+                    if ($target.hasClass('checked')) {
+
+                        // 如果是点中了INPUT，此时的`全部`可能已经被点掉了，所以强制选中它
+                        $input.prop('checked', true);
+                        return;
+                    }
+
+                    // 清除其他被选中的选项样式并取消它们的input的checked状态
+                    $checkedItems.removeClass(checkedClass).find('input').prop('checked', false);
+                }
+
+                // 如果选中的不是`全部`并且`全部`还在选中状态，那么取消它的选中状态
+                else {
+                    $group.find('label[data-all]')
+                        .removeClass(checkedClass)
+                        .find('input')
+                        .prop('checked', false);
+                }
+
+            }
+
+            $input.prop('checked', isChecked);
+
+            $target.toggleClass(checkedClass);
+
+            var name = $input.attr('name');
+
+            var checkedData = isRadio
+                ? {key: name, value: [$input.attr('value')]}
+                : me.getData(name);
+
+            // 比较状态变化
+            var newValue = checkedData.value.join(',');
+
+            var propertyName = 'data-value';
+
+            // 如果值没有变化，那么就不释放change事件了
+            if ($group.attr(propertyName) === newValue) {
+                return;
+            }
+
+            // 更新值
+            $group.attr(propertyName, newValue);
+
+            /**
+             * @event module:Filter#change
+             * @type {Object}
+             * @property {string} key 过滤项的键名
+             * @property {Array.<string>} value 当前选项组的选中值
+             */
+            me.fire('change', checkedData);
+
         }
     };
 
@@ -210,6 +239,8 @@ define(function (require) {
             // 控件class前缀，同时将作为main的class之一
             prefix: 'ecl-ui-filter',
 
+            allTag: 'data-all',
+
             groups: 'p',
 
             checkedClass: 'checked',
@@ -226,10 +257,18 @@ define(function (require) {
          * @private
          */
         init: function (options) {
-            this.disabled  = options.disabled;
+            var me = this;
 
-            this.main = options.main && lib.g(options.main);
-            this.bindEvents(privates);
+            me.disabled  = options.disabled;
+
+            me.main = typeof options.main === 'string'
+                    ? $('#' + options.main)
+                    : $(options.main);
+
+            me.main = me.main[0];
+
+            me.bindEvents(privates);
+
         },
 
 
@@ -243,32 +282,31 @@ define(function (require) {
          * @public
          */
         render: function (wrapper) {
-            var main    = wrapper && lib.g(wrapper) || this.main;
-            var options = this.options;
+            var me      = this;
+            var $main    = typeof wrapper === 'string' 
+                        ? $('#' + wrapper)            // 如果是string，那么是id
+                        : $(wrapper || me.main);      // 如果是HTMLElement，那直接$包裹一下
+                                                      // 如果是falsy，那么使用me.main
 
-            if (!main) {
+            var options = me.options;
+
+            if (!$main.length) {
                 throw new Error('main not found!');
             }
 
-            if (!this.rendered) {
-                this.rendered = true;
+            if (!me.rendered) {
+                me.rendered = true;
 
-                var groups = this.groups = {};
+                var groups = me.groups = {};
 
-                lib.each(
-                    main.getElementsByTagName(options.groups),
-                    function (group) {
+                $(options.groups).each(function (index, group) {
+                    groups[$('input', group).attr('name')] = group;
+                });
 
-                        // 以第一个 input 标签的 name 作为 key
-                        var key = group.getElementsByTagName('input')[0].name;
-                        groups[key] = group;
-                    }
-                );
-
-                lib.on(main, 'click', this._bound.onClick);
+                $main.on('click', me._bound.onClick);
             }
 
-            return this;
+            return me;
         },
 
         /**
@@ -279,23 +317,44 @@ define(function (require) {
          * @public
          */
         getData: function (key) {
-            var group = this.groups[key];
-            var value = [];
-            var data = {key: key, value: value};
+            var me    = this;
+            var group = me.groups[key];
+            var data  = { key : key };
+            var value = data.value = [];
 
-            if (group) {
+            // 如果没有指定key的filter群组，那么返回空值
+            if (!group) {
+                return data;
+            }
 
-                var disabledClass = this.options.disabledClass;
-                lib.each(
-                    group.getElementsByTagName('input'),
-                    function (input) {
-                        if (input.checked
-                            && !lib.hasClass(input.parentNode, disabledClass)
-                        ) {
-                            value.push(input.value);
-                        }
-                    }
-                );
+            var checkedClass  = me.options.checkedClass;
+            var all           = [];
+            var isAllSelected = false;
+
+            // 找到那些被标识了选中状态的LABEL
+            $('label', group).each(function (i, label) {
+
+                var $label = $(label);
+                var $input = $label.find('input');
+                var v      = $input.val();
+
+                v && all.push(v);
+
+                if (!$label.hasClass(checkedClass)) {
+                    return;
+                }
+
+                if ($label.attr('data-all')) {
+                    isAllSelected = true;
+                }
+                else {
+                    value.push(v);
+                }
+
+            });
+
+            if (isAllSelected) {
+                data.value = all;
             }
 
             return data;
@@ -315,22 +374,25 @@ define(function (require) {
             var group = this.groups[key];
             var comma = ',';
 
-            values = comma + values.join(comma) + comma;
+            if (!group) {
+                return;
+            }
 
-            lib.each(
-                group.getElementsByTagName('input'),
-                function (input) {
-                    var parentNode = input.parentNode;
-                    if (~values.indexOf(comma + input.value + comma)) {
-                        input.checked = false;
-                        lib.removeClass(parentNode, checkedClass);
-                        lib.addClass(parentNode, disabledClass);
-                    }
-                    else {
-                        lib.removeClass(parentNode, disabledClass);
-                    }
+            values = values.join(comma);
+
+            $('input', group).each(function (i, input) {
+                var $input = $(input);
+                var $label = $input.parent();
+
+                if (lib.contains(values, $input.attr('value'), comma)) {
+                    $input.prop('checked', false);
+                    $label.removeClass(checkedClass).addClass(disabledClass);
                 }
-            );
+                else {
+                    $label.removeClass(disabledClass);
+                }
+            });
+
         },
 
         /**
@@ -343,12 +405,12 @@ define(function (require) {
             var disabledClass = this.options.disabledClass;
             var group = this.groups[key];
 
-            lib.each(
-                lib.q(disabledClass, group),
-                function (label) {
-                    lib.removeClass(label, disabledClass);
-                }
-            );
+            if (!group) {
+                return;
+            }
+
+            $('.' + disabledClass, group).removeClass(disabledClass);
+
         }
 
 

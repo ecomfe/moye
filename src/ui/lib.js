@@ -282,7 +282,7 @@ define(function () {
     lib.contains = lib.string.contains = function (source, target, seperator) {
         seperator = seperator || ' ';
         source = seperator + source + seperator;
-        target = seperator + lib.trim(target) + seperator;
+        target = seperator + $.trim(target) + seperator;
         return source.indexOf(target) > -1;
     };
 
@@ -564,19 +564,12 @@ define(function () {
 
             if (listeners) {
 
-                console.log(listeners.length);
-
                 $.each(
                     listeners,
                     function (index, listener) {
-
                         args = args || {};
                         args.type = type;
-
-                        console.log(index, typeof listener);
-
                         listener.call(me, args);
-
                     }
                 );
             }
@@ -624,7 +617,7 @@ define(function () {
                 val = options[name];
 
                 // 处理配置项中的事件
-                if (eventNameReg.test(name) && lib.isFunction(val)) {
+                if (eventNameReg.test(name) && $.isFunction(val)) {
 
                     // 移除on前缀，并转换第3个字符为小写，得到事件类型
                     var type = name.charAt(2).toLowerCase() + name.slice(3);

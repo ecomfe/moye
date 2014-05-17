@@ -9,13 +9,18 @@ module.exports = function(config) {
 
 
     // frameworks to use
-    frameworks: ['jasmine', 'requirejs'],
+    frameworks: [
+      'jasmine', 
+      'requirejs', 
+      'http://s1.bdstatic.com/r/www/cache/static/jquery/jquery-1.10.2.min_f2fb5194.js'
+    ],
 
 
     // list of files / patterns to load in the browser
-    files: [
-      {pattern: 'test/**/libSpec.js', included: false},
-    ],
+    files: [{
+      pattern: 'test/**/FilterSpec.js', 
+      included: false
+    }],
 
 
     // list of files to exclude

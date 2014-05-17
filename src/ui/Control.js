@@ -8,6 +8,7 @@
 
 define(function (require) {
 
+    var $ = require('jquery');
     var lib = require('./lib');
 
     /**
@@ -48,9 +49,9 @@ define(function (require) {
             var me = this;
             var bound = this._bound || {};
 
-            lib.forIn(provider, function (fn, name) {
+            $.each(provider, function (name, fn) {
                 if (/^on[A-Z]/.test(name)) {
-                    bound[name] = lib.bind(fn, me);
+                    bound[name] = $.proxy(fn, me);
                 }
             });
 
@@ -65,15 +66,21 @@ define(function (require) {
          * @protected
          */
         initialize: function (options) {
-            options = this.setOptions(options);
-            if (this.binds) {
-                this.bindEvents(this.binds);
+
+            var me = this;
+
+            options = me.setOptions(options);
+
+            if (me.binds) {
+                me.bindEvents(me.binds);
             }
-            if (this.init) {
-                this.init(options);
-                this.init = null;
+
+            if (me.init) {
+                me.init(options);
+                me.init = null;
             }
-            this.children = [];
+
+            me.children = [];
         },
 
 
@@ -117,16 +124,14 @@ define(function (require) {
          * 
          * @param {string} tagName 标签名
          * @param {Object=} properties 标签属性
+         * @deprecated
          * @return {HTMLElement} 创建后的元素
          */
         createElement: function (tagName, properties) {
-            tagName = tagName || 'div';
-            var element = document.createElement(tagName);
-
+            var element = document.createElement(tagName || 'div');
             for (var prop in properties) {
                 element[prop] = properties[prop];
             }
-
             return element;
         },
 

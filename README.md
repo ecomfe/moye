@@ -18,13 +18,13 @@ Moye (知心组件库)
 + isArray 由$.isArray替代
 + isFunctoin 由$.isFunction替代
 + each/array.each 由$.each替代
-+ indexOf/array.indexOf 由$.indexOf替代
++ indexOf/array.indexOf 由$.inArray替代
 + toArray 由$.makeArray替代
 + extend/object.extend 由$.extend替代
 + parse 由$.parseJSON替代
 + trim 由$.trim替代
 + camelCase 由$.camelCase替代
-+ bind/fn.bind 由$.bind替代
++ bind/fn.bind 由$.proxy替代
 + on/event.on() 由$.on替代
 + un/event.un() 由$.off替代
 + fire()/event.fire() 由$('selector').trigger() 替代

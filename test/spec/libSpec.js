@@ -69,6 +69,7 @@ define(function (require) {
 
             // 'a[1]=2&a[0]=1&b=1&c=c&d[e]=1';
             var output = lib.toQueryString(input);
+
             expect(lib.contains(output, 'a[0]=1', '&')).toBe(true);
             expect(lib.contains(output, 'a[1]=2', '&')).toBe(true);
             expect(lib.contains(output, 'b=1', '&')).toBe(true);

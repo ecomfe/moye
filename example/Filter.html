@@ -6,6 +6,7 @@
 <link rel="stylesheet" href="common.css" />
 <link rel="stylesheet" href="css/Filter.css" />
 <script src="http://s1.bdstatic.com/r/www/cache/ecom/esl/1-6-8/esl.js"></script>
+<script src="http://s1.bdstatic.com/r/www/cache/static/jquery/jquery-1.10.2.min_f2fb5194.js"></script>
 </head>
 <body>
 <div id='content_left'><!--左侧最外层div-->
@@ -20,7 +21,7 @@
 		<label><input type="radio" name="type" value="5" />策略经营</label>
 	</p>
 	<p>按特色：
-		<label><input type="checkbox" name="special" value="" />全部</label>
+		<label data-all="all"><input type="checkbox" name="special" value="" />全部</label>
 		<label><input type="checkbox" name="special" value="1" />奇幻</label>
 		<label class="checked"><input type="checkbox" name="special" value="2" checked="checked" />玄幻</label>
 		<label><input type="checkbox" name="special" value="3" />武侠</label>
@@ -36,7 +37,7 @@
 <script>
 (function () {
     require.config({
-      baseUrl: '../src/ui'
+      baseUrl: '../src/ui',
     });
 
     require(['lib', 'Filter'], function (lib, Filter) {
@@ -44,29 +45,32 @@
     	var map = {
     		'1': [2, 3, 5],
     		'2': [1, 2, 4]
-    	}
+    	};
 
-        new Filter({
-          prefix: 'ecl-ui-filter',
-          main: lib.q('ecl-ui-filter')[0],
-          groups: 'p',
-          
-          onChange: function (e) {
-          	//console.log(e);
+      var counter = 0;
 
-          	if (e.key === 'type') {
-          		var value = e.value[0];
+      new Filter({
+        prefix: 'ecl-ui-filter',
+        main: $('.ecl-ui-filter')[0],
+        groups: 'p',
+        
+        onChange: function (e) {
 
-          		if (map[value]) {
-          			this.disableItems('special', map[value]);
-          		}
-          		else {
-          			this.enableItems('special');
-          		}
-          	}
-          }
+        	console.log(++counter);
 
-        }).render();
+        	if (e.key === 'type') {
+        		var value = e.value[0];
+
+        		if (map[value]) {
+        			this.disableItems('special', map[value]);
+        		}
+        		else {
+        			this.enableItems('special');
+        		}
+        	}
+        }
+
+      }).render();
     });
 
 })();
