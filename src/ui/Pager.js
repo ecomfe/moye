@@ -411,7 +411,7 @@ define(function (require) {
             }
 
             return this;
-        },
+        }
     });
 
     /**
