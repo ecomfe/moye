@@ -124,7 +124,7 @@ define(function (require) {
             var element = document.createElement(tagName);
 
             for (var prop in properties) {
-                element.setAttribute(prop, properties[prop]);
+                element[prop] = properties[prop];
             }
 
             return element;
