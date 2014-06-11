@@ -26,7 +26,7 @@ define(function (require) {
      */
     var setTextNoSelect = (function (supportCss) {
         var selectEvent;
-        return (supportCss 
+        return (supportCss
             ? function (enabled, noSelectClass) {
                 lib[enabled ? 'addClass' : 'removeClass'](document.body, noSelectClass);
             }
@@ -45,7 +45,7 @@ define(function (require) {
 
     /**
      * 私有函数或方法
-     * 
+     *
      * @type {Object}
      * @namespace
      * @name module:ScrollBar~privates
@@ -153,7 +153,7 @@ define(function (require) {
 
         /**
          * 主容器鼠标进入事件
-         * 
+         *
          * @private
          */
         onMainEnter: function () {
@@ -162,7 +162,7 @@ define(function (require) {
 
         /**
          * 主容器鼠标离开事件
-         * 
+         *
          * @private
          */
         onMainLeave: function () {
@@ -472,7 +472,7 @@ define(function (require) {
 
         /**
          * 设置启用
-         * 
+         *
          * @override
          */
         enable: function () {
@@ -481,7 +481,7 @@ define(function (require) {
 
         /**
          * 设置禁用
-         * 
+         *
          * @override
          */
         disable: function () {
@@ -490,7 +490,7 @@ define(function (require) {
 
         /**
          * 销毁，注销事件，解除引用
-         * 
+         *
          * @override
          * @public
          * @fires module:ScrollBar#dispose
