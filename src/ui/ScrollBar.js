@@ -26,7 +26,7 @@ define(function (require) {
      */
     var setTextNoSelect = (function (supportCss) {
         var selectEvent;
-        return (supportCss 
+        return (supportCss
             ? function (enabled, noSelectClass) {
                 lib[enabled ? 'addClass' : 'removeClass'](document.body, noSelectClass);
             }
@@ -45,7 +45,7 @@ define(function (require) {
 
     /**
      * 私有函数或方法
-     * 
+     *
      * @type {Object}
      * @namespace
      * @name module:ScrollBar~privates
@@ -68,8 +68,8 @@ define(function (require) {
                 : (e.pageY || e.clientY);
             this.thumbStart = parseInt(this.thumb.style[this.xAxis ? 'left' : 'top'], 10) || 0;
 
-            lib.on(document, 'mousemove', this.onMousemove);
-            lib.on(document, 'mouseup', this.onMouseup);
+            lib.on(document, 'mousemove', this._bound.onMousemove);
+            lib.on(document, 'mouseup', this._bound.onMouseup);
         },
 
         /**
@@ -103,8 +103,8 @@ define(function (require) {
         onMouseup: function () {
             setTextNoSelect(false, privates.getClass.call(this, 'noselect'));
 
-            lib.un(document, 'mousemove', this.onMousemove);
-            lib.un(document, 'mouseup', this.onMouseup);
+            lib.un(document, 'mousemove', this._bound.onMousemove);
+            lib.un(document, 'mouseup', this._bound.onMouseup);
         },
 
         /**
@@ -153,7 +153,7 @@ define(function (require) {
 
         /**
          * 主容器鼠标进入事件
-         * 
+         *
          * @private
          */
         onMainEnter: function () {
@@ -162,7 +162,7 @@ define(function (require) {
 
         /**
          * 主容器鼠标离开事件
-         * 
+         *
          * @private
          */
         onMainLeave: function () {
@@ -472,7 +472,7 @@ define(function (require) {
 
         /**
          * 设置启用
-         * 
+         *
          * @override
          */
         enable: function () {
@@ -481,7 +481,7 @@ define(function (require) {
 
         /**
          * 设置禁用
-         * 
+         *
          * @override
          */
         disable: function () {
@@ -490,7 +490,7 @@ define(function (require) {
 
         /**
          * 销毁，注销事件，解除引用
-         * 
+         *
          * @override
          * @public
          * @fires module:ScrollBar#dispose
