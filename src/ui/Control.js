@@ -11,6 +11,13 @@ define(function (require) {
     var $ = require('jquery');
     var lib = require('./lib');
 
+    var LIFE_CYCLE = {
+        NEW: 0,
+        INITED: 1,
+        RENDERED: 2,
+        DISPOSED: 4
+    };
+
     /**
      * 控件基类
      * 
@@ -69,11 +76,34 @@ define(function (require) {
 
             var me = this;
 
+            me.changeStage('NEW');
+            me.currentStates = {};
+
             options = me.setOptions(options);
 
-            if (me.binds) {
-                me.bindEvents(me.binds);
+            /**
+             * 控件的主元素
+             *
+             * @type {HTMLElement}
+             * @protected
+             * @readonly
+             */
+            me.main = options.main ? options.main : document.createElement('div');
+
+            if (options.hasOwnProperty('skin')) {
+                me.skin = options.skin;
             }
+
+            if (options.hasOwnProperty('states')) {
+                me.states = options.states;
+            }
+
+            if (options.hasOwnProperty('id')) {
+                me.id = options.id;
+            }
+
+            delete options.id;
+            delete options.skin;
 
             if (me.init) {
                 me.init(options);
@@ -81,6 +111,8 @@ define(function (require) {
             }
 
             me.children = [];
+
+            me.changeStage('INITED');
         },
 
 
@@ -92,8 +124,75 @@ define(function (require) {
          * @protected
          */
         render: function () {
-            throw new Error('not implement render');
+            var me = this;
+
+            if (me.isInStage('INITED')) {
+
+                me.initStructure();
+                me.initEvents();
+
+                // 为控件主元素添加id
+                if (!me.main.id) {
+                    me.main.id = lib.getId(me);
+                }
+
+                lib.addPartClasses(me);
+
+                if (me.states) {
+                    for (var i = me.states.length - 1; i >= 0; i--) {
+                        me.addState(me.states[i]);
+                    };
+                }
+
+                if (me.plugins) {
+                    for (var i = 0, len = me.plugins.length; i < len; i++) {
+                        me.plugins[i].execute(me);
+                    }
+                }
+
+            }
+
+            // 由子控件实现
+            me.repaint();
+
+            if (me.isInStage('INITED')) {
+                // 切换控件所属生命周期阶段
+                me.changeStage('RENDERED');
+            }
+
+            return me;
+
         },
+                
+        /**
+         * 初始化DOM结构
+         * 
+         * @abstract
+         * @return {Control} self
+         */
+        initStructure: function () {
+            return this;
+        },
+
+        /**
+         * 初始化事件绑定
+         * 
+         * @return {Control} self
+         */
+        initEvents: function () {
+            if (this.binds) {
+               this.bindEvents(this.binds);
+            }
+            return this;
+        },
+
+        /**
+         * 重绘视图
+         * 
+         * @abstract
+         * @return {Control} self
+         */
+        repaint: function () {},
 
         /**
          * 将控件添加到页面的某个元素中
@@ -109,6 +208,7 @@ define(function (require) {
         /**
          * 通过 className 查找控件容器内的元素
          * 
+         * @deprecated
          * @see lib.q
          * @param {string} className 元素的class，只能指定单一的class，
          * 如果为空字符串或者纯空白的字符串，返回空数组。
@@ -122,6 +222,7 @@ define(function (require) {
         /**
          * 创建一个元素，并设置属性
          * 
+         * @deprecated
          * @param {string} tagName 标签名
          * @param {Object=} properties 标签属性
          * @deprecated
@@ -133,6 +234,67 @@ define(function (require) {
                 element[prop] = properties[prop];
             }
             return element;
+        },
+
+        /**
+         * 增加状态
+         * 
+         * @param {string} state 状态
+         * @fires module:Control#statechange
+         * @return {Control} self
+         */
+        addState: function (state) {
+
+            var me = this;
+
+            if (me.hasState(state)) {
+                return me;
+            }
+
+            me.currentStates[state] = true;
+            lib.addStateClasses(me, state);
+
+            me.fire('statechange', {
+                state: state,
+                action: 'add'
+            });
+
+            return me;
+        },
+
+        /**
+         * 移除状态
+         * 
+         * @param {string} state 状态
+         * @fires module:Control#statechange
+         * @return {Control} self
+         */
+        removeState: function (state) {
+            var me = this;
+
+            if (!me.hasState(state)) {
+                return me;
+            }
+
+            me.currentStates[state] = false;
+            lib.removeStateClasses(me, state);
+            
+            me.fire('statechange', {
+                state: state,
+                action: 'remove'
+            });
+
+            return me;
+        },
+
+        /**
+         * 判断控件是否处于指定状态
+         *
+         * @param {string} state 状态名
+         * @return {boolean}
+         */
+        hasState: function (state) {
+            return !!this.currentStates[state];
         },
 
         /**
@@ -260,6 +422,59 @@ define(function (require) {
              * @event module:Control#dispose
              */
             this.fire('dispose');
+        },
+
+        /**
+         * 判断控件是否处于相应的生命周期阶段
+         * 
+         * @param {string} stage 生命周期阶段
+         * @return {boolean}
+         */
+        isInStage: function (stage) {
+            if (LIFE_CYCLE[stage] == null) {
+                throw new Error('Invalid life cycle stage: ' + stage);
+            }
+            return this.stage === LIFE_CYCLE[stage];
+        },
+
+        /**
+         * 改变控件的生命周期阶段
+         * 
+         * @param {string} stage 生命周期阶段
+         * @return {SELF}
+         */
+        changeStage: function (stage) {
+            if (LIFE_CYCLE[stage] === null) {
+                throw new Error('Invalid life cycle stage: ' + stage);
+            }
+            this.stage = LIFE_CYCLE[stage];
+            return this;
+        },
+
+        /**
+         * 使用插件
+         * 
+         * @public
+         * @param {Plugin} plugin 插件
+         */
+        use: function (plugin) {
+            var me = this;
+            var plugins = me.plugins;
+
+            // 存入队列
+            if (!me.plugins) {
+                plugins = me.plugins = [];
+            }
+
+            plugins.push(plugin);
+
+            // 如果控件已经渲染过了，那么直接执行插件
+            // 否则控件会在渲染时，执行插件
+            if (me.isInStage('RENDERED')) {
+                plugin.execute(me);
+            }
+
+            return me;
         }
 
     }).implement(lib.observable).implement(lib.configurable);

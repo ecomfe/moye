@@ -674,5 +674,200 @@ define(function () {
 
     })();
 
+    /**
+     * 获取控件部件相关的class数组
+     * 
+     * esui简化版本
+     *
+     * 如果不传递`part`参数，则生成如下：
+     *
+     * - `ui-{type}`
+     * - `skin-{type}`
+     *
+     * 如果有`part`参数，则生成如下：
+     *
+     * - `ui-{type}-{part}`
+     * - `skin-{type}-{part}`
+     *
+     * @param {string?} part 部件名称
+     * @return {string[]}
+     */
+    lib.getPartClasses = function (control, part) {
+        var type       = control.type.toLowerCase();
+        var skin       = control.skin;
+        var prefix     = config.uiClassPrefix;
+        var skinPrefix = config.skinClassPrefix;
+        var classes    = [];
+
+        if (part) {
+            classes.push(joinByStrike(prefix, type, part));
+            if (skin) {
+                classes.push(joinByStrike(skinPrefix, skin, type, part));
+            }
+        }
+        else {
+            classes.push(joinByStrike(prefix, type));
+            if (skin) {
+                classes.push(
+                    joinByStrike(skinPrefix, skin),
+                    joinByStrike(skinPrefix, skin, type)
+                );
+            }
+        }
+
+        return classes;
+    };
+
+    /**
+     * 获取控件部件相关的class字符串，具体可参考{@link lib#getPartClasses}方法
+     *
+     * @param {string} [part] 部件名称
+     * @return {string}
+     */
+    lib.getPartClassName = function (control, part) {
+        return getPartClasses(control, part).join(' ');
+    };
+
+    /**
+     * 添加控件部件相关的class，具体可参考{@link lib#getPartClasses}方法
+     *
+     * @param {string} [part] 部件名称
+     * @param {HTMLElement | string} [element] 部件元素或部件名称，默认为主元素
+     */
+    lib.addPartClasses = function (control, part, element) {
+
+        if (typeof element === 'string') {
+            element = lib.getPart(control, element);
+        }
+
+        element = element || control.main;
+
+        if (!element) {
+            return;
+        }
+
+        var classes = lib.getPartClasses(control, part);
+
+        for (var i = 0, len = classes.length; i < len; i++) {
+            lib.addClass(element, classes[i]);
+        }
+
+    };
+
+    /**
+     * 移除控件部件相关的class，具体可参考{@link lib#getPartClasses}方法
+     *
+     * @param {string} [part] 部件名称
+     * @param {HTMLElement | string} [element] 部件元素或部件名称，默认为主元素
+     */
+    lib.removePartClasses = function (control, part, element) {
+
+        if (typeof element === 'string') {
+            element = this.getPart(element);
+        }
+
+        element = element || this.control.main;
+
+        if (!element) {
+            return;
+        }
+
+        var classes = lib.getPartClasses(control, part);
+
+        for (var i = 0, len = classes.length; i < len; i++) {
+            lib.removeClass(element, classes[i]);
+        }
+
+    };
+
+
+    /**
+     * 获取控件状态相关的class数组
+     *
+     * 生成如下：
+     *
+     * - `ui-{type}-{state}`
+     * - `state-{state}`
+     * - `skin-{skin}-{state}`
+     * - `skin-{skin}-{styleType}-{state}`
+     *
+     * @param {string} state 状态名称
+     * @return {string[]}
+     */
+    lib.getStateClasses = function (control, state) {
+        var type = control.type.toLowerCase();
+        var classes = [
+            joinByStrike(config.uiClassPrefix, type, state),
+            joinByStrike(config.stateClassPrefix, state)
+        ];
+
+        var skin = control.skin;
+        if (skin) {
+            var skinPrefix = config.skinClassPrefix;
+            classes.push(
+                joinByStrike(skinPrefix, skin, state),
+                joinByStrike(skinPrefix, skin, type, state)
+            );
+        }
+        return classes;
+    };
+
+    /**
+     * 添加控件状态相关的class，具体可参考{@link lib#getStateClasses}方法
+     *
+     * @param {string} state 状态名称
+     */
+    lib.addStateClasses = function (control, state) {
+        var element = control.main;
+        if (!element) {
+            return;
+        }
+        var classes = lib.getStateClasses(control, state);
+        for (var i = classes.length - 1; i >= 0; i--) {
+            lib.addClass(element, classes[i]);
+        };
+    };
+
+    /**
+     * 移除控件状态相关的class，具体可参考{@link lib#getStateClasses}方法
+     *
+     * @param {string} state 状态名称
+     */
+    lib.removeStateClasses = function (control, state) {
+        var element = control.main;
+        if (!element) {
+            return;
+        }
+
+        var classes = lib.getStateClasses(control, state);
+
+        for (var i = classes.length - 1; i >= 0; i--) {
+            lib.removeClass(element, classes[i]);
+        };
+    };
+
+    /**
+     * 获取指定部件的DOM元素
+     *
+     * @param {string} part 部件名称
+     * @return {HTMLElement}
+     */
+    lib.getPart = function (part) {
+        return lib.g(this.getId(part));
+    };
+
+    /**
+     * 获取用于控件DOM元素的id
+     * 
+     * 控件ID: ctrl-{type}-{id}
+     * 控件部件ID: ctrl-{type}-{id}-{part}
+     * @param {string} [part] 部件名称，如不提供则生成控件主元素的id
+     * @return {string}
+     */
+    lib.getId = function (control, part) {
+        part = part ? '-' + part : '';
+        return 'ctrl-' + control.type.toLowerCase() + '-' + control.id + part;
+    };
+
     return lib;
 });
