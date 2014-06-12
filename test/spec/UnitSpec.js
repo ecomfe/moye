@@ -26,7 +26,6 @@ define(function (require) {
 
         });
 
-
         it('格式化单独测试', function () {
             var n;
 
@@ -165,8 +164,6 @@ define(function (require) {
             expect(n + '').toBe('1');
 
         });
-
-
 
     });
 

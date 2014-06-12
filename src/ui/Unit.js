@@ -417,7 +417,6 @@ define(function (require) {
         }
     };
 
-
     /*
      *公式转换函数，内部使用
      */
