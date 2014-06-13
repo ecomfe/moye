@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>Calendar</title>
+<link rel="stylesheet" href="common.css" />
+<script src="http://s1.bdstatic.com/r/www/cache/static/jquery/jquery-1.10.2.min_f2fb5194.js"></script>
+<script src="http://s1.bdstatic.com/r/www/cache/ecom/esl/1-6-8/esl.js"></script>
+
+</head>
+<body>
+  <div class="d1">
+        <select class="unit">
+            <option value="angle">角度</option>
+            <option value="angle">角度</option>
+            <option value="area">面积</option>
+            <option value="byte">数据存储</option>
+            <option value="density">密度</option>
+            <option value="length" selected="selected">长度</option>
+            <option value="power">功率</option>
+            <option value="pressure">压力</option>
+            <option value="speed">速度</option>
+            <option value="strength">力</option>
+            <option value="temperature">温度</option>
+            <option value="time">时间</option>
+            <option value="volume">体积</option>
+            <option value="weight">质量</option>
+            <option value="work">功、能和热量</option>
+        </select>
+        <br>  
+        <input maxlength="200">  
+        <select></select>
+        →
+        <select></select>
+        <div class="d2"></div>
+    </div>
+    <div class="d3"></div>
+<script>
+
+(function () {
+
+    require.config({
+      baseUrl: '../src/moye/ui'
+    });
+    require(['Unit'], function (Unit) {
+      
+      $(document).ready(function(){
+        var $inputs = $('input');
+        var $from = $inputs.eq(0);
+        var $selects = $('select');
+        var $unitCatagory = $selects.eq(0);
+        var $unitFrom = $selects.eq(1);
+        var $unitTo = $selects.eq(2);
+        var catagory = $unitCatagory.val();
+        var unitFrom = $unitFrom.val();
+        var unitTo = $unitTo.val();
+        var format = Unit.format;
+        var unit = []; 
+
+        $unitCatagory.bind('change', function(){
+            catagory = $unitCatagory.val();
+              initSelect(Unit.getData(catagory));
+              calc = Unit.calc;
+              doCalc();
+        });
+
+        $from.bind('input propertychange', function(){
+            doCalc();
+        });
+
+        $selects.slice(1).bind('change', function(){
+            $from.data('lastSearchNumber', +new Date());
+            doCalc();
+        });
+
+        initSelect(Unit.getData(catagory));
+        calc = Unit.calc;
+        $from.val(1);
+        doCalc();
+
+        function doCalc(){
+            var number = $.trim($from.val());
+            unitFrom = $unitFrom.val();
+            unitTo = $unitTo.val();
+            var reg = /(\d+)(\.)(\d{4})\d+(e[+-]\d+)/;
+            if(check(number) && unitFrom){
+                number = number*1;
+                if(number !== $from.data('lastSearchNumber')){                    
+                    if(unitTo){
+                        $from.data('lastSearchNumber', number);
+                        var rs = calc(catagory, number, unitFrom, unitTo);
+                        var num = rs.num;
+/*
+                        var str = num + '';
+                        var arr = str.split('');
+                        if(str.indexOf('.') < 0 && str.indexOf('e') < 0){
+                            arr.reverse();
+                            str = arr.join('');
+                            str = str.replace(/(\d{3})/g, '$1 ');
+                            arr = str.split('');
+                            arr.reverse();
+                            str = arr.join('');
+                        }
+                        var html = str + $unitTo.find('option:selected').text();
+                        $('.d2').empty().append(html);
+*/
+                        var html = rs.num + $unitTo.find('option:selected').text();
+                        $('.d2').empty().append(html);
+                    }else{
+                        var html = '';
+                        for(var i = 0, l = unit.length; i < l; i++){
+                            var rs = calc(catagory, number, unitFrom, unit[i].uFirst);
+
+                            html += '<div>' + rs.num + unit[i].uFirst + unit[i].uSecond + '</div>';
+                        }
+                        $('.d2').empty().append(html);
+                    }
+                }
+            }
+        }
+
+        function initSelect(conf){
+            var temp, uFirst, uSecond, optionStr = '';
+            unit = [];
+            for(var o in conf){
+                if(conf.hasOwnProperty(o)){
+                    var str = conf[o];
+                    temp = str.split('_');
+                    uFirst = temp[1];
+                    uSecond = temp[2] ? temp[2] : '';
+                    unit.push({
+                        'uFirst': uFirst,
+                        'uSecond': uSecond
+                    });
+                    optionStr += '<option value=' + uFirst + '>' + uFirst + uSecond + '</option>';
+                }
+            }
+            $unitFrom.empty().append(optionStr);
+            $unitTo.empty().append('<option value="">全部</option>'+optionStr);
+        }
+
+        function check(number){
+            return !isNaN(number);
+        }
+      });
+
+    });//require end
+
+})();
+</script>
+</div>
+</div>
+</body>
+</html>
