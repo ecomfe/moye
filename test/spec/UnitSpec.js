@@ -24,6 +24,10 @@ define(function (require) {
             rs = Unit.calcOrigin('length', 111111111111111111111111, '千米', '海里');
             expect(rs.num).toBe(5.999520038396928e+22);
 
+            //获取公式
+            rs = Unit.getData('length');
+            expect(rs).toBeDefined();
+
         });
 
         it('格式化单独测试', function () {
@@ -72,6 +76,10 @@ define(function (require) {
 
             n = Unit.format(1.123456789);
             expect(n + '').toBe('1.1234568');
+
+            //小数位开始有5个及以上0，转换为科学计数法，计数小数保留四位
+            n = Unit.format(-0.00000123);
+            expect(n + '').toBe('-1.2300e-6');
 
             //小数点后超过4位的保留小数点后7位，最后的0省去
             n = Unit.format(-0.132100032123);
