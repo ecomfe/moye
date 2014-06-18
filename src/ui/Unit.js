@@ -9,19 +9,14 @@
  */
 
 define(function (require) {
-
-    var Unit = {};
-
-        //最长限制
-    var MAX_NUM = 14,
-        //小数位数
-        DECIMAL_NUM = 7,
-        //科学计数法小数点后位数
-        EXPONENTIAL_NUM = 4;
+    
+    var MAX_NUM = 14,        //格式化后的最长限制
+        DECIMAL_NUM = 7,     //四舍五入时小数点后位数
+        EXPONENTIAL_NUM = 4; //科学计数法小数点后位数
 
     //算法公式，将所有单位都转换为基本单位（如长度都转换成米）(init)，再转换成需要的单位(calc)
     var conf = {
-        'angle':{
+        'angle': {
             calc: {
                 '圆周':'(x*771.604938)/(Math.pow(10,9))_圆周',
                 '直角':'(x*3.086420)/(Math.pow(10,6))_直角',
@@ -722,125 +717,140 @@ define(function (require) {
     };
 
     /*
-     *公式转换函数，内部使用
-     */
-    Unit.explain = function(x, formula){
-        return formula.replace('x', x).split('_');
-    };
-
-    /*
-     *计算入口
-     * @uType String, not null, 度量衡类型(如length, time)
-     * @x     Number, not null, 输入的值
-     * @uFrom String, not null, 原单位
-     * @uTo   String, not null, 目标单位
-     * @keepOrigin Boolean, null，是否返回原始结果值，默认false，返回格式化后的结果值
+     * 计算
+     * @uType       String,  not null, 单位类型(如length, time)
+     * @num         Number,  not null, 输入值
+     * @uFrom       String,  not null, 原单位
+     * @uTo         String,  not null, 目标单位
+     * @keepOrigin  Boolean, null，    保持原始结果(不进行格式化)，默认false
      *
-     * return String, 计算结果值
+     * return       Object, 计算结果
      */
-    Unit.calc = function(uType, x, uFrom, uTo, keepOrigin){
-        var unit = conf[uType],
-            init = Unit.explain(x ,unit.init[uFrom]),
-            special = unit.special && unit.special[uFrom + '-' + uTo] || null,
+    function calc( uType, num, uFrom, uTo, keepOrigin ) {
+        var unit = conf[ uType ],
+            init = explain( num ,unit.init[ uFrom ] ),
+            special = unit.special && unit.special[ uFrom + '-' + uTo ] || null,
             num, unitFirst, unitSecond;
-        //如果某个单位有特殊处理
-        if(special){
-            rs = Unit.explain(x, special);
-        }else{
-            rs = Unit.explain( (new Function('return ' + init[0]))() , unit.calc[uTo]);
+
+        //对某一类的某一单位做特殊算法处理
+        if ( special ) {
+            rs = explain( num, special );
+        } else {
+            rs = explain( ( new Function( 'return ' + init[ 0 ] ) )() , unit.calc[ uTo ] );
         }
-        num = (new Function('return ' + rs[0]))();
-        unitFirst = rs[1];
-        unitSecond = rs[2] || '';
+        //计算出最终结果(eval转换后的公式)
+        num = ( new Function( 'return ' + rs[ 0 ] ) )();
+        //中文单位
+        unitFirst = rs[ 1 ];
+        //英文单位，有的可能没有
+        unitSecond = rs[ 2 ] || '';
+
         return {
-            num: keepOrigin ? num : Unit.format(num),
+            num: keepOrigin ? num : format( num ),
             unitFirst: unitFirst,
             unitSecond: unitSecond ? unitSecond : ''
         };
     };
 
-    Unit.format = function(num){
+    /*
+     * 对结果进行格式化(内部使用)
+     */
+    function format( num ) {
         //格式策略，整体不超过14位
         var strNum = num + '',
             isFloat = false,
             arr, intPart, decPart;
         //只有包括.且整数位小于14位才认为是浮点数（便于以后格式化）
-        if(strNum.indexOf('.') > -1){
-            var match = strNum.match(/\.\d+e[+-](\d+)$/);
-            if(match && match[1]){
-                isFloat = match[1]*1 < (MAX_NUM - 1) ? true : false;
-            }else{
+        if ( strNum.indexOf( '.' ) > -1 ) {
+            var match = strNum.match( /\.\d+e[+-](\d+)$/ );
+            if ( match && match[ 1 ] ) {
+                isFloat = match[ 1 ] * 1 < ( MAX_NUM - 1 ) ? true : false;
+            } else {
                 isFloat = true;
             }
         }
         //小数处理逻辑
-        if(isFloat){
+        if ( isFloat ) {
             //-1 ~ 1之间的小数
-            if(num > -1 && num < 1 && num != 0){
+            if ( num > -1 && num < 1 && num != 0 ) {
                 //小数位开始有5个及以上0，转换为科学计数法，计数小数保留四位
-                if(Math.abs(num) < 0.00001){
-                    num = Unit.exponential(num, EXPONENTIAL_NUM);
-                }else{
+                if ( Math.abs( num ) < 0.00001 ) {
+                    num = exponential( num, EXPONENTIAL_NUM );
+                } else {
                     //保留7位小数
-                    num = num.toFixed(DECIMAL_NUM)*1;
+                    num = num.toFixed( DECIMAL_NUM ) * 1;
                 }
-            }else{
-                arr = strNum.split('.');
-                intPart = arr[0];
-                decPart = arr[1];
+            } else {
+                arr = strNum.split( '.' );
+                intPart = arr[ 0 ];
+                decPart = arr[ 1 ];
                 //整体超长
-                if(strNum.length > MAX_NUM){
+                if ( strNum.length > MAX_NUM ) {
                     //整数部分超长
-                    if(intPart.length >= MAX_NUM){
-                        num = Unit.exponential(num, EXPONENTIAL_NUM);
-                    }else{
-                        if(intPart.length < DECIMAL_NUM - 1){
-                            num = num.toFixed(DECIMAL_NUM)*1;
-                        }else{
-                            num = num.toFixed(MAX_NUM - intPart.length - 1)*1;
+                    if( intPart.length >= MAX_NUM ) {
+                        num = exponential( num, EXPONENTIAL_NUM );
+                    } else {
+                        if ( intPart.length < DECIMAL_NUM - 1 ) {
+                            num = num.toFixed( DECIMAL_NUM ) * 1;
+                        } else {
+                            num = num.toFixed( MAX_NUM - intPart.length - 1 ) * 1;
                         }
                     }
-                }else{
-                    if(decPart.length > DECIMAL_NUM){
-                        num = num.toFixed(DECIMAL_NUM)*1;
+                } else {
+                    if ( decPart.length > DECIMAL_NUM ) {
+                        num = num.toFixed( DECIMAL_NUM ) * 1;
                     }
                 }
             }
-        }else{
-            if(strNum.length > MAX_NUM){
-                num = Unit.exponential(num, EXPONENTIAL_NUM);
+        } else {
+            if ( strNum.length > MAX_NUM ){
+                num = exponential( num, EXPONENTIAL_NUM );
             }
         }
         return num + '';
     };
 
-    //科学计数法（保留小数n位)，如果计数小数位均为0，去掉
-    Unit.exponential = function(num, n){
-        var num2 = num.toExponential(n);
-        num = (num2 + '').match(new RegExp("\.0{" + n + "}e")) ? num.toExponential(0) : num2;
-        return num;
+    /*
+     * 转换公式的快捷函数(内部使用)
+     */
+    function explain( num, formula ) {
+        return formula.replace( 'x', num ).split( '_' );
+    };
+
+    /*
+     * 科学计数法快捷函数(内部使用)
+     */    
+    function exponential( num, n ) {
+        //保留科学计数法小数后n位
+        var numExp = num.toExponential( n );
+        //如果计数小数位均为0，去掉
+        return ( numExp + '' ).match( new RegExp( "\.0{" + n + "}e" ) ) ? num.toExponential( 0 ) : numExp;        
     }
 
     return {
-        getLength: function(uType){
+        //获取某一类的所有单位数量
+        getLength: function( uType ) {
             var len = 0;
-            $.each(conf[uType].group, function(i, g){
+            for( var i = 0, g; g = conf[ uType ].group[i]; i++ ) {
                 len += g.list.length;
-            });
+            };
             return len;
         },
-        getData: function(uType){
-            return conf[uType];
+        //返回某一类的所有配置项
+        getData: function( uType ) {
+            return conf[ uType ];
         },
-        calc: function(uType, x, uFrom, uTo){
-            return Unit.calc(uType, x, uFrom, uTo);
+        //计算，返回格式化后的结果
+        calc: function( uType, x, uFrom, uTo ) {
+            return calc( uType, x, uFrom, uTo );
         },
-        calcOrigin: function(uType, x, uFrom, uTo){
-            return Unit.calc(uType, x, uFrom, uTo, true);
+        //计算，返回原始结果
+        calcOrigin: function( uType, x, uFrom, uTo ) {
+            return calc( uType, x, uFrom, uTo, true );
         },
-        format: function(num){
-            return Unit.format(num);
-        },
-        a:Unit
+        //格式化
+        format: function( num ) {
+            return format( num );
+        }
     };
 });
