@@ -3,25 +3,20 @@
  * Copyright 2014 Baidu Inc. All rights reserved.
  * @author subei
  * @date 2014-05-22
- * 
+ *
  * 做特殊处理的逻辑(搜special):
  * 1.time小时转换成分
  */
 
 define(function (require) {
-
-    var Unit = {};
-
-        //最长限制
-    var MAX_NUM = 14,
-        //小数位数
-        DECIMAL_NUM = 7,
-        //科学计数法小数点后位数
-        EXPONENTIAL_NUM = 4;
+    
+    var MAX_NUM = 14,        //格式化后的最长限制
+        DECIMAL_NUM = 7,     //四舍五入时小数点后位数
+        EXPONENTIAL_NUM = 4; //科学计数法小数点后位数
 
     //算法公式，将所有单位都转换为基本单位（如长度都转换成米）(init)，再转换成需要的单位(calc)
-    Unit.conf = {
-        'angle':{
+    var conf = {
+        'angle': {
             calc: {
                 '圆周':'(x*771.604938)/(Math.pow(10,9))_圆周',
                 '直角':'(x*3.086420)/(Math.pow(10,6))_直角',
@@ -41,7 +36,28 @@ define(function (require) {
                 '秒':'(x*1)_秒',
                 '弧度':'(x*206264.806247)_秒',
                 '豪弧度':'(x*206.264806)_秒'
-            }
+            },
+            iu: '角度(°)',
+            group:[
+                {
+                    name: '角度制',
+                    list: [
+                        '圆周',
+                        '直角',
+                        '百分度_(gon)',
+                        '度_(°)',
+                        '分_( ′)',
+                        '秒_(")'
+                    ]
+                },
+                {
+                    name: '弧度制',
+                    list: [
+                        '弧度_(rad)',
+                        '豪弧度_(mrad)'
+                    ]
+                }
+            ]
         },
         'area': {
             calc: {
@@ -81,7 +97,42 @@ define(function (require) {
                 '亩':'(x*(1/0.0015))/1_平方米',
                 '平方尺':'(x*(1/9))/1_平方米',
                 '平方寸':'(x*(0.01/9))/1_平方米'
-            }
+            },
+            iu: '平方米(㎡)',
+            group:[
+                {
+                    name: '公制',
+                    list: [
+                        '平方千米_(km²)',
+                        '公顷_(ha)',
+                        '公亩_(are)',
+                        '平方米_(㎡)',
+                        '平方分米_(dm²)',
+                        '平方厘米_(cm²)',
+                        '平方毫米_(mm²)'
+                    ]
+                },
+                {
+                    name: '英制',
+                    list: [
+                        '英亩_(acre)',
+                        '平方英里_(sq.mi)',
+                        '平方码_(sq.yd)',
+                        '平方英尺_(sq.ft)',
+                        '平方英寸_(sq.in)',
+                        '平方竿_(sq.rd)'
+                    ]
+                },
+                {
+                    name: '市制',
+                    list: [
+                        '顷',
+                        '亩',
+                        '平方尺',
+                        '平方寸'
+                    ]
+                }
+            ]
         },
         'byte': {
             calc: {
@@ -103,7 +154,23 @@ define(function (require) {
                 '太字节':'(x*Math.pow(2,40))_字节',
                 '拍字节':'(x*Math.pow(2,50))_字节',
                 '艾字节':'(x*Math.pow(2,60))_字节'
-            }
+            },
+            iu: '字节(b)',
+            group:[
+                {
+                    name: '',
+                    list: [
+                        '比特_(bit)',
+                        '字节_(b)',
+                        '千字节_(kb)',
+                        '兆字节_(mb)',
+                        '千兆字节_(gb)',
+                        '太字节_(tb)',
+                        '拍字节_(pb)',
+                        '艾字节_(eb)'
+                    ]
+                }
+            ]
         },
         'density': {
             calc: {
@@ -121,7 +188,21 @@ define(function (require) {
                 '克/立方厘米':'(x*1000)_千克/立方米',
                 '克/立方分米':'(x*1)_千克/立方米',
                 '克/立方米':'(x*1)/1000_千克/立方米'
-            }
+            },
+            iu:'千克/立方米(kg/m³)',
+            group:[
+                {
+                    name: '',
+                    list: [
+                        '千克/立方厘米_(kg/cm³)',
+                        '千克/立方分米_(kg/dm³)',
+                        '千克/立方米_(kg/m³)',
+                        '克/立方厘米_(g/cm³)',
+                        '克/立方分米_(g/dm³)',
+                        '克/立方米_(g/m³)'
+                    ]
+                }
+            ]
         },
         'length': {
             calc: {
@@ -167,8 +248,46 @@ define(function (require) {
                 '分':'(x*(0.01/3))/1_米',
                 '厘':'(x*(0.001/3))/1_米',
                 '毫':'(x*(0.0001/3))/1_米'
-            }
-        }, 
+            },
+            iu: '米(m)',
+            group:[
+                {
+                    name: '公制',
+                    list: [
+                        '千米_(km)',
+                        '米_(m)',
+                        '分米_(dm)',
+                        '厘米_(cm)',
+                        '毫米_(mm)',
+                        '微米_(um)'
+                    ]
+                },
+                {
+                    name: '英制',
+                    list: [
+                        '英寸_(in)',
+                        '英尺_(ft)',
+                        '码_(yd)',
+                        '英里_(mi)',
+                        '海里_(nmi)',
+                        '英寻_(fm)',
+                        '弗隆_(fg)'
+                    ]
+                },
+                {
+                    name: '市制',
+                    list: [
+                        '里',
+                        '丈',
+                        '尺',
+                        '寸',
+                        '分',
+                        '厘',
+                        '毫'
+                    ]
+                }
+            ]
+        },
         'power': {
             calc: {
                 '瓦':'(x*1)/1_瓦_(W)',
@@ -197,7 +316,26 @@ define(function (require) {
                 '英尺·磅/秒':'(x*(745.699872/550))/1_瓦',
                 '焦耳/秒':'(x*1)/1_瓦',
                 '牛顿·米/秒':'(x*1)/1_瓦'
-            }
+            },
+            iu: '瓦(W)',
+            group: [
+                {
+                    name: '',
+                    list: [
+                        '瓦_(W)',
+                        '千瓦_(kW)',
+                        '英制马力',
+                        '米制马力',
+                        '马力',
+                        '公斤·米/秒_(kg·m/s)',
+                        '千卡/秒_(kcal/s)',
+                        '英热单位/秒_(Btu/s)',
+                        '英尺·磅/秒_(ft·lb/s)',
+                        '焦耳/秒_(J/s)',
+                        '牛顿·米/秒_(N·m/s)'
+                    ]
+                }
+            ]
         },
         'pressure': {
             calc: {
@@ -229,7 +367,28 @@ define(function (require) {
                 '毫米水柱':'(x*(1/0.101972))/1_帕斯卡',
                 '公斤力/平方厘米':'(x*98066.5)/1_帕斯卡',
                 '公斤力/平方米':'(x*9.80665)/1_帕斯卡'
-            }
+            },
+            iu: '帕斯卡(Pa)',
+            group: [
+                {
+                    name: '',
+                    list: [
+                        '帕斯卡_(Pa)',
+                        '千帕_(kpa)',
+                        '百帕_(mpa)',
+                        '标准大气压_(atm)',
+                        '毫米汞柱_(mmHg)',
+                        '英寸汞柱_(in Hg)',
+                        '巴_(bar)',
+                        '毫巴_(mbar)',
+                        '磅力/平方英尺_(psi)',
+                        '磅力/平方英寸_(psf)',
+                        '毫米水柱',
+                        '公斤力/平方厘米_(kgf/cm²)',
+                        '公斤力/平方米_(kgf/㎡)'
+                    ]
+                }
+            ]
         },
         'speed': {
             calc: {
@@ -249,7 +408,22 @@ define(function (require) {
                 '马赫':'(x*340.300000)_米/秒',
                 '英里/时':'(x*447.040000)/1000_米/秒',
                 '英寸/秒':'(x*25.400000)/1000_米/秒'
-            }
+            },
+            iu: '米/秒(m/s)',
+            group: [
+                {
+                    name: '',
+                    list: [
+                        '米/秒_(m/s)',
+                        '千米/秒_(km/s)',
+                        '千米/时_(km/h)',
+                        '光速_(c)',
+                        '马赫_(mach)',
+                        '英里/时_(mile/h)',
+                        '英寸/秒_(in/s)'
+                    ]
+                }
+            ]
         },
         'strength': {
             calc: {
@@ -269,7 +443,22 @@ define(function (require) {
                 '公吨力':'(x*9806.650000)_牛',
                 '磅力':'(x*4.448222)_牛',
                 '千磅力':'(x*4448.221615)_牛'
-            }
+            },
+            iu: '牛(N)',
+            group: [
+                {
+                    name: '',
+                    list: [
+                        '牛_(N)',
+                        '千牛_(kN)',
+                        '千克力_(kgf)',
+                        '克力',
+                        '公吨力',
+                        '磅力_(lbf)',
+                        '千磅力_(kip)'
+                    ]
+                }
+            ]
         },
         'temperature': {
             calc: {
@@ -285,7 +474,20 @@ define(function (require) {
                 '开氏度':'(x-273.15)+273.15_开氏度',
                 '兰氏度':'(x/1.8-273.15)+273.15_开氏度',
                 '列氏度':'(x*1.25)+273.15_开氏度'
-            }
+            },
+            iu: '开氏度(K)',
+            group: [
+                {
+                    name: '',
+                    list: [
+                        '摄氏度_(℃)',
+                        '华氏度_(℉)',
+                        '开氏度_(K)',
+                        '兰氏度_(°R)',
+                        '列氏度_(°Re)'
+                    ]
+                }
+            ]
         },
         'time': {
             calc: {
@@ -306,6 +508,21 @@ define(function (require) {
                 '秒':'(x*1)_秒',
                 '毫秒':'(x*1)/1000_秒'
             },
+            iu: '秒(s)',
+            group:[
+                {
+                    name: '',
+                    list: [
+                        '年_(yr)',
+                        '周_(week)',
+                        '天_(d)',
+                        '时_(h)',
+                        '分_(min)',
+                        '秒_(s)',
+                        '毫秒_(ms)'
+                    ]
+                }
+            ],
             special: {
                 '时-分': '(x*60)_分_(min)'
             }
@@ -344,7 +561,35 @@ define(function (require) {
                 '亩英尺':'(x*(43560*1728*0.016387064/1000))/1_立方米',
                 '英制加仑':'(x*0.00454609188)/1_立方米',
                 '美制加仑':'(x*(231*0.016387064/1000))/1_立方米'
-            }
+            },
+            iu: '立方米(m³)',
+            group: [
+                {
+                    name: '公制',
+                    list: [
+                        '立方米_(m³)',
+                        '立方分米_(dm³)',
+                        '立方厘米_(cm³)',
+                        '立方毫米_(mm³)',
+                        '升_(l)',
+                        '分升_(dl)',
+                        '毫升_(ml)',
+                        '厘升_(cl)',
+                        '公石_(hl)'
+                    ]
+                },
+                {
+                    name: '英制',
+                    list: [
+                        '立方英尺_(cu ft)',
+                        '立方英寸_(cu in)',
+                        '立方码_(cu yd)',
+                        '亩英尺',
+                        '英制加仑_(uk gal)',
+                        '美制加仑_(us gal)'
+                    ]
+                }
+            ]
         },
         'weight': {
             calc: {
@@ -388,7 +633,44 @@ define(function (require) {
                 '斤':'(x*0.5)/1_千克',
                 '两':'(x*0.05)/1_千克',
                 '钱':'(x*0.005)/1_千克'
-            }
+            },
+            iu: '千克(kg)',
+            group:[
+                {
+                    name: '公制',
+                    list: [
+                        '千克_(kg)',
+                        '克_(g)',
+                        '毫克_(mg)',
+                        '吨_(t)',
+                        '公担_(q)'
+                    ]
+                },
+                {
+                    name: '英制',
+                    list: [
+                        '磅_(lb)',
+                        '盎司_(oz)',
+                        '克拉_(ct)',
+                        '格令_(gr)',
+                        '长吨_(lt)',
+                        '短吨_(st)',
+                        '英担',
+                        '美担',
+                        '英石_(st)',
+                        '打兰_(dr)'
+                    ]
+                },
+                {
+                    name: '市制',
+                    list: [
+                        '担',
+                        '斤',
+                        '两',
+                        '钱'
+                    ]
+                }
+            ]
         },
         'work': {
             calc: {
@@ -413,123 +695,162 @@ define(function (require) {
                 '大卡':'(x*4185.851820846)/1_焦耳',
                 '英热单位':'(x*1055.05585262)/1_焦耳',
                 '英尺·磅':'(x*1.3557483731)/1_焦耳'
-            }
+            },
+            iu: '焦耳(J)',
+            group:[
+                {
+                    name: '焦耳(J)',
+                    list: [
+                        '焦耳_(J)',
+                        '公斤·米_(kg·m)',
+                        '米制马力·时_(hp·h)',
+                        '英制马力·时_(UKHp·h)',
+                        '千瓦·时_(kW·h)',
+                        '卡_(cal)',
+                        '千卡_(kcal)',
+                        '英热单位_(btu)',
+                        '英尺·磅_(ft·lb)'
+                    ]
+                }
+            ]
         }
     };
 
     /*
-     *公式转换函数，内部使用
+     * 计算
+     * @uType       String,  not null, 单位类型(如length, time)
+     * @num         Number,  not null, 输入值
+     * @uFrom       String,  not null, 原单位
+     * @uTo         String,  not null, 目标单位
+     * @keepOrigin  Boolean, null，    保持原始结果(不进行格式化)，默认false
+     *
+     * return       Object, 计算结果
      */
-    Unit.explain = function(x, formula){
-        return formula.replace('x', x).split('_');
-    };
-
-    /*
-     *计算入口
-     * @uType String, not null, 度量衡类型(如length, time)
-     * @x     Number, not null, 输入的值
-     * @uFrom String, not null, 原单位
-     * @uTo   String, not null, 目标单位
-     * @keepOrigin Boolean, null，是否返回原始结果值，默认false，返回格式化后的结果值
-     * 
-     * return String, 计算结果值
-     */
-    Unit.calc = function(uType, x, uFrom, uTo, keepOrigin){
-        var unit = Unit.conf[uType],
-            conv = Unit.explain(x ,unit.init[uFrom]),
-            special = unit.special && unit.special[uFrom + '-' + uTo] || null,
+    function calc( uType, num, uFrom, uTo, keepOrigin ) {
+        var unit = conf[ uType ],
+            init = explain( num ,unit.init[ uFrom ] ),
+            special = unit.special && unit.special[ uFrom + '-' + uTo ] || null,
             num, unitFirst, unitSecond;
-        //如果某个单位有特殊处理
-        if(special){
-            rs = Unit.explain(x, special);
-        }else{
-            rs = Unit.explain( (new Function('return ' + conv[0]))() , unit.calc[uTo]);
+
+        //对某一类的某一单位做特殊算法处理
+        if ( special ) {
+            rs = explain( num, special );
+        } else {
+            rs = explain( ( new Function( 'return ' + init[ 0 ] ) )() , unit.calc[ uTo ] );
         }
-        num = (new Function('return ' + rs[0]))();
-        unitFirst = rs[1];
-        unitSecond = rs[2] || '';
+        //计算出最终结果(eval转换后的公式)
+        num = ( new Function( 'return ' + rs[ 0 ] ) )();
+        //中文单位
+        unitFirst = rs[ 1 ];
+        //英文单位，有的可能没有
+        unitSecond = rs[ 2 ] || '';
+
         return {
-            num: keepOrigin ? num : Unit.format(num),
+            num: keepOrigin ? num : format( num ),
             unitFirst: unitFirst,
             unitSecond: unitSecond ? unitSecond : ''
         };
     };
 
-    Unit.format = function(num){
-        //格式策略，整体不超过14位            
+    /*
+     * 对结果进行格式化(内部使用)
+     */
+    function format( num ) {
+        //格式策略，整体不超过14位
         var strNum = num + '',
             isFloat = false,
             arr, intPart, decPart;
         //只有包括.且整数位小于14位才认为是浮点数（便于以后格式化）
-        if(strNum.indexOf('.') > -1){
-            var match = strNum.match(/\.\d+e[+-](\d+)$/);
-            if(match && match[1]){
-                isFloat = match[1]*1 < (MAX_NUM - 1) ? true : false;
-            }else{
+        if ( strNum.indexOf( '.' ) > -1 ) {
+            var match = strNum.match( /\.\d+e[+-](\d+)$/ );
+            if ( match && match[ 1 ] ) {
+                isFloat = match[ 1 ] * 1 < ( MAX_NUM - 1 ) ? true : false;
+            } else {
                 isFloat = true;
             }
         }
         //小数处理逻辑
-        if(isFloat){
+        if ( isFloat ) {
             //-1 ~ 1之间的小数
-            if(num > -1 && num < 1 && num != 0){
+            if ( num > -1 && num < 1 && num != 0 ) {
                 //小数位开始有5个及以上0，转换为科学计数法，计数小数保留四位
-                if(Math.abs(num) < 0.00001){
-                    num = Unit.exponential(num, EXPONENTIAL_NUM);
-                }else{
+                if ( Math.abs( num ) < 0.00001 ) {
+                    num = exponential( num, EXPONENTIAL_NUM );
+                } else {
                     //保留7位小数
-                    num = num.toFixed(DECIMAL_NUM)*1;
+                    num = num.toFixed( DECIMAL_NUM ) * 1;
                 }
-            }else{
-                arr = strNum.split('.');
-                intPart = arr[0];
-                decPart = arr[1];
+            } else {
+                arr = strNum.split( '.' );
+                intPart = arr[ 0 ];
+                decPart = arr[ 1 ];
                 //整体超长
-                if(strNum.length > MAX_NUM){
+                if ( strNum.length > MAX_NUM ) {
                     //整数部分超长
-                    if(intPart.length >= MAX_NUM){
-                        num = Unit.exponential(num, EXPONENTIAL_NUM);
-                    }else{
-                        if(intPart.length < DECIMAL_NUM - 1){
-                            num = num.toFixed(DECIMAL_NUM)*1;
-                        }else{
-                            num = num.toFixed(MAX_NUM - intPart.length - 1)*1;
+                    if( intPart.length >= MAX_NUM ) {
+                        num = exponential( num, EXPONENTIAL_NUM );
+                    } else {
+                        if ( intPart.length < DECIMAL_NUM - 1 ) {
+                            num = num.toFixed( DECIMAL_NUM ) * 1;
+                        } else {
+                            num = num.toFixed( MAX_NUM - intPart.length - 1 ) * 1;
                         }
                     }
-                }else{
-                    if(decPart.length > DECIMAL_NUM){
-                        num = num.toFixed(DECIMAL_NUM)*1;
+                } else {
+                    if ( decPart.length > DECIMAL_NUM ) {
+                        num = num.toFixed( DECIMAL_NUM ) * 1;
                     }
                 }
             }
-        }else{
-            if(strNum.length > MAX_NUM){
-                num = Unit.exponential(num, EXPONENTIAL_NUM);
+        } else {
+            if ( strNum.length > MAX_NUM ){
+                num = exponential( num, EXPONENTIAL_NUM );
             }
         }
         return num + '';
     };
 
-    //科学计数法（保留小数n位)，如果计数小数位均为0，去掉
-    Unit.exponential = function(num, n){
-        var num2 = num.toExponential(n);
-        num = (num2 + '').match(new RegExp("\.0{" + n + "}e")) ? num.toExponential(0) : num2;
-        return num;
+    /*
+     * 转换公式的快捷函数(内部使用)
+     */
+    function explain( num, formula ) {
+        return formula.replace( 'x', num ).split( '_' );
+    };
+
+    /*
+     * 科学计数法快捷函数(内部使用)
+     */    
+    function exponential( num, n ) {
+        //保留科学计数法小数后n位
+        var numExp = num.toExponential( n );
+        //如果计数小数位均为0，去掉
+        return ( numExp + '' ).match( new RegExp( "\.0{" + n + "}e" ) ) ? num.toExponential( 0 ) : numExp;        
     }
 
     return {
-        getData: function(uType){
-            return Unit.conf[uType].calc;
+        //获取某一类的所有单位数量
+        getLength: function( uType ) {
+            var len = 0;
+            for( var i = 0, g; g = conf[ uType ].group[i]; i++ ) {
+                len += g.list.length;
+            };
+            return len;
         },
-        calc: function(uType, x, uFrom, uTo){
-            return Unit.calc(uType, x, uFrom, uTo);
+        //返回某一类的所有配置项
+        getData: function( uType ) {
+            return conf[ uType ];
         },
-        calcOrigin: function(uType, x, uFrom, uTo){
-            return Unit.calc(uType, x, uFrom, uTo, true);
+        //计算，返回格式化后的结果
+        calc: function( uType, x, uFrom, uTo ) {
+            return calc( uType, x, uFrom, uTo );
         },
-        format: function(num){
-            return Unit.format(num);
+        //计算，返回原始结果
+        calcOrigin: function( uType, x, uFrom, uTo ) {
+            return calc( uType, x, uFrom, uTo, true );
         },
-        a:Unit
+        //格式化
+        format: function( num ) {
+            return format( num );
+        }
     };
 });

@@ -59,9 +59,9 @@
 
         $unitCatagory.bind('change', function(){
             catagory = $unitCatagory.val();
-              initSelect(Unit.getData(catagory));
-              calc = Unit.calc;
-              doCalc();
+            calc = Unit.calc;
+            initSelect(catagory);            
+            doCalc();
         });
 
         $from.bind('input propertychange', function(){
@@ -73,7 +73,7 @@
             doCalc();
         });
 
-        initSelect(Unit.getData(catagory));
+        initSelect(catagory);
         calc = Unit.calc;
         $from.val(1);
         doCalc();
@@ -90,20 +90,6 @@
                         $from.data('lastSearchNumber', number);
                         var rs = calc(catagory, number, unitFrom, unitTo);
                         var num = rs.num;
-/*
-                        var str = num + '';
-                        var arr = str.split('');
-                        if(str.indexOf('.') < 0 && str.indexOf('e') < 0){
-                            arr.reverse();
-                            str = arr.join('');
-                            str = str.replace(/(\d{3})/g, '$1 ');
-                            arr = str.split('');
-                            arr.reverse();
-                            str = arr.join('');
-                        }
-                        var html = str + $unitTo.find('option:selected').text();
-                        $('.d2').empty().append(html);
-*/
                         var html = rs.num + $unitTo.find('option:selected').text();
                         $('.d2').empty().append(html);
                     }else{
@@ -119,22 +105,31 @@
             }
         }
 
-        function initSelect(conf){
+        function initSelect(catagory){
             var temp, uFirst, uSecond, optionStr = '';
+
+            var data = Unit.getData(catagory);
             unit = [];
-            for(var o in conf){
-                if(conf.hasOwnProperty(o)){
-                    var str = conf[o];
-                    temp = str.split('_');
-                    uFirst = temp[1];
-                    uSecond = temp[2] ? temp[2] : '';
+
+            $.each(data.group, function(i, g){
+                if(g.name){
+                    optionStr += '<optgroup label="'+g.name+'">';
+                }
+                $.each(g.list, function(j, l){
+                    temp = l.split('_');
+                    uFirst = temp[0];
+                    uSecond = temp[1] ? temp[1] : '';
                     unit.push({
                         'uFirst': uFirst,
                         'uSecond': uSecond
                     });
                     optionStr += '<option value=' + uFirst + '>' + uFirst + uSecond + '</option>';
+                });
+                if(g.name){
+                    optionStr += '</optgroup>';
                 }
-            }
+
+            });
             $unitFrom.empty().append(optionStr);
             $unitTo.empty().append('<option value="">全部</option>'+optionStr);
         }

@@ -24,9 +24,16 @@ define(function (require) {
             rs = Unit.calcOrigin('length', 111111111111111111111111, '千米', '海里');
             expect(rs.num).toBe(5.999520038396928e+22);
 
+            //获取某一公式的单位数量
+            rs = Unit.getLength('length');            
+            expect(rs).toBe(20);
+
             //获取公式
-            rs = Unit.getData('length');
-            expect(rs).toBeDefined();
+            rs = Unit.getData('length');            
+            expect(rs.calc).toBeDefined();
+            expect(rs.init).toBeDefined();
+            expect(rs.group).toBeDefined();
+            expect(rs.iu).toBeDefined();
 
         });
 
