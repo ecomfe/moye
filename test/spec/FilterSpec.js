@@ -1,6 +1,5 @@
 define(function (require) {
 
-    var lib    = require('ui/lib');
     var Filter = require('ui/Filter');
     var $      = require('jquery');
     
@@ -201,7 +200,7 @@ define(function (require) {
 
                     var $input = $('input[value=' + v + '][name=special]');
 
-                    expect($('input[value=' + v + '][name=special]').prop('checked')).toBe(true);
+                    expect($input.prop('checked')).toBe(true);
                 });
 
             };
