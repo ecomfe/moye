@@ -202,8 +202,8 @@ define(function (require) {
                     return true;
                 },
 
-                unkown: function () {
-                    return this.parent('unkown');
+                unknow: function () {
+                    return this.parent('unknow');
                 }
             });
 
@@ -212,7 +212,7 @@ define(function (require) {
             expect(sinbad.name).toBe('Sinbad');
             expect(sinbad.eat()).toBe('MeatFish');
             expect(sinbad.big()).toBeTruthy();
-            expect(sinbad.unkown).toThrow();
+            expect($.proxy(sinbad.unknow, sinbad)).toThrow();
 
             expect(sinbad instanceof Lion).toBe(true);
             expect(sinbad instanceof Cat).toBe(true);
@@ -231,7 +231,7 @@ define(function (require) {
                 },
 
                 eat: function () {
-                    return 'Meat' + this.parent('eat');
+                    return 'Meat' + ' & ' + this.parent('eat');
                 },
 
                 big: function () {
@@ -245,7 +245,7 @@ define(function (require) {
             var sinbad = new Lion1();
 
             expect(sinbad.name).toBe('Sinbad');
-            expect(sinbad.eat()).toBe('MeatFish');
+            expect(sinbad.eat()).toBe('Meat & Fish');
             expect(sinbad.big()).toBeTruthy();
 
             expect(sinbad instanceof Lion1).toBe(true);
@@ -257,6 +257,10 @@ define(function (require) {
             var A = lib.newClass({
                 options: {
                     a: true
+                },
+
+                foo: function () {
+                    return this.options.a;
                 }
             });
 
@@ -270,12 +274,25 @@ define(function (require) {
             var C = A.extend({
                 options: {
                     name: 'c'
+                },
+
+                foo: function () {
+                    return this.options.name + ':' + this.parent();
+                }
+            });
+
+            var D = C.extend({
+                name: 'D',
+
+                foo: function () {
+                    return this.name + ':' + this.parent();
                 }
             });
 
             var a = new A();
             var b = new B();
             var c = new C();
+            var d = new D();
 
             expect(a instanceof A).toBe(true);
             expect(b instanceof B).toBe(true);
@@ -283,6 +300,10 @@ define(function (require) {
             expect(c instanceof C).toBe(true);
             expect(c instanceof A).toBe(true);
             expect(c instanceof B).toBe(false);
+            expect(d instanceof D).toBe(true);
+            expect(d instanceof C).toBe(true);
+            expect(d instanceof A).toBe(true);
+            expect(d.foo()).toBe('D:c:true');
 
             expect(a.options).toEqual({a: true});
             expect(b.options).toEqual(
@@ -298,6 +319,27 @@ define(function (require) {
                     name: 'c'
                 }
             );
+        });
+
+        it('私有方法', function () {
+            Cat.implement({
+                _foo: function () {
+                    return 'bar';
+                },
+
+                _bar: function () {
+                    return this._foo();
+                },
+
+                foo: function () {
+                    return this._bar();
+                }
+            });
+
+            var cat = new Cat('Tom');
+            expect(cat._foo).toThrow();
+            expect(cat._bar).toThrow();
+            expect($.proxy(cat.foo, cat)).not.toThrow();
         });
 
         it('事件实现', function () {
