@@ -7,7 +7,7 @@
  */
 
 /* jshint boss: true, unused: false */
-define(function () {
+define(function (require) {
 
     var $ = require('jquery');
 
