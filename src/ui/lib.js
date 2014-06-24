@@ -62,14 +62,35 @@ define(function (require) {
             : $.type(obj);
     };
 
+    /**
+     * 判断是否日期对象
+     * 
+     * @method module:lib.isDate
+     * @param {*} obj 待判断的输入
+     * @return {boolean} 类型判断结果
+     */
     lib.isDate = function (obj) {
         return $.type(obj) === 'date';
     };
 
+    /**
+     * 判断是否字符串
+     * 
+     * @method module:lib.isString
+     * @param {*} obj 待判断的输入
+     * @return {boolean} 类型判断结果
+     */
     lib.isString = function (obj) {
         return $.type(obj) === 'string';
     };
 
+    /**
+     * 判断是否对象
+     * 
+     * @method module:lib.isObject
+     * @param {*} obj 待判断的输入
+     * @return {boolean} 类型判断结果
+     */
     lib.isObject = function (obj) {
         return $.type(obj) === 'object';
     };
@@ -103,6 +124,9 @@ define(function (require) {
 
     /* ========================== lib.object ========================== */
 
+    /**
+     * @namespace module:lib.object
+     */
     lib.object = {};
 
     /**
@@ -231,6 +255,9 @@ define(function (require) {
 
     /* ========================== lib.string ========================== */
    
+    /**
+     * @namespace module:lib.string
+     */
     lib.string = {};
 
     /**
@@ -288,6 +315,9 @@ define(function (require) {
 
     /* ========================== lib.fn ========================== */
 
+    /**
+     * @namespace module:lib.fn
+     */
     lib.fn = {};
 
     /** 
