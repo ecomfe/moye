@@ -195,9 +195,20 @@ define(function (require) {
     })();
 
     /**
-     * 深度拷贝对象
+     * 深层复制
      * 
-     * @type {[type]}
+     * @method module:lib.clone
+     * @param {*} source 被复制的源
+     * 
+     * @return {*} 复制后的新对象
+     */
+    /**
+     * 深层复制
+     * 
+     * @method module:lib.object.clone
+     * @param {*} source 被复制的源
+     * 
+     * @return {*} 复制后的新对象
      */
     var clone = lib.clone = lib.object.clone = function (target) {
         return $.extend.call(null, true, {}, target);
