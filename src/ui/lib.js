@@ -286,6 +286,10 @@ define(function () {
         return source.indexOf(target) > -1;
     };
 
+    lib.g = function (id) {
+        return typeOf(id) === 'string' ? document.getElementById(id) : id;
+    };
+
     /* ========================== lib.fn ========================== */
 
     lib.fn = {};

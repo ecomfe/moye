@@ -12,7 +12,7 @@ define(function (require) {
         );
 
         lunar = new Lunar({
-            main: lib.q('ecl-ui-lunar')[0],
+            main: $('.ecl-ui-lunar').get(0),
             value: '1981-09-17'
         }).render();
     });
@@ -81,8 +81,8 @@ define(function (require) {
 
             lunar.setRange({begin: '2013-06-01'});
 
-            var prev = lib.q('ecl-ui-lunar-pre', lunar.main)[0];
-            var next = lib.q('ecl-ui-lunar-next', lunar.main)[0];
+            var prev = $('.ecl-ui-lunar-pre', lunar.main)[0];
+            var next = $('.ecl-ui-lunar-next', lunar.main)[0];
             expect(prev.offsetHeight).toBe(0);
 
             lunar.setValue('2013-06-01');

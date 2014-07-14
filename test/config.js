@@ -18,7 +18,10 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [{
-      pattern: 'test/**/FilterSpec.js', 
+      pattern: 'test/spec/FilterSpec.js',
+      included: false
+    }, {
+      pattern: 'test/spec/LunarSpec.js',
       included: false
     }],
 

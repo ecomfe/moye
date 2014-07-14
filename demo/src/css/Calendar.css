@@ -1,0 +1,93 @@
+/*! 2014 Baidu Inc. All Rights Reserved */
+.ecl-ui-cal h3,
+.ecl-ui-cal-pre,
+.ecl-ui-cal-next {
+  background: url(http://open.baidu.com/stat/ticket/cal.gif) 0 -19px;
+}
+.ecl-ui-cal {
+  position: absolute;
+  border: 1px solid #b5b5b5;
+  background: #fff;
+  text-align: center;
+  left: -2000px;
+}
+.ecl-ui-cal h3 {
+  margin: 0;
+  padding: 0;
+  text-align: center;
+  line-height: 19px;
+  height: 19px;
+  overflow: hidden;
+  font-size: 14px;
+  background-position: 1px 0;
+  background-repeat: repeat-x;
+  color: #41537b;
+  margin-bottom: 2px;
+  border: 1px solid #c6cede;
+  border-top-color: #e9eff9;
+  border-left-color: #e9eff9;
+}
+.ecl-ui-cal ul {
+  color: #666;
+}
+.ecl-ui-cal li,
+.ecl-ui-cal p a {
+  float: left;
+  width: 25px;
+  font: 12px Arial;
+}
+.ecl-ui-cal p a {
+  color: #000;
+  height: 18px;
+  line-height: 18px;
+  margin-top: 3px;
+  text-decoration: none;
+  outline: none;
+  overflow: hidden;
+}
+.ecl-ui-cal p a:hover {
+  color: #fff;
+  background: #eb4f03;
+}
+.ecl-ui-cal p a.ecl-ui-cal-disabled,
+.ecl-ui-cal p a.ecl-ui-cal-disabled:hover {
+  color: #ddd;
+  cursor: not-allowed;
+  background: none;
+}
+.ecl-ui-cal-month {
+  float: left;
+  margin: auto 2px;
+  width: 175px;
+  border-left: 1px solid #dae2f5;
+}
+.ecl-ui-cal-month .ecl-ui-cal-today {
+  color: red;
+}
+.ecl-ui-cal-month .ecl-ui-cal-weekend {
+  color: orange;
+}
+.ecl-ui-cal-month .ecl-ui-cal-checked {
+  color: #fff;
+  background: #3977d2;
+}
+.ecl-ui-cal-month .ecl-ui-cal-pre-month,
+.ecl-ui-cal-month .ecl-ui-cal-next-month {
+  color: #999;
+}
+.ecl-ui-cal-pre,
+.ecl-ui-cal-next {
+  width: 5px;
+  height: 9px;
+  font-size: 0;
+  position: absolute;
+  overflow: hidden;
+  top: 6px;
+}
+.ecl-ui-cal-pre {
+  left: 6px;
+}
+.ecl-ui-cal-next {
+  right: 6px;
+  background-position: 0 -28px;
+}

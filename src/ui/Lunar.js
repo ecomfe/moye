@@ -8,6 +8,7 @@
 
 define(function (require) {
 
+    var $ = require('jquery');
     var lib = require('./lib');
     var Control = require('./Control');
 
@@ -495,29 +496,24 @@ define(function (require) {
             var options = this.options;
             var prefix = options.prefix;
             var range  = this.range;
-            var prev = lib.q(prefix + '-pre', this.main)[0];
-            var next = lib.q(prefix + '-next', this.main)[0];
+            var prev = $(prefix + '-pre', this.main);
+            var next = $(prefix + '-next', this.main);
 
             date = date || this.date || this.from(this.value);
 
             var dateYYYYMM = privates.getYYYYMM.call(this, date);
 
-            if (prev) {
-                lib[!range 
+            prev[!range 
                     || !range.begin
                     || privates.getYYYYMM.call(this, range.begin) < dateYYYYMM
                         ? 'show' : 'hide'
-                ](prev);
+                ]();
 
-            }
-
-            if (next) {
-                lib[!range
+            next[!range
                     || !range.end
                     || privates.getYYYYMM.call(this, range.end) > dateYYYYMM
                         ? 'show' : 'hide'
-                ](next);
-            }
+                ]();
         },
 
         /**
@@ -674,7 +670,8 @@ define(function (require) {
                 return;
             }
 
-            var el     = lib.getTarget(e);
+
+            var el     = event.target;
             var tag    = el.tagName;
 
             while (tag !== 'A' &&　el !== this.main) {
@@ -682,10 +679,12 @@ define(function (require) {
                 tag = el.tagName;
             }
 
+            var $el = $(el);
+
             switch (tag) {
 
                 case 'A':
-                    lib.preventDefault(e);
+                    event.preventDefault();
 
                     var prefix    = this.options.prefix;
                     var preClass  = prefix + '-pre';
@@ -693,22 +692,19 @@ define(function (require) {
                     var goTodayClass  = prefix + '-go-today';
                     var addEventClass = prefix + '-add-event';
                     var disClass  = prefix + '-disabled';
-                    var hasClass  = lib.hasClass;
-
-                    var stopPropagation = lib.stopPropagation;
 
                     // 上月操作
-                    if (hasClass(el, preClass)) {
+                    if ($el.hasClass(preClass)) {
                         privates.showPreMonth.call(this);
-                        stopPropagation(e);
+                        event.stopPropagation();
                     }
                     // 下月操作
-                    else if (hasClass(el, nextClass)) {
+                    else if ($el.hasClass(nextClass)) {
                         privates.showNextMonth.call(this);
-                        stopPropagation(e);
+                        event.stopPropagation();
                     }
                     // 回到今天
-                    else if (hasClass(el, goTodayClass)) {
+                    else if ($el.hasClass(goTodayClass)) {
                         var now = new Date();
                         if (privates.getYYYYMM.call(this, this.date) !== privates.getYYYYMM.call(this, now)) {
                             this.date = now;
@@ -716,11 +712,11 @@ define(function (require) {
                         }
                     }
                     // 添加事件
-                    else if (hasClass(el, addEventClass)) {
+                    else if ($el.hasClass(addEventClass)) {
                         this.fire('add', this);
                     }
                     // 选取日期
-                    else if (!hasClass(el, disClass)) {
+                    else if (!$el.hasClass(disClass)) {
                         privates.pick.call(this, el, e);
                     }
 
@@ -1100,13 +1096,12 @@ define(function (require) {
                     + '<a href="#" class="' + prefix + '-go-today">今天</a>'
                     + '<a href="#" class="' + prefix + '-add-event">添加事件</a>';
 
-                this.monthElement = lib.q(monthClass, main)[0];
+                this.monthElement = $('.' + monthClass, main).get(0);
 
                 privates.build.call(this);
                 
-                lib.on(main, 'click', this._bound.onClick);
-                
-                lib.addClass(main, 'c-clearfix');
+                $(main).on('click', this._bound.onClick).addClass('c-clearfix');
+
             }
 
             return this;
@@ -1132,7 +1127,7 @@ define(function (require) {
             var els = this.getDayElements();
             var data = {};
 
-            lib.each(els, function (el, i) {
+            $.each(els, function (i, el) {
                 var date = el.getAttribute('data-date');
 
                 data[date] = {
@@ -1149,7 +1144,7 @@ define(function (require) {
                     // 列信息
                     cols: i % 7
                 };
-            });
+            })
 
             return data;
         },
