@@ -111,7 +111,7 @@ define(function (require) {
 
                 // 属性`data-all`的值如果与options.allTag相同，那么此INPUT为`全部`
                 // 对此INPUT选择具有排他性
-                if ($target.attr('data-all')) {
+                if ($target.attr(tag)) {
 
                     // 当单选按钮处理，选择状态不可切换
                     if ($target.hasClass('checked')) {

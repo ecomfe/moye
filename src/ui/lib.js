@@ -7,7 +7,7 @@
  */
 
 /* jshint boss: true, unused: false */
-define(function () {
+define(function (require) {
 
     var $ = require('jquery');
 
@@ -62,14 +62,35 @@ define(function () {
             : $.type(obj);
     };
 
+    /**
+     * 判断是否日期对象
+     * 
+     * @method module:lib.isDate
+     * @param {*} obj 待判断的输入
+     * @return {boolean} 类型判断结果
+     */
     lib.isDate = function (obj) {
         return $.type(obj) === 'date';
     };
 
+    /**
+     * 判断是否字符串
+     * 
+     * @method module:lib.isString
+     * @param {*} obj 待判断的输入
+     * @return {boolean} 类型判断结果
+     */
     lib.isString = function (obj) {
         return $.type(obj) === 'string';
     };
 
+    /**
+     * 判断是否对象
+     * 
+     * @method module:lib.isObject
+     * @param {*} obj 待判断的输入
+     * @return {boolean} 类型判断结果
+     */
     lib.isObject = function (obj) {
         return $.type(obj) === 'object';
     };
@@ -103,6 +124,9 @@ define(function () {
 
     /* ========================== lib.object ========================== */
 
+    /**
+     * @namespace module:lib.object
+     */
     lib.object = {};
 
     /**
@@ -171,9 +195,20 @@ define(function () {
     })();
 
     /**
-     * 深度拷贝对象
+     * 深层复制
      * 
-     * @type {[type]}
+     * @method module:lib.clone
+     * @param {*} source 被复制的源
+     * 
+     * @return {*} 复制后的新对象
+     */
+    /**
+     * 深层复制
+     * 
+     * @method module:lib.object.clone
+     * @param {*} source 被复制的源
+     * 
+     * @return {*} 复制后的新对象
      */
     var clone = lib.clone = lib.object.clone = function (target) {
         return $.extend.call(null, true, {}, target);
@@ -231,6 +266,9 @@ define(function () {
 
     /* ========================== lib.string ========================== */
    
+    /**
+     * @namespace module:lib.string
+     */
     lib.string = {};
 
     /**
@@ -292,6 +330,9 @@ define(function () {
 
     /* ========================== lib.fn ========================== */
 
+    /**
+     * @namespace module:lib.fn
+     */
     lib.fn = {};
 
     /** 
@@ -384,18 +425,25 @@ define(function () {
                 return result;
             };
 
-            Class.prototype = prototype || {};
-            Class.prototype.constructor = Class;
-
             Class.extend = curry(extend, Class);
             Class.implement = curry(implement, Class);
+
+            prototype = prototype || {};
+            if (prototype.$wrapped) {
+                delete prototype.$wrapped;
+                Class.prototype = prototype;
+                Class.prototype.constructor = Class;
+            }
+            else {
+                Class.implement(prototype);
+            }
 
             return Class;
         };
 
         /**
          * 扩展生成子类
-             * 
+         * 
          * @inner
          * @param {Class} superClass 父类
          * @param {Object} params 扩展方法集合
@@ -405,28 +453,15 @@ define(function () {
         function extend(superClass, params) {
             var F = function () {};
             F.prototype = superClass.prototype;
+            var f = new F();
+            f.$wrapped = true;
 
-            var subClass = lib.newClass(new F());
-            subClass.prototype.parent = curry(parent, superClass);
+            var subClass = lib.newClass(f);
+            subClass.parent = superClass;
 
             subClass.implement(params);
 
             return subClass;
-        }
-
-        /**
-         * 调用父类方法
-         * 
-         * @inner
-         * @param {Class} superClass 父类
-         * @param {string} name 父类方法名
-         */
-        function parent(superClass, name) {
-            var method = superClass.prototype[name];
-            if (method) {
-                return method.apply(this, slice(arguments, 2));
-            }
-            throw new Error('parent Class has no method named ' + name);
         }
 
         /* jshint -W055 */
@@ -459,11 +494,73 @@ define(function () {
                     );
                 }
                 else {
-                    prototype[key] = value;
+                    prototype[key] = wrap(newClass, key, value);
                 }
             });
 
             return newClass;
+        }
+
+        var commentRule = /(\/\*([\s\S]*?)\*\/|([^:]|^)\/\/(.*)$)/mg;
+        var parentRule = /(?:this|me|self)\.parent\(/;
+        var privateRule = /(?:this|me|self)\._[a-z\d_\$]+\(/i;
+        /**
+         * 方法包装器
+         * 
+         * @inner
+         * @param {Class} newClass 被包装的方法所属类
+         * @param {string} name 方法名
+         * @param {*} method 方法函数
+         * @return {*} 非函数类型直接返回，否则检测是否包含
+         */
+        function wrap(newClass, name, method) {
+            if (!$.isFunction(method) || method.$wrapped) {
+                return method;
+            }
+
+            var code = String(method).replace(commentRule, '');
+            var hasParentCall = parentRule.test(code);
+            var hasPrivateCall = privateRule.test(code);
+            var isPrivate = name.charAt(0) === '_';
+            if (!(hasParentCall || isPrivate || hasPrivateCall)) {
+                return method;
+            }
+
+            if (hasParentCall) {
+                var parentMethod;
+                var parentClass = newClass.parent;
+
+                while (parentClass) {
+                    parentMethod = parentClass.prototype[name];
+                    if (parentMethod) {
+                        break;
+                    }
+                    else {
+                        parentClass = parentClass.parent;
+                    }
+                }
+            }
+
+            var wrapper = function () {
+                if (hasParentCall && !parentMethod) {
+                    throw new Error('parent Class has no method named ' + name);
+                }
+
+                if (isPrivate && !this.$caller) {
+                    throw new Error('can not call private method:' + name);
+                }
+
+                this.parent = parentMethod;
+                this.$caller = wrapper;
+                var result = method.apply(this, arguments);
+                this.parent = null;
+                this.$caller = null;
+
+                return result;
+            };
+            wrapper.$wrapped = true;
+
+            return wrapper;
         }
     })();
 
