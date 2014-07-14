@@ -5,5 +5,4 @@ dep
 asset
 doc/api
 test/coverage
-example/css
 SpecRunner.html
