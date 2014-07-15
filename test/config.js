@@ -32,6 +32,9 @@ module.exports = function(config) {
     }, {
       pattern: 'test/spec/logSpec.js',
       included: false
+    }, {
+      pattern: 'test/spec/CookieSpec.js',
+      included: false
     }],
 
 
