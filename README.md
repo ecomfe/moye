@@ -23,6 +23,7 @@ Moye (知心组件库)
 + extend/object.extend 由$.extend替代
 + parse 由$.parseJSON替代
 + trim 由$.trim替代
++ toQueryString 由$.param替代
 + camelCase 由$.camelCase替代
 + bind/fn.bind 由$.proxy替代
 + on/event.on() 由$.on替代
@@ -47,7 +48,6 @@ Moye (知心组件库)
 由于jquery不能提供当前功能，以下方法保留
 + slice/array.slice
 + stringify
-+ toQueryString
 + capitalize
 + pad
 + binds
