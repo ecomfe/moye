@@ -1,4 +1,5 @@
 define(function (require) {
+    var $ = require('jquery');
     var lib = require('ui/lib');
     
 

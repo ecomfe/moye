@@ -210,8 +210,9 @@ define(function (require) {
      * 
      * @return {*} 复制后的新对象
      */
-    var clone = lib.clone = lib.object.clone = function (target) {
-        return $.extend.call(null, true, {}, target);
+    var clone = lib.clone = lib.object.clone = function (source) {
+        var target = $.type(source) === 'array' ? [] : {};
+        return $.extend(true, target, source);
     };
 
 
@@ -262,7 +263,6 @@ define(function (require) {
 
         return queryString.join('&');
     };
-    lib.toQueryString = lib.object.toQueryString = toQueryString;
 
     /* ========================== lib.string ========================== */
    
