@@ -8,6 +8,7 @@
 
 define(function (require) {
 
+    var $ = require('jquery');
     var lib = require('./lib');
     var Control = require('./Control');
     var Popup = require('./Popup');
@@ -63,39 +64,40 @@ define(function (require) {
                 return;
             }
 
-            var el     = lib.getTarget(e);
+            var el     = e.target;
             var tag    = el.tagName;
             var target = this.target;
+            var $el    = $(el);
+
 
             while (tag !== 'A' &&　el !== this.main) {
                 el = el.parentNode;
                 tag = el.tagName;
             }
 
+
             switch (tag) {
 
                 case 'A':
-                    lib.preventDefault(e);
+                    e.preventDefault();
 
                     var prefix    = this.options.prefix;
                     var preClass  = prefix + '-pre';
                     var nextClass = prefix + '-next';
                     var disClass  = prefix + '-disabled';
-                    var hasClass  = lib.hasClass;
 
-                    var stopPropagation = lib.stopPropagation;
 
                     // 上月操作
-                    if (hasClass(el, preClass)) {
+                    if ($el.hasClass(preClass)) {
                         privates.showPreMonth.call(this);
-                        stopPropagation(e);
+                        e.stopPropagation();
                     }
                     // 下月操作
-                    else if (hasClass(el, nextClass)) {
+                    else if ($el.hasClass(nextClass)) {
                         privates.showNextMonth.call(this);
-                        stopPropagation(e);
+                        e.stopPropagation();
                     }
-                    else if (!hasClass(el, disClass)) {
+                    else if (!$el.hasClass(disClass)) {
                         el.getAttribute('data-date') && privates.pick.call(this, el);
                     }
 
@@ -497,33 +499,28 @@ define(function (require) {
             var options = this.options;
             var prefix = options.prefix;
             var range  = this.range;
-            var prev = lib.q(prefix + '-pre', this.main)[0];
-            var next = lib.q(prefix + '-next', this.main)[0];
+            var prev = $('.' + prefix + '-pre', this.main);
+            var next = $('.' + prefix + '-next', this.main);
 
             date = date || this.date || this.from(this.value);
 
-            if (prev) {
-                lib[!range 
-                    || !range.begin
-                    || privates.getYYYYMM.call(this, range.begin) < privates.getYYYYMM.call(this, date)
-                        ? 'show' : 'hide'
-                ](prev);
-
-            }
-
+            prev[!range 
+                || !range.begin
+                || privates.getYYYYMM.call(this, range.begin) < privates.getYYYYMM.call(this, date)
+                    ? 'show' : 'hide'
+            ]();
 
             var last = new Date(
                 date.getFullYear(),
                 date.getMonth() + options.monthes - 1,
                 1
             );
-            if (next) {
-                lib[!range
-                    || !range.end
-                    || privates.getYYYYMM.call(this, range.end) > privates.getYYYYMM.call(this, last)
-                        ? 'show' : 'hide'
-                ](next);
-            }
+
+            next[!range
+                || !range.end
+                || privates.getYYYYMM.call(this, range.end) > privates.getYYYYMM.call(this, last)
+                    ? 'show' : 'hide'
+            ]();
         },
 
         /**
@@ -812,7 +809,7 @@ define(function (require) {
                 popup.on('beforeShow', bound.onBeforeShow);
                 
                 this.main = popup.main;
-                lib.addClass(this.main, 'c-clearfix');
+                $(this.main).addClass('c-clearfix');
 
                 if (options.target) {
                     this.setTarget(lib.g(options.target));

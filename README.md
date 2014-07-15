@@ -62,8 +62,8 @@ Moye (知心组件库)
 ### 目前组件重构进度
 
 - [x] lib     清理完成
-- [ ] 农历控件 [Lunar](http://ecomfe.github.io/moye/example/Lunar.html)
-- [ ] 日历控件 [Calendar](http://ecomfe.github.io/moye/example/Calendar.html)
+- [x] 农历控件 [Lunar](http://ecomfe.github.io/moye/example/Lunar.html)
+- [x] 日历控件 [Calendar](http://ecomfe.github.io/moye/example/Calendar.html)
 - [ ] 日历扩展 [CalendarExtension](http://ecomfe.github.io/moye/example/CalendarExtension.html)
 - [ ] 城市选择 [City](http://ecomfe.github.io/moye/example/City.html)
 - [ ] 分页控件 [Pager](http://ecomfe.github.io/moye/example/Pager.html)
@@ -81,3 +81,6 @@ Moye (知心组件库)
 - [ ] 星号评级 [Rating](http://ecomfe.github.io/moye/example/Rating.html)
 - [ ] 滚 动 条 [ScrollBar](http://ecomfe.github.io/moye/example/ScrollBar.html)
 - [ ] 图片轮播 [Slider](http://ecomfe.github.io/moye/example/Slider.html)
+- [ ] 浮出层
+    + options.main 改为jquery-selector可接受的字符串
+    + options.triggers 改为jquery-selector可接受的字符串

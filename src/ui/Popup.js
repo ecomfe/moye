@@ -9,11 +9,9 @@
 
 define(function (require) {
 
+    var $ = require('jquery');
     var lib = require('./lib');
     var Control = require('./Control');
-
-    var DOM = lib.dom;
-    var PAGE = lib.page;
 
     /**
      * 私有函数或方法
@@ -54,21 +52,24 @@ define(function (require) {
                 return;
             }
 
-            if (oldTarget !== this.target) {
+            var trigger = e.target;
+
+            if (oldTarget && oldTarget !== trigger) {
                 this.hide();
             }
 
-            var trigger = lib.getTarget(e);
+            var $trigger = $(e.target);
             var liveTriggers = this.liveTriggers;
 
             if (liveTriggers) {
                 var cls = this.options.triggers;
-                var hasClass = lib.hasClass;
-                while (!hasClass(trigger, cls) && trigger !== liveTriggers) {
-                    trigger = trigger.parentNode;
+                while (!$trigger.hasClass(cls)) {
+                    if ($.inArray(trigger, this.liveTriggers) !== -1) {
+                        break;
+                    }
+                    trigger = trigger.parent();
                 }
-
-                if (!hasClass(trigger, cls)) {
+                if (!$trigger.hasClass(cls)) {
                     return;
                 }
             }
@@ -86,8 +87,8 @@ define(function (require) {
 
             var bound = this._bound;
             this._timer = setTimeout(function () {
-                lib.on(document, 'click', bound.onHide);
-                lib.on(window, 'resize', bound.onResize);
+                $(document).on('click', bound.onHide);
+                $(window).on('resize', bound.onResize);
             }, 0);
         },
 
@@ -97,10 +98,10 @@ define(function (require) {
          * @private
          */
         onHide: function (e) {
-            var target = lib.getTarget(e);
+            var target = e.target;
             var main   = this.main;
 
-            if (!main || main === target || DOM.contains(main, target)) {
+            if (!main || main === target || $.contains(main, target)) {
                 return;
             }
 
@@ -116,33 +117,36 @@ define(function (require) {
          */
         computePosition: function () {
             var options      = this.options;
-            var target       = this.target || this.triggers[0];
-            var main         = this.main;
+            var target       = $(this.target || this.triggers[0]);
+            var main         = $(this.main);
             var dir          = options.dir;
-            var position     = DOM.getPosition(target);
+            var position     = target.position();
 
             // 目标的8个关键坐标点
             var top          = position.top;
             var left         = position.left;
-            var width        = target.offsetWidth;
-            var height       = target.offsetHeight;
+            var width        = target.outerWidth();  // target[0].offsetWidth;
+            var height       = target.outerHeight(); // target[0].offsetHeight;
             var right        = left + width;
             var bottom       = top + height;
             var center       = left + (width / 2);
             var middle       = top + (height / 2);
 
             // 提示层宽高
-            var mainWidth    = main.offsetWidth;
-            var mainHeight   = main.offsetHeight;
+            var mainWidth    = main.width();
+            var mainHeight   = main.height();
+
+
+            var win          = $(window);
 
             // 视窗范围
-            var scrollTop    = PAGE.getScrollTop();
-            var scrollLeft   = PAGE.getScrollLeft();
-            var scrollRight  = scrollLeft + PAGE.getViewWidth();
-            var scrollBottom = scrollTop + PAGE.getViewHeight();
+            var scrollTop    = win.scrollTop();
+            var scrollLeft   = win.scrollLeft();
+            var scrollRight  = scrollLeft + win.width();
+            var scrollBottom = scrollTop + win.height();
 
             // 属性配置优于实例配置
-            var dirFromAttr = target.getAttribute('data-popup');
+            var dirFromAttr = target.attr('data-popup');
             if (dirFromAttr) {
                 dir = /[trbl]{2}/.test(dirFromAttr) ? dirFromAttr : '1';
             }
@@ -235,8 +239,7 @@ define(function (require) {
 
             }
 
-            DOM.setStyles(
-                main, 
+            $(main).css( 
                 {
                     left: left + offset.x + 'px',
                     top: top + offset.y + 'px'
@@ -398,16 +401,12 @@ define(function (require) {
             }
 
             var prefix = options.prefix;
-            var main   = this.main = options.main 
-                && lib.g(options.main)
-                || document.createElement('div');
+            var main   = $(options.main || '<div>');
 
-            if (options.main) {
-                lib.addClass(main, prefix);
-            }
-            else {
-                main.className  = prefix;
-                main.style.left = '-2000px';
+            main.addClass(prefix);
+
+            if (!options.main) {
+                main.css('left','-2000px');
             }
 
             var triggers     = options.triggers;
@@ -416,28 +415,28 @@ define(function (require) {
 
             if (liveTriggers) {
 
-                this.liveTriggers = lib.on(
-                    lib.g(liveTriggers),
-                    'click',
-                    bound.onShow
-                );
+                liveTriggers = lib.isString(liveTriggers) 
+                    ? $('.' + liveTriggers)
+                    : $(liveTriggers);
+
+                this.liveTriggers = liveTriggers
+                    .on('click', bound.onShow)
+                    .toArray();
+
             }
             else {
 
-                if (lib.isString(triggers)) {
-                    triggers = lib.q(options.triggers);
-                }
+                triggers = lib.isString(triggers) 
+                    ? $('.' + options.triggers)
+                    : $(options.triggers);
 
-                lib.each(
-                    lib.toArray(triggers),
-                    function (trigger) {
-                        lib.on(trigger, 'click', bound.onShow);
-                    }
-                );
-
-                this.triggers = triggers;
-
+                this.triggers = triggers
+                    .on('click', bound.onShow)
+                    .toArray();
             }
+
+            this.main = main.get(0);
+
         },
 
         /**
@@ -449,31 +448,29 @@ define(function (require) {
          * @public
          */
         render: function () {
-            var main = this.main;
+            var main = $(this.main);
 
             if (this.content) {
-                main.innerHTML = this.content;
+                main.html(this.content);
             }
 
             if (!this.rendered) {
-                this.rendered = true;
-                document.body.appendChild(main);
-
                 var me = this;
+                me.rendered = true;
+                main
+                    .appendTo(document.body)
+                    .on(
+                        'click', 
+                        function (e) {
 
-                lib.on(
-                    main,
-                    'click',
-                    function (e) {
-
-                        /**
-                         * @event module:Popup#click
-                         * @type {Object}
-                         * @property {Event} event 事件源对象
-                         */
-                        me.fire('click', { event: e });
-                    }
-                );
+                            /**
+                             * @event module:Popup#click
+                             * @type {Object}
+                             * @property {Event} event 事件源对象
+                             */
+                            me.fire('click', { event: e });
+                        }
+                    );
 
             }
 
@@ -510,8 +507,8 @@ define(function (require) {
             this.fire('hide');
 
             var bound = this._bound;
-            lib.un(document, 'click', bound.onHide);
-            lib.un(window, 'resize', bound.onResize);
+            $(document).off('click', bound.onHide);
+            $(window).off('resize', bound.onResize);
 
             clearTimeout(this._timer);
             clearTimeout(this._resizeTimer);

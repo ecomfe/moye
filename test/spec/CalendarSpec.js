@@ -17,7 +17,7 @@ define(function (require) {
                 + '</div>'
         );
 
-        var triggers = lib.q('calendar-trigger');
+        var triggers = $('.calendar-trigger');
         calendar = new Calendar({
             triggers: triggers,
             target: triggers[0]
@@ -99,7 +99,7 @@ define(function (require) {
                     calendar.format(date, 'yyyy-MM-dd')
                 );
 
-                var el = lib.dom.next(checked)
+                var el = $(checked).next()
                     || dom._matchNode(
                         target,
                         'previousSibling',
@@ -120,7 +120,8 @@ define(function (require) {
             calendar.on('show', onShow);
 
             calendar.target.value = calendar.format(date);
-            lib.fire(calendar.target, 'click');
+
+            $(calendar.target).trigger('click');
 
             calendar.un('beforeShow', onBeforeShow);
             calendar.on('show', onShow);
@@ -169,7 +170,7 @@ define(function (require) {
         
         it('setTarget', function () {
             expect(function () {
-                calendar.setTarget(lib.q('calendar-trigger')[0]);
+                calendar.setTarget($('.calendar-trigger')[0]);
             }).not.toThrow();
             expect(calendar.setTarget).toThrow();
         });

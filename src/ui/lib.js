@@ -729,7 +729,7 @@ define(function (require) {
                 else if (name in thisOptions) {
 
                     thisOptions[name] = typeOf(val) === 'object'
-                        ? extend(thisOptions[name] || {}, val)
+                        ? $.extend(thisOptions[name] || {}, val)
                         : val;
                 }
             }
