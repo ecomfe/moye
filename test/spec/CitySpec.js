@@ -1,4 +1,5 @@
 define(function (require) {
+    var $ = require('jquery');
     var lib = require('ui/lib');
     
     var City = require('ui/City');
@@ -17,7 +18,7 @@ define(function (require) {
                 + '</div>'
         );
 
-        triggers = lib.q('city-trigger');
+        triggers = $('.city-trigger').toArray();
         city = new City({
             prefix: 'ecl-ui-city',
             index: 2,
@@ -36,15 +37,13 @@ define(function (require) {
     afterEach(function () {
         triggers = null;
         city.dispose();
-        document.body.removeChild(lib.g('cityContainer'));
+        $('#cityContainer').remove();
     });
   
     describe('基本接口', function () {
 
         it('控件类型', function () {
-
             expect(city.type).toBe('City');
-
         });
 
         it('显示/隐藏', function () {
@@ -74,16 +73,15 @@ define(function (require) {
         });
 
         it('隐藏城市', function () {
-            lib.fire(triggers[0], 'click');
+            $(triggers[0]).trigger('click');
             expect(city.panels.length).toBe(5);
-
             expect(
                 city.panels[0].getElementsByTagName('a')[0].innerHTML
             ).not.toBe('上海');
         });
 
         it('onClick', function () {
-            lib.fire(city.target, 'click');
+            $(city.target).trigger('click');
 
             var target = city.labels[1];
             var event = {target: target};
@@ -103,8 +101,7 @@ define(function (require) {
 
                 if (el.tagName === 'LI') {
                     expect(el.getAttribute('data-idx') | 0).toBe(1);
-                    expect(lib.dom.hasClass(el, 'ecl-ui-city-active'))
-                        .toBeTruthy();
+                    expect($(el).hasClass('ecl-ui-city-active')).toBeTruthy();
                 }
                 else if (el.tagName === 'A') {
                     expect(value).toBe(el.innerHTML);
@@ -119,11 +116,11 @@ define(function (require) {
             city.on('pick', onPick);
             city.on('click', onClick);
 
-            lib.fire(target, 'click');
+            $(target).trigger('click');
 
             target = city.panels[1].getElementsByTagName('a')[1];
             event.target = target;
-            lib.fire(target, 'click');
+            $(target).trigger('click');
 
             city.un('hide', onHide);
             city.un('click', onClick);
@@ -174,7 +171,7 @@ define(function (require) {
        
         it('setTarget', function () {
             expect(function () {
-                city.setTarget(lib.q('city-trigger')[0]);
+                city.setTarget($('.city-trigger')[0]);
             }).not.toThrow();
             expect(city.setTarget).toThrow();
         });

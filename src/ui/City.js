@@ -8,6 +8,7 @@
 
 define(function (require) {
 
+    var $ = require('jquery');
     var lib = require('./lib');
     var Control = require('./Control');
     var Popup = require('./Popup');
@@ -47,7 +48,7 @@ define(function (require) {
             var makeLinks = function (cities) {
                 var links = [];
 
-                lib.each(cities.split(comma), function (city) {
+                $.each(cities.split(comma), function (i, city) {
                     if (
                         !hideCities
                         || !~hideCities.indexOf(comma + city + comma)
@@ -63,12 +64,9 @@ define(function (require) {
                 return links.join('');
             };
 
-            lib.each(this.tabs, function (tab, i, start) {
+            $.each(this.tabs, function (i, tab) {
+                var start = '<li data-idx="' + i + '"' + (i === index ? active : '');
                 tab = tab.split('|');
-                start = '<li data-idx="'
-                    + i
-                    + '"'
-                    + (i === index ? active : '');
                 labels.push(start + '>' + tab[0] + '</li>');
                 panels.push(start + '>' + makeLinks(tab[1]) + '</li>');
             });
@@ -92,7 +90,7 @@ define(function (require) {
             if (!e) {
                 return;
             }
-            var el     = lib.getTarget(e);
+            var el     = e.target;
             var tag    = el.tagName;
             var target = this.target;
             var index  = el.getAttribute('data-idx');
@@ -100,7 +98,7 @@ define(function (require) {
             switch (tag) {
 
                 case 'A':
-                    lib.preventDefault(e);
+                    e.preventDefault();
 
                     if (el.className) {
                         this.hide();
@@ -363,8 +361,8 @@ define(function (require) {
                 var popup = this.popup = new Popup(this.srcOptions);
                 var bound = this._bound;
 
-                popup.on('click', lib.bind(bound.onClick, this));
-                popup.on('beforeShow', lib.bind(bound.onBeforeShow, this));
+                popup.on('click', $.proxy(bound.onClick, this));
+                popup.on('beforeShow', $.proxy(bound.onBeforeShow, this));
                 
                 this.main = popup.main;
 
@@ -414,13 +412,14 @@ define(function (require) {
 
             if (i !== index) {
 
-                lib.removeClass(labels[index], activeClass);
-                lib.removeClass(panels[index], activeClass);
+                $(labels[index]).removeClass(activeClass);
+                $(panels[index]).removeClass(activeClass);
 
                 index = this.index = i;
 
-                lib.addClass(labels[index], activeClass);
-                lib.addClass(panels[index], activeClass);
+                $(labels[index]).addClass(activeClass);
+                $(panels[index]).addClass(activeClass);
+
             }
         },
 

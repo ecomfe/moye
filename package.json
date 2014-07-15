@@ -29,13 +29,16 @@
   "main": "src/ui/lib.js",
   "controls": [
     {
+      "name": "Calendar"
+    },
+    {
+      "name": "City"
+    },
+    {
       "name": "Filter"
     },
     {
       "name": "Lunar"
-    },
-    {
-      "name": "Calendar"
     }
   ],
   "directories": {

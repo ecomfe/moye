@@ -26,6 +26,9 @@ module.exports = function(config) {
     }, {
       pattern: 'test/spec/CalendarSpec.js',
       included: false
+    }, {
+      pattern: 'test/spec/CitySpec.js',
+      included: false
     }],
 
 

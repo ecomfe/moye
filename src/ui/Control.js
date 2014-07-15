@@ -67,20 +67,18 @@ define(function (require) {
          */
         initialize: function (options) {
 
-            var me = this;
+            options = this.setOptions(options);
 
-            options = me.setOptions(options);
-
-            if (me.binds) {
-                me.bindEvents(me.binds);
+            if (this.binds) {
+                lib.binds(this, this.binds);
             }
 
-            if (me.init) {
-                me.init(options);
-                me.init = null;
+            if (this.init) {
+                this.init(options);
+                this.init = null;
             }
 
-            me.children = [];
+            this.children = [];
         },
 
 
