@@ -35,6 +35,9 @@ module.exports = function(config) {
     }, {
       pattern: 'test/spec/CookieSpec.js',
       included: false
+    }, {
+      pattern: 'test/spec/TabsSpec.js',
+      included: false
     }],
 
 

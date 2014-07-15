@@ -8,6 +8,7 @@
  
 define(function (require) {
 
+    var $ = require('jquery');
     var lib = require('./lib');
     var Control = require('./Control');
     
@@ -31,26 +32,18 @@ define(function (require) {
             var main = this.main;
             var options = this.options;
 
-            var target = lib.getTarget(e);
-            if (target.tagName !== 'LI') {
-                target = lib.getAncestorBy(
-                    target,
-                    function (el) {
-
-                        // 最高访问到控件根容器, 避免到文档根节点
-                        return el.tagName === 'LI' || el === main;
-                        
-                    }
-                );
-                
-                if (target === main) {
+            var target = $(e.target);
+            if (!target.is('li')) {
+                target = target.closest('li', main);
+                if (!target.length) {
                     return;
                 }
             }
 
             var selectedClass = options.prefix + '-selected';
-            var hasSelected = lib.hasClass(target, selectedClass);
-            var index = target.getAttribute('data-index') | 0;
+            var hasSelected = target.hasClass(selectedClass);
+            var index = target.attr('data-index') | 0;
+
             if (hasSelected
                 || this.onBeforeChange(this.selectedIndex, index) === false
             ) {
@@ -58,8 +51,8 @@ define(function (require) {
             }
 
             var labels = this.labels;
-            lib.removeClass(labels[this.selectedIndex], selectedClass);
-            lib.addClass(labels[index], selectedClass);
+            $(labels[this.selectedIndex]).removeClass(selectedClass);
+            $(labels[index]).addClass(selectedClass);
 
             var selectedLabel = labels[index];
 
@@ -136,7 +129,7 @@ define(function (require) {
          */
         init: function (options) {
             this.main = lib.g(options.main);
-            this.labels = lib.q(options.prefix + '-labels', this.main)[0];
+            this.labels = $('.' + options.prefix + '-labels', this.main)[0];
             this.selectedIndex = options.selectedIndex | 0;
 
             this.bindEvents(privates);
@@ -155,17 +148,16 @@ define(function (require) {
                 this.rendered = true;
 
                 // 先给选项卡父容器添加事件监听
-                lib.on(this.labels, 'click', this._bound.onClick);
+                $(this.labels).on('click', this._bound.onClick);
 
                 // 找出所有选项卡
-                var labels =
-                    lib.toArray(this.labels.getElementsByTagName('li'));
+                var labels = $('li', this.labels).toArray();
 
                 // 是否支持伪元素
                 var noPseudoElement = lib.browser.ie6;
-                lib.each(
+                $.each(
                     labels,
-                    function (label, i) {
+                    function (i, label) {
                         // 自动加上索引标识
                         label.setAttribute('data-index', i);
 
@@ -178,7 +170,7 @@ define(function (require) {
                 );
 
                 var selectedClass = options.prefix + '-selected';
-                var selectedLabel = lib.q(selectedClass, this.labels)[0];
+                var selectedLabel = $('.' + selectedClass, this.labels)[0];
 
                 this.labels = labels;
 
@@ -188,7 +180,7 @@ define(function (require) {
                 }
                 else {
                     selectedLabel = labels[this.selectedIndex];
-                    selectedLabel && lib.fire(selectedLabel, 'click');
+                    selectedLabel && $(selectedLabel).trigger('click');
                 }
 
             }

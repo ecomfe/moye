@@ -1,4 +1,5 @@
 define(function (require) {
+    var $ = require('jquery');
     var lib = require('ui/lib');        
     var Tabs = require('ui/Tabs');
 
@@ -21,7 +22,7 @@ define(function (require) {
         );
 
         tabs = new Tabs({
-            main: lib.q('ecl-ui-tabs')[0],
+            main: $('.ecl-ui-tabs')[0],
             selectedIndex: 0
         }).render();
 
@@ -37,7 +38,7 @@ define(function (require) {
     describe('create a instance', function () {
         
         it('auto compute selectedIndex', function () {
-            var selected = lib.q('ecl-ui-tabs-selected', tabs.main)[0];
+            var selected = $('.ecl-ui-tabs-selected', tabs.main)[0];
             var selectedIndex = selected.getAttribute('data-index') | 0;
             expect(tabs.selectedIndex).toBe(selectedIndex);
         });
@@ -52,8 +53,8 @@ define(function (require) {
                 count++;
             };
             tabs.on('change', onChange);
-            lib.fire(tabs.labels[index].firstChild, 'click');
-            lib.fire(tabs.labels[index], 'click');
+            $(tabs.labels[index].firstChild).trigger('click');
+            $(tabs.labels[index]).trigger('click');
 
             expect(count).toBe(1);
             tabs.un('change', onChange);
@@ -81,7 +82,7 @@ define(function (require) {
                 expect(e.selected).toBe(selected);
                 expect(tabs.selectedIndex).toBe(index);
             });
-            lib.fire(iTag, 'click');
+            $(iTag).trigger('click');
         });
 
         it('enable change', function () {
@@ -93,7 +94,7 @@ define(function (require) {
             var rndIndex = Math.floor(Math.random() * tabs.labels.length);
 
             tabs.on('change', onChange);
-            lib.fire(tabs.labels[rndIndex], 'click');
+            $(tabs.labels[rndIndex]).trigger('click');
             onChange();
 
             // jasmine.Clock.tick(100);
@@ -109,7 +110,7 @@ define(function (require) {
             var rndIndex = Math.random() * tabs.labels.length | 0;
 
             tabs.on('change', onChange);
-            lib.fire(tabs.labels[rndIndex], 'click');
+            $(tabs.labels[rndIndex]).trigger('click');
             
             // jasmine.Clock.tick(100);
             expect(onChange).not.toHaveBeenCalled();
