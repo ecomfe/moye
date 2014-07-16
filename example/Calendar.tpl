@@ -225,7 +225,7 @@ require(['Calendar'], function (Calendar) {
           // 更新定位及赋值关联的目标 target
           target = target.tagName === 'INPUT' && target.type === 'text'
                    ? target
-                   : target.previousSibling;
+                   : $(target).prev().get(0);
 
           this.setTarget(target);
 

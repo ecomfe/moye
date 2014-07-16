@@ -13,17 +13,6 @@ define(function (require) {
     var Control = require('./Control');
 
     /**
-     * 移除当前的元素
-     *
-     * @param {HTMLDomElement} domElement 当前元素
-     * @inner
-     */
-
-    function remove(domElement) {
-        domElement && domElement.parentNode.removeChild(domElement);
-    }
-
-    /**
      * 对目标字符串进行格式化
      * 从tangram中抽出
      * @see http://1.5.13-tangram.baidu.com.r.bae.baidu.com:8081

@@ -16,7 +16,7 @@ ul {
 {% content: content %}
 
 {% filter: markdown %}
-# Tabs
+# Tabs 选项卡
 
 ### DEMO
 -----------------------
@@ -38,7 +38,7 @@ ul {
 -----------------------
 
 ```html
-<ul class="ecl-ui-tabs-labels">
+<ul id="tabs" class="ecl-ui-tabs-labels">
   <li>CSS控件</li>
   <li class="ecl-ui-tabs-selected">UI控件拆分</li>
   <li>UI栅格化设计</li>

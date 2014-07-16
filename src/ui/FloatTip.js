@@ -158,8 +158,6 @@ define(function (require) {
          * @public
          */
         setContent: function (content) {
-            console.log(content);
-            console.log(privates.getDom.call(this, 'content'));
             privates.getDom.call(this, 'content').innerHTML = content;
         },
 
@@ -246,7 +244,7 @@ define(function (require) {
          * @public
          */
         show: function () {
-            $(this.main).show()
+            $(this.main).show();
             this.adjustPos();
             return this;
         },

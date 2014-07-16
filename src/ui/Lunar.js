@@ -1144,7 +1144,7 @@ define(function (require) {
                     // 列信息
                     cols: i % 7
                 };
-            })
+            });
 
             return data;
         },

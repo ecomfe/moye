@@ -1,3 +1,9 @@
+/**
+ * @file 选项卡组件测试用例
+ * @author chris <wfsr@foxmail.com>
+ * @author ludafa <leonlu@outlook.com>
+ */
+
 define(function (require) {
     var $ = require('jquery');
     var lib = require('ui/lib');        

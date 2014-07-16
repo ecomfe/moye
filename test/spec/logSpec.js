@@ -1,3 +1,9 @@
+/**
+ * @file ubs点击日志组件测试用例
+ * @author chris <wfsr@foxmail.com>
+ * @author ludafa <leonlu@outlook.com>
+ */
+
 define(function (require) {
 
     var $   = require('jquery');

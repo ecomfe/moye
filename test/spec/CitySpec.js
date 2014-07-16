@@ -1,9 +1,11 @@
+/**
+ * @file 城市控件测试用例
+ * @author chris(wfsr@foxmail.com)
+ *         ludafa <leonlu@outlook.com>
+ */
 define(function (require) {
     var $ = require('jquery');
-    var lib = require('ui/lib');
-    
     var City = require('ui/City');
-    
     var city;
     var triggers;
 

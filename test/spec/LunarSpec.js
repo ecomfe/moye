@@ -1,6 +1,10 @@
+/**
+ * @file 农历组件测试用例
+ * @author chris <wfsr@foxmail.com>
+ * @author ludafa <leonlu@outlook.com>
+ */
+
 define(function (require) {
-    var lib = require('ui/lib');
-    
     var Lunar = require('ui/Lunar');
     
     var lunar;

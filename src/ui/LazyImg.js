@@ -8,6 +8,7 @@
  
 define(function (require) {
 
+    var $ = require('jquery');
     var lib = require('./lib');
     var Lazy = require('./Lazy');
 
@@ -28,45 +29,47 @@ define(function (require) {
          * @private
          */
         load: function (scroll, size) {
-            var _src = this.options.src;
-
-            var imgs = [];
+            var _src   = this.options.src;
             var offset = this.options.offset;
 
-            lib.each(this.imgs, function (img) {
-                var el = img.parentNode.parentNode;
-                var src = img.getAttribute(_src);
-                if (el.offsetHeight && src) {
+            // 剔除已加载的未加载图片元素数组
+            this.imgs = $.grep(this.imgs, function (img) {
 
-                    // 图片的坐标数据
-                    var cd = lib.getPosition(img);
-                    cd.right = cd.left + img.offsetWidth;
-                    cd.bottom = cd.top + img.offsetHeight;
+                img = $(img);
 
-                    var isOverRight = cd.left - offset.x >= scroll.x + size.x;
-                    var isOverBottom = cd.top - offset.y >= scroll.y + size.y;
-                    var isLessLeft = cd.right + offset.x <= scroll.x;
-                    var isLessTop = cd.bottom + offset.y <= scroll.y;
+                var el = img.parent().parent();
+                var src = img.attr(_src);
 
-                    // 如果在可视区域之内
-                    if (!(isOverRight || isOverBottom) 
-                         && !(isLessLeft || isLessTop)
-                    ) {
-                        img.src = src;
-                        img.removeAttribute(_src);
-                    }
-                    // 保留在可视区域之外的图片
-                    else {
-                        imgs.push(img);
-                    }
+                if (!el.height() || !src) {
+                    return false;
                 }
+
+                // 图片的坐标数据
+                var cd = img.position();
+
+                cd.right = cd.left + img.width();
+                cd.bottom = cd.top + img.height();
+
+                var isOverRight = cd.left - offset.x >= scroll.x + size.x;
+                var isOverBottom = cd.top - offset.y >= scroll.y + size.y;
+                var isLessLeft = cd.right + offset.x <= scroll.x;
+                var isLessTop = cd.bottom + offset.y <= scroll.y;
+
+                // 如果在可视区域之内
+                if (!(isOverRight || isOverBottom) && !(isLessLeft || isLessTop)) {
+                    img.attr('src', src);
+                    img.removeAttr(_src);
+                    return false;
+                }
+
+                // 保留在可视区域之外的图片
+                return true;
+
             });
 
-            // 剔除已加载的未加载图片元素数组
-            this.imgs = imgs;
 
             // 如果图片全部加载过，可从监听集合中移除
-            if (!imgs.length) {
+            if (!this.imgs.length) {
                 Lazy.remove(this.main);
             }
         }  
@@ -127,11 +130,10 @@ define(function (require) {
          */
         initialize: function (options, main) {
             options = this.setOptions(options);
-            main = this.main = lib.g(options.main) || lib.q(options.main)[0];
-            this.imgs = options.imgs
-                || lib.toArray(main.getElementsByTagName('img'));
+            main = this.main = lib.g(options.main) || $('.' + options.main)[0];
+            this.imgs = options.imgs || $('img', main).toArray();
 
-            Lazy.add(main, lib.bind(privates.load, this), options.offset);
+            Lazy.add(main, $.proxy(privates.load, this), options.offset);
         }
      
     }).implement(lib.configurable);
@@ -145,13 +147,26 @@ define(function (require) {
      * @static
      */
     LazyImg.load = function (className, options) {
+
+
         if (lib.isObject(className)) {
             options = className;
             className = null;
         }
-        lib.each(lib.q(className || 'lazy-img'), function (el) {
+
+        options = options || {};
+        className = className || 'lazy-img';
+
+        $('.' + className).each(function (i, el) {
             /* jshint -W031 */
-            new LazyImg(lib.extend(options || {}, {main: el}));
+            new LazyImg(
+                $.extend(
+                    options, 
+                    {  
+                        main: el
+                    }
+                )
+            );
         });
     };
 

@@ -1,6 +1,10 @@
+/**
+ * @file 浮层测试用例
+ * @author chris <wfsr@foxmail.com>
+ * @author ludafa <leonlu@outlook.com>
+ */
 define(function (require) {
     var $ = require('jquery');
-    var lib = require('ui/lib');
     var FloatTip = require('ui/FloatTip');
 
     beforeEach(function () {
@@ -42,7 +46,6 @@ define(function (require) {
             expect(contentElement.innerHTML).toBe(floatTip.options.content);
 
             floatTip.setContent('XXXX');
-            console.log(contentElement.innerHTML);
             expect(contentElement.innerHTML).toBe('XXXX');
 
         });

@@ -102,7 +102,7 @@ define(function (require) {
                  * @event module:Dialog#cancel
                  */
                 dlg.fire('cancel');
-            }
+            };
 
             $('#' + opts.cancelId).on('click', opts.cancelHandler);
         }

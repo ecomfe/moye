@@ -74,10 +74,10 @@ Moye (知心组件库)
     1. 现在我们不再默认第一个选项为`全部`了，而是通过`label`上的data-all属性来识别。使用者可以在`options`中通过配置属性`allTag`来调整`data-all`，换成任意别的标签，比如`data-some-tag`;
     2. 现在选中`全部`在调用`getData()`时会在返回值中会包含所有的选项值，而不是空数组了。
 - [ ] 下拉选项 [Select](http://ecomfe.github.io/moye/example/Select.html)
-- [ ] 延迟加载 [Lazy](http://ecomfe.github.io/moye/example/Lazy.html)
+- [x] 延迟加载 [Lazy](http://ecomfe.github.io/moye/example/Lazy.html)
 - [x] 选 项 卡 [Tabs](http://ecomfe.github.io/moye/example/Tabs.html)
 - [x] 对 话 框 [Dialog](http://ecomfe.github.io/moye/example/Dialog.html)
-- [ ] 浮动提示 [FloatTip](http://ecomfe.github.io/moye/example/FloatTip.html)
+- [x] 浮动提示 [FloatTip](http://ecomfe.github.io/moye/example/FloatTip.html)
 - [ ] 图片上传 [PicUploader](http://ecomfe.github.io/moye/example/PicUploader.html)
 - [ ] 星号评级 [Rating](http://ecomfe.github.io/moye/example/Rating.html)
 - [ ] 滚 动 条 [ScrollBar](http://ecomfe.github.io/moye/example/ScrollBar.html)
