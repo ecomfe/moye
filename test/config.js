@@ -38,6 +38,12 @@ module.exports = function(config) {
     }, {
       pattern: 'test/spec/TabsSpec.js',
       included: false
+    }, {
+      pattern: 'test/spec/DialogSpec.js',
+      included: false
+    }, {
+      pattern: 'test/spec/DialogFactorySpec.js',
+      included: false
     }],
 
 

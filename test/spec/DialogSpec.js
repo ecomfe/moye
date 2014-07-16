@@ -1,6 +1,6 @@
 define(function (require) {
+    var $ = require('jquery');
     var Dialog = require('ui/Dialog');
-    var lib = require('ui/lib');
     var dialog;
 
     beforeEach(function () {
@@ -36,20 +36,18 @@ define(function (require) {
 
         it('mask.hide', function () {
             mask.hide();
-            expect(mask.mask.style.display).toBe('none');
+            expect($(mask.mask).css('display')).toBe('none');
         });
 
         it('mask.show', function () {
             mask.show();
-            expect(mask.mask.style.display === 'none').toBeFalsy();
+            expect($(mask.mask).css('display')).toNotBe('none');
         });
 
         it('mask.repaint', function () {
             mask.repaint();
 
-            var width = Math.max(
-            document.documentElement.clientWidth, Math.max(
-            document.body.scrollWidth, document.documentElement.scrollWidth));
+            var width = $(window).width();
 
             expect(mask.mask.style.width).toBe(width + 'px');
         });
@@ -70,12 +68,8 @@ define(function (require) {
 
         it('event:show', function () {
             dialog.on('show', function () {
-
                 expect(dialog.main).toBeTruthy();
-
-                expect(
-                lib.hasClass(
-                dialog.main, 'ecl-ui-dialog-hide')).toBeFalsy();
+                expect($(dialog.main).hasClass('ecl-ui-dialog-hide')).toBeFalsy();
             });
             dialog.show();
         });
@@ -83,21 +77,15 @@ define(function (require) {
 
         it('event:show', function () {
             dialog.on('show', function () {
-
                 expect(dialog.main).toBeTruthy();
-
-                expect(
-                lib.hasClass(
-                dialog.main, 'ecl-ui-dialog-hide')).toBeFalsy();
+                expect($(dialog.main).hasClass('ecl-ui-dialog-hide')).toBeFalsy();
             });
             dialog.show();
         });
 
         it('event:hide', function () {
             dialog.on('hide', function () {
-                expect(
-                lib.hasClass(
-                dialog.main, 'ecl-ui-dialog-hide')).toBeTruthy();
+                expect($(dialog.main).hasClass('ecl-ui-dialog-hide')).toBeTruthy();
             });
             dialog.hide();
         });

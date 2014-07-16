@@ -738,6 +738,13 @@ define(function (require) {
         }
     };
 
+    var guidPrefix = 'moye';
+    var guid = 0;
+
+    lib.guid = function () {
+        return guidPrefix + '-' + guid++;
+    };
+
     /* ========================== BROWSER ========================== */
 
     /* jshint -W101 */

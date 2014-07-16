@@ -1,6 +1,6 @@
 define(function (require) {
+    var $ = require('jquery');
     var DialogFactory = require('ui/DialogFactory');
-    var lib = require('ui/lib');
     var alertDialog, confirmDialog;
     var onConfirm, onCancel, confirmCount = 0,
         cancelCount = 0;
@@ -107,13 +107,8 @@ define(function (require) {
 
             alertDialog.show();
 
-            expect(lib.q('ecl-ui-dialog-confirm-btn', alertDialog.main)[0])
-                .toBeTruthy();
-
-            lib.fire(
-                lib.q('ecl-ui-dialog-confirm-btn', alertDialog.main)[0],
-                'click'
-            );
+            expect($('.ecl-ui-dialog-confirm-btn', alertDialog.main)[0]).toBeTruthy();
+            $('.ecl-ui-dialog-confirm-btn', alertDialog.main).trigger('click');
         });
 
         it('event:confirm,confirm dialog', function () {
@@ -130,13 +125,10 @@ define(function (require) {
 
             confirmDialog.show();
 
-            expect(lib.q('ecl-ui-dialog-confirm-btn', confirmDialog.main)[0])
+            expect($('.ecl-ui-dialog-confirm-btn', confirmDialog.main)[0])
                 .toBeTruthy();
 
-            lib.fire(
-                lib.q('ecl-ui-dialog-confirm-btn', confirmDialog.main)[0],
-                'click'
-            );
+            $('.ecl-ui-dialog-confirm-btn', confirmDialog.main).trigger('click');
         });
 
         it('event:cancel', function () {
@@ -157,13 +149,9 @@ define(function (require) {
 
             confirmDialog.show();
 
-            expect(lib.q('ecl-ui-dialog-cancel-btn', confirmDialog.main)[0])
-                .toBeTruthy();
+            expect($('.ecl-ui-dialog-cancel-btn', confirmDialog.main)[0]).toBeTruthy();
 
-            lib.fire(
-                lib.q('ecl-ui-dialog-cancel-btn', confirmDialog.main)[0],
-                'click'
-            );
+            $('.ecl-ui-dialog-cancel-btn', confirmDialog.main).trigger('click');
         });
 
 

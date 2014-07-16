@@ -7,6 +7,7 @@
  */
 define(function (require) {
 
+    var $ = require('jquery');
     var lib = require('./lib');
     var Dialog = require('./Dialog');
 
@@ -48,7 +49,7 @@ define(function (require) {
 
         //设置取消按钮
         if (opts.cancel) {
-            var id = 'btn-' + Math.random();
+            var id = 'btn-' + lib.guid();
             var cls = getClass(opts, 'cancel-btn');
             footer += '<a id="' + id + '" href="javascript:;"'
                 + ' class="' + cls + '">'
@@ -60,7 +61,7 @@ define(function (require) {
 
         //设置确定按钮
         if (opts.confirm) {
-            var id = 'btn-'  + Math.random();
+            var id = 'btn-'  + lib.guid();
             var cls = getClass(opts, 'confirm-btn');
             footer = '<button id="' + id + '"' + ' class="' + cls + '">'
                 + (opts.confirmTitle || '确定')
@@ -81,14 +82,14 @@ define(function (require) {
 
             dlg.onConfirm && dlg.on('confirm', dlg.onConfirm);
 
-            lib.on(lib.g(opts.confirmId), 'click',
-
             opts.confirmHandler = function () {
                 /**
                  * @event module:Dialog#confirm
                  */
                 dlg.fire('confirm');
-            });
+            };
+
+            $('#' + opts.confirmId).on('click', opts.confirmHandler);
         }
 
         //绑定取消事件
@@ -96,25 +97,29 @@ define(function (require) {
 
             dlg.onCancel && dlg.on('cancel', dlg.onCancel);
 
-            lib.on(lib.g(opts.cancelId), 'click',
-
             opts.cancelHandler = function () {
                 /**
                  * @event module:Dialog#cancel
                  */
                 dlg.fire('cancel');
-                dlg.hide();
-            });
+            }
+
+            $('#' + opts.cancelId).on('click', opts.cancelHandler);
         }
 
         //绑定注销事件
         dlg.on('beforedispose', function () {
             dlg.un('confirm');
             dlg.un('cancel');
-            opts.confirmId && lib.un(
-            lib.g(opts.confirmId), 'click', opts.confirmHandler);
-            opts.cancelId && lib.un(
-            lib.g(opts.cancelId), 'click', opts.cancelHandler);
+
+            if (opts.confirmId) {
+                $('#' + opts.confirmId).off('click', opts.confirmHandler);
+            }
+
+            if (opts.cancelId) {
+                $('#' + opts.cancelId).off('click', opts.cancelHandler);
+            }
+            
             opts = null;
         });
         return dlg;

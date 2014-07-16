@@ -107,14 +107,13 @@ define(function (require) {
         /**
          * 通过 className 查找控件容器内的元素
          * 
-         * @see lib.q
          * @param {string} className 元素的class，只能指定单一的class，
          * 如果为空字符串或者纯空白的字符串，返回空数组。
          * @return {Array} 获取的元素集合，查找不到或className参数错误时返回空数组
          * @public
          */
         query: function (className) {
-            return lib.q(className, this.main);
+            return $('.' + className, this.main).toArray();
         },
         
         /**
