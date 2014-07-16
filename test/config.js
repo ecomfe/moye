@@ -44,6 +44,9 @@ module.exports = function(config) {
     }, {
       pattern: 'test/spec/DialogFactorySpec.js',
       included: false
+    }, {
+      pattern: 'test/spec/FloatTipSpec.js',
+      included: false
     }],
 
 

@@ -4,10 +4,12 @@
  *
  * @file 浮动提示组件
  * @author mengke(mengke01@baidu.com)
+ * @author lupengyu(lupengyu@baidu.com)
  */
 
 define(function (require) {
 
+    var $ = require('jquery');
     var lib = require('./lib');
     var Control = require('./Control');
 
@@ -42,7 +44,7 @@ define(function (require) {
          * @private
          */
         getDom: function (name, scope) {
-            return lib.q(privates.getClass.call(this, name), lib.g(scope))[0];
+            return $('.' + privates.getClass.call(this, name), lib.g(scope))[0];
         },
 
         /**
@@ -59,27 +61,23 @@ define(function (require) {
             };
 
             //渲染主框架内容
-            var main = this.createElement('div', {
-                'className': privates.getClass.call(this)
-            });
-
-            lib.setStyles(main, {
-                width: opt.width,
-                left: opt.left,
-                top: opt.top,
-                position: opt.fixed ? 'fixed' : 'absolute',
-                zIndex: opt.level
-            });
-
-            main.innerHTML = this.options.tpl.replace(
-                /#\{([\w-.]+)\}/g,
-                function ($0, $1) {
-                    return cls[$1] || '';
-                }
-            );
-
-            document.body.appendChild(main);
-            this.main = main;
+            this.main = $('<div>')
+                .addClass(privates.getClass.call(this))
+                .css({
+                    width: opt.width,
+                    left: opt.left,
+                    top: opt.top,
+                    position: opt.fixed ? 'fixed' : 'absolute',
+                    zIndex: opt.level
+                })
+                .html(this.options.tpl.replace(
+                    /#\{([\w-.]+)\}/g,
+                    function ($0, $1) {
+                        return cls[$1] || '';
+                    }
+                ))
+                .appendTo(document.body)
+                .get(0);
 
         }        
     };
@@ -160,6 +158,8 @@ define(function (require) {
          * @public
          */
         setContent: function (content) {
+            console.log(content);
+            console.log(privates.getDom.call(this, 'content'));
             privates.getDom.call(this, 'content').innerHTML = content;
         },
 
@@ -192,6 +192,8 @@ define(function (require) {
         adjustPos: function () {
             var left = this.options.left;
             var top = this.options.top;
+            var win = $(window);
+            var main = $(this.main);
 
             //如果fixed则需要修正下margin-left
             if (this.options.fixed) {
@@ -202,34 +204,34 @@ define(function (require) {
 
                 if (!left) {
                     cssOpt.left = '50%';
-                    cssOpt.marginLeft = (-this.main.offsetWidth / 2) + 'px';
+                    cssOpt.marginLeft = (-main.width() / 2) + 'px';
                 }
 
                 if (!top) {
                     //这里固定为0.4的位置
-                    cssOpt.top = (lib.getViewHeight() - this.main.offsetHeight)
+                    cssOpt.top = (win.height() - main.height())
                         * 0.4 + 'px';
                 }
 
-                lib.setStyles(this.main, cssOpt);
+                $(this.main).css(cssOpt);
             }
 
             //absolute则需要动态计算left，top使dialog在视窗的指定位置
             else {
                 if (left === '') {
-                    left = (lib.getViewWidth() - this.main.offsetWidth) / 2;
-                    left += lib.getScrollLeft();
+                    left = (win.width() - main.width()) / 2;
+                    left += win.scrollLeft();
                     left += 'px';
                 }
 
                 if (top === '') {
                     //这里固定为0.35的位置
-                    top = (lib.getViewHeight() - this.main.offsetHeight) * 0.4;
-                    top += lib.getScrollTop();
+                    top = (win.height() - main.height()) * 0.4;
+                    top += win.scrollTop();
                     top += 'px';
                 }
 
-                lib.setStyles(this.main, {
+                main.css({
                     position: 'absolute',
                     left: left,
                     top: top
@@ -244,7 +246,7 @@ define(function (require) {
          * @public
          */
         show: function () {
-            lib.removeClass(this.main, privates.getClass.call(this, 'hide'));
+            $(this.main).show()
             this.adjustPos();
             return this;
         },
@@ -255,9 +257,13 @@ define(function (require) {
          * @public
          */
         hide: function () {
-            lib.addClass(this.main, privates.getClass.call(this, 'hide'));
+            $(this.main).hide();
             return this;
         }
+
+        // dispose: function () {
+        //     // this.parent.dispose();
+        // }
     });
 
     return FloatTip;

@@ -42,6 +42,12 @@
     },
     {
       "name": "Tabs"
+    },
+    {
+      "name": "Dialog"
+    },
+    {
+      "name": "FloatTip"
     }
   ],
   "directories": {
