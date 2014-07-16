@@ -1,2 +1,269 @@
-/*! 2014 Baidu Inc. All Rights Reserved */
-define("Dialog",["require","./lib","./Control"],function(require){function t(t){t&&t.parentNode.removeChild(t)}function e(t,e){t=String(t);var i=Array.prototype.slice.call(arguments,1),n=Object.prototype.toString;if(i.length)return i=1===i.length?null!==e&&/\[object (Array|Object)\]/.test(n.call(e))?e:i:i,t.replace(/#\{(.+?)\}/g,function(t,e){var s=i[e];if("[object Function]"===n.call(s))s=s(e);return"undefined"==typeof s?"":s});else return t}var i=require("./lib"),n=require("./Control"),s=i.newClass({initialize:function(t){var e=document.createElement("div");if(e.className=t.className,i.setStyles(e,t.styles),document.body.appendChild(e),this.mask=e,s.curMasks++,6===i.browser.ie&&!s.ie6frame)s.ie6frame=document.createElement('<iframe src="about:blank" frameborder="0" style="position:absolute;left:0;top:0;z-index:1;filter:alpha(opacity=0)"></iframe>'),document.body.appendChild(s.ie6frame)},repaint:function(){var t=Math.max(document.documentElement.clientWidth,Math.max(document.body.scrollWidth,document.documentElement.scrollWidth)),e=Math.max(document.documentElement.clientHeight,Math.max(document.body.scrollHeight,document.documentElement.scrollHeight));if(this.mask.style.width=t+"px",this.mask.style.height=e+"px",s.ie6frame)s.ie6frame.style.width=t+"px",s.ie6frame.style.height=e+"px"},show:function(){if(s.ie6frame)s.ie6frame.style.zIndex=this.mask.style.zIndex-1,i.show(s.ie6frame);i.show(this.mask)},hide:function(){if(s.ie6frame)i.hide(s.ie6frame);i.hide(this.mask)},dispose:function(){if(t(this.mask),s.curMasks--,s.curMasks<=0&&s.ie6frame)t(s.ie6frame),s.curMasks=0,s.ie6frame=null}});s.curMasks=0,s.create=function(t){return new s(t)};var a={getDom:function(t){return i.q(this.options.prefix+"-"+t,this.main)[0]},getClass:function(t){t=t?"-"+t:"";var e=this.options.skin;return this.options.prefix+t+(e?" "+e+t:"")},renderDOM:function(){var t=this.options,n={closeClass:a.getClass.call(this,"close"),headerClass:a.getClass.call(this,"header"),bodyClass:a.getClass.call(this,"body"),footerClass:a.getClass.call(this,"footer"),title:t.title,content:t.content,footer:t.footer},r=this.createElement("div",{className:a.getClass.call(this)});if(i.setStyles(r,{width:t.width,top:t.top,position:t.fixed?"fixed":"absolute",zIndex:t.level}),r.innerHTML=e(this.options.tpl,n),document.body.appendChild(r),this.main=r,this.options.showMask)this.mask=s.create({className:a.getClass.call(this,"mask"),styles:{zIndex:this.options.level-1}})},bind:function(){i.on(a.getDom.call(this,"close"),"click",this._bound.onClose)},getHeaderDom:function(){return a.getDom.call(this,"header")},getBodyDom:function(){return a.getDom.call(this,"body")},getFooterDom:function(){return a.getDom.call(this,"footer")},onClose:function(t){a.onHide.call(this,t)},onResize:function(){var t=this;clearTimeout(t._resizeTimer),t._resizeTimer=setTimeout(function(){t.adjustPos()},100)},onShow:function(t){var e=this;e.fire("beforeshow",{event:t}),e.show()},onHide:function(t){this.fire("beforehide",{event:t}),this.hide()}},r=n.extend({type:"Dialog",options:{main:"",prefix:"ecl-ui-dialog",title:"",content:"",footer:"",skin:"",width:"",top:"",left:"",fixed:1,showMask:1,level:10,dragable:1,tpl:'<div class="#{closeClass}">×</div><div class="#{headerClass}">#{title}</div><div class="#{bodyClass}">#{content}</div><div class="#{footerClass}">#{footer}</div>'},init:function(t){this._disabled=t.disabled,this.bindEvents(a)},setTitle:function(t){a.getHeaderDom.call(this).innerHTML=t},setContent:function(t){a.getBodyDom.call(this).innerHTML=t},setFooter:function(t){a.getFooterDom.call(this).innerHTML=t},adjustPos:function(){var t=this.options.left,e=this.options.top;if(this.options.fixed){var n={left:t,top:e};if(!t)n.left="50%",n.marginLeft=-this.main.offsetWidth/2+"px";if(!e)n.top=.35*(i.getViewHeight()-this.main.offsetHeight)+"px";i.setStyles(this.main,n)}else{if(!t){var s=window.pageXOffset||document.documentElement.scrollLeft||document.body.scrollLeft;t=s+(i.getViewWidth()-this.main.offsetWidth)/2+"px"}if(!e){var a=window.pageYOffset||document.documentElement.scrollTop||document.body.scrollTop;e=a+.35*(i.getViewHeight()-this.main.offsetHeight)+"px"}i.setStyles(this.main,{position:"absolute",left:t,top:e})}this.mask&&this.mask.repaint()},show:function(){var t=this;return i.on(window,"resize",this._bound.onResize),t.mask&&t.mask.show(),i.each(a.getClass.call(this,"hide").split(" "),function(e){i.removeClass(t.main,e)}),t.adjustPos(),t.fire("show"),t},hide:function(){var t=this;return t.mask&&t.mask.hide(),i.each(a.getClass.call(this,"hide").split(" "),function(e){i.addClass(t.main,e)}),t.fire("hide"),i.un(window,"resize",this._bound.onResize),clearTimeout(t._resizeTimer),t},render:function(){var t=this.options;if(!this.rendered){if(t.fixed&&6===i.browser.ie)t.fixed=0;if(a.renderDOM.call(this),t.main){var e=i.g(t.main);e&&a.getBodyDom.call(this).appendChild(e)}a.bind.call(this),this.rendered=!0}return this},setWidth:function(t){var e=this;if(!e.rendered||1>t)return e;else return i.setStyles(e.main,{width:t+"px"}),e.adjustPos(),e},dispose:function(){this.fire("beforedispose");var t=this._bound;i.un(a.getDom.call(this,"close"),"click",t.onClose),i.un(window,"resize",t.onResize),clearTimeout(this._resizeTimer),this.mask&&this.mask.dispose(),this.parent("dispose")}});return r.Mask=s,r});
+define('ui/Dialog', [
+    'require',
+    './lib',
+    './Control'
+], function (require) {
+    var lib = require('./lib');
+    var Control = require('./Control');
+    function remove(domElement) {
+        domElement && domElement.parentNode.removeChild(domElement);
+    }
+    function format(source, opts) {
+        source = String(source);
+        var data = Array.prototype.slice.call(arguments, 1);
+        var toString = Object.prototype.toString;
+        if (data.length) {
+            data = data.length === 1 ? opts !== null && /\[object (Array|Object)\]/.test(toString.call(opts)) ? opts : data : data;
+            return source.replace(/#\{(.+?)\}/g, function (match, key) {
+                var replacer = data[key];
+                if ('[object Function]' === toString.call(replacer)) {
+                    replacer = replacer(key);
+                }
+                return 'undefined' === typeof replacer ? '' : replacer;
+            });
+        }
+        return source;
+    }
+    var Mask = lib.newClass({
+            initialize: function (opts) {
+                var div = document.createElement('div');
+                div.className = opts.className;
+                lib.setStyles(div, opts.styles);
+                document.body.appendChild(div);
+                this.mask = div;
+                Mask.curMasks++;
+                if (6 === lib.browser.ie && !Mask.ie6frame) {
+                    Mask.ie6frame = document.createElement('' + '<iframe' + ' src="about:blank"' + ' frameborder="0"' + ' style="position:absolute;left:0;top:0;z-index:1;' + 'filter:alpha(opacity=0)"' + '></iframe>');
+                    document.body.appendChild(Mask.ie6frame);
+                }
+            },
+            repaint: function () {
+                var width = Math.max(document.documentElement.clientWidth, Math.max(document.body.scrollWidth, document.documentElement.scrollWidth));
+                var height = Math.max(document.documentElement.clientHeight, Math.max(document.body.scrollHeight, document.documentElement.scrollHeight));
+                this.mask.style.width = width + 'px';
+                this.mask.style.height = height + 'px';
+                if (Mask.ie6frame) {
+                    Mask.ie6frame.style.width = width + 'px';
+                    Mask.ie6frame.style.height = height + 'px';
+                }
+            },
+            show: function () {
+                if (Mask.ie6frame) {
+                    Mask.ie6frame.style.zIndex = this.mask.style.zIndex - 1;
+                    lib.show(Mask.ie6frame);
+                }
+                lib.show(this.mask);
+            },
+            hide: function () {
+                if (Mask.ie6frame) {
+                    lib.hide(Mask.ie6frame);
+                }
+                lib.hide(this.mask);
+            },
+            dispose: function () {
+                remove(this.mask);
+                Mask.curMasks--;
+                if (Mask.curMasks <= 0 && Mask.ie6frame) {
+                    remove(Mask.ie6frame);
+                    Mask.curMasks = 0;
+                    Mask.ie6frame = null;
+                }
+            }
+        });
+    Mask.curMasks = 0;
+    Mask.create = function (opts) {
+        return new Mask(opts);
+    };
+    var privates = {
+            getDom: function (name) {
+                return lib.q(this.options.prefix + '-' + name, this.main)[0];
+            },
+            getClass: function (name) {
+                name = name ? '-' + name : '';
+                var skin = this.options.skin;
+                return this.options.prefix + name + (skin ? ' ' + skin + name : '');
+            },
+            renderDOM: function () {
+                var opt = this.options;
+                var data = {
+                        closeClass: privates.getClass.call(this, 'close'),
+                        headerClass: privates.getClass.call(this, 'header'),
+                        bodyClass: privates.getClass.call(this, 'body'),
+                        footerClass: privates.getClass.call(this, 'footer'),
+                        title: opt.title,
+                        content: opt.content,
+                        footer: opt.footer
+                    };
+                var main = this.createElement('div', { 'className': privates.getClass.call(this) });
+                lib.setStyles(main, {
+                    width: opt.width,
+                    top: opt.top,
+                    position: opt.fixed ? 'fixed' : 'absolute',
+                    zIndex: opt.level
+                });
+                main.innerHTML = format(this.options.tpl, data);
+                document.body.appendChild(main);
+                this.main = main;
+                if (this.options.showMask) {
+                    this.mask = Mask.create({
+                        className: privates.getClass.call(this, 'mask'),
+                        styles: { zIndex: this.options.level - 1 }
+                    });
+                }
+            },
+            bind: function () {
+                lib.on(privates.getDom.call(this, 'close'), 'click', this._bound.onClose);
+            },
+            getHeaderDom: function () {
+                return privates.getDom.call(this, 'header');
+            },
+            getBodyDom: function () {
+                return privates.getDom.call(this, 'body');
+            },
+            getFooterDom: function () {
+                return privates.getDom.call(this, 'footer');
+            },
+            onClose: function (e) {
+                privates.onHide.call(this, e);
+            },
+            onResize: function () {
+                var me = this;
+                clearTimeout(me._resizeTimer);
+                me._resizeTimer = setTimeout(function () {
+                    me.adjustPos();
+                }, 100);
+            },
+            onShow: function (e) {
+                var me = this;
+                me.fire('beforeshow', { event: e });
+                me.show();
+            },
+            onHide: function (e) {
+                this.fire('beforehide', { event: e });
+                this.hide();
+            }
+        };
+    var Dialog = Control.extend({
+            type: 'Dialog',
+            options: {
+                main: '',
+                prefix: 'ecl-ui-dialog',
+                title: '',
+                content: '',
+                footer: '',
+                skin: '',
+                width: '',
+                top: '',
+                left: '',
+                fixed: 1,
+                showMask: 1,
+                level: 10,
+                dragable: 1,
+                tpl: '' + '<div class="#{closeClass}">\xD7</div>' + '<div class="#{headerClass}">#{title}</div>' + '<div class="#{bodyClass}">#{content}</div>' + '<div class="#{footerClass}">#{footer}</div>'
+            },
+            init: function (options) {
+                this._disabled = options.disabled;
+                this.bindEvents(privates);
+            },
+            setTitle: function (content) {
+                privates.getHeaderDom.call(this).innerHTML = content;
+            },
+            setContent: function (content) {
+                privates.getBodyDom.call(this).innerHTML = content;
+            },
+            setFooter: function (content) {
+                privates.getFooterDom.call(this).innerHTML = content;
+            },
+            adjustPos: function () {
+                var left = this.options.left;
+                var top = this.options.top;
+                if (this.options.fixed) {
+                    var cssOpt = {
+                            left: left,
+                            top: top
+                        };
+                    if (!left) {
+                        cssOpt.left = '50%';
+                        cssOpt.marginLeft = -this.main.offsetWidth / 2 + 'px';
+                    }
+                    if (!top) {
+                        cssOpt.top = (lib.getViewHeight() - this.main.offsetHeight) * 0.35 + 'px';
+                    }
+                    lib.setStyles(this.main, cssOpt);
+                } else {
+                    if (!left) {
+                        var scrollLeft = window.pageXOffset || document.documentElement.scrollLeft || document.body.scrollLeft;
+                        left = scrollLeft + (lib.getViewWidth() - this.main.offsetWidth) / 2 + 'px';
+                    }
+                    if (!top) {
+                        var scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
+                        top = scrollTop + (lib.getViewHeight() - this.main.offsetHeight) * 0.35 + 'px';
+                    }
+                    lib.setStyles(this.main, {
+                        position: 'absolute',
+                        left: left,
+                        top: top
+                    });
+                }
+                this.mask && this.mask.repaint();
+            },
+            show: function () {
+                var me = this;
+                lib.on(window, 'resize', this._bound.onResize);
+                me.mask && me.mask.show();
+                lib.each(privates.getClass.call(this, 'hide').split(' '), function (className) {
+                    lib.removeClass(me.main, className);
+                });
+                me.adjustPos();
+                me.fire('show');
+                return me;
+            },
+            hide: function () {
+                var me = this;
+                me.mask && me.mask.hide();
+                lib.each(privates.getClass.call(this, 'hide').split(' '), function (className) {
+                    lib.addClass(me.main, className);
+                });
+                me.fire('hide');
+                lib.un(window, 'resize', this._bound.onResize);
+                clearTimeout(me._resizeTimer);
+                return me;
+            },
+            render: function () {
+                var options = this.options;
+                if (!this.rendered) {
+                    if (options.fixed && 6 === lib.browser.ie) {
+                        options.fixed = 0;
+                    }
+                    privates.renderDOM.call(this);
+                    if (options.main) {
+                        var ctl = lib.g(options.main);
+                        ctl && privates.getBodyDom.call(this).appendChild(ctl);
+                    }
+                    privates.bind.call(this);
+                    this.rendered = true;
+                }
+                return this;
+            },
+            setWidth: function (width) {
+                var me = this;
+                if (!me.rendered || width < 1) {
+                    return me;
+                }
+                lib.setStyles(me.main, { width: width + 'px' });
+                me.adjustPos();
+                return me;
+            },
+            dispose: function () {
+                this.fire('beforedispose');
+                var bound = this._bound;
+                lib.un(privates.getDom.call(this, 'close'), 'click', bound.onClose);
+                lib.un(window, 'resize', bound.onResize);
+                clearTimeout(this._resizeTimer);
+                this.mask && this.mask.dispose();
+                this.parent('dispose');
+            }
+        });
+    Dialog.Mask = Mask;
+    return Dialog;
+});

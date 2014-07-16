@@ -1,2 +1,109 @@
-/*! 2014 Baidu Inc. All Rights Reserved */
-define("FloatTip",["require","./lib","./Control"],function(require){var t=require("./lib"),e=require("./Control"),i={getClass:function(t){return t=t?"-"+t:"",this.options.prefix+t},getDom:function(e,n){return t.q(i.getClass.call(this,e),t.g(n))[0]},create:function(){var e=this.options,n={content:e.content,iconClass:i.getClass.call(this,"icon"),contentClass:i.getClass.call(this,"content")},s=this.createElement("div",{className:i.getClass.call(this)});t.setStyles(s,{width:e.width,left:e.left,top:e.top,position:e.fixed?"fixed":"absolute",zIndex:e.level}),s.innerHTML=this.options.tpl.replace(/#\{([\w-.]+)\}/g,function(t,e){return n[e]||""}),document.body.appendChild(s),this.main=s}},n=e.extend({type:"FloatTip",options:{prefix:"ecl-ui-floattip",content:"",width:"",top:"",left:"",fixed:1,level:"",tpl:'<i class="#{iconClass}"></i><div class="#{contentClass}">#{content}</div>'},setContent:function(t){i.getDom.call(this,"content").innerHTML=t},render:function(){if(!this.rendered){var e=this.options;if(e.fixed&&6===t.browser.ie)e.fixed=0;i.create.call(this),this.rendered=!0}return this},adjustPos:function(){var e=this.options.left,i=this.options.top;if(this.options.fixed){var n={left:e,top:i};if(!e)n.left="50%",n.marginLeft=-this.main.offsetWidth/2+"px";if(!i)n.top=.4*(t.getViewHeight()-this.main.offsetHeight)+"px";t.setStyles(this.main,n)}else{if(""===e)e=(t.getViewWidth()-this.main.offsetWidth)/2,e+=t.getScrollLeft(),e+="px";if(""===i)i=.4*(t.getViewHeight()-this.main.offsetHeight),i+=t.getScrollTop(),i+="px";t.setStyles(this.main,{position:"absolute",left:e,top:i})}},show:function(){return t.removeClass(this.main,i.getClass.call(this,"hide")),this.adjustPos(),this},hide:function(){return t.addClass(this.main,i.getClass.call(this,"hide")),this}});return n});
+define('ui/FloatTip', [
+    'require',
+    './lib',
+    './Control'
+], function (require) {
+    var lib = require('./lib');
+    var Control = require('./Control');
+    var privates = {
+            getClass: function (name) {
+                name = name ? '-' + name : '';
+                return this.options.prefix + name;
+            },
+            getDom: function (name, scope) {
+                return lib.q(privates.getClass.call(this, name), lib.g(scope))[0];
+            },
+            create: function () {
+                var opt = this.options;
+                var cls = {
+                        content: opt.content,
+                        iconClass: privates.getClass.call(this, 'icon'),
+                        contentClass: privates.getClass.call(this, 'content')
+                    };
+                var main = this.createElement('div', { 'className': privates.getClass.call(this) });
+                lib.setStyles(main, {
+                    width: opt.width,
+                    left: opt.left,
+                    top: opt.top,
+                    position: opt.fixed ? 'fixed' : 'absolute',
+                    zIndex: opt.level
+                });
+                main.innerHTML = this.options.tpl.replace(/#\{([\w-.]+)\}/g, function ($0, $1) {
+                    return cls[$1] || '';
+                });
+                document.body.appendChild(main);
+                this.main = main;
+            }
+        };
+    var FloatTip = Control.extend({
+            type: 'FloatTip',
+            options: {
+                prefix: 'ecl-ui-floattip',
+                content: '',
+                width: '',
+                top: '',
+                left: '',
+                fixed: 1,
+                level: '',
+                tpl: '' + '<i class="#{iconClass}"></i>' + '<div class="#{contentClass}">#{content}</div>'
+            },
+            setContent: function (content) {
+                privates.getDom.call(this, 'content').innerHTML = content;
+            },
+            render: function () {
+                if (!this.rendered) {
+                    var options = this.options;
+                    if (options.fixed && 6 === lib.browser.ie) {
+                        options.fixed = 0;
+                    }
+                    privates.create.call(this);
+                    this.rendered = true;
+                }
+                return this;
+            },
+            adjustPos: function () {
+                var left = this.options.left;
+                var top = this.options.top;
+                if (this.options.fixed) {
+                    var cssOpt = {
+                            left: left,
+                            top: top
+                        };
+                    if (!left) {
+                        cssOpt.left = '50%';
+                        cssOpt.marginLeft = -this.main.offsetWidth / 2 + 'px';
+                    }
+                    if (!top) {
+                        cssOpt.top = (lib.getViewHeight() - this.main.offsetHeight) * 0.4 + 'px';
+                    }
+                    lib.setStyles(this.main, cssOpt);
+                } else {
+                    if (left === '') {
+                        left = (lib.getViewWidth() - this.main.offsetWidth) / 2;
+                        left += lib.getScrollLeft();
+                        left += 'px';
+                    }
+                    if (top === '') {
+                        top = (lib.getViewHeight() - this.main.offsetHeight) * 0.4;
+                        top += lib.getScrollTop();
+                        top += 'px';
+                    }
+                    lib.setStyles(this.main, {
+                        position: 'absolute',
+                        left: left,
+                        top: top
+                    });
+                }
+            },
+            show: function () {
+                lib.removeClass(this.main, privates.getClass.call(this, 'hide'));
+                this.adjustPos();
+                return this;
+            },
+            hide: function () {
+                lib.addClass(this.main, privates.getClass.call(this, 'hide'));
+                return this;
+            }
+        });
+    return FloatTip;
+});

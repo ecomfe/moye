@@ -10,7 +10,7 @@ var highlight = require('highlight.js');
 
 highlight.configure({
   classPrefix: ''
-})
+});
 
 marked.setOptions({
   renderer: new marked.Renderer(),

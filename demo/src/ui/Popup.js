@@ -1,2 +1,210 @@
-/*! 2014 Baidu Inc. All Rights Reserved */
-define("Popup",["require","./lib","./Control"],function(require){var t=require("./lib"),e=require("./Control"),i=t.dom,n=t.page,s={onResize:function(){clearTimeout(this._resizeTimer);var t=this;this._resizeTimer=setTimeout(function(){t.show()},100)},onShow:function(e){var i=this.target;if(!this._disabled){if(i!==this.target)this.hide();var n=t.getTarget(e),s=this.liveTriggers;if(s){for(var a=this.options.triggers,r=t.hasClass;!r(n,a)&&n!==s;)n=n.parentNode;if(!r(n,a))return}this.fire("beforeShow",{event:e}),this.show(),this.trigger=n;var o=this._bound;this._timer=setTimeout(function(){t.on(document,"click",o.onHide),t.on(window,"resize",o.onResize)},0)}},onHide:function(e){var n=t.getTarget(e),s=this.main;if(s&&s!==n&&!i.contains(s,n))this.hide(),clearTimeout(this._resizeTimer)},computePosition:function(){var t=this.options,e=this.target||this.triggers[0],s=this.main,a=t.dir,r=i.getPosition(e),o=r.top,l=r.left,h=e.offsetWidth,c=e.offsetHeight,f=l+h,u=o+c,d=l+h/2,p=o+c/2,g=s.offsetWidth,m=s.offsetHeight,v=n.getScrollTop(),b=n.getScrollLeft(),y=b+n.getViewWidth(),C=v+n.getViewHeight(),w=e.getAttribute("data-popup");if(w)a=/[trbl]{2}/.test(w)?w:"1";var x,k;if("auto"===a){var M=h>g||l-(g-h)/2>0&&y>=f+(g-h)/2?"c":l+g>y?"r":"l",T=c>m||o-(m-c)/2>0&&C>=u+(m-c)/2?"c":o+m>C?"b":"t";if(C>=u+m)k="b",x=M;else if(y>=f+g)k="r",x=T;else if(o-m>=v)k="t",x=M;else if(l-g>=b)k="l",x=T;a=k+x}else k=a.charAt(0),x=a.charAt(1);var D=t.offset;if({t:1,b:1}[k])l={l:l,c:d-g/2,r:f-g}[x],o={t:o-m,b:u}[k];else if({l:1,r:1}[k])o={t:o,c:p-m/2,b:u-m}[x],l={l:l-g-D.x,r:f+D.x}[k];i.setStyles(s,{left:l+D.x+"px",top:o+D.y+"px"})}},a=e.extend({type:"Popup",options:{disabled:!1,main:"",target:"",triggers:"",liveTriggers:"",content:"",dir:"bl",prefix:"ecl-hotel-ui-popup",offset:{x:0,y:0}},init:function(e){if(this._disabled=e.disabled,this.content=e.content,this.bindEvents(s),e.target)this.target=t.g(e.target);var i=e.prefix,n=this.main=e.main&&t.g(e.main)||document.createElement("div");if(e.main)t.addClass(n,i);else n.className=i,n.style.left="-2000px";var a=e.triggers,r=e.liveTriggers,o=this._bound;if(r)this.liveTriggers=t.on(t.g(r),"click",o.onShow);else{if(t.isString(a))a=t.q(e.triggers);t.each(t.toArray(a),function(e){t.on(e,"click",o.onShow)}),this.triggers=a}},render:function(){var e=this.main;if(this.content)e.innerHTML=this.content;if(!this.rendered){this.rendered=!0,document.body.appendChild(e);var i=this;t.on(e,"click",function(t){i.fire("click",{event:t})})}return this},show:function(){s.computePosition.call(this),this.fire("show")},hide:function(){this.main.style.left="-2000px",this.fire("hide");var e=this._bound;t.un(document,"click",e.onHide),t.un(window,"resize",e.onResize),clearTimeout(this._timer),clearTimeout(this._resizeTimer)}});return a});
+define('ui/Popup', [
+    'require',
+    'jquery',
+    './lib',
+    './Control'
+], function (require) {
+    var $ = require('jquery');
+    var lib = require('./lib');
+    var Control = require('./Control');
+    var privates = {
+            onResize: function () {
+                clearTimeout(this._resizeTimer);
+                var me = this;
+                this._resizeTimer = setTimeout(function () {
+                    me.show();
+                }, 100);
+            },
+            onShow: function (e) {
+                var oldTarget = this.target;
+                if (this._disabled) {
+                    return;
+                }
+                var trigger = e.target;
+                if (oldTarget && oldTarget !== trigger) {
+                    this.hide();
+                }
+                var $trigger = $(e.target);
+                var liveTriggers = this.liveTriggers;
+                if (liveTriggers) {
+                    var cls = this.options.triggers;
+                    while (!$trigger.hasClass(cls)) {
+                        if ($.inArray(trigger, this.liveTriggers) !== -1) {
+                            break;
+                        }
+                        trigger = trigger.parent();
+                    }
+                    if (!$trigger.hasClass(cls)) {
+                        return;
+                    }
+                }
+                this.fire('beforeShow', { event: e });
+                this.show();
+                this.trigger = trigger;
+                var bound = this._bound;
+                this._timer = setTimeout(function () {
+                    $(document).on('click', bound.onHide);
+                    $(window).on('resize', bound.onResize);
+                }, 0);
+            },
+            onHide: function (e) {
+                var target = e.target;
+                var main = this.main;
+                if (!main || main === target || $.contains(main, target)) {
+                    return;
+                }
+                this.hide();
+                clearTimeout(this._resizeTimer);
+            },
+            computePosition: function () {
+                var options = this.options;
+                var target = $(this.target || this.triggers[0]);
+                var main = $(this.main);
+                var dir = options.dir;
+                var position = target.position();
+                var top = position.top;
+                var left = position.left;
+                var width = target.outerWidth();
+                var height = target.outerHeight();
+                var right = left + width;
+                var bottom = top + height;
+                var center = left + width / 2;
+                var middle = top + height / 2;
+                var mainWidth = main.width();
+                var mainHeight = main.height();
+                var win = $(window);
+                var scrollTop = win.scrollTop();
+                var scrollLeft = win.scrollLeft();
+                var scrollRight = scrollLeft + win.width();
+                var scrollBottom = scrollTop + win.height();
+                var dirFromAttr = target.attr('data-popup');
+                if (dirFromAttr) {
+                    dir = /[trbl]{2}/.test(dirFromAttr) ? dirFromAttr : '1';
+                }
+                var second, first;
+                if (dir === 'auto') {
+                    var horiz = width > mainWidth || left - (mainWidth - width) / 2 > 0 && right + (mainWidth - width) / 2 <= scrollRight ? 'c' : left + mainWidth > scrollRight ? 'r' : 'l';
+                    var vertical = height > mainHeight || top - (mainHeight - height) / 2 > 0 && bottom + (mainHeight - height) / 2 <= scrollBottom ? 'c' : top + mainHeight > scrollBottom ? 'b' : 't';
+                    if (bottom + mainHeight <= scrollBottom) {
+                        first = 'b';
+                        second = horiz;
+                    } else if (right + mainWidth <= scrollRight) {
+                        first = 'r';
+                        second = vertical;
+                    } else if (top - mainHeight >= scrollTop) {
+                        first = 't';
+                        second = horiz;
+                    } else if (left - mainWidth >= scrollLeft) {
+                        first = 'l';
+                        second = vertical;
+                    }
+                    dir = first + second;
+                } else {
+                    first = dir.charAt(0);
+                    second = dir.charAt(1);
+                }
+                var offset = options.offset;
+                if ({
+                        t: 1,
+                        b: 1
+                    }[first]) {
+                    left = {
+                        l: left,
+                        c: center - mainWidth / 2,
+                        r: right - mainWidth
+                    }[second];
+                    top = {
+                        t: top - mainHeight,
+                        b: bottom
+                    }[first];
+                } else if ({
+                        l: 1,
+                        r: 1
+                    }[first]) {
+                    top = {
+                        t: top,
+                        c: middle - mainHeight / 2,
+                        b: bottom - mainHeight
+                    }[second];
+                    left = {
+                        l: left - mainWidth - offset.x,
+                        r: right + offset.x
+                    }[first];
+                }
+                $(main).css({
+                    left: left + offset.x + 'px',
+                    top: top + offset.y + 'px'
+                });
+            }
+        };
+    var Popup = Control.extend({
+            type: 'Popup',
+            options: {
+                disabled: false,
+                main: '',
+                target: '',
+                triggers: '',
+                liveTriggers: '',
+                content: '',
+                dir: 'bl',
+                prefix: 'ecl-hotel-ui-popup',
+                offset: {
+                    x: 0,
+                    y: 0
+                }
+            },
+            init: function (options) {
+                this._disabled = options.disabled;
+                this.content = options.content;
+                this.bindEvents(privates);
+                if (options.target) {
+                    this.target = lib.g(options.target);
+                }
+                var prefix = options.prefix;
+                var main = $(options.main || '<div>');
+                main.addClass(prefix);
+                if (!options.main) {
+                    main.css('left', '-2000px');
+                }
+                var triggers = options.triggers;
+                var liveTriggers = options.liveTriggers;
+                var bound = this._bound;
+                if (liveTriggers) {
+                    liveTriggers = lib.isString(liveTriggers) ? $('.' + liveTriggers) : $(liveTriggers);
+                    this.liveTriggers = liveTriggers.on('click', bound.onShow).toArray();
+                } else {
+                    triggers = lib.isString(triggers) ? $('.' + options.triggers) : $(options.triggers);
+                    this.triggers = triggers.on('click', bound.onShow).toArray();
+                }
+                this.main = main.get(0);
+            },
+            render: function () {
+                var main = $(this.main);
+                if (this.content) {
+                    main.html(this.content);
+                }
+                if (!this.rendered) {
+                    var me = this;
+                    me.rendered = true;
+                    main.appendTo(document.body).on('click', function (e) {
+                        me.fire('click', { event: e });
+                    });
+                }
+                return this;
+            },
+            show: function () {
+                privates.computePosition.call(this);
+                this.fire('show');
+            },
+            hide: function () {
+                this.main.style.left = '-2000px';
+                this.fire('hide');
+                var bound = this._bound;
+                $(document).off('click', bound.onHide);
+                $(window).off('resize', bound.onResize);
+                clearTimeout(this._timer);
+                clearTimeout(this._resizeTimer);
+            }
+        });
+    return Popup;
+});

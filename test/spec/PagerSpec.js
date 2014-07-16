@@ -1,4 +1,6 @@
 define(function (require) {
+
+    var $ = require('jquery');
     var lib = require('ui/lib');
     var Pager = require('ui/Pager');
     
@@ -15,7 +17,7 @@ define(function (require) {
 
         pager = new Pager({
             prefix: 'ecl-ui-pager',
-            main: lib.q('ecl-ui-pager')[0],
+            main: $('.ecl-ui-pager')[0],
             page: 0,
             first: first,
             total: 18
@@ -91,7 +93,7 @@ define(function (require) {
             };
             pager.on('click', onClick);
             pager.on('change', onChange);
-            lib.fire(el, 'click');
+            $(el).trigger('click');
             pager.un('click', onClick);
             pager.un('change', onChange);
 
@@ -113,8 +115,8 @@ define(function (require) {
             pager.main.appendChild(el);
             pager.on('click', onClick);
             pager.on('change', onChange);
-            lib.fire(pager.main, 'click');
-            lib.fire(el, 'click');
+            $(pager.main).trigger('click');
+            $(el).trigger('click');
             pager.un('click', onClick);
             pager.un('change', onChange);
             pager.main.removeChild(el);

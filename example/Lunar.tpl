@@ -8,6 +8,7 @@
 # Lunar 农历日历
 
 ### DEMO
+-----------------------
 
 {% /filter%}
 
@@ -17,6 +18,7 @@
 {% filter: markdown %}
 
 ### 源码
+-----------------------
 
 ```html
 <div class="ecl-ui-lunar c-clearfix" id="lunar"></div>

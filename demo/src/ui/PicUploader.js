@@ -1,2 +1,203 @@
-/*! 2014 Baidu Inc. All Rights Reserved */
-define("PicUploader",["require","./lib","./Control"],function(require){function t(t,e){var i=new FileReader(t);i.onload=function(t){e&&e(t.target.result),i=null},i.readAsDataURL(t)}function e(t){var e=document.createElement("input");e.type="file";for(var i in t)e[i]=t[i];return e}var i=require("./lib"),n=require("./Control"),s="FileReader"in window,a={getClass:function(t){return t=t?"-"+t:"",this.options.prefix+t},getDom:function(t,e){return i.q(a.getClass.call(this,t),i.g(e))[0]},onCloseClick:function(t){var e=i.getTarget(t),n=i.getAncestorByClass(e,a.getClass.call(this,"picker"));a.removePicker.call(this,n)},onFileChange:function(n){var r=i.getTarget(n),o=r.value;if(o){var l=o.slice(Math.max(o.lastIndexOf("/"),o.lastIndexOf("\\"))+1);l=l.slice(0,l.lastIndexOf("."));var h=i.getAncestorByClass(r,a.getClass.call(this,"picker")),c=this._bound;if(!o.match(this.options.fileType)){if(i.browser.ie){var f=e({className:r.className});r.parentNode.insertBefore(f,r),i.un(r,"change",c.onFileChange),r.parentNode.removeChild(r),i.on(f,"change",c.onFileChange)}else r.value="";i.addClass(h,a.getClass.call(this,"error")),this.fire("pickerror",{fileName:o})}else{var u=a.getDom.call(this,"pic",h);if(s)t(r.files[0],function(t){var e=document.createElement("IMG");e.src=t,u.appendChild(e),u=null});else u.innerHTML="<em>"+l+"</em>";if(h.title=l,a.getDom.call(this,"title",h).innerHTML=l,i.removeClass(h,a.getClass.call(this,"cur")),i.removeClass(h,a.getClass.call(this,"error")),i.addClass(h,a.getClass.call(this,"picked")),i.un(r,"change",c.onFileChange),this.count++,this.count<this.options.maxCount)a.create.call(this);this.fire("pick",{fileName:o})}}},removePicker:function(t){var e=a.getDom.call(this,"file",t).value,n=this._bound;if(i.un(a.getDom.call(this,"file",t),"change",n.onFileChange),i.un(a.getDom.call(this,"close",t),"click",n.onCloseClick),t.parentNode.removeChild(t),this.count--,this.count===this.options.maxCount-1)a.create.call(this);this.fire("remove",{fileName:e})},bindPicker:function(t){var e=this._bound;i.on(a.getDom.call(this,"file",t),"change",e.onFileChange),i.on(a.getDom.call(this,"close",t),"click",e.onCloseClick)},create:function(){var t={closeClass:a.getClass.call(this,"close"),picClass:a.getClass.call(this,"pic"),titleClass:a.getClass.call(this,"title"),fileClass:a.getClass.call(this,"file"),wrapperClass:a.getClass.call(this,"wrapper")},e=this.createElement("div",{className:a.getClass.call(this,"picker")+" "+a.getClass.call(this,"cur")});e.innerHTML=this.options.tpl.replace(/#\{([\w-.]+)\}/g,function(e,i){return t[i]||""}),this.options.main.appendChild(e),a.bindPicker.call(this,this.curPicker=e)}},r=n.extend({type:"PicUploader",options:{main:"",prefix:"ecl-ui-picuploader",maxCount:3,fileType:/\.(jpg|png|gif|jpeg)$/,tpl:'<div class="#{closeClass}" title="关闭">×</div><div class="#{picClass}"></div><div class="#{titleClass}">点击上传</div><a href="javascript:;" class="#{wrapperClass}"><input type="file" class="#{fileClass}"></a>'},count:0,init:function(t){if(!t.main&&1!==t.main.nodeType)throw new Error("invalid main");if(this.bindEvents(a),this._disabled=t.disabled,this._disabled)this.disable()},render:function(){if(!this.rendered)a.create.call(this),this.rendered=!0;return this},remove:function(t,e){var n=this;return e=e||function(t,e,i){return t===e},i.each(i.q(a.getClass.call(this,"file"),this.options.main),function(s,r){if(s.value===t)if(e(s.value,t,r))a.removePicker.call(n,i.getAncestorByClass(s,a.getClass.call(n,"picker")))}),this},removeAt:function(t){var e=i.q(a.getClass.call(this,"picker"),this.options.main);if(e[t]!==this.curPicker)a.removePicker.call(this,e[t]);return this},getFileList:function(){var t=this,e=[];return i.each(i.q(a.getClass.call(this,"file"),this.options.main),function(i){if(i.value.match(t.options.fileType))e.push(i.value)}),e},enable:function(){if(this.curPicker)i.removeClass(this.options.main,a.getClass.call(this,"disabled"));return this._disabled=0,this},disable:function(){if(this.curPicker)i.addClass(this.options.main,a.getClass.call(this,"disabled"));return this._disabled=1,this},dispose:function(){if(this.curPicker){var t=this._bound;i.un(a.getDom.call(this,"file",this.curPicker),"change",t.onFileChange),i.un(a.getDom.call(this,"close",this.curPicker),"click",t.onCloseClick),this.curPicker=0}this.options.main.innerHTML="",this.parent("dispose")}});return r});
+define('ui/PicUploader', [
+    'require',
+    './lib',
+    './Control'
+], function (require) {
+    var lib = require('./lib');
+    var Control = require('./Control');
+    var supportFileReader = 'FileReader' in window;
+    function getLocalImageData(filePath, callBack) {
+        var reader = new FileReader(filePath);
+        reader.onload = function (e) {
+            callBack && callBack(e.target.result);
+            reader = null;
+        };
+        reader.readAsDataURL(filePath);
+    }
+    function createFileNode(options) {
+        var node = document.createElement('input');
+        node.type = 'file';
+        for (var i in options) {
+            node[i] = options[i];
+        }
+        return node;
+    }
+    var privates = {
+            getClass: function (name) {
+                name = name ? '-' + name : '';
+                return this.options.prefix + name;
+            },
+            getDom: function (name, scope) {
+                return lib.q(privates.getClass.call(this, name), lib.g(scope))[0];
+            },
+            onCloseClick: function (e) {
+                var target = lib.getTarget(e);
+                var picker = lib.getAncestorByClass(target, privates.getClass.call(this, 'picker'));
+                privates.removePicker.call(this, picker);
+            },
+            onFileChange: function (e) {
+                var target = lib.getTarget(e);
+                var filePath = target.value;
+                if (!filePath) {
+                    return;
+                }
+                var fileName = filePath.slice(Math.max(filePath.lastIndexOf('/'), filePath.lastIndexOf('\\')) + 1);
+                fileName = fileName.slice(0, fileName.lastIndexOf('.'));
+                var picker = lib.getAncestorByClass(target, privates.getClass.call(this, 'picker'));
+                var bound = this._bound;
+                if (!filePath.match(this.options.fileType)) {
+                    if (lib.browser.ie) {
+                        var newTarget = createFileNode({ className: target.className });
+                        target.parentNode.insertBefore(newTarget, target);
+                        lib.un(target, 'change', bound.onFileChange);
+                        target.parentNode.removeChild(target);
+                        lib.on(newTarget, 'change', bound.onFileChange);
+                    } else {
+                        target.value = '';
+                    }
+                    lib.addClass(picker, privates.getClass.call(this, 'error'));
+                    this.fire('pickerror', { fileName: filePath });
+                } else {
+                    var pic = privates.getDom.call(this, 'pic', picker);
+                    if (supportFileReader) {
+                        getLocalImageData(target.files[0], function (data) {
+                            var img = document.createElement('IMG');
+                            img.src = data;
+                            pic.appendChild(img);
+                            pic = null;
+                        });
+                    } else {
+                        pic.innerHTML = '<em>' + fileName + '</em>';
+                    }
+                    picker.title = fileName;
+                    privates.getDom.call(this, 'title', picker).innerHTML = fileName;
+                    lib.removeClass(picker, privates.getClass.call(this, 'cur'));
+                    lib.removeClass(picker, privates.getClass.call(this, 'error'));
+                    lib.addClass(picker, privates.getClass.call(this, 'picked'));
+                    lib.un(target, 'change', bound.onFileChange);
+                    this.count++;
+                    if (this.count < this.options.maxCount) {
+                        privates.create.call(this);
+                    }
+                    this.fire('pick', { fileName: filePath });
+                }
+            },
+            removePicker: function (picker) {
+                var fileName = privates.getDom.call(this, 'file', picker).value;
+                var bound = this._bound;
+                lib.un(privates.getDom.call(this, 'file', picker), 'change', bound.onFileChange);
+                lib.un(privates.getDom.call(this, 'close', picker), 'click', bound.onCloseClick);
+                picker.parentNode.removeChild(picker);
+                this.count--;
+                if (this.count === this.options.maxCount - 1) {
+                    privates.create.call(this);
+                }
+                this.fire('remove', { fileName: fileName });
+            },
+            bindPicker: function (id) {
+                var bound = this._bound;
+                lib.on(privates.getDom.call(this, 'file', id), 'change', bound.onFileChange);
+                lib.on(privates.getDom.call(this, 'close', id), 'click', bound.onCloseClick);
+            },
+            create: function () {
+                var cls = {
+                        closeClass: privates.getClass.call(this, 'close'),
+                        picClass: privates.getClass.call(this, 'pic'),
+                        titleClass: privates.getClass.call(this, 'title'),
+                        fileClass: privates.getClass.call(this, 'file'),
+                        wrapperClass: privates.getClass.call(this, 'wrapper')
+                    };
+                var picker = this.createElement('div', { 'className': privates.getClass.call(this, 'picker') + ' ' + privates.getClass.call(this, 'cur') });
+                picker.innerHTML = this.options.tpl.replace(/#\{([\w-.]+)\}/g, function ($0, $1) {
+                    return cls[$1] || '';
+                });
+                this.options.main.appendChild(picker);
+                privates.bindPicker.call(this, this.curPicker = picker);
+            }
+        };
+    var PicUploader = Control.extend({
+            type: 'PicUploader',
+            options: {
+                main: '',
+                prefix: 'ecl-ui-picuploader',
+                maxCount: 3,
+                fileType: /\.(jpg|png|gif|jpeg)$/,
+                tpl: '' + '<div class="#{closeClass}" title="\u5173\u95ED">\xD7</div>' + '<div class="#{picClass}"></div>' + '<div class="#{titleClass}">\u70B9\u51FB\u4E0A\u4F20</div>' + '<a href="javascript:;" class="#{wrapperClass}">' + '<input type="file" class="#{fileClass}">' + '</a>'
+            },
+            count: 0,
+            init: function (options) {
+                if (!options.main && 1 !== options.main.nodeType) {
+                    throw new Error('invalid main');
+                }
+                this.bindEvents(privates);
+                this._disabled = options.disabled;
+                if (this._disabled) {
+                    this.disable();
+                }
+            },
+            render: function () {
+                if (!this.rendered) {
+                    privates.create.call(this);
+                    this.rendered = true;
+                }
+                return this;
+            },
+            remove: function (filePath, checker) {
+                var me = this;
+                checker = checker || function (removePath, filePath, index) {
+                    index;
+                    return removePath === filePath;
+                };
+                lib.each(lib.q(privates.getClass.call(this, 'file'), this.options.main), function (item, index) {
+                    if (item.value === filePath) {
+                        if (checker(item.value, filePath, index)) {
+                            privates.removePicker.call(me, lib.getAncestorByClass(item, privates.getClass.call(me, 'picker')));
+                        }
+                    }
+                });
+                return this;
+            },
+            removeAt: function (index) {
+                var list = lib.q(privates.getClass.call(this, 'picker'), this.options.main);
+                if (list[index] !== this.curPicker) {
+                    privates.removePicker.call(this, list[index]);
+                }
+                return this;
+            },
+            getFileList: function () {
+                var me = this;
+                var files = [];
+                lib.each(lib.q(privates.getClass.call(this, 'file'), this.options.main), function (item) {
+                    if (item.value.match(me.options.fileType)) {
+                        files.push(item.value);
+                    }
+                });
+                return files;
+            },
+            enable: function () {
+                if (this.curPicker) {
+                    lib.removeClass(this.options.main, privates.getClass.call(this, 'disabled'));
+                }
+                this._disabled = 0;
+                return this;
+            },
+            disable: function () {
+                if (this.curPicker) {
+                    lib.addClass(this.options.main, privates.getClass.call(this, 'disabled'));
+                }
+                this._disabled = 1;
+                return this;
+            },
+            dispose: function () {
+                if (this.curPicker) {
+                    var bound = this._bound;
+                    lib.un(privates.getDom.call(this, 'file', this.curPicker), 'change', bound.onFileChange);
+                    lib.un(privates.getDom.call(this, 'close', this.curPicker), 'click', bound.onCloseClick);
+                    this.curPicker = 0;
+                }
+                this.options.main.innerHTML = '';
+                this.parent('dispose');
+            }
+        });
+    return PicUploader;
+});

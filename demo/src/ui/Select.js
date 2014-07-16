@@ -1,2 +1,218 @@
-/*! 2014 Baidu Inc. All Rights Reserved */
-define("Select",["require","./lib","./Control","./Popup"],function(require){function t(t){return t.replace(/[^\x00-\xff]/gi,"..").length}function e(i,s,n){if(s>=t(i))return i;for(var a=0,r=0,o="";s>r;)o+=i.charAt(a),r+=t(i.charAt(a)),a++;if(r>s)o=o.substr(0,o.length-1);var l=n?t(n):0;if(l)s-=l,o=e(o,s)+n;return o}var i=require("./lib"),s=require("./Control"),n=require("./Popup"),a={onDisable:function(){this.popup.disable(),i.addClass(this.target,this.options.prefix+"-disabled")},onEnable:function(){this.popup.enable(),i.removeClass(this.target,this.options.prefix+"-disabled")},onClick:function(t){var e=t.event;if(e&&!this._disabled){var s=i.getTarget(e),n=s.tagName;switch(n){case"A":i.preventDefault(e),a.pick.call(this,s)}this.fire("click",t)}},onBeforeShow:function(t){if(i.preventDefault(t.event),!this._disabled)this.fire("beforeShow",t),i.addClass(this.target,this.options.prefix+"-hl")},onHide:function(){i.removeClass(this.target,this.options.prefix+"-hl")},pick:function(t,s){this.hide();var n=this.lastItem;if(n!==t){var a=this.options,r=this.target,o=this.realTarget,l=this.lastValue,h=a.prefix+"-"+a.selectedClass,c=t.getAttribute("data-value"),u=c?t.innerHTML:this.defaultValue,f=u?e(u,a.maxLength,a.ellipsis):u,d=a.isNumber?0|c:c;if(n)i.removeClass(n,h);if(c)i.addClass(t,h);if(this.lastItem=t,!s)this.fire("pick",{value:d,text:u,shortText:f});if(c!==l){if(this.lastValue=c,r){if(r.type)r.value=f,r.focus();else(o||r).innerHTML=f;r.title=u}var p=a.prefix+"-checked";if(i[c?"addClass":"removeClass"](r,p),!s)this.fire("change",{value:d,text:u,shortText:f})}}}},r=s.extend({type:"Select",options:{disabled:!1,main:"",maxLength:16,ellipsis:"...",target:"",cols:1,selectedClass:"cur",prefix:"ecl-ui-sel",isNumber:!0,datasource:null,valueUseIndex:!1},init:function(t){if(!t.target)throw new Error("invalid target");this._disabled=t.disabled,this.bindEvents(a)},render:function(){var t=this.options;if(!this.rendered){this.rendered=!0,this.target=i.g(t.target),this.realTarget=i.dom.first(this.target)||this.target,this.defaultValue=this.realTarget.innerHTML||this.realTarget.value||"",this.srcOptions.triggers=[this.target];var e=this.popup=new n(this.srcOptions);if(this.addChild(e),t.datasource)t.isNumber=t.valueUseIndex,this.fill(t.datasource);var s=this._bound;if(e.on("click",s.onClick),e.on("beforeShow",s.onBeforeShow),e.on("hide",s.onHide),e.render(),this.on("disable",s.onDisable),this.on("enable",s.onEnable),this.main=e.main,t.cols>1)i.addClass(this.main,t.prefix+"-cols"+t.cols)}else this.popup.render();return this},show:function(t){this.popup.show(),this.fire("show",{target:t})},hide:function(){this.popup.hide(),this.fire("hide")},fill:function(t){if(t&&t.length){if(!i.isArray(t))t=String(t).split(/\s*[,，]\s*/);for(var e=[],s=!!this.options.valueUseIndex,n=0;n<t.length;n++){var a=t[n];if(!i.isObject(a)){var r=a.split(/\s*[:：]\s*/);a={text:r[0]},a.value=r.length>1?r[1]:s?n:r[0]}e.push('<a href="#" data-value="'+a.value+'">'+a.text+"</a>")}this.popup.main.innerHTML=e.join("")}},getValue:function(t){var e=this.options,s=e.prefix+"-"+e.selectedClass,n=this.popup.query(s)[0],a=n?n.getAttribute("data-value"):"";return t="boolean"===i.typeOf(t)?t:e.isNumber,t?0|a:a},reset:function(){a.pick.call(this,i.dom.first(this.main),!0)}});return r});
+define('ui/Select', [
+    'require',
+    './lib',
+    './Control',
+    './Popup'
+], function (require) {
+    var lib = require('./lib');
+    var Control = require('./Control');
+    var Popup = require('./Popup');
+    function bLength(str) {
+        return str.replace(/[^\x00-\xff]/gi, '..').length;
+    }
+    function textOverflow(str, max, ellipsis) {
+        if (max >= bLength(str)) {
+            return str;
+        }
+        var i = 0;
+        var l = 0;
+        var rs = '';
+        while (l < max) {
+            rs += str.charAt(i);
+            l += bLength(str.charAt(i));
+            i++;
+        }
+        if (l > max) {
+            rs = rs.substr(0, rs.length - 1);
+        }
+        var ellipsisLen = ellipsis ? bLength(ellipsis) : 0;
+        if (ellipsisLen) {
+            max -= ellipsisLen;
+            rs = textOverflow(rs, max) + ellipsis;
+        }
+        return rs;
+    }
+    var privates = {
+            onDisable: function () {
+                this.popup.disable();
+                lib.addClass(this.target, this.options.prefix + '-disabled');
+            },
+            onEnable: function () {
+                this.popup.enable();
+                lib.removeClass(this.target, this.options.prefix + '-disabled');
+            },
+            onClick: function (args) {
+                var e = args.event;
+                if (!e || this._disabled) {
+                    return;
+                }
+                var el = lib.getTarget(e);
+                var tag = el.tagName;
+                switch (tag) {
+                case 'A':
+                    lib.preventDefault(e);
+                    privates.pick.call(this, el);
+                    break;
+                default:
+                    break;
+                }
+                this.fire('click', args);
+            },
+            onBeforeShow: function (arg) {
+                lib.preventDefault(arg.event);
+                if (this._disabled) {
+                    return;
+                }
+                this.fire('beforeShow', arg);
+                lib.addClass(this.target, this.options.prefix + '-hl');
+            },
+            onHide: function () {
+                lib.removeClass(this.target, this.options.prefix + '-hl');
+            },
+            pick: function (el, isSilent) {
+                this.hide();
+                var lastItem = this.lastItem;
+                if (lastItem === el) {
+                    return;
+                }
+                var options = this.options;
+                var target = this.target;
+                var realTarget = this.realTarget;
+                var lastValue = this.lastValue;
+                var selectedClass = options.prefix + '-' + options.selectedClass;
+                var value = el.getAttribute('data-value');
+                var text = value ? el.innerHTML : this.defaultValue;
+                var shortText = text ? textOverflow(text, options.maxLength, options.ellipsis) : text;
+                var typeValue = options.isNumber ? value | 0 : value;
+                if (lastItem) {
+                    lib.removeClass(lastItem, selectedClass);
+                }
+                if (value) {
+                    lib.addClass(el, selectedClass);
+                }
+                this.lastItem = el;
+                if (!isSilent) {
+                    this.fire('pick', {
+                        value: typeValue,
+                        text: text,
+                        shortText: shortText
+                    });
+                }
+                if (value === lastValue) {
+                    return;
+                }
+                this.lastValue = value;
+                if (target) {
+                    if (target.type) {
+                        target.value = shortText;
+                        target.focus();
+                    } else {
+                        (realTarget || target).innerHTML = shortText;
+                    }
+                    target.title = text;
+                }
+                var klass = options.prefix + '-checked';
+                lib[value ? 'addClass' : 'removeClass'](target, klass);
+                if (!isSilent) {
+                    this.fire('change', {
+                        value: typeValue,
+                        text: text,
+                        shortText: shortText
+                    });
+                }
+            }
+        };
+    var Select = Control.extend({
+            type: 'Select',
+            options: {
+                disabled: false,
+                main: '',
+                maxLength: 16,
+                ellipsis: '...',
+                target: '',
+                cols: 1,
+                selectedClass: 'cur',
+                prefix: 'ecl-ui-sel',
+                isNumber: true,
+                datasource: null,
+                valueUseIndex: false
+            },
+            init: function (options) {
+                if (!options.target) {
+                    throw new Error('invalid target');
+                }
+                this._disabled = options.disabled;
+                this.bindEvents(privates);
+            },
+            render: function () {
+                var options = this.options;
+                if (!this.rendered) {
+                    this.rendered = true;
+                    this.target = lib.g(options.target);
+                    this.realTarget = lib.dom.first(this.target) || this.target;
+                    this.defaultValue = this.realTarget.innerHTML || this.realTarget.value || '';
+                    this.srcOptions.triggers = [this.target];
+                    var popup = this.popup = new Popup(this.srcOptions);
+                    this.addChild(popup);
+                    if (options.datasource) {
+                        options.isNumber = options.valueUseIndex;
+                        this.fill(options.datasource);
+                    }
+                    var bound = this._bound;
+                    popup.on('click', bound.onClick);
+                    popup.on('beforeShow', bound.onBeforeShow);
+                    popup.on('hide', bound.onHide);
+                    popup.render();
+                    this.on('disable', bound.onDisable);
+                    this.on('enable', bound.onEnable);
+                    this.main = popup.main;
+                    if (options.cols > 1) {
+                        lib.addClass(this.main, options.prefix + '-cols' + options.cols);
+                    }
+                } else {
+                    this.popup.render();
+                }
+                return this;
+            },
+            show: function (target) {
+                this.popup.show();
+                this.fire('show', { target: target });
+            },
+            hide: function () {
+                this.popup.hide();
+                this.fire('hide');
+            },
+            fill: function (datasource) {
+                if (!datasource || !datasource.length) {
+                    return;
+                }
+                if (!lib.isArray(datasource)) {
+                    datasource = String(datasource).split(/\s*[,，]\s*/);
+                }
+                var html = [];
+                var valueUseIndex = !!this.options.valueUseIndex;
+                for (var i = 0; i < datasource.length; i++) {
+                    var item = datasource[i];
+                    if (!lib.isObject(item)) {
+                        var data = item.split(/\s*[:：]\s*/);
+                        item = { text: data[0] };
+                        item.value = data.length > 1 ? data[1] : valueUseIndex ? i : data[0];
+                    }
+                    html.push('' + '<a href="#" data-value="' + item.value + '">' + item.text + '</a>');
+                }
+                this.popup.main.innerHTML = html.join('');
+            },
+            getValue: function (isNumber) {
+                var options = this.options;
+                var klass = options.prefix + '-' + options.selectedClass;
+                var selected = this.popup.query(klass)[0];
+                var value = selected ? selected.getAttribute('data-value') : '';
+                isNumber = lib.typeOf(isNumber) === 'boolean' ? isNumber : options.isNumber;
+                return isNumber ? value | 0 : value;
+            },
+            reset: function () {
+                privates.pick.call(this, lib.dom.first(this.main), true);
+            }
+        });
+    return Select;
+});

@@ -1,2 +1,132 @@
-/*! 2014 Baidu Inc. All Rights Reserved */
-define("Lazy",["require","./lib"],function(require){var t=require("./lib"),e=function(i,n){var s=0;if("none"!==t.getStyle(i,"display")){var a="offset"+t.capitalize(n||"Height");t.each(i.childNodes,function(t){var i=t[a];if(!i)i=e(t,n);s+=i})}return s},i={compute:function(){var i={x:t.getScrollLeft(),y:t.getScrollTop()},n=this.lastScroll,s={left:i.x<n.x,top:i.y<n.y};this.lastScroll=i;var a={x:t.getViewWidth(),y:t.getViewHeight()},r=this.els;for(var o in r)if(r.hasOwnProperty(o)){var l=r[o],h=t.getPosition(l[0]),c=l[2]||{};if(c.x=c.x||10,c.y=c.y||10,h.width=l[0].offsetWidth,h.height=l[0].offsetHeight,h.width>0&&0===h.height)h.height=e(l[0]);else if(0===h.width&&h.height>0)h.width=e(l[0],"Width");var d=!1,u=h.left-c.x>=i.x+a.x,f=h.top-c.y>=i.y+a.y,p=h.left+h.width+c.x<=i.x,m=h.top+c.y+h.height<=i.y;if(!(u||f||p||m)){if(!c.trigger)l[1](i,a,h,s,l[0]);d=!0}if(c.trigger)l[1](d,i,a,h,s,l)}},onScroll:function(){clearTimeout(this._timer),this._timer=setTimeout(this._bound.compute,this.delay),this.scrolled=!0}},n=t.newClass({type:"Lazy",initialize:function(){this.els={},this.count=0,this.delay=100,this.lastScroll={x:t.getScrollLeft(),y:t.getScrollTop},this._bound={onScroll:t.bind(i.onScroll,this),compute:t.bind(i.compute,this)}},add:function(e,i,n){this.els[t.guid(e)]=[e,i,n];var s=this._bound.onScroll;if(!this.count)t.on(window,"scroll",s),t.on(window,"resize",s);if(this.count++,!this.scrolled)s();return this},remove:function(e){var i=t.guid(e);if(i in this.els)if(delete this.els[i],this.count--,!this.count)t.un(window,"scroll",this.onScroll),t.un(window,"resize",this.onScroll);return this}});return function(t){var e,i=function(){return e||(e=new t)};t.add=function(){return i().add.apply(e,arguments)},t.remove=function(){return i().remove.apply(e,arguments)}}(n),n});
+define('ui/Lazy', [
+    'require',
+    './lib'
+], function (require) {
+    var lib = require('./lib');
+    var fixSize = function (node, attr) {
+        var size = 0;
+        if (lib.getStyle(node, 'display') !== 'none') {
+            var prop = 'offset' + lib.capitalize(attr || 'Height');
+            lib.each(node.childNodes, function (el) {
+                var oh = el[prop];
+                if (!oh) {
+                    oh = fixSize(el, attr);
+                }
+                size += oh;
+            });
+        }
+        return size;
+    };
+    var privates = {
+            compute: function () {
+                var scroll = {
+                        x: lib.getScrollLeft(),
+                        y: lib.getScrollTop()
+                    };
+                var lastScroll = this.lastScroll;
+                var dir = {
+                        left: scroll.x < lastScroll.x,
+                        top: scroll.y < lastScroll.y
+                    };
+                this.lastScroll = scroll;
+                var size = {
+                        x: lib.getViewWidth(),
+                        y: lib.getViewHeight()
+                    };
+                var els = this.els;
+                for (var key in els) {
+                    if (els.hasOwnProperty(key)) {
+                        var data = els[key];
+                        var cd = lib.getPosition(data[0]);
+                        var options = data[2] || {};
+                        options.x = options.x || 10;
+                        options.y = options.y || 10;
+                        cd.width = data[0].offsetWidth;
+                        cd.height = data[0].offsetHeight;
+                        if (cd.width > 0 && cd.height === 0) {
+                            cd.height = fixSize(data[0]);
+                        } else if (cd.width === 0 && cd.height > 0) {
+                            cd.width = fixSize(data[0], 'Width');
+                        }
+                        var visible = false;
+                        var isOverRight = cd.left - options.x >= scroll.x + size.x;
+                        var isOverBottom = cd.top - options.y >= scroll.y + size.y;
+                        var isLessLeft = cd.left + cd.width + options.x <= scroll.x;
+                        var isLessTop = cd.top + options.y + cd.height <= scroll.y;
+                        if (!(isOverRight || isOverBottom) && !(isLessLeft || isLessTop)) {
+                            if (!options.trigger) {
+                                data[1](scroll, size, cd, dir, data[0]);
+                            }
+                            visible = true;
+                        }
+                        if (options.trigger) {
+                            data[1](visible, scroll, size, cd, dir, data);
+                        }
+                    }
+                }
+            },
+            onScroll: function () {
+                clearTimeout(this._timer);
+                this._timer = setTimeout(this._bound.compute, this.delay);
+                this.scrolled = true;
+            }
+        };
+    var Lazy = lib.newClass({
+            type: 'Lazy',
+            initialize: function () {
+                this.els = {};
+                this.count = 0;
+                this.delay = 100;
+                this.lastScroll = {
+                    x: lib.getScrollLeft(),
+                    y: lib.getScrollTop
+                };
+                this._bound = {
+                    onScroll: lib.bind(privates.onScroll, this),
+                    compute: lib.bind(privates.compute, this)
+                };
+            },
+            add: function (el, callback, options) {
+                this.els[lib.guid(el)] = [
+                    el,
+                    callback,
+                    options
+                ];
+                var onScroll = this._bound.onScroll;
+                if (!this.count) {
+                    lib.on(window, 'scroll', onScroll);
+                    lib.on(window, 'resize', onScroll);
+                }
+                this.count++;
+                if (!this.scrolled) {
+                    onScroll();
+                }
+                return this;
+            },
+            remove: function (el) {
+                var guid = lib.guid(el);
+                if (guid in this.els) {
+                    delete this.els[guid];
+                    this.count--;
+                    if (!this.count) {
+                        lib.un(window, 'scroll', this.onScroll);
+                        lib.un(window, 'resize', this.onScroll);
+                    }
+                }
+                return this;
+            }
+        });
+    (function (Lazy) {
+        var lazy;
+        var getInstance = function () {
+            return lazy || (lazy = new Lazy());
+        };
+        Lazy.add = function () {
+            return getInstance().add.apply(lazy, arguments);
+        };
+        Lazy.remove = function () {
+            return getInstance().remove.apply(lazy, arguments);
+        };
+    }(Lazy));
+    return Lazy;
+});

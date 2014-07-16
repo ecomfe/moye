@@ -47,6 +47,9 @@ module.exports = function(config) {
     }, {
       pattern: 'test/spec/FloatTipSpec.js',
       included: false
+    }, {
+      pattern: 'test/spec/PagerSpec.js',
+      included: false
     }],
 
 

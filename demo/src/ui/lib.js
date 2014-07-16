@@ -1,2 +1,340 @@
-/*! 2014 Baidu Inc. All Rights Reserved */
-define("lib",["jquery"],function(){function t(t){return function(){return Function.call.apply(t,arguments)}}var e=require("jquery"),i={},n=i.typeOf=function(t){return t&&"object"==typeof t&&"nodeType"in t?"dom":e.type(t)};i.isDate=function(t){return"date"===e.type(t)},i.isString=function(t){return"string"===e.type(t)},i.isObject=function(t){return"object"===e.type(t)},i.array={};var s=i.slice=i.array.slice=t(Array.prototype.slice);i.object={},i.stringify=i.object.stringify=window.JSON&&JSON.stringify||function(){var t={"\b":"\\b","	":"\\t","\n":"\\n","\f":"\\f","\r":"\\r",'"':'\\"',"\\":"\\\\"},i=function(e){return t[e]||"\\u"+("0000"+e.charCodeAt(0).toString(16)).slice(-4)};return function s(t){if(t&&t.toJSON)t=t.toJSON();switch(n(t)){case"string":return'"'+t.replace(/[\x00-\x1f\\"]/g,i)+'"';case"array":return"["+map(t,s)+"]";case"object":var a=[];return e.each(t,function(t,e){var i=s(e);if(i)a.push(s(t)+":"+i)}),"{"+a+"}";case"number":case"boolean":return""+t;case"null":return"null"}return null}}();var a=i.clone=i.object.clone=function(t){return e.extend.call(null,!0,{},t)},r=function(t,i){var s=[];return e.each(t,function(t,e){if(i)t=i+"["+t+"]";var a;switch(n(e)){case"object":a=r(e,t);break;case"array":for(var o={},l=e.length;l--;)o[l]=e[l];a=r(o,t);break;default:a=t+"="+encodeURIComponent(e)}if(null!=e)s.push(a)}),s.join("&")};i.toQueryString=i.object.toQueryString=r,i.string={},i.capitalize=i.string.capitalize=function(t){return String(t).replace(/\b[a-z]/g,function(t){return t.toUpperCase()})},i.contains=i.string.contains=function(t,i,n){return n=n||" ",t=n+t+n,i=n+e.trim(i)+n,t.indexOf(i)>-1},i.g=function(t){return"string"===n(t)?document.getElementById(t):t},i.fn={},i.binds=i.fn.binds=function(t,i){if("string"==typeof i)i=~i.indexOf(",")?i.split(/\s*,\s*/):s(arguments,1);if(i&&i.length)for(var n,a;n=i.pop();)if(a=n&&t[n])t[n]=e.bind(a,t)};var o=i.curry=i.fn.curry=function(t){var e=s(arguments,1);return function(){return t.apply(this,e.concat(s(arguments)))}};return function(){function t(t,e){var s=function(){};s.prototype=t.prototype;var a=i.newClass(new s);return a.prototype.parent=o(n,t),a.implement(e),a}function n(t,e){var i=t.prototype[e];if(i)return i.apply(this,s(arguments,2));throw new Error("parent Class has no method named "+e)}function a(t,n){if(e.isFunction(n))n=n.prototype;var s=t.prototype;return e.each(n,function(t,n){if(i.isObject(s[t])&&i.isObject(n))s[t]=e.extend(!0,{},s[t],n);else s[t]=n}),t}i.newClass=function(n,s){if(i.isObject(n))s=n;var r=function(){var t=this.initialize?this.initialize.apply(this,arguments):this;if(e.isFunction(n))t=n.apply(this,arguments);return t};return r.prototype=s||{},r.prototype.constructor=r,r.extend=o(t,r),r.implement=o(a,r),r}}(),i.observable={on:function(t,i){if(e.isFunction(t))i=t,t="*";this._listeners=this._listeners||{};var n=this._listeners[t]||[];if(e.inArray(i,n)<0)i.$type=t,n.push(i);return this._listeners[t]=n,this},un:function(t,i){if(e.isFunction(t))i=t,t="*";this._listeners=this._listeners||{};var n=this._listeners[t];if(n)if(i){var s=e.inArray(i,n);if(~s)n.splice(s,1)}else n.length=0,delete this._listeners[t];return this},once:function(t,i){if(e.isFunction(t))i=t,t="*";var n=this,s=function(){i.apply(n,arguments),n.un(t,s)};this.on.call(n,t,s)},fire:function(t,i){var n=this;n._listeners=n._listeners||{};var s=n._listeners[t];if(s)e.each(s,function(e,s){i=i||{},i.type=t,s.call(n,i)});if("*"!==t)n.fire("*",i);return n}},i.configurable={setOptions:function(t){if(!t)return a(this.options);var i=this.options=a(this.options),s=/^on[A-Z]/,r=this;this.srcOptions=t;var o;for(var l in t)if(Object.prototype.hasOwnProperty.call(t,l)){if(o=t[l],s.test(l)&&e.isFunction(o)){var h=l.charAt(2).toLowerCase()+l.slice(3);r.on(h,o),delete t[l]}else if(l in i)i[l]="object"===n(o)?extend(i[l]||{},o):o}else;return i}},function(){var t=/(opera|ie|firefox|chrome|version)[\s\/:]([\w\d\.]+)?.*?(safari|version[\s\/:]([\w\d\.]+)|$)/,e=navigator.userAgent.toLowerCase().match(t)||[null,"unknown",0],n="ie"===e[1]&&document.documentMode,s=i.browser={name:"version"===e[1]?e[3]:e[1],version:n||parseFloat("opera"===e[1]&&e[4]?e[4]:e[2])};s[s.name]=0|s.version,s[s.name+(0|s.version)]=!0}(),i});
+define('ui/lib', [
+    'require',
+    'jquery'
+], function (require) {
+    var $ = require('jquery');
+    var lib = {};
+    function generic(method) {
+        return function () {
+            return Function.call.apply(method, arguments);
+        };
+    }
+    function fallback(condition, implement, feature) {
+        return condition ? generic(feature || condition) : implement;
+    }
+    var typeOf = lib.typeOf = function (obj) {
+            return obj && typeof obj === 'object' && 'nodeType' in obj ? 'dom' : $.type(obj);
+        };
+    lib.isDate = function (obj) {
+        return $.type(obj) === 'date';
+    };
+    lib.isString = function (obj) {
+        return $.type(obj) === 'string';
+    };
+    lib.isObject = function (obj) {
+        return $.type(obj) === 'object';
+    };
+    lib.array = {};
+    var slice = lib.slice = lib.array.slice = generic(Array.prototype.slice);
+    lib.object = {};
+    lib.stringify = lib.object.stringify = window.JSON && JSON.stringify || function () {
+        var special = {
+                '\b': '\\b',
+                '\t': '\\t',
+                '\n': '\\n',
+                '\f': '\\f',
+                '\r': '\\r',
+                '"': '\\"',
+                '\\': '\\\\'
+            };
+        var escape = function (chr) {
+            return special[chr] || '\\u' + ('0000' + chr.charCodeAt(0).toString(16)).slice(-4);
+        };
+        return function stringify(obj) {
+            if (obj && obj.toJSON) {
+                obj = obj.toJSON();
+            }
+            switch (typeOf(obj)) {
+            case 'string':
+                return '"' + obj.replace(/[\x00-\x1f\\"]/g, escape) + '"';
+            case 'array':
+                return '[' + map(obj, stringify) + ']';
+            case 'object':
+                var string = [];
+                $.each(obj, function (key, value) {
+                    var json = stringify(value);
+                    if (json) {
+                        string.push(stringify(key) + ':' + json);
+                    }
+                });
+                return '{' + string + '}';
+            case 'number':
+            case 'boolean':
+                return '' + obj;
+            case 'null':
+                return 'null';
+            }
+            return null;
+        };
+    }();
+    var clone = lib.clone = lib.object.clone = function (source) {
+            var target = $.type(source) === 'array' ? [] : {};
+            return $.extend(true, target, source);
+        };
+    var toQueryString = function (object, base) {
+        var queryString = [];
+        $.each(object, function (key, value) {
+            if (base) {
+                key = base + '[' + key + ']';
+            }
+            var result;
+            switch (typeOf(value)) {
+            case 'object':
+                result = toQueryString(value, key);
+                break;
+            case 'array':
+                var qs = {};
+                var i = value.length;
+                while (i--) {
+                    qs[i] = value[i];
+                }
+                result = toQueryString(qs, key);
+                break;
+            default:
+                result = key + '=' + encodeURIComponent(value);
+                break;
+            }
+            if (value != null) {
+                queryString.push(result);
+            }
+        });
+        return queryString.join('&');
+    };
+    lib.string = {};
+    lib.capitalize = lib.string.capitalize = function (source) {
+        return String(source).replace(/\b[a-z]/g, function (match) {
+            return match.toUpperCase();
+        });
+    };
+    lib.contains = lib.string.contains = function (source, target, seperator) {
+        seperator = seperator || ' ';
+        source = seperator + source + seperator;
+        target = seperator + $.trim(target) + seperator;
+        return source.indexOf(target) > -1;
+    };
+    lib.g = function (id) {
+        return typeOf(id) === 'string' ? document.getElementById(id) : id;
+    };
+    lib.fn = {};
+    lib.binds = lib.fn.binds = function (me, methods) {
+        if (typeof methods === 'string') {
+            methods = ~methods.indexOf(',') ? methods.split(/\s*,\s*/) : slice(arguments, 1);
+        }
+        if (!methods || !methods.length) {
+            return;
+        }
+        var name;
+        var fn;
+        while (name = methods.pop()) {
+            fn = name && me[name];
+            if (fn) {
+                me[name] = $.bind(fn, me);
+            }
+        }
+    };
+    var curry = lib.curry = lib.fn.curry = function (fn) {
+            var args = slice(arguments, 1);
+            return function () {
+                return fn.apply(this, args.concat(slice(arguments)));
+            };
+        };
+    (function () {
+        lib.newClass = function (originConstructor, prototype) {
+            if (lib.isObject(originConstructor)) {
+                prototype = originConstructor;
+            }
+            var Class = function () {
+                var result = this.initialize ? this.initialize.apply(this, arguments) : this;
+                if ($.isFunction(originConstructor)) {
+                    result = originConstructor.apply(this, arguments);
+                }
+                return result;
+            };
+            Class.extend = curry(extend, Class);
+            Class.implement = curry(implement, Class);
+            prototype = prototype || {};
+            if (prototype.$wrapped) {
+                delete prototype.$wrapped;
+                Class.prototype = prototype;
+                Class.prototype.constructor = Class;
+            } else {
+                Class.implement(prototype);
+            }
+            return Class;
+        };
+        function extend(superClass, params) {
+            var F = function () {
+            };
+            F.prototype = superClass.prototype;
+            var f = new F();
+            f.$wrapped = true;
+            var subClass = lib.newClass(f);
+            subClass.parent = superClass;
+            subClass.implement(params);
+            return subClass;
+        }
+        function implement(newClass, params) {
+            if ($.isFunction(params)) {
+                params = params.prototype;
+            }
+            var prototype = newClass.prototype;
+            $.each(params, function (key, value) {
+                if (lib.isObject(prototype[key]) && lib.isObject(value)) {
+                    prototype[key] = $.extend(true, {}, prototype[key], value);
+                } else {
+                    prototype[key] = wrap(newClass, key, value);
+                }
+            });
+            return newClass;
+        }
+        var commentRule = /(\/\*([\s\S]*?)\*\/|([^:]|^)\/\/(.*)$)/gm;
+        var parentRule = /(?:this|me|self)\.parent\(/;
+        var privateRule = /(?:this|me|self)\._[a-z\d_\$]+\(/i;
+        function wrap(newClass, name, method) {
+            if (!$.isFunction(method) || method.$wrapped) {
+                return method;
+            }
+            var code = String(method).replace(commentRule, '');
+            var hasParentCall = parentRule.test(code);
+            var hasPrivateCall = privateRule.test(code);
+            var isPrivate = name.charAt(0) === '_';
+            if (!(hasParentCall || isPrivate || hasPrivateCall)) {
+                return method;
+            }
+            if (hasParentCall) {
+                var parentMethod;
+                var parentClass = newClass.parent;
+                while (parentClass) {
+                    parentMethod = parentClass.prototype[name];
+                    if (parentMethod) {
+                        break;
+                    } else {
+                        parentClass = parentClass.parent;
+                    }
+                }
+            }
+            var wrapper = function () {
+                if (hasParentCall && !parentMethod) {
+                    throw new Error('parent Class has no method named ' + name);
+                }
+                if (isPrivate && !this.$caller) {
+                    throw new Error('can not call private method:' + name);
+                }
+                this.parent = parentMethod;
+                this.$caller = wrapper;
+                var result = method.apply(this, arguments);
+                this.parent = null;
+                this.$caller = null;
+                return result;
+            };
+            wrapper.$wrapped = true;
+            return wrapper;
+        }
+    }());
+    lib.observable = {
+        on: function (type, listener) {
+            if ($.isFunction(type)) {
+                listener = type;
+                type = '*';
+            }
+            this._listeners = this._listeners || {};
+            var listeners = this._listeners[type] || [];
+            if ($.inArray(listener, listeners) < 0) {
+                listener.$type = type;
+                listeners.push(listener);
+            }
+            this._listeners[type] = listeners;
+            return this;
+        },
+        un: function (type, listener) {
+            if ($.isFunction(type)) {
+                listener = type;
+                type = '*';
+            }
+            this._listeners = this._listeners || {};
+            var listeners = this._listeners[type];
+            if (listeners) {
+                if (listener) {
+                    var index = $.inArray(listener, listeners);
+                    if (~index) {
+                        listeners.splice(index, 1);
+                    }
+                } else {
+                    listeners.length = 0;
+                    delete this._listeners[type];
+                }
+            }
+            return this;
+        },
+        once: function (type, listener) {
+            if ($.isFunction(type)) {
+                listener = type;
+                type = '*';
+            }
+            var me = this;
+            var realListener = function () {
+                listener.apply(me, arguments);
+                me.un(type, realListener);
+            };
+            this.on.call(me, type, realListener);
+        },
+        fire: function (type, args) {
+            var me = this;
+            me._listeners = me._listeners || {};
+            var listeners = me._listeners[type];
+            if (listeners) {
+                $.each(listeners, function (index, listener) {
+                    args = args || {};
+                    args.type = type;
+                    listener.call(me, args);
+                });
+            }
+            if (type !== '*') {
+                me.fire('*', args);
+            }
+            return me;
+        }
+    };
+    lib.configurable = {
+        setOptions: function (options) {
+            if (!options) {
+                return clone(this.options);
+            }
+            var thisOptions = this.options = clone(this.options);
+            var eventNameReg = /^on[A-Z]/;
+            var me = this;
+            this.srcOptions = options;
+            var val;
+            for (var name in options) {
+                if (!Object.prototype.hasOwnProperty.call(options, name)) {
+                    continue;
+                }
+                val = options[name];
+                if (eventNameReg.test(name) && $.isFunction(val)) {
+                    var type = name.charAt(2).toLowerCase() + name.slice(3);
+                    me.on(type, val);
+                    delete options[name];
+                } else if (name in thisOptions) {
+                    thisOptions[name] = typeOf(val) === 'object' ? $.extend(thisOptions[name] || {}, val) : val;
+                }
+            }
+            return thisOptions;
+        }
+    };
+    (function () {
+        var reg = /(opera|ie|firefox|chrome|version)[\s\/:]([\w\d\.]+)?.*?(safari|version[\s\/:]([\w\d\.]+)|$)/;
+        var UA = navigator.userAgent.toLowerCase().match(reg) || [
+                null,
+                'unknown',
+                0
+            ];
+        var mode = UA[1] === 'ie' && document.documentMode;
+        var browser = lib.browser = {
+                name: UA[1] === 'version' ? UA[3] : UA[1],
+                version: mode || parseFloat(UA[1] === 'opera' && UA[4] ? UA[4] : UA[2])
+            };
+        browser[browser.name] = browser.version | 0;
+        browser[browser.name + (browser.version | 0)] = true;
+    }());
+    return lib;
+});

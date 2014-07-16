@@ -1,2 +1,271 @@
-/*! 2014 Baidu Inc. All Rights Reserved */
-define("log",["require","./lib"],function(require){var t=require("./lib"),e=function(t){try{return new Function("return ("+t+")")()}catch(e){return{}}},i=function(){var e=[];return function(i){var n=e.push(document.createElement("img"))-1;e[n].onload=e[n].onerror=function(){e[n]=e[n].onload=e[n].onerror=null,delete e[n]};var s=r.action+t.toQueryString(i);e[n].src=s+"&"+(+new Date).toString(36),exports.fire("send",{url:s})}}(),n=function(i,n,r){var o,l,h=0,c=n,u=[],f=c.getAttribute("data-rsv");if(f)i.rsv=t.extend(i,{rsv:e(f)});for(var d,p=0,m=/\bOP_LOG_(TITLE|LINK|IMG|BTN|INPUT|OTHERS)\b/i;c!==r;){if("1"===c.getAttribute("data-nolog")){h=1;break}if(d=c.getAttribute("data-click"))i=t.extend(e(d),i);if(f=c.getAttribute("data-rsv"))i.rsv=t.extend(e(f),i.rsv);if(c.href)l=c.href,o="link";if("link"===o&&"H3"===c.tagName)o="title";if(m.test(c.className))o=RegExp.$1.toLowerCase();var g=1;if(c.previousSibling){var v=c.previousSibling;do{if(1===v.nodeType&&v.tagName===c.tagName)g++;v=v.previousSibling}while(v)}u[p++]=c.tagName+(g>1?g:""),c=c.parentNode}if(n!==r)if(d=r.getAttribute("data-click"))i=t.extend(e(d),i);if(h)return!h;u.reverse();var b=n.tagName.toLowerCase();if(!o&&/^(a|img|input|button|select|datalist|textarea)$/.test(b))o={a:"link"}[b]||"input",l=n.href||n.src||l;if(o=n.getAttribute("data-type")||o,!o)return!1;if(l)i.url=l;return a(i,n,"p1"),a(i,n,"act"),a(i,n,"item"),a(i,n,"mod",r.id),s(i,n,o,b,u,p),i.xpath=u.join("-").toLowerCase()+"("+o+")",i},s=function(e,i,n,s,a,r){var o="",l=function(t){return t.getAttribute("data-title")||t.title||t.textContent||t.innerText||""};if("input"===n)if(/input|textarea/.test(s)){if(o=i.value,i.type&&"password"===i.type.toLowerCase())o=""}else if(/select|datalist/.test(s)){if(i.children.length>0){var h=i.selectedIndex||0;o=i.children[h>-1?h:0].innerHTML}}else o=l(i)||i.value||"";else if(o=l(i),!o)for(var c=i,u=r;u>0;)if(u--,/^a\d*\b/i.test(a[u])){e.url=c.href,o=l(c);break}else{if(c.className&&/\bOP_LOG_[A-Z]+\b/.test(c.className)){o=l(c);break}c=c.parentNode}e.txt=t.trim(o).replace(/<[^>]+?>/g,"")},a=function(t,e,i,n){t[i]=e.getAttribute("data-"+i)||t[i]||n||"-"},r={action:"http://nsclick.baidu.com/v.gif?",main:"result-op",title:"OP_LOG_TITLE",link:"OP_LOG_LINK",img:"OP_LOG_IMG",btn:"OP_LOG_BTN",input:"OP_LOG_INPUT",others:"OP_LOG_OTHERS",data:{url:(window.location||document.location||{href:"-"}).href,pid:"-",cat:"-",page:"-",fr:"-",pvid:"-",rqid:"-",qid:"-",psid:"-",sid:"-",pn:"-",act:"-",mod:"-",item:"-",p1:"-",xpath:"-",f:"-",txt:"-",q:"-",rsv:null}},o=function(i,n){var s=e(i.getAttribute("data-click"));s.p1=n,i.setAttribute("data-click",t.stringify(s))},l=function(s,a){var l=a||t.getTarget(s),h=r.main,c=t.hasClass(l,h)?l:t.getAncestorByClass(l,h);if(c&&"1"!==c.getAttribute("data-nolog")){var u=l.getAttribute("data-click");if(u)u=e(u);if(u=n(u||{},l,c)){if(r.data)u=t.extend(t.extend({},r.data),u);if(!("p1"in u))t.each(t.q(r.main),function(t,e){if(t===c)u.p1=e+1;o(t,e+1)});exports.fire("click",{data:u,target:l,main:c}),i(u)}}},exports={config:function(e){return t.extend(r,e),this},start:function(){return t.on(document,"mousedown",l),this.fire("start"),this},stop:function(){return t.un(document,"mousedown",l),this},click:function(t){return l(null,t),this},fill:function(i,n){for(var s,a,r=0;s=i[r++];){if(a=s.getAttribute("data-click"))n=t.extend(e(a),n);s.setAttribute("data-click",t.stringify(n))}return this},live:function(e){var i=this.map;if(!i)i=this.map={},this.on("click",function(t){var e=t.data.mod;if(e&&e in i)i[e](t)});return t.extend(i,e),this},send:function(e){return i(t.extend(t.clone(r.data),e)),this}};return t.extend(exports,t.clone(t.observable)),exports});
+define('ui/log', [
+    'require',
+    'jquery',
+    './lib'
+], function (require) {
+    var $ = require('jquery');
+    var lib = require('./lib');
+    var parseJSON = function (data) {
+        try {
+            return new Function('return (' + data + ')')();
+        } catch (e) {
+            return {};
+        }
+    };
+    var send = function () {
+            var list = [];
+            return function (data) {
+                var index = list.push(document.createElement('img')) - 1;
+                list[index].onload = list[index].onerror = function () {
+                    list[index] = list[index].onload = list[index].onerror = null;
+                    delete list[index];
+                };
+                var url = options.action + $.param(data);
+                list[index].src = url + '&' + (+new Date()).toString(36);
+                exports.fire('send', { url: url });
+            };
+        }();
+    var fill = function (data, from, to) {
+        var type;
+        var url;
+        var nolog = 0;
+        var el = from;
+        var path = [];
+        var rsvData = el.getAttribute('data-rsv');
+        if (rsvData) {
+            data.rsv = $.extend(data, { rsv: parseJSON(rsvData) });
+        }
+        var i = 0;
+        var clickData;
+        var typeReg = /\bOP_LOG_(TITLE|LINK|IMG|BTN|INPUT|OTHERS)\b/i;
+        while (el !== to) {
+            if (el.getAttribute('data-nolog') === '1') {
+                nolog = 1;
+                break;
+            }
+            clickData = el.getAttribute('data-click');
+            if (clickData) {
+                data = $.extend(parseJSON(clickData), data);
+            }
+            rsvData = el.getAttribute('data-rsv');
+            if (rsvData) {
+                data.rsv = $.extend(parseJSON(rsvData), data.rsv);
+            }
+            if (el.href) {
+                url = el.href;
+                type = 'link';
+            }
+            if (type === 'link' && el.tagName === 'H3') {
+                type = 'title';
+            }
+            if (typeReg.test(el.className)) {
+                type = RegExp.$1.toLowerCase();
+            }
+            var count = 1;
+            if (el.previousSibling) {
+                var sibling = el.previousSibling;
+                do {
+                    if (sibling.nodeType === 1 && sibling.tagName === el.tagName) {
+                        count++;
+                    }
+                    sibling = sibling.previousSibling;
+                } while (sibling);
+            }
+            path[i++] = el.tagName + (count > 1 ? count : '');
+            el = el.parentNode;
+        }
+        if (from !== to) {
+            clickData = to.getAttribute('data-click');
+            if (clickData) {
+                data = $.extend(parseJSON(clickData), data);
+            }
+        }
+        if (nolog) {
+            return !nolog;
+        }
+        path.reverse();
+        var tag = from.tagName.toLowerCase();
+        if (!type && /^(a|img|input|button|select|datalist|textarea)$/.test(tag)) {
+            type = { a: 'link' }[tag] || 'input';
+            url = from.href || from.src || url;
+        }
+        type = from.getAttribute('data-type') || type;
+        if (!type) {
+            return false;
+        }
+        if (url) {
+            data.url = url;
+        }
+        setField(data, from, 'p1');
+        setField(data, from, 'act');
+        setField(data, from, 'item');
+        setField(data, from, 'mod', to.id);
+        setTitle(data, from, type, tag, path, i);
+        data.xpath = path.join('-').toLowerCase() + '(' + type + ')';
+        return data;
+    };
+    var setTitle = function (data, from, type, tag, path, level) {
+        var title = '';
+        var get = function (el) {
+            return el.getAttribute('data-title') || el.title || el.textContent || el.innerText || '';
+        };
+        if (type === 'input') {
+            if (/input|textarea/.test(tag)) {
+                title = from.value;
+                if (from.type && from.type.toLowerCase() === 'password') {
+                    title = '';
+                }
+            } else if (/select|datalist/.test(tag)) {
+                if (from.children.length > 0) {
+                    var index = from.selectedIndex || 0;
+                    title = from.children[index > -1 ? index : 0].innerHTML;
+                }
+            } else {
+                title = get(from) || from.value || '';
+            }
+        } else {
+            title = get(from);
+            if (!title) {
+                var el = from;
+                var i = level;
+                while (i > 0) {
+                    i--;
+                    if (/^a\d*\b/i.test(path[i])) {
+                        data.url = el.href;
+                        title = get(el);
+                        break;
+                    } else {
+                        if (el.className && /\bOP_LOG_[A-Z]+\b/.test(el.className)) {
+                            title = get(el);
+                            break;
+                        }
+                        el = el.parentNode;
+                    }
+                }
+            }
+        }
+        data.txt = $.trim(title).replace(/<[^>]+?>/g, '');
+    };
+    var setField = function (data, from, key, defaults) {
+        data[key] = from.getAttribute('data-' + key) || data[key] || defaults || '-';
+    };
+    var options = {
+            action: 'http://nsclick.baidu.com/v.gif?',
+            main: 'result-op',
+            title: 'OP_LOG_TITLE',
+            link: 'OP_LOG_LINK',
+            img: 'OP_LOG_IMG',
+            btn: 'OP_LOG_BTN',
+            input: 'OP_LOG_INPUT',
+            others: 'OP_LOG_OTHERS',
+            data: {
+                url: (window.location || document.location || { href: '-' }).href,
+                pid: '-',
+                cat: '-',
+                page: '-',
+                fr: '-',
+                pvid: '-',
+                rqid: '-',
+                qid: '-',
+                psid: '-',
+                sid: '-',
+                pn: '-',
+                act: '-',
+                mod: '-',
+                item: '-',
+                p1: '-',
+                xpath: '-',
+                f: '-',
+                txt: '-',
+                q: '-',
+                rsv: null
+            }
+        };
+    var bindP1 = function (el, index) {
+        var data = parseJSON(el.getAttribute('data-click'));
+        data.p1 = index;
+        el.setAttribute('data-click', lib.stringify(data));
+    };
+    var onClick = function (e, el) {
+        var target = $(el || e.target);
+        var klass = options.main;
+        var main = $(target).closest('.' + klass);
+        if (!main.length || main.attr('data-nolog') === '1') {
+            return;
+        }
+        var data = target.attr('data-click');
+        if (data) {
+            data = parseJSON(data);
+        }
+        data = fill(data || {}, target[0], main[0]);
+        if (!data) {
+            return;
+        }
+        if (options.data) {
+            data = $.extend({}, options.data, data);
+        }
+        if (!('p1' in data)) {
+            $('.' + options.main).each(function (i, el) {
+                if (el === main) {
+                    data.p1 = i + 1;
+                }
+                bindP1(el, i + 1);
+            });
+        }
+        exports.fire('click', {
+            data: data,
+            target: target[0],
+            main: main[0]
+        });
+        send(data);
+    };
+    var exports = {
+            config: function (ops) {
+                $.extend(options, ops);
+                return this;
+            },
+            start: function () {
+                $(document).on('mousedown', onClick);
+                this.fire('start');
+                return this;
+            },
+            stop: function () {
+                $(document).on('mousedown', onClick);
+                return this;
+            },
+            click: function (el) {
+                onClick(null, el);
+                return this;
+            },
+            fill: function (elements, data) {
+                for (var i = 0, element, clickData; element = elements[i++];) {
+                    clickData = element.getAttribute('data-click');
+                    if (clickData) {
+                        data = $.extend(parseJSON(clickData), data);
+                    }
+                    element.setAttribute('data-click', lib.stringify(data));
+                }
+                return this;
+            },
+            live: function (obj) {
+                var map = this.map;
+                if (!map) {
+                    map = this.map = {};
+                    this.on('click', function (json) {
+                        var mod = json.data.mod;
+                        if (mod && mod in map) {
+                            map[mod](json);
+                        }
+                    });
+                }
+                $.extend(map, obj);
+                return this;
+            },
+            send: function (data) {
+                send($.extend(lib.clone(options.data), data));
+                return this;
+            }
+        };
+    $.extend(exports, lib.observable);
+    return exports;
+});

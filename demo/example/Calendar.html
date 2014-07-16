@@ -2,135 +2,287 @@
 <html>
 <head>
 <meta charset="utf-8" />
-<title>Calendar</title>
-<link rel="stylesheet" href="common.css" />
-<link rel="stylesheet" href="css/Calendar.css" />
-<script src="http://s1.bdstatic.com/r/www/cache/ecom/esl/1-6-8/esl.js"></script>
+<title>Calendar - Moye</title>
+<link rel="stylesheet" href="./css/common.css" />
+<link rel="stylesheet" href="../src/css/Calendar.css">
+<style>
+  .line input {
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+    padding: 4px 5px;
+    height: 16px;
+    line-height: 16px;
+    margin: 0;
+    outline: none;
+  }
+  
+  .line button {
+    margin-left: 10px;
+  }
 
+  .line {
+    margin: 10px 0;
+  }
+</style>
 </head>
 <body>
-<div id='content_left'><!--左侧最外层div-->
-  <div class="result-op" srcid="16873" id="1" mu="http://baike.baidu.com/view/1758.htm" data-op="{'y':'FD9FFD6B'}">
-
-<input type="text" class="calendar-trigger" /><input type="button" value="click" class="calendar-trigger" />
-<input type="text" class="calendar-trigger" /><input type="button" value="click" class="calendar-trigger" />
-
-<div class="live-holder">
-<input type="text" class="calendar-target calendar-trigger1" /><input type="button" value="click" class="calendar-trigger1" />
+<div class="nav">
+  <a href="#" class="logo"><img src="./img/moye.png" alt=""></a>
+  <ul>
+    <li><a href="Calendar.html" class="active">Calendar</a>
+    <li><a href="City.html" class="">City</a>
+    <li><a href="Filter.html" class="">Filter</a>
+    <li><a href="Lunar.html" class="">Lunar</a>
+    <li><a href="Tabs.html" class="">Tabs</a>
+    <li><a href="Pager.html" class="">Pager</a>
+  </ul>
 </div>
-<input type="button" class="create-button" value="create button" />
+<div class="container">
+<div class="markdown"><h1 id="calender-">Calender 日历</h1>
+<h3 id="demo">DEMO</h3>
+<hr>
+</div><div class="line">
+  <input type="text" class="calendar-trigger" />
+  <button type="button" class="calendar-trigger" >click</button>
+  <input type="text" class="calendar-trigger" />
+  <button type="button" class="calendar-trigger" >click</button>
+</div>
+
+<div class="line live-holder">
+  <input type="text" class="calendar-target calendar-trigger1" />
+  <button type="button" class="calendar-trigger1">click</button>
+</div>
+
+<button type="button" class="create-button">create button</button>
+
 <div class="embed-calendar-holder"></div>
+<div class="markdown"><h3 id="-">源码</h3>
+<hr>
+<pre><code class="lang-html">&lt;div <span class="keyword">class</span>=<span class="string">"line"</span>&gt;
+  &lt;input <span class="class"><span class="keyword">type</span></span>=<span class="string">"text"</span> <span class="keyword">class</span>=<span class="string">"calendar-trigger"</span> /&gt;
+  &lt;button <span class="class"><span class="keyword">type</span></span>=<span class="string">"button"</span> <span class="keyword">class</span>=<span class="string">"calendar-trigger"</span> &gt;click&lt;/button&gt;
+  &lt;input <span class="class"><span class="keyword">type</span></span>=<span class="string">"text"</span> <span class="keyword">class</span>=<span class="string">"calendar-trigger"</span> /&gt;
+  &lt;button <span class="class"><span class="keyword">type</span></span>=<span class="string">"button"</span> <span class="keyword">class</span>=<span class="string">"calendar-trigger"</span> &gt;click&lt;/button&gt;
+&lt;/div&gt;
+
+&lt;div <span class="keyword">class</span>=<span class="string">"line live-holder"</span>&gt;
+  &lt;input <span class="class"><span class="keyword">type</span></span>=<span class="string">"text"</span> <span class="keyword">class</span>=<span class="string">"calendar-target calendar-trigger1"</span> /&gt;
+  &lt;button <span class="class"><span class="keyword">type</span></span>=<span class="string">"button"</span> <span class="keyword">class</span>=<span class="string">"calendar-trigger1"</span>&gt;click&lt;/button&gt;
+&lt;/div&gt;
+
+&lt;button <span class="class"><span class="keyword">type</span></span>=<span class="string">"button"</span> <span class="keyword">class</span>=<span class="string">"create-button"</span>&gt;create button&lt;/button&gt;
+
+&lt;div <span class="keyword">class</span>=<span class="string">"embed-calendar-holder"</span>&gt;&lt;/div&gt;
+</code></pre>
+<pre><code class="lang-js"><span class="built_in">require</span>([<span class="string">'Calendar'</span>], <span class="function"><span class="keyword">function</span> <span class="params">(Calendar)</span> </span>{
+
+  <span class="keyword">var</span> addDays = <span class="function"><span class="keyword">function</span> <span class="params">(date, days)</span> </span>{
+      <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Date</span>(date.getTime() + days * <span class="number">24</span> * <span class="number">60</span> * <span class="number">60</span> * <span class="number">1000</span>);
+  };
+
+  <span class="keyword">var</span> now = <span class="keyword">new</span> <span class="built_in">Date</span>();
+  <span class="keyword">var</span> begin = [now, addDays(now, <span class="number">89</span>)];
+  <span class="keyword">var</span> end = [addDays(now, <span class="number">1</span>), addDays(now, <span class="number">90</span>)];
+
+  <span class="keyword">var</span> triggers = $(<span class="string">'.calendar-trigger'</span>);
+
+  <span class="keyword">new</span> Calendar({
+    prefix: <span class="string">'ecl-ui-cal'</span>,
+    <span class="comment">// W为星期几，WW带周作前缀</span>
+    dateFormat: <span class="string">'yyyy-MM-dd(WW)'</span>,
+    triggers: <span class="string">'calendar-trigger'</span>,
+    <span class="comment">//value: '2012-03-30',</span>
+    <span class="comment">// 显示几个月</span>
+    <span class="comment">//monthes: 3,</span>
+    <span class="comment">// 一周的开始日，默认为周日</span>
+    first: <span class="number">1</span>,
+    lang: {
+      days: <span class="string">'一,二,三,四,五,六,日'</span>
+    },
+    <span class="comment">// range: {</span>
+    <span class="comment">//   begin: '2013-03-25',</span>
+    <span class="comment">//   end: '2013-07-25'</span>
+    <span class="comment">// },</span>
+    <span class="comment">// 如果要处理节日</span>
+    process: <span class="function"><span class="keyword">function</span> <span class="params">(el, classList, dateString)</span> </span>{
+      <span class="keyword">var</span> festivals = {
+        <span class="string">'2013-03-08'</span>: <span class="string">'三八'</span>,
+        <span class="string">'2013-04-04'</span>: <span class="string">'清明'</span>,
+        <span class="string">'2013-05-01'</span>: <span class="string">'劳动'</span>,
+        <span class="string">'2013-10-01'</span>: <span class="string">'国庆'</span>
+      };
+
+      <span class="keyword">if</span> ( festivals[dateString] ) {
+        <span class="comment">// 改变文字显示，你也可以通过push一个class到classList 以便改为预设的class</span>
+        el.innerHTML = festivals[dateString];
+      }
+    },
+    <span class="comment">// 不指定 target 时，需要在本事件中动态指定</span>
+    onBeforeShow: <span class="function"><span class="keyword">function</span> <span class="params">(arg)</span> </span>{
+          <span class="keyword">var</span> e = arg.event;
+          <span class="keyword">var</span> target = e.target;
+
+          <span class="comment">// 更新定位及赋值关联的目标 target</span>
+          target = target.tagName === <span class="string">'INPUT'</span> &amp;&amp; target.type === <span class="string">'text'</span>
+                   ? target
+                   : target.previousSibling;
+
+          <span class="keyword">this</span>.setTarget(target);
+
+          <span class="keyword">if</span> ( target === triggers[<span class="number">0</span>] ) {
+              <span class="comment">// 设定开始的范围</span>
+              <span class="keyword">this</span>.setRange({begin: begin[<span class="number">0</span>], end: begin[<span class="number">1</span>]});
+          }
+          <span class="keyword">else</span> {
+              <span class="keyword">if</span> (triggers[<span class="number">0</span>].value) {
+                <span class="keyword">var</span> date = <span class="keyword">this</span>.from(triggers[<span class="number">0</span>].value);
+                <span class="comment">// 在开始日期的后一天</span>
+                end[<span class="number">0</span>] = addDays(date, <span class="number">1</span>);
+                <span class="comment">// 开始日期的30天结束</span>
+                end[<span class="number">1</span>] = addDays(date, <span class="number">30</span>);
+              }
+
+              <span class="comment">// 设定结束的范围</span>
+              <span class="keyword">this</span>.setRange({begin: end[<span class="number">0</span>], end: end[<span class="number">1</span>]});
+          }
+    },
+    <span class="comment">// 选取日期的后续处理</span>
+    <span class="comment">// arg = { value:, week:, date: }</span>
+    onPick: <span class="function"><span class="keyword">function</span> <span class="params">(arg)</span> </span>{
+      <span class="keyword">var</span> target = <span class="keyword">this</span>.target;
+      <span class="keyword">if</span> ( target === triggers[<span class="number">0</span>] &amp;&amp; triggers[<span class="number">2</span>].value &lt;= target.value) {
+          triggers[<span class="number">2</span>].value = <span class="keyword">this</span>.format(addDays(arg.date, <span class="number">1</span>));
+      }
+    }
+  }).render();
+
+  <span class="keyword">new</span> Calendar({
+    prefix: <span class="string">'ecl-ui-cal'</span>,
+    main: $(<span class="string">'.embed-calendar-holder'</span>)[<span class="number">0</span>],
+    triggers: <span class="string">'calendar-trigger1'</span>,
+    liveTriggers: $(<span class="string">'.live-holder'</span>)[<span class="number">0</span>],
+    target: $(<span class="string">'.calendar-target'</span>)[<span class="number">0</span>],
+    onHide: <span class="function"><span class="keyword">function</span> <span class="params">()</span> </span>{
+      <span class="built_in">console</span>.log(<span class="string">'hided'</span>);
+    }
+  }).render();
+
+  $(<span class="string">'.create-button'</span>).on(<span class="string">'click'</span>, <span class="function"><span class="keyword">function</span> <span class="params">()</span> </span>{
+    $(<span class="string">'&lt;button&gt;'</span>)
+      .addClass(<span class="string">'calendar-trigger1'</span>)
+      .html(<span class="string">'new btn'</span>)
+      .appendTo(<span class="string">'.live-holder'</span>);
+  });
+
+});
+</code></pre>
+</div></div>
+<script src="http://s1.bdstatic.com/r/www/cache/ecom/esl/1-6-8/esl.js"></script>
+<script src="http://s1.bdstatic.com/r/www/cache/static/jquery/jquery-1.10.2.min_f2fb5194.js"></script>
 <script>
-
-(function () {
-
-    require.config({ 'baseUrl': '../src/ui' });
-    require(['lib', 'Calendar'], function (lib, Calendar) {
-
-        var addDays = function (date, days) {
-            return new Date(date.getTime() + days * 24 * 60 * 60 * 1000);
-        };
-
-        var now = new Date();
-        var begin = [now, addDays(now, 89)];
-        var end = [addDays(now, 1), addDays(now, 90)];
-
-        var triggers = lib.q('calendar-trigger');
-
-        new Calendar({
-          prefix: 'ecl-ui-cal',
-          // W为星期几，WW带周作前缀
-          dateFormat: 'yyyy-MM-dd(WW)',
-          triggers: triggers,
-          //value: '2012-03-30',
-          // 显示几个月
-          //monthes: 3,
-          // 一周的开始日，默认为周日
-          first: 1,
-          lang: {
-            days: '一,二,三,四,五,六,日'
-          },
-          // range: {
-          //   begin: '2013-03-25',
-          //   end: '2013-07-25'
-          // },
-          // 如果要处理节日
-          process: function (el, classList, dateString) {
-            var festivals = {
-              '2013-03-08': '三八',
-              '2013-04-04': '清明',
-              '2013-05-01': '劳动',
-              '2013-10-01': '国庆'
-            };
-
-            if ( festivals[dateString] ) {
-              // 改变文字显示，你也可以通过push一个class到classList 以便改为预设的class
-              el.innerHTML = festivals[dateString];
-            }
-          },
-          // 不指定 target 时，需要在本事件中动态指定
-          onBeforeShow: function (arg) {
-                var e = arg.event;
-                var target = lib.getTarget(e);
-
-                // 更新定位及赋值关联的目标 target
-                target = target.tagName === 'INPUT' && target.type === 'text'
-                         ? target
-                         : target.previousSibling;
-
-                this.setTarget(target);
-
-                if ( target === triggers[0] ) {
-                    // 设定开始的范围
-                    this.setRange({begin: begin[0], end: begin[1]});
-                }
-                else {
-                    if (triggers[0].value) {
-                      var date = this.from(triggers[0].value);
-                      // 在开始日期的后一天
-                      end[0] = addDays(date, 1);
-                      // 开始日期的30天结束
-                      end[1] = addDays(date, 30);
-                    }
-
-                    // 设定结束的范围
-                    this.setRange({begin: end[0], end: end[1]});
-                }
-          },
-          // 选取日期的后续处理
-          // arg = { value:, week:, date: }
-          onPick: function (arg) {
-            var target = this.target;
-            if ( target === triggers[0] && triggers[2].value <= target.value) {
-                triggers[2].value = this.format(addDays(arg.date, 1));
-            }
-          }
-        }).render();
-
-        new Calendar({
-          prefix: 'ecl-ui-cal',
-          main: lib.q('embed-calendar-holder')[0],
-          triggers: 'calendar-trigger1',
-          liveTriggers: lib.q('live-holder')[0],
-          target: lib.q('calendar-target')[0],
-          onHide: function () {
-            console.log('hided');
-          }
-        }).render();
-
-        lib.on(lib.q('create-button')[0], 'click', function () {
-          var btn = document.createElement('button')
-          btn.className = 'calendar-trigger1';
-          btn.innerHTML = 'new btn';
-          lib.q('live-holder')[0].appendChild(btn);
-        });
-
-
-    });
-
-})();
+require.config({ 'baseUrl': '../src/ui' });
 </script>
-</div>
-</div>
-</body>
+<script>
+require(['Calendar'], function (Calendar) {
+
+  var addDays = function (date, days) {
+      return new Date(date.getTime() + days * 24 * 60 * 60 * 1000);
+  };
+
+  var now = new Date();
+  var begin = [now, addDays(now, 89)];
+  var end = [addDays(now, 1), addDays(now, 90)];
+
+  var triggers = $('.calendar-trigger');
+
+  new Calendar({
+    prefix: 'ecl-ui-cal',
+    // W为星期几，WW带周作前缀
+    dateFormat: 'yyyy-MM-dd(WW)',
+    triggers: 'calendar-trigger',
+    //value: '2012-03-30',
+    // 显示几个月
+    //monthes: 3,
+    // 一周的开始日，默认为周日
+    first: 1,
+    lang: {
+      days: '一,二,三,四,五,六,日'
+    },
+    // range: {
+    //   begin: '2013-03-25',
+    //   end: '2013-07-25'
+    // },
+    // 如果要处理节日
+    process: function (el, classList, dateString) {
+      var festivals = {
+        '2013-03-08': '三八',
+        '2013-04-04': '清明',
+        '2013-05-01': '劳动',
+        '2013-10-01': '国庆'
+      };
+
+      if ( festivals[dateString] ) {
+        // 改变文字显示，你也可以通过push一个class到classList 以便改为预设的class
+        el.innerHTML = festivals[dateString];
+      }
+    },
+    // 不指定 target 时，需要在本事件中动态指定
+    onBeforeShow: function (arg) {
+          var e = arg.event;
+          var target = e.target;
+
+          // 更新定位及赋值关联的目标 target
+          target = target.tagName === 'INPUT' && target.type === 'text'
+                   ? target
+                   : target.previousSibling;
+
+          this.setTarget(target);
+
+          if ( target === triggers[0] ) {
+              // 设定开始的范围
+              this.setRange({begin: begin[0], end: begin[1]});
+          }
+          else {
+              if (triggers[0].value) {
+                var date = this.from(triggers[0].value);
+                // 在开始日期的后一天
+                end[0] = addDays(date, 1);
+                // 开始日期的30天结束
+                end[1] = addDays(date, 30);
+              }
+
+              // 设定结束的范围
+              this.setRange({begin: end[0], end: end[1]});
+          }
+    },
+    // 选取日期的后续处理
+    // arg = { value:, week:, date: }
+    onPick: function (arg) {
+      var target = this.target;
+      if ( target === triggers[0] && triggers[2].value <= target.value) {
+          triggers[2].value = this.format(addDays(arg.date, 1));
+      }
+    }
+  }).render();
+
+  new Calendar({
+    prefix: 'ecl-ui-cal',
+    main: $('.embed-calendar-holder')[0],
+    triggers: 'calendar-trigger1',
+    liveTriggers: $('.live-holder')[0],
+    target: $('.calendar-target')[0],
+    onHide: function () {
+      console.log('hided');
+    }
+  }).render();
+
+  $('.create-button').on('click', function () {
+    $('<button>')
+      .addClass('calendar-trigger1')
+      .html('new btn')
+      .appendTo('.live-holder');
+  });
+
+});
+</script></body>
 </html>
