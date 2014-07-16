@@ -1,2 +1,69 @@
-/*! 2014 Baidu Inc. All Rights Reserved */
-define("DialogFactory",["require","./lib","./Dialog"],function(require){function t(t,e){e=e?"-"+e:"";var i=t.skin;return(t.prefix||"ecl-ui-dialog")+e+(i?" "+i+e:"")}function e(e){var s=e.footer||"";if(e.cancel){var a="btn-"+Math.random(),r=t(e,"cancel-btn");s+='<a id="'+a+'" href="javascript:;" class="'+r+'">'+(e.cancelTitle||"取消")+"</a>",e.title=e.title||"确认",e.cancelId=a}if(e.confirm){var a="btn-"+Math.random(),r=t(e,"confirm-btn");s='<button id="'+a+'" class="'+r+'">'+(e.confirmTitle||"确定")+"</button>"+s,e.title=e.title||"提示",e.confirmId=a}e.footer=s;var o=new n(e);if(o.render(),e.confirmId)o.onConfirm&&o.on("confirm",o.onConfirm),i.on(i.g(e.confirmId),"click",e.confirmHandler=function(){o.fire("confirm")});if(e.cancelId)o.onCancel&&o.on("cancel",o.onCancel),i.on(i.g(e.cancelId),"click",e.cancelHandler=function(){o.fire("cancel"),o.hide()});return o.on("beforedispose",function(){o.un("confirm"),o.un("cancel"),e.confirmId&&i.un(i.g(e.confirmId),"click",e.confirmHandler),e.cancelId&&i.un(i.g(e.cancelId),"click",e.cancelHandler),e=null}),o}var i=require("./lib"),n=require("./Dialog"),s={create:function(t){return e(t)},alert:function(t){return t.confirm=1,e(t)},confirm:function(t){return t.confirm=1,t.cancel=1,e(t)}};return s});
+define('ui/DialogFactory', [
+    'require',
+    './lib',
+    './Dialog'
+], function (require) {
+    var lib = require('./lib');
+    var Dialog = require('./Dialog');
+    function getClass(opts, name) {
+        name = name ? '-' + name : '';
+        var skin = opts.skin;
+        return (opts.prefix || 'ecl-ui-dialog') + name + (skin ? ' ' + skin + name : '');
+    }
+    function genDialog(opts) {
+        var footer = opts.footer || '';
+        if (opts.cancel) {
+            var id = 'btn-' + Math.random();
+            var cls = getClass(opts, 'cancel-btn');
+            footer += '<a id="' + id + '" href="javascript:;"' + ' class="' + cls + '">' + (opts.cancelTitle || '\u53D6\u6D88') + '</a>';
+            opts.title = opts.title || '\u786E\u8BA4';
+            opts.cancelId = id;
+        }
+        if (opts.confirm) {
+            var id = 'btn-' + Math.random();
+            var cls = getClass(opts, 'confirm-btn');
+            footer = '<button id="' + id + '"' + ' class="' + cls + '">' + (opts.confirmTitle || '\u786E\u5B9A') + '</button>' + footer;
+            opts.title = opts.title || '\u63D0\u793A';
+            opts.confirmId = id;
+        }
+        opts.footer = footer;
+        var dlg = new Dialog(opts);
+        dlg.render();
+        if (opts.confirmId) {
+            dlg.onConfirm && dlg.on('confirm', dlg.onConfirm);
+            lib.on(lib.g(opts.confirmId), 'click', opts.confirmHandler = function () {
+                dlg.fire('confirm');
+            });
+        }
+        if (opts.cancelId) {
+            dlg.onCancel && dlg.on('cancel', dlg.onCancel);
+            lib.on(lib.g(opts.cancelId), 'click', opts.cancelHandler = function () {
+                dlg.fire('cancel');
+                dlg.hide();
+            });
+        }
+        dlg.on('beforedispose', function () {
+            dlg.un('confirm');
+            dlg.un('cancel');
+            opts.confirmId && lib.un(lib.g(opts.confirmId), 'click', opts.confirmHandler);
+            opts.cancelId && lib.un(lib.g(opts.cancelId), 'click', opts.cancelHandler);
+            opts = null;
+        });
+        return dlg;
+    }
+    var DialogFactory = {
+            create: function (opts) {
+                return genDialog(opts);
+            },
+            alert: function (opts) {
+                opts.confirm = 1;
+                return genDialog(opts);
+            },
+            confirm: function (opts) {
+                opts.confirm = 1;
+                opts.cancel = 1;
+                return genDialog(opts);
+            }
+        };
+    return DialogFactory;
+});

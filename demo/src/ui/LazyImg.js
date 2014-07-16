@@ -1,2 +1,63 @@
-/*! 2014 Baidu Inc. All Rights Reserved */
-define("LazyImg",["require","./lib","./Lazy"],function(require){var t=require("./lib"),e=require("./Lazy"),i={load:function(i,n){var s=this.options.src,a=[],o=this.options.offset;if(t.each(this.imgs,function(e){var r=e.parentNode.parentNode,l=e.getAttribute(s);if(r.offsetHeight&&l){var h=t.getPosition(e);h.right=h.left+e.offsetWidth,h.bottom=h.top+e.offsetHeight;var c=h.left-o.x>=i.x+n.x,u=h.top-o.y>=i.y+n.y,d=h.right+o.x<=i.x,f=h.bottom+o.y<=i.y;if(!(c||u||d||f))e.src=l,e.removeAttribute(s);else a.push(e)}}),this.imgs=a,!a.length)e.remove(this.main)}};return LazyImg=t.newClass({type:"LazyImg",options:{main:"",src:"_src",imgs:null,offset:{y:32}},initialize:function(n,s){n=this.setOptions(n),s=this.main=t.g(n.main)||t.q(n.main)[0],this.imgs=n.imgs||t.toArray(s.getElementsByTagName("img")),e.add(s,t.bind(i.load,this),n.offset)}}).implement(t.configurable),LazyImg.load=function(e,i){if(t.isObject(e))i=e,e=null;t.each(t.q(e||"lazy-img"),function(e){new LazyImg(t.extend(i||{},{main:e}))})},LazyImg});
+define('ui/LazyImg', [
+    'require',
+    './lib',
+    './Lazy'
+], function (require) {
+    var lib = require('./lib');
+    var Lazy = require('./Lazy');
+    var privates = {
+            load: function (scroll, size) {
+                var _src = this.options.src;
+                var imgs = [];
+                var offset = this.options.offset;
+                lib.each(this.imgs, function (img) {
+                    var el = img.parentNode.parentNode;
+                    var src = img.getAttribute(_src);
+                    if (el.offsetHeight && src) {
+                        var cd = lib.getPosition(img);
+                        cd.right = cd.left + img.offsetWidth;
+                        cd.bottom = cd.top + img.offsetHeight;
+                        var isOverRight = cd.left - offset.x >= scroll.x + size.x;
+                        var isOverBottom = cd.top - offset.y >= scroll.y + size.y;
+                        var isLessLeft = cd.right + offset.x <= scroll.x;
+                        var isLessTop = cd.bottom + offset.y <= scroll.y;
+                        if (!(isOverRight || isOverBottom) && !(isLessLeft || isLessTop)) {
+                            img.src = src;
+                            img.removeAttribute(_src);
+                        } else {
+                            imgs.push(img);
+                        }
+                    }
+                });
+                this.imgs = imgs;
+                if (!imgs.length) {
+                    Lazy.remove(this.main);
+                }
+            }
+        };
+    LazyImg = lib.newClass({
+        type: 'LazyImg',
+        options: {
+            main: '',
+            src: '_src',
+            imgs: null,
+            offset: { y: 32 }
+        },
+        initialize: function (options, main) {
+            options = this.setOptions(options);
+            main = this.main = lib.g(options.main) || lib.q(options.main)[0];
+            this.imgs = options.imgs || lib.toArray(main.getElementsByTagName('img'));
+            Lazy.add(main, lib.bind(privates.load, this), options.offset);
+        }
+    }).implement(lib.configurable);
+    LazyImg.load = function (className, options) {
+        if (lib.isObject(className)) {
+            options = className;
+            className = null;
+        }
+        lib.each(lib.q(className || 'lazy-img'), function (el) {
+            new LazyImg(lib.extend(options || {}, { main: el }));
+        });
+    };
+    return LazyImg;
+});

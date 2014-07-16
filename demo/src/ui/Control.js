@@ -1,2 +1,101 @@
-/*! 2014 Baidu Inc. All Rights Reserved */
-define("Control",["require","jquery","./lib"],function(require){var t=require("jquery"),e=require("./lib"),i=e.newClass({type:"Control",_disabled:!1,bindEvents:function(e){var i=this,n=this._bound||{};t.each(e,function(e,a){if(/^on[A-Z]/.test(e))n[e]=t.proxy(a,i)}),this._bound=n},initialize:function(t){var e=this;if(t=e.setOptions(t),e.binds)e.bindEvents(e.binds);if(e.init)e.init(t),e.init=null;e.children=[]},render:function(){throw new Error("not implement render")},appendTo:function(t){this.main=t||this.main,this.render()},query:function(t){return e.q(t,this.main)},createElement:function(t,e){var i=document.createElement(t||"div");for(var n in e)i[n]=e[n];return i},disable:function(){this._disabled=!0,this.fire("disable")},enable:function(){this._disabled=!1,this.fire("enable")},isDisabled:function(){return this._disabled},addChild:function(t,e){var i=this.children;if(e=e||t.childName)i[e]=t;i.push(t)},removeChild:function(t){var e=this.children;for(var i in e)if(e.hasOwnProperty(i))if(e[i]===t)delete this[i]},getChild:function(t){return this.children[t]},initChildren:function(){throw new Error("not implement initChildren")},dispose:function(){for(var t;t=this.children.pop();)t.dispose();for(var e in this._listners)this.un(e);var i=this.main;if(i&&i.parentNode)i.parentNode.removeChild(i),delete this.main;this.fire("dispose")}}).implement(e.observable).implement(e.configurable);return i});
+define('ui/Control', [
+    'require',
+    'jquery',
+    './lib'
+], function (require) {
+    var $ = require('jquery');
+    var lib = require('./lib');
+    var Control = lib.newClass({
+            type: 'Control',
+            _disabled: false,
+            bindEvents: function (provider) {
+                var me = this;
+                var bound = this._bound || {};
+                $.each(provider, function (name, fn) {
+                    if (/^on[A-Z]/.test(name)) {
+                        bound[name] = $.proxy(fn, me);
+                    }
+                });
+                this._bound = bound;
+            },
+            initialize: function (options) {
+                options = this.setOptions(options);
+                if (this.binds) {
+                    lib.binds(this, this.binds);
+                }
+                if (this.init) {
+                    this.init(options);
+                    this.init = null;
+                }
+                this.children = [];
+            },
+            render: function () {
+                throw new Error('not implement render');
+            },
+            appendTo: function (wrap) {
+                this.main = wrap || this.main;
+                this.render();
+            },
+            query: function (className) {
+                return lib.q(className, this.main);
+            },
+            createElement: function (tagName, properties) {
+                var element = document.createElement(tagName || 'div');
+                for (var prop in properties) {
+                    element[prop] = properties[prop];
+                }
+                return element;
+            },
+            disable: function () {
+                this._disabled = true;
+                this.fire('disable');
+            },
+            enable: function () {
+                this._disabled = false;
+                this.fire('enable');
+            },
+            isDisabled: function () {
+                return this._disabled;
+            },
+            addChild: function (control, name) {
+                var children = this.children;
+                name = name || control.childName;
+                if (name) {
+                    children[name] = control;
+                }
+                children.push(control);
+            },
+            removeChild: function (control) {
+                var children = this.children;
+                for (var name in children) {
+                    if (children.hasOwnProperty(name)) {
+                        if (children[name] === control) {
+                            delete this[name];
+                        }
+                    }
+                }
+            },
+            getChild: function (name) {
+                return this.children[name];
+            },
+            initChildren: function (wrap) {
+                throw new Error('not implement initChildren');
+            },
+            dispose: function () {
+                var child;
+                while (child = this.children.pop()) {
+                    child.dispose();
+                }
+                for (var type in this._listners) {
+                    this.un(type);
+                }
+                var main = this.main;
+                if (main && main.parentNode) {
+                    main.parentNode.removeChild(main);
+                    delete this.main;
+                }
+                this.fire('dispose');
+            }
+        }).implement(lib.observable).implement(lib.configurable);
+    return Control;
+});

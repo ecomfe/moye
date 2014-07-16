@@ -51,6 +51,9 @@
     },
     {
       "name": "Lazy"
+    },
+    {
+      "name": "Pager"
     }
   ],
   "directories": {

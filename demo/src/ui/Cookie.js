@@ -1,2 +1,66 @@
-/*! 2014 Baidu Inc. All Rights Reserved */
-define("Cookie",["require","./lib"],function(require){var t=require("./lib"),e=function(t){return String(t).replace(/([-.*+?^${}()|[\]\/\\])/g,"\\$1")},i=t.newClass({options:{path:"/",domain:"",duration:0,secure:!1},initialize:function(t,e){e=this.setOptions(e),this.key=t,this.value=[e.domain?"domain="+e.domain:"",e.path?"path="+e.path:"",e.secure?"secure":""].join("; ")},get:function(t){var i=document.cookie.match("(?:^|;)\\s*"+e(t||this.key)+"=([^;]*)");return i?decodeURIComponent(i[1]):""},set:function(t,e){if(arguments.length<2)e=t,t=this.key;var i=this.options;if(e=encodeURIComponent(e)+this.value,i.duration)e+="; expires="+new Date(864e5*i.duration+ +new Date).toGMTString();return document.cookie=t+"="+e,this},remove:function(t){var e=this.options;return duration=e.duration,e.duration=-1,this.set(t||this.key),e.duration=duration,this}});return i.implement(t.configurable),t.extend(i,{get:function(t){return new i(t).get()},set:function(t,e,n){return new i(t,n).set(e)},remove:function(t,e){return new i(t,e).remove()}}),i});
+define('ui/Cookie', [
+    'require',
+    'jquery',
+    './lib'
+], function (require) {
+    var $ = require('jquery');
+    var lib = require('./lib');
+    var escapeRegExp = function (str) {
+        return String(str).replace(/([-.*+?^${}()|[\]\/\\])/g, '\\$1');
+    };
+    var Cookie = lib.newClass({
+            options: {
+                path: '/',
+                domain: '',
+                duration: 0,
+                secure: false
+            },
+            initialize: function (key, options) {
+                options = this.setOptions(options);
+                this.key = key;
+                this.value = [
+                    options.domain ? 'domain=' + options.domain : '',
+                    options.path ? 'path=' + options.path : '',
+                    options.secure ? 'secure' : ''
+                ].join('; ');
+            },
+            get: function (key) {
+                var value = document.cookie.match('(?:^|;)\\s*' + escapeRegExp(key || this.key) + '=([^;]*)');
+                return value ? decodeURIComponent(value[1]) : '';
+            },
+            set: function (key, value) {
+                if (arguments.length < 2) {
+                    value = key;
+                    key = this.key;
+                }
+                var options = this.options;
+                value = encodeURIComponent(value) + this.value;
+                if (options.duration) {
+                    value += '' + '; expires=' + new Date(options.duration * 86400000 + +new Date()).toGMTString();
+                }
+                document.cookie = key + '=' + value;
+                return this;
+            },
+            remove: function (key) {
+                var options = this.options;
+                duration = options.duration;
+                options.duration = -1;
+                this.set(key || this.key);
+                options.duration = duration;
+                return this;
+            }
+        });
+    Cookie.implement(lib.configurable);
+    $.extend(Cookie, {
+        get: function (key) {
+            return new Cookie(key).get();
+        },
+        set: function (key, value, options) {
+            return new Cookie(key, options).set(value);
+        },
+        remove: function (key, options) {
+            return new Cookie(key, options).remove();
+        }
+    });
+    return Cookie;
+});

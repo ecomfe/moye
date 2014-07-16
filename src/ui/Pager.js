@@ -8,6 +8,7 @@
 
 define(function (require) {
 
+    var $ = require('jquery');
     var lib = require('./lib');
     var Control = require('./Control');
 
@@ -148,8 +149,8 @@ define(function (require) {
          * @private
          */
         onChange: function (e, target) {
-            e && lib.preventDefault(e);
-            target = target || lib.getTarget(e);
+            e.preventDefault();
+            target = target || e.target;
 
             /**
              * @event module:Pager#click
@@ -162,17 +163,9 @@ define(function (require) {
             }
 
             if (target.tagName !== 'A') {
-                target = lib.getAncestorBy(
-                    target,
-                    function (el) {
-
-                        // 最高访问到控件根容器, 避免到文档根节点
-                        return el.tagName === 'A' || el === main;
-                        
-                    }
-                );
+                target = $(target).closest('A', main)[0];
                 
-                if (target === main) {
+                if (target == undefined || target === main) {
                     return;
                 }
             }
@@ -334,8 +327,7 @@ define(function (require) {
 
             if (options.main) {
                 this.main = lib.g(options.main);
-                lib.addClass(this.main, options.prefix);
-                lib.on(this.main, 'click', this._bound.onChange);
+                $(this.main).addClass(options.prefix).on('click', this._bound.onChange);
             }
         },
 
@@ -403,10 +395,10 @@ define(function (require) {
 
             if (this.total > 1 || this.options.showAlways) {
                 main.innerHTML = privates.build.call(this);
-                lib.show(main);
+                $(main).show();
             }
             else {
-                lib.hide(main);
+                $(main).hide();
             }
 
             return this;

@@ -1,2 +1,140 @@
-/*! 2014 Baidu Inc. All Rights Reserved */
-define("Rating",["require","./lib","./Control"],function(require){var t=require("./lib"),e=require("./Control"),i={drain:function(){var e=this.options,i=e.prefix,n=this.query(i+"-star-on");t.each(n,function(e){t.removeClass(e,i+"-star-on")})},fill:function(e){e=parseInt(e||0,10);var i=this.options,n=i.prefix,s=this.stars.slice(0,e);return t.each(s,function(e){t.addClass(e,n+"-star-on")}),s},resetRating:function(){var e=this.options,i=e.value,n=e.prefix,s=this.stars.slice(0,i);return t.each(s,function(e){t.addClass(e,n+"-star-on")}),s},onClick:function(e){var n=this.options,s=n.prefix,a=t.getTarget(e),r=n.value;if(!e||this.disabled)return!1;if(t.hasClass(a,s+"-star")){var o=parseInt(a.getAttribute("data-value"),10);if(o===r)return!1;n.value=o,i.drain.call(this),i.resetRating.call(this),this.fire("rated",{value:n.value})}},onMouseOver:function(e){var n=this.options,s=n.prefix,a=t.getTarget(e);if(!e||this.disabled)return!1;if(t.hasClass(a,s+"-star"))i.drain.call(this),i.fill.call(this,a.getAttribute("data-value"))},onMouseOut:function(e){var n=this.options,s=n.prefix,a=t.getTarget(e);if(!e||this.disabled)return!1;if(t.hasClass(a,s+"-star"))i.drain.call(this),i.resetRating.call(this)}},n=e.extend({options:{disabled:!1,main:"",prefix:"ecl-ui-rating",max:5,value:0,skin:0},type:"Rating",init:function(e){this.main=t.g(e.main),this._disabled=e.disabled,this.bindEvents(i)},render:function(){var e=this.options;if(!this.rendered){this.rendered=!0;var n=[],s=e.prefix;n.push('<ul class="'+s+'-stars">');for(var a=0;a<e.max;a++)n.push("<li ",'class="'+s+'-star" ','data-value="'+(a+1)+'"',">",e.skin?"":"☆","</li>");n.push("</ul>"),this.main.innerHTML=n.join(""),this.stars=this.query(s+"-star");var r=this._bound;t.each(this.stars,function(e){t.on(e,"mouseover",r.onMouseOver),t.on(e,"mouseout",r.onMouseOut),t.on(e,"click",r.onClick)})}return i.resetRating.call(this),this._disabled&&this.disable(),this},enable:function(){t.removeClass(this.main,this.options.prefix+"-disabled"),this.parent("enable")},disable:function(){t.addClass(this.main,this.options.prefix+"-disabled"),this.parent("disable")},dispose:function(){var e=this._bound;t.each(this.stars,function(i){t.un(i,"click",e.onClick),t.un(i,"mouseover",e.onMouseOver),t.un(i,"mouseout",e.onMouseOut)}),delete this.stars,this.parent("dispose")}});return n});
+define('ui/Rating', [
+    'require',
+    './lib',
+    './Control'
+], function (require) {
+    var lib = require('./lib');
+    var Control = require('./Control');
+    var privates = {
+            drain: function () {
+                var options = this.options;
+                var prefix = options.prefix;
+                var ons = this.query(prefix + '-star-on');
+                lib.each(ons, function (star) {
+                    lib.removeClass(star, prefix + '-star-on');
+                });
+            },
+            fill: function (value) {
+                value = parseInt(value || 0, 10);
+                var options = this.options;
+                var prefix = options.prefix;
+                var result = this.stars.slice(0, value);
+                lib.each(result, function (star) {
+                    lib.addClass(star, prefix + '-star-on');
+                });
+                return result;
+            },
+            resetRating: function () {
+                var options = this.options;
+                var value = options.value;
+                var prefix = options.prefix;
+                var result = this.stars.slice(0, value);
+                lib.each(result, function (star) {
+                    lib.addClass(star, prefix + '-star-on');
+                });
+                return result;
+            },
+            onClick: function (e) {
+                var options = this.options;
+                var prefix = options.prefix;
+                var target = lib.getTarget(e);
+                var value = options.value;
+                if (!e || this.disabled) {
+                    return false;
+                }
+                if (lib.hasClass(target, prefix + '-star')) {
+                    var newValue = parseInt(target.getAttribute('data-value'), 10);
+                    if (newValue === value) {
+                        return false;
+                    }
+                    options.value = newValue;
+                    privates.drain.call(this);
+                    privates.resetRating.call(this);
+                    this.fire('rated', { value: options.value });
+                }
+            },
+            onMouseOver: function (e) {
+                var options = this.options;
+                var prefix = options.prefix;
+                var target = lib.getTarget(e);
+                if (!e || this.disabled) {
+                    return false;
+                }
+                if (lib.hasClass(target, prefix + '-star')) {
+                    privates.drain.call(this);
+                    privates.fill.call(this, target.getAttribute('data-value'));
+                }
+            },
+            onMouseOut: function (e) {
+                var options = this.options;
+                var prefix = options.prefix;
+                var target = lib.getTarget(e);
+                if (!e || this.disabled) {
+                    return false;
+                }
+                if (lib.hasClass(target, prefix + '-star')) {
+                    privates.drain.call(this);
+                    privates.resetRating.call(this);
+                }
+            }
+        };
+    var Rating = Control.extend({
+            options: {
+                disabled: false,
+                main: '',
+                prefix: 'ecl-ui-rating',
+                max: 5,
+                value: 0,
+                skin: 0
+            },
+            type: 'Rating',
+            init: function (options) {
+                this.main = lib.g(options.main);
+                this._disabled = options.disabled;
+                this.bindEvents(privates);
+            },
+            render: function () {
+                var options = this.options;
+                if (!this.rendered) {
+                    this.rendered = true;
+                    var html = [];
+                    var prefix = options.prefix;
+                    html.push('<ul class="' + prefix + '-stars">');
+                    for (var i = 0; i < options.max; i++) {
+                        html.push('<li ', 'class="' + prefix + '-star' + '" ', 'data-value="' + (i + 1) + '"', '>', options.skin ? '' : '\u2606', '</li>');
+                    }
+                    html.push('</ul>');
+                    this.main.innerHTML = html.join('');
+                    this.stars = this.query(prefix + '-star');
+                    var bound = this._bound;
+                    lib.each(this.stars, function (star) {
+                        lib.on(star, 'mouseover', bound.onMouseOver);
+                        lib.on(star, 'mouseout', bound.onMouseOut);
+                        lib.on(star, 'click', bound.onClick);
+                    });
+                }
+                privates.resetRating.call(this);
+                this._disabled && this.disable();
+                return this;
+            },
+            enable: function () {
+                lib.removeClass(this.main, this.options.prefix + '-disabled');
+                this.parent('enable');
+            },
+            disable: function () {
+                lib.addClass(this.main, this.options.prefix + '-disabled');
+                this.parent('disable');
+            },
+            dispose: function () {
+                var bound = this._bound;
+                lib.each(this.stars, function (star) {
+                    lib.un(star, 'click', bound.onClick);
+                    lib.un(star, 'mouseover', bound.onMouseOver);
+                    lib.un(star, 'mouseout', bound.onMouseOut);
+                });
+                delete this.stars;
+                this.parent('dispose');
+            }
+        });
+    return Rating;
+});

@@ -1,2 +1,222 @@
-/*! 2014 Baidu Inc. All Rights Reserved */
-define("SliderAnim",["require","./lib"],function(require){var t=require("./lib"),e=function(){return window.requestAnimationFrame||window.webkitRequestAnimationFrame||window.mozRequestAnimationFrame||window.oRequestAnimationFrame||function(t){return setTimeout(t,1e3/60)}}(),i=function(){return window.cancelAnimationFrame||window.webkitCancelAnimationFrame||window.mozCancelAnimationFrame||window.oCancelAnimationFrame||function(t){clearTimeout(t)}}(),s=function(t){return t?function(t,e){if(1===e)t.style.filter="";else t.style.filter="alpha(opacity="+100*e+")"}:function(t,e){if(1===e)t.style.opacity="";else t.style.opacity=e}}(t.browser.ie<9),n=t.newClass({initialize:function(t,e){this.slider=t,this.options=e},switchTo:function(){},isBusy:function(){},enable:function(){},disable:function(){},refresh:function(){},dispose:function(){this.slider=null,this.options=null}});n.easing={easing:function(t){if((t/=.5)<1)return.5*t*t;else return-0.5*(--t*(t-2)-1)},backIn:function(t){var e=1.70158;return t*t*((e+1)*t-e)},backOut:function(t){var e=1.70158;return(t-=1)*t*((e+1)*t+e)+1},backBoth:function(t){var e=1.70158;if((t/=.5)<1)return.5*t*t*(((e*=1.525)+1)*t-e);else return.5*((t-=2)*t*(((e*=1.525)+1)*t+e)+2)},lineer:function(t){return t},bounce:function(t){if(1/2.75>t)return 7.5625*t*t;else if(2/2.75>t)return 7.5625*(t-=1.5/2.75)*t+.75;else if(2.5/2.75>t)return 7.5625*(t-=2.25/2.75)*t+.9375;return 7.5625*(t-=2.625/2.75)*t+.984375}},n.anims={},n.add=function(t,e){if(!this.anims[t])return this.anims[t]=e,!0;else return!1};var a=n.extend({initialize:function(t,e){var i=this;i.slider=t,i.interval=e.interval||300,i.easingFn=n.easing[e.easing||"easing"];var s=i.timeHandler;i.timeHandler=function(){s.apply(i)}},beforeSwitch:function(){},switchTo:function(t,i){if(this.beforeSwitch(t,i),this.startTime=new Date,!this.timer)this.timer=e(this.timeHandler)},timeHandler:function(){var t=new Date-this.startTime;if(t>=this.interval)this.tick(1),this.timer=0;else this.tick(t/this.interval),this.timer=e(this.timeHandler)},isBusy:function(){return 0!==this.timer},disable:function(){i(this.timer),this.timer=0},dispose:function(){this.disable(),this.slider=null},tick:function(){}});return n.TimeLine=a,n.add("no",n.extend({switchTo:function(t){this.slider.stage.scrollLeft=this.slider.stageWidth*t}})),n.add("slide",a.extend({initialize:function(t,e){this.parent("initialize",t,e),this.yAxis="vertical"===e.direction,this.rollCycle=e.rollCycle||!1},beforeSwitch:function(t,e){var i=this.slider.stageWidth,s=this.slider.stageHeight,n=this.slider.count-1;if(this.rollCycle)if(!this.cycleNode){var a=this.slider.stage.firstChild.cloneNode();this.slider.stage.appendChild(a),this.cycleNode=!0}if(this.yAxis){if(this.isBusy())this.curPos=this.slider.stage.scrollTop;else this.curPos=s*e;this.targetPos=s*t}else{if(this.isBusy())this.curPos=this.slider.stage.scrollLeft;else this.curPos=i*e;if(this.targetPos=i*t,this.rollCycle)if(0===t&&e===n)this.targetPos=i*(n+1);else if(t===n&&0===e&&!this.isBusy())this.curPos=i*(n+1)}},tick:function(t){var e=(this.targetPos-this.curPos)*this.easingFn(t);this.slider.stage[this.yAxis?"scrollTop":"scrollLeft"]=this.curPos+e}})),n.add("opacity",a.extend({setOpacity:s,beforeSwitch:function(e){var i=this.slider.getChildren(this.slider.stage),s=i.length;if(void 0===this.index)this.index=s-1;if(void 0===this.lastIndex)this.lastIndex=s-1;this.setOpacity(i[this.index],1),t.removeClass(i[this.index],this.slider.getClass("top")),t.removeClass(i[this.lastIndex],this.slider.getClass("cover")),t.addClass(i[this.index],this.slider.getClass("cover")),this.lastIndex=this.index,t.addClass(i[this.index=e],this.slider.getClass("top")),this.setOpacity(this.curElement=i[e],0)},tick:function(t){var e=this.easingFn(t);if(this.setOpacity(this.curElement,e),1===t)this.curElement=null},dispose:function(){this.curElement=null,this.parent("dispose")}})),n});
+define('ui/SliderAnim', [
+    'require',
+    './lib'
+], function (require) {
+    var lib = require('./lib');
+    var requestAnimationFrame = function () {
+            return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || function (callback) {
+                return setTimeout(callback, 1000 / 60);
+            };
+        }();
+    var cancelAnimationFrame = function () {
+            return window.cancelAnimationFrame || window.webkitCancelAnimationFrame || window.mozCancelAnimationFrame || window.oCancelAnimationFrame || function (id) {
+                clearTimeout(id);
+            };
+        }();
+    var setOpacity = function (isLowerIEVersion) {
+            return isLowerIEVersion ? function (element, opacity) {
+                if (opacity === 1) {
+                    element.style.filter = '';
+                } else {
+                    element.style.filter = '' + 'alpha(opacity=' + 100 * opacity + ')';
+                }
+            } : function (element, opacity) {
+                if (opacity === 1) {
+                    element.style.opacity = '';
+                } else {
+                    element.style.opacity = opacity;
+                }
+            };
+        }(lib.browser.ie < 9);
+    var SliderAnim = lib.newClass({
+            initialize: function (slider, options) {
+                this.slider = slider;
+                this.options = options;
+            },
+            switchTo: function () {
+            },
+            isBusy: function () {
+            },
+            enable: function () {
+            },
+            disable: function () {
+            },
+            refresh: function () {
+            },
+            dispose: function () {
+                this.slider = null;
+                this.options = null;
+            }
+        });
+    SliderAnim.easing = {
+        easing: function (p) {
+            if ((p /= 0.5) < 1) {
+                return 1 / 2 * p * p;
+            }
+            return -1 / 2 * (--p * (p - 2) - 1);
+        },
+        backIn: function (p) {
+            var s = 1.70158;
+            return p * p * ((s + 1) * p - s);
+        },
+        backOut: function (p) {
+            var s = 1.70158;
+            return (p = p - 1) * p * ((s + 1) * p + s) + 1;
+        },
+        backBoth: function (p) {
+            var s = 1.70158;
+            if ((p /= 0.5) < 1) {
+                return 1 / 2 * (p * p * (((s *= 1.525) + 1) * p - s));
+            }
+            return 1 / 2 * ((p -= 2) * p * (((s *= 1.525) + 1) * p + s) + 2);
+        },
+        lineer: function (p) {
+            return p;
+        },
+        bounce: function (p) {
+            if (p < 1 / 2.75) {
+                return 7.5625 * p * p;
+            } else if (p < 2 / 2.75) {
+                return 7.5625 * (p -= 1.5 / 2.75) * p + 0.75;
+            } else if (p < 2.5 / 2.75) {
+                return 7.5625 * (p -= 2.25 / 2.75) * p + 0.9375;
+            }
+            return 7.5625 * (p -= 2.625 / 2.75) * p + 0.984375;
+        }
+    };
+    SliderAnim.anims = {};
+    SliderAnim.add = function (name, Class) {
+        if (!this.anims[name]) {
+            this.anims[name] = Class;
+            return true;
+        }
+        return false;
+    };
+    var TimeLine = SliderAnim.extend({
+            initialize: function (slider, options) {
+                var me = this;
+                me.slider = slider;
+                me.interval = options.interval || 300;
+                me.easingFn = SliderAnim.easing[options.easing || 'easing'];
+                var _timeHandler = me.timeHandler;
+                me.timeHandler = function () {
+                    _timeHandler.apply(me);
+                };
+            },
+            beforeSwitch: function (index, lastIndex) {
+            },
+            switchTo: function (index, lastIndex) {
+                this.beforeSwitch(index, lastIndex);
+                this.startTime = new Date();
+                if (!this.timer) {
+                    this.timer = requestAnimationFrame(this.timeHandler);
+                }
+            },
+            timeHandler: function () {
+                var timePast = new Date() - this.startTime;
+                if (timePast >= this.interval) {
+                    this.tick(1);
+                    this.timer = 0;
+                } else {
+                    this.tick(timePast / this.interval);
+                    this.timer = requestAnimationFrame(this.timeHandler);
+                }
+            },
+            isBusy: function () {
+                return this.timer !== 0;
+            },
+            disable: function () {
+                cancelAnimationFrame(this.timer);
+                this.timer = 0;
+            },
+            dispose: function () {
+                this.disable();
+                this.slider = null;
+            },
+            tick: function (percent) {
+            }
+        });
+    SliderAnim.TimeLine = TimeLine;
+    SliderAnim.add('no', SliderAnim.extend({
+        switchTo: function (index) {
+            this.slider.stage.scrollLeft = this.slider.stageWidth * index;
+        }
+    }));
+    SliderAnim.add('slide', TimeLine.extend({
+        initialize: function (slider, options) {
+            this.parent('initialize', slider, options);
+            this.yAxis = options.direction === 'vertical';
+            this.rollCycle = options.rollCycle || false;
+        },
+        beforeSwitch: function (index, lastIndex) {
+            var stageWidth = this.slider.stageWidth;
+            var stageHeight = this.slider.stageHeight;
+            var maxIndex = this.slider.count - 1;
+            if (this.rollCycle) {
+                if (!this.cycleNode) {
+                    var cloned = this.slider.stage.firstChild.cloneNode();
+                    this.slider.stage.appendChild(cloned);
+                    this.cycleNode = true;
+                }
+            }
+            if (this.yAxis) {
+                if (this.isBusy()) {
+                    this.curPos = this.slider.stage.scrollTop;
+                } else {
+                    this.curPos = stageHeight * lastIndex;
+                }
+                this.targetPos = stageHeight * index;
+            } else {
+                if (this.isBusy()) {
+                    this.curPos = this.slider.stage.scrollLeft;
+                } else {
+                    this.curPos = stageWidth * lastIndex;
+                }
+                this.targetPos = stageWidth * index;
+                if (this.rollCycle) {
+                    if (index === 0 && lastIndex === maxIndex) {
+                        this.targetPos = stageWidth * (maxIndex + 1);
+                    } else if (index === maxIndex && lastIndex === 0 && !this.isBusy()) {
+                        this.curPos = stageWidth * (maxIndex + 1);
+                    }
+                }
+            }
+        },
+        tick: function (percent) {
+            var move = (this.targetPos - this.curPos) * this.easingFn(percent);
+            this.slider.stage[this.yAxis ? 'scrollTop' : 'scrollLeft'] = this.curPos + move;
+        }
+    }));
+    SliderAnim.add('opacity', TimeLine.extend({
+        setOpacity: setOpacity,
+        beforeSwitch: function (index) {
+            var childNodes = this.slider.getChildren(this.slider.stage);
+            var l = childNodes.length;
+            if (undefined === this.index) {
+                this.index = l - 1;
+            }
+            if (undefined === this.lastIndex) {
+                this.lastIndex = l - 1;
+            }
+            this.setOpacity(childNodes[this.index], 1);
+            lib.removeClass(childNodes[this.index], this.slider.getClass('top'));
+            lib.removeClass(childNodes[this.lastIndex], this.slider.getClass('cover'));
+            lib.addClass(childNodes[this.index], this.slider.getClass('cover'));
+            this.lastIndex = this.index;
+            lib.addClass(childNodes[this.index = index], this.slider.getClass('top'));
+            this.setOpacity(this.curElement = childNodes[index], 0);
+        },
+        tick: function (percent) {
+            var move = this.easingFn(percent);
+            this.setOpacity(this.curElement, move);
+            if (percent === 1) {
+                this.curElement = null;
+            }
+        },
+        dispose: function () {
+            this.curElement = null;
+            this.parent('dispose');
+        }
+    }));
+    return SliderAnim;
+});
