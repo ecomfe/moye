@@ -48,7 +48,7 @@ define('ui/lib', [
             case 'string':
                 return '"' + obj.replace(/[\x00-\x1f\\"]/g, escape) + '"';
             case 'array':
-                return '[' + map(obj, stringify) + ']';
+                return '[' + $.map(obj, stringify) + ']';
             case 'object':
                 var string = [];
                 $.each(obj, function (key, value) {
@@ -320,6 +320,31 @@ define('ui/lib', [
             }
             return thisOptions;
         }
+    };
+    var guidPrefix = 'moye';
+    var guid = 0;
+    lib.guid = function () {
+        return guidPrefix + '-' + guid++;
+    };
+    var win = $(window);
+    var doc = $(document);
+    lib.getScrollLeft = function () {
+        return doc.scrollLeft();
+    };
+    lib.getScrollTop = function () {
+        return doc.scrollTop();
+    };
+    lib.getScrollHeight = function () {
+        return doc.height();
+    };
+    lib.getScrollWidth = function () {
+        return doc.width();
+    };
+    lib.getViewWidth = function () {
+        return win.width();
+    };
+    lib.getViewHeight = function () {
+        return win.height();
     };
     (function () {
         var reg = /(opera|ie|firefox|chrome|version)[\s\/:]([\w\d\.]+)?.*?(safari|version[\s\/:]([\w\d\.]+)|$)/;

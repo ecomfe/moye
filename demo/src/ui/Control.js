@@ -37,7 +37,7 @@ define('ui/Control', [
                 this.render();
             },
             query: function (className) {
-                return lib.q(className, this.main);
+                return $('.' + className, this.main).toArray();
             },
             createElement: function (tagName, properties) {
                 var element = document.createElement(tagName || 'div');

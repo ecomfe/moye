@@ -1,8 +1,10 @@
 define('ui/DialogFactory', [
     'require',
+    'jquery',
     './lib',
     './Dialog'
 ], function (require) {
+    var $ = require('jquery');
     var lib = require('./lib');
     var Dialog = require('./Dialog');
     function getClass(opts, name) {
@@ -13,14 +15,14 @@ define('ui/DialogFactory', [
     function genDialog(opts) {
         var footer = opts.footer || '';
         if (opts.cancel) {
-            var id = 'btn-' + Math.random();
+            var id = 'btn-' + lib.guid();
             var cls = getClass(opts, 'cancel-btn');
             footer += '<a id="' + id + '" href="javascript:;"' + ' class="' + cls + '">' + (opts.cancelTitle || '\u53D6\u6D88') + '</a>';
             opts.title = opts.title || '\u786E\u8BA4';
             opts.cancelId = id;
         }
         if (opts.confirm) {
-            var id = 'btn-' + Math.random();
+            var id = 'btn-' + lib.guid();
             var cls = getClass(opts, 'confirm-btn');
             footer = '<button id="' + id + '"' + ' class="' + cls + '">' + (opts.confirmTitle || '\u786E\u5B9A') + '</button>' + footer;
             opts.title = opts.title || '\u63D0\u793A';
@@ -31,22 +33,27 @@ define('ui/DialogFactory', [
         dlg.render();
         if (opts.confirmId) {
             dlg.onConfirm && dlg.on('confirm', dlg.onConfirm);
-            lib.on(lib.g(opts.confirmId), 'click', opts.confirmHandler = function () {
+            opts.confirmHandler = function () {
                 dlg.fire('confirm');
-            });
+            };
+            $('#' + opts.confirmId).on('click', opts.confirmHandler);
         }
         if (opts.cancelId) {
             dlg.onCancel && dlg.on('cancel', dlg.onCancel);
-            lib.on(lib.g(opts.cancelId), 'click', opts.cancelHandler = function () {
+            opts.cancelHandler = function () {
                 dlg.fire('cancel');
-                dlg.hide();
-            });
+            };
+            $('#' + opts.cancelId).on('click', opts.cancelHandler);
         }
         dlg.on('beforedispose', function () {
             dlg.un('confirm');
             dlg.un('cancel');
-            opts.confirmId && lib.un(lib.g(opts.confirmId), 'click', opts.confirmHandler);
-            opts.cancelId && lib.un(lib.g(opts.cancelId), 'click', opts.cancelHandler);
+            if (opts.confirmId) {
+                $('#' + opts.confirmId).off('click', opts.confirmHandler);
+            }
+            if (opts.cancelId) {
+                $('#' + opts.cancelId).off('click', opts.cancelHandler);
+            }
             opts = null;
         });
         return dlg;

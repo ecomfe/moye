@@ -43,7 +43,7 @@ define('ui/Cookie', [
             },
             remove: function (key) {
                 var options = this.options;
-                duration = options.duration;
+                var duration = options.duration;
                 options.duration = -1;
                 this.set(key || this.key);
                 options.duration = duration;

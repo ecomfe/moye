@@ -1,8 +1,10 @@
 define('ui/PicUploader', [
     'require',
+    'jquery',
     './lib',
     './Control'
 ], function (require) {
+    var $ = require('jquery');
     var lib = require('./lib');
     var Control = require('./Control');
     var supportFileReader = 'FileReader' in window;
@@ -28,39 +30,40 @@ define('ui/PicUploader', [
                 return this.options.prefix + name;
             },
             getDom: function (name, scope) {
-                return lib.q(privates.getClass.call(this, name), lib.g(scope))[0];
+                return $('.' + privates.getClass.call(this, name), lib.g(scope))[0];
             },
             onCloseClick: function (e) {
-                var target = lib.getTarget(e);
-                var picker = lib.getAncestorByClass(target, privates.getClass.call(this, 'picker'));
+                var target = $(e.target);
+                var clazz = '.' + privates.getClass.call(this, 'picker');
+                var picker = target.closest(clazz)[0];
                 privates.removePicker.call(this, picker);
             },
             onFileChange: function (e) {
-                var target = lib.getTarget(e);
-                var filePath = target.value;
+                var target = $(e.target);
+                var filePath = target.val();
                 if (!filePath) {
                     return;
                 }
-                var fileName = filePath.slice(Math.max(filePath.lastIndexOf('/'), filePath.lastIndexOf('\\')) + 1);
+                var pos = Math.max(filePath.lastIndexOf('/'), filePath.lastIndexOf('\\'));
+                var fileName = filePath.slice(pos + 1);
                 fileName = fileName.slice(0, fileName.lastIndexOf('.'));
-                var picker = lib.getAncestorByClass(target, privates.getClass.call(this, 'picker'));
+                var clazz = '.' + privates.getClass.call(this, 'picker');
+                var picker = target.closest(clazz);
                 var bound = this._bound;
                 if (!filePath.match(this.options.fileType)) {
                     if (lib.browser.ie) {
-                        var newTarget = createFileNode({ className: target.className });
-                        target.parentNode.insertBefore(newTarget, target);
-                        lib.un(target, 'change', bound.onFileChange);
-                        target.parentNode.removeChild(target);
-                        lib.on(newTarget, 'change', bound.onFileChange);
+                        var newTarget = createFileNode({ className: target.attr('class') });
+                        target.after(newTarget).off('change', bound.onFileChange).remove();
+                        $(newTarget).on('change', bound.onFileChange);
                     } else {
-                        target.value = '';
+                        target.val('');
                     }
-                    lib.addClass(picker, privates.getClass.call(this, 'error'));
+                    picker.addClass(privates.getClass.call(this, 'error'));
                     this.fire('pickerror', { fileName: filePath });
                 } else {
-                    var pic = privates.getDom.call(this, 'pic', picker);
+                    var pic = privates.getDom.call(this, 'pic', picker.get(0));
                     if (supportFileReader) {
-                        getLocalImageData(target.files[0], function (data) {
+                        getLocalImageData(target.get(0).files[0], function (data) {
                             var img = document.createElement('IMG');
                             img.src = data;
                             pic.appendChild(img);
@@ -69,12 +72,9 @@ define('ui/PicUploader', [
                     } else {
                         pic.innerHTML = '<em>' + fileName + '</em>';
                     }
-                    picker.title = fileName;
-                    privates.getDom.call(this, 'title', picker).innerHTML = fileName;
-                    lib.removeClass(picker, privates.getClass.call(this, 'cur'));
-                    lib.removeClass(picker, privates.getClass.call(this, 'error'));
-                    lib.addClass(picker, privates.getClass.call(this, 'picked'));
-                    lib.un(target, 'change', bound.onFileChange);
+                    privates.getDom.call(this, 'title', picker.get(0)).innerHTML = fileName;
+                    picker.attr('title', fileName).removeClass(privates.getClass.call(this, 'cur')).removeClass(privates.getClass.call(this, 'error')).addClass(privates.getClass.call(this, 'picked'));
+                    target.off('change', bound.onFileChange);
                     this.count++;
                     if (this.count < this.options.maxCount) {
                         privates.create.call(this);
@@ -85,8 +85,8 @@ define('ui/PicUploader', [
             removePicker: function (picker) {
                 var fileName = privates.getDom.call(this, 'file', picker).value;
                 var bound = this._bound;
-                lib.un(privates.getDom.call(this, 'file', picker), 'change', bound.onFileChange);
-                lib.un(privates.getDom.call(this, 'close', picker), 'click', bound.onCloseClick);
+                $(privates.getDom.call(this, 'file', picker)).off('change', bound.onFileChange);
+                $(privates.getDom.call(this, 'close', picker)).off('click', bound.onCloseClick);
                 picker.parentNode.removeChild(picker);
                 this.count--;
                 if (this.count === this.options.maxCount - 1) {
@@ -96,8 +96,8 @@ define('ui/PicUploader', [
             },
             bindPicker: function (id) {
                 var bound = this._bound;
-                lib.on(privates.getDom.call(this, 'file', id), 'change', bound.onFileChange);
-                lib.on(privates.getDom.call(this, 'close', id), 'click', bound.onCloseClick);
+                $(privates.getDom.call(this, 'file', id)).on('change', bound.onFileChange);
+                $(privates.getDom.call(this, 'close', id)).on('click', bound.onCloseClick);
             },
             create: function () {
                 var cls = {
@@ -148,17 +148,15 @@ define('ui/PicUploader', [
                     index;
                     return removePath === filePath;
                 };
-                lib.each(lib.q(privates.getClass.call(this, 'file'), this.options.main), function (item, index) {
-                    if (item.value === filePath) {
-                        if (checker(item.value, filePath, index)) {
-                            privates.removePicker.call(me, lib.getAncestorByClass(item, privates.getClass.call(me, 'picker')));
-                        }
+                $('.' + privates.getClass.call(this, 'file'), this.main).each(function (index, item) {
+                    if (item.value === filePath && checker(item.value, filePath, index)) {
+                        privates.removePicker.call(me, $(item).closest('.' + privates.getClass.call(me, 'picker')).get(0));
                     }
                 });
                 return this;
             },
             removeAt: function (index) {
-                var list = lib.q(privates.getClass.call(this, 'picker'), this.options.main);
+                var list = $('.' + privates.getClass.call(this, 'picker'), this.options.main);
                 if (list[index] !== this.curPicker) {
                     privates.removePicker.call(this, list[index]);
                 }
@@ -166,24 +164,20 @@ define('ui/PicUploader', [
             },
             getFileList: function () {
                 var me = this;
-                var files = [];
-                lib.each(lib.q(privates.getClass.call(this, 'file'), this.options.main), function (item) {
-                    if (item.value.match(me.options.fileType)) {
-                        files.push(item.value);
-                    }
-                });
-                return files;
+                return $('.' + privates.getClass.call(this, 'file'), this.options.main).map(function (i, item) {
+                    return item.value.match(me.options.fileType) ? item.value : null;
+                }).get();
             },
             enable: function () {
                 if (this.curPicker) {
-                    lib.removeClass(this.options.main, privates.getClass.call(this, 'disabled'));
+                    $(this.options.main).removeClass(privates.getClass.call(this, 'disabled'));
                 }
                 this._disabled = 0;
                 return this;
             },
             disable: function () {
                 if (this.curPicker) {
-                    lib.addClass(this.options.main, privates.getClass.call(this, 'disabled'));
+                    $(this.options.main).addClass(privates.getClass.call(this, 'disabled'));
                 }
                 this._disabled = 1;
                 return this;
@@ -191,8 +185,8 @@ define('ui/PicUploader', [
             dispose: function () {
                 if (this.curPicker) {
                     var bound = this._bound;
-                    lib.un(privates.getDom.call(this, 'file', this.curPicker), 'change', bound.onFileChange);
-                    lib.un(privates.getDom.call(this, 'close', this.curPicker), 'click', bound.onCloseClick);
+                    $(privates.getDom.call(this, 'file', this.curPicker)).off('change', bound.onFileChange);
+                    $(privates.getDom.call(this, 'close', this.curPicker)).off('click', bound.onCloseClick);
                     this.curPicker = 0;
                 }
                 this.options.main.innerHTML = '';

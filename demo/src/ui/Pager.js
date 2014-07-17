@@ -98,7 +98,7 @@ define('ui/Pager', [
                 }
                 if (target.tagName !== 'A') {
                     target = $(target).closest('A', main)[0];
-                    if (target == undefined || target === main) {
+                    if (target === undefined || target === main) {
                         return;
                     }
                 }
