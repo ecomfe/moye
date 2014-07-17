@@ -504,6 +504,7 @@ define(function (require) {
         var commentRule = /(\/\*([\s\S]*?)\*\/|([^:]|^)\/\/(.*)$)/mg;
         var parentRule = /(?:this|me|self)\.parent\(/;
         var privateRule = /(?:this|me|self)\._[a-z\d_\$]+\(/i;
+
         /**
          * 方法包装器
          * 
@@ -522,6 +523,7 @@ define(function (require) {
             var hasParentCall = parentRule.test(code);
             var hasPrivateCall = privateRule.test(code);
             var isPrivate = name.charAt(0) === '_';
+            
             if (!(hasParentCall || isPrivate || hasPrivateCall)) {
                 return method;
             }
@@ -558,6 +560,7 @@ define(function (require) {
 
                 return result;
             };
+
             wrapper.$wrapped = true;
 
             return wrapper;
