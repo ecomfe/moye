@@ -81,7 +81,7 @@ define(function (require) {
      * @requires Lazy
      * @exports LazyImg
      */
-    LazyImg = lib.newClass(/** @lends module:LazyImg.prototype*/{
+    var LazyImg = lib.newClass(/** @lends module:LazyImg.prototype*/{
 
         /**
          * 控件类型标识
