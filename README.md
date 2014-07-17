@@ -79,7 +79,7 @@ Moye (知心组件库)
 - [x] 对 话 框 [Dialog](http://ecomfe.github.io/moye/example/Dialog.html)
 - [x] 浮动提示 [FloatTip](http://ecomfe.github.io/moye/example/FloatTip.html)
 - [ ] 图片上传 [PicUploader](http://ecomfe.github.io/moye/example/PicUploader.html)
-- [ ] 星号评级 [Rating](http://ecomfe.github.io/moye/example/Rating.html)
+- [x] 星号评级 [Rating](http://ecomfe.github.io/moye/example/Rating.html)
 - [ ] 滚 动 条 [ScrollBar](http://ecomfe.github.io/moye/example/ScrollBar.html)
 - [ ] 图片轮播 [Slider](http://ecomfe.github.io/moye/example/Slider.html)
 - [x] 浮出层

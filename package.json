@@ -54,6 +54,9 @@
     },
     {
       "name": "Pager"
+    },
+    {
+      "name": "Rating"
     }
   ],
   "directories": {
