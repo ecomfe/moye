@@ -53,6 +53,9 @@ module.exports = function(config) {
     }, {
       pattern: 'test/spec/RatingSpec.js',
       included: false
+    }, {
+      pattern: 'test/spec/PicUploaderSpec.js',
+      included: false
     }],
 
 

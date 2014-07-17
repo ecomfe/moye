@@ -9,6 +9,7 @@
 
 define(function (require) {
 
+    var $ = require('jquery');
     var lib = require('./lib');
     var Control = require('./Control');
 
@@ -86,8 +87,7 @@ define(function (require) {
          * @private
          */
         getDom: function (name, scope) {
-            return lib.q(
-            privates.getClass.call(this, name), lib.g(scope))[0];
+            return $('.' + privates.getClass.call(this, name), lib.g(scope))[0];
         },
 
         /**
@@ -97,9 +97,9 @@ define(function (require) {
          * @param {HTMLEvent} e dom事件对象
          */
         onCloseClick: function (e) {
-            var target = lib.getTarget(e);
-            var picker = lib.getAncestorByClass(
-            target, privates.getClass.call(this, 'picker'));
+            var target = $(e.target);
+            var clazz = '.' + privates.getClass.call(this, 'picker');
+            var picker = target.closest(clazz)[0];
             privates.removePicker.call(this, picker);
         },
 
@@ -113,49 +113,46 @@ define(function (require) {
          */
         onFileChange: function (e) {
 
-            var target = lib.getTarget(e);
-            var filePath = target.value;
+            var target = $(e.target);
+            var filePath = target.val();
 
             if (!filePath) {
                 return;
             }
 
-            var fileName = filePath.slice(
-            Math.max(
-            filePath.lastIndexOf('/'), filePath.lastIndexOf('\\')) + 1);
+            var pos      = Math.max(filePath.lastIndexOf('/'), filePath.lastIndexOf('\\'));
+            var fileName = filePath.slice(pos + 1);
             fileName = fileName.slice(0, fileName.lastIndexOf('.'));
-
-            var picker = lib.getAncestorByClass(
-            target, privates.getClass.call(this, 'picker'));
-
-            var bound = this._bound;
+            var clazz    = '.' + privates.getClass.call(this, 'picker');
+            var picker   = target.closest(clazz);
+            var bound    = this._bound;
 
             if (!filePath.match(this.options.fileType)) {
 
                 //IE浏览器不允许设置file.value这里移除之后再创建一个
                 if (lib.browser.ie) {
-                    //这里用cloneNode会出现一堆诡异的问题
+
+                    // 这里用cloneNode会出现一堆诡异的问题
                     // 只能创建新的节点来替换，会损失一部分原始的信息
-                    // 
                     var newTarget = createFileNode({
-                        className: target.className
+                        className: target.attr('class')
                     });
 
-                    target.parentNode.insertBefore(newTarget, target);
-
-                    //删除事件
-                    lib.un(target, 'change', bound.onFileChange);
-                    target.parentNode.removeChild(target);
+                    // 销毁旧的input
+                    target
+                        .after(newTarget)
+                        .off('change', bound.onFileChange)
+                        .remove();
 
                     //重新绑定事件
-                    lib.on(newTarget, 'change', bound.onFileChange);
+                    $(newTarget).on('change', bound.onFileChange);
 
                 }
                 else {
-                    target.value = '';
+                    target.val('');
                 }
 
-                lib.addClass(picker, privates.getClass.call(this, 'error'));
+                picker.addClass(privates.getClass.call(this, 'error'));
 
                 /**
                  * @event module:PicUploader#error
@@ -164,39 +161,42 @@ define(function (require) {
                  */
                 this.fire('pickerror', {
                     fileName: filePath
-
                 });
+
             }
             else {
 
-                var pic = privates.getDom.call(this, 'pic', picker);
+                var pic = privates.getDom.call(this, 'pic', picker.get(0));
 
-                //支持fileReader则可以提供预览
+                // 支持fileReader则可以提供预览
                 if (supportFileReader) {
-                    getLocalImageData(target.files[0], function (data) {
+                    getLocalImageData(target.get(0).files[0], function (data) {
                         var img = document.createElement('IMG');
                         img.src = data;
                         pic.appendChild(img);
                         pic = null;
                     });
                 }
-                //否则只显示文件名字
+
+                // 否则只显示文件名字
                 else {
                     pic.innerHTML = '<em>' + fileName + '</em>';
                 }
 
-                picker.title = fileName;
-                privates.getDom.call(this, 'title', picker).innerHTML = fileName;
+                privates.getDom.call(this, 'title', picker.get(0)).innerHTML = fileName;
 
-                //修改class
-                lib.removeClass(picker, privates.getClass.call(this, 'cur'));
-                lib.removeClass(picker, privates.getClass.call(this, 'error'));
-                lib.addClass(picker, privates.getClass.call(this, 'picked'));
+                // 修改class
+                picker
+                    .attr('title', fileName)
+                    .removeClass(privates.getClass.call(this, 'cur'))
+                    .removeClass(privates.getClass.call(this, 'error'))
+                    .addClass(privates.getClass.call(this, 'picked'));
 
                 //解绑事件
-                lib.un(target, 'change', bound.onFileChange);
+                target.off('change', bound.onFileChange);
 
                 this.count++;
+
                 //如果没有超过限制，则继续生成一个上传框
                 if (this.count < this.options.maxCount) {
                     privates.create.call(this);
@@ -227,11 +227,8 @@ define(function (require) {
             var bound = this._bound;
 
             //解绑事件
-            lib.un(
-            privates.getDom.call(this, 'file', picker), 'change', bound.onFileChange);
-
-            lib.un(
-            privates.getDom.call(this, 'close', picker), 'click', bound.onCloseClick);
+            $(privates.getDom.call(this, 'file', picker)).off('change', bound.onFileChange);
+            $(privates.getDom.call(this, 'close', picker)).off('click', bound.onCloseClick);
 
             picker.parentNode.removeChild(picker);
 
@@ -260,11 +257,12 @@ define(function (require) {
          */
         bindPicker: function (id) {
             var bound = this._bound;
+
             //绑定文件选择
-            lib.on(privates.getDom.call(this, 'file', id), 'change', bound.onFileChange);
+            $(privates.getDom.call(this, 'file', id)).on('change', bound.onFileChange);
 
             //绑定关闭
-            lib.on(privates.getDom.call(this, 'close', id), 'click', bound.onCloseClick);
+            $(privates.getDom.call(this, 'close', id)).on('click', bound.onCloseClick);
         },
 
         /**
@@ -424,20 +422,16 @@ define(function (require) {
                 index;
                 return removePath === filePath;
             };
-            lib.each(
-                lib.q(privates.getClass.call(this, 'file'),
-                this.options.main),
-                function (item, index) {
-                    if (item.value === filePath) {
-                        if (checker(item.value, filePath, index)) {
-                            privates.removePicker.call(
-                                me,
-                                lib.getAncestorByClass(item, privates.getClass.call(me, 'picker'))
-                            );
-                        }
-                    }
+
+            $('.' + privates.getClass.call(this, 'file'), this.main).each(function (index, item) {
+                if (item.value === filePath && checker(item.value, filePath, index)) {
+                    privates.removePicker.call(
+                        me,
+                        $(item).closest('.' + privates.getClass.call(me, 'picker')).get(0)
+                    );
                 }
-            );
+            });
+
             return this;
         },
 
@@ -450,7 +444,7 @@ define(function (require) {
          * @public
          */
         removeAt: function (index) {
-            var list = lib.q(privates.getClass.call(this, 'picker'), this.options.main);
+            var list = $('.' + privates.getClass.call(this, 'picker'), this.options.main);
             if (list[index] !== this.curPicker) {
                 privates.removePicker.call(this, list[index]);
             }
@@ -465,16 +459,11 @@ define(function (require) {
          */
         getFileList: function () {
             var me = this;
-            var files = [];
-            lib.each(
-                lib.q(privates.getClass.call(this, 'file'), this.options.main),
-                function (item) {
-                    if (item.value.match(me.options.fileType)) {
-                        files.push(item.value);
-                    }
-                }
-            );
-            return files;
+            return $('.' + privates.getClass.call(this, 'file'), this.options.main)
+                .map(function (i, item) {
+                    return item.value.match(me.options.fileType) ? item.value : null;
+                })
+                .get();
         },
 
         /**
@@ -486,7 +475,7 @@ define(function (require) {
         enable: function () {
 
             if (this.curPicker) {
-                lib.removeClass(this.options.main, privates.getClass.call(this, 'disabled'));
+                $(this.options.main).removeClass(privates.getClass.call(this, 'disabled'));
             }
 
             this._disabled = 0;
@@ -503,7 +492,7 @@ define(function (require) {
         disable: function () {
 
             if (this.curPicker) {
-                lib.addClass(this.options.main, privates.getClass.call(this, 'disabled'));
+                $(this.options.main).addClass(privates.getClass.call(this, 'disabled'));
             }
 
             this._disabled = 1;
@@ -523,17 +512,12 @@ define(function (require) {
             if (this.curPicker) {
                 var bound = this._bound;
 
-                lib.un(
-                    privates.getDom.call(this, 'file', this.curPicker),
-                    'change',
-                    bound.onFileChange
-                );
+                $(privates.getDom.call(this, 'file', this.curPicker))
+                    .off('change', bound.onFileChange);
 
-                lib.un(
-                    privates.getDom.call(this, 'close', this.curPicker),
-                    'click',
-                    bound.onCloseClick
-                );
+                $(privates.getDom.call(this, 'close', this.curPicker))
+                    .off('click', bound.onCloseClick);
+
                 this.curPicker = 0;
             }
 
