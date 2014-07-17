@@ -1,13 +1,12 @@
 define('ui/Dialog', [
     'require',
+    'jquery',
     './lib',
     './Control'
 ], function (require) {
+    var $ = require('jquery');
     var lib = require('./lib');
     var Control = require('./Control');
-    function remove(domElement) {
-        domElement && domElement.parentNode.removeChild(domElement);
-    }
     function format(source, opts) {
         source = String(source);
         var data = Array.prototype.slice.call(arguments, 1);
@@ -26,57 +25,57 @@ define('ui/Dialog', [
     }
     var Mask = lib.newClass({
             initialize: function (opts) {
-                var div = document.createElement('div');
-                div.className = opts.className;
-                lib.setStyles(div, opts.styles);
-                document.body.appendChild(div);
-                this.mask = div;
+                this.mask = $('<div>').addClass(opts.className).css(opts.styles).appendTo(document.body).get(0);
                 Mask.curMasks++;
                 if (6 === lib.browser.ie && !Mask.ie6frame) {
-                    Mask.ie6frame = document.createElement('' + '<iframe' + ' src="about:blank"' + ' frameborder="0"' + ' style="position:absolute;left:0;top:0;z-index:1;' + 'filter:alpha(opacity=0)"' + '></iframe>');
-                    document.body.appendChild(Mask.ie6frame);
+                    var frame = '' + '<iframe' + ' src="about:blank"' + ' frameborder="0"' + ' style="position:absolute;left:0;top:0;z-index:1;' + 'filter:alpha(opacity=0)"' + '></iframe>';
+                    Mask.ie6frame = $(frame).appendTo(document.body).get(0);
                 }
             },
             repaint: function () {
-                var width = Math.max(document.documentElement.clientWidth, Math.max(document.body.scrollWidth, document.documentElement.scrollWidth));
-                var height = Math.max(document.documentElement.clientHeight, Math.max(document.body.scrollHeight, document.documentElement.scrollHeight));
-                this.mask.style.width = width + 'px';
-                this.mask.style.height = height + 'px';
+                var doc = $(document);
+                var width = doc.width();
+                var height = doc.height();
+                $(this.mask).css({
+                    width: width + 'px',
+                    height: height + 'px'
+                });
                 if (Mask.ie6frame) {
-                    Mask.ie6frame.style.width = width + 'px';
-                    Mask.ie6frame.style.height = height + 'px';
+                    $(Mask.ie6frame).css({
+                        width: width + 'px',
+                        height: height + 'px'
+                    });
                 }
             },
             show: function () {
                 if (Mask.ie6frame) {
-                    Mask.ie6frame.style.zIndex = this.mask.style.zIndex - 1;
-                    lib.show(Mask.ie6frame);
+                    $(Mask.ie6frame).css('z-index', this.mask.style.zIndex - 1).show();
                 }
-                lib.show(this.mask);
+                $(this.mask).show();
             },
             hide: function () {
                 if (Mask.ie6frame) {
-                    lib.hide(Mask.ie6frame);
+                    $(Mask.ie6frame).hide();
                 }
-                lib.hide(this.mask);
+                $(this.mask).hide();
             },
             dispose: function () {
-                remove(this.mask);
+                $(this.mask).remove();
                 Mask.curMasks--;
                 if (Mask.curMasks <= 0 && Mask.ie6frame) {
-                    remove(Mask.ie6frame);
+                    $(Mask.ie6frame).remove();
                     Mask.curMasks = 0;
                     Mask.ie6frame = null;
                 }
             }
         });
     Mask.curMasks = 0;
-    Mask.create = function (opts) {
-        return new Mask(opts);
+    Mask.create = function (options) {
+        return new Mask(options);
     };
     var privates = {
             getDom: function (name) {
-                return lib.q(this.options.prefix + '-' + name, this.main)[0];
+                return $('.' + this.options.prefix + '-' + name, this.main)[0];
             },
             getClass: function (name) {
                 name = name ? '-' + name : '';
@@ -94,16 +93,12 @@ define('ui/Dialog', [
                         content: opt.content,
                         footer: opt.footer
                     };
-                var main = this.createElement('div', { 'className': privates.getClass.call(this) });
-                lib.setStyles(main, {
+                this.main = $('<div>').addClass(privates.getClass.call(this)).css({
                     width: opt.width,
                     top: opt.top,
                     position: opt.fixed ? 'fixed' : 'absolute',
                     zIndex: opt.level
-                });
-                main.innerHTML = format(this.options.tpl, data);
-                document.body.appendChild(main);
-                this.main = main;
+                }).html(format(this.options.tpl, data)).appendTo(document.body).get(0);
                 if (this.options.showMask) {
                     this.mask = Mask.create({
                         className: privates.getClass.call(this, 'mask'),
@@ -112,7 +107,8 @@ define('ui/Dialog', [
                 }
             },
             bind: function () {
-                lib.on(privates.getDom.call(this, 'close'), 'click', this._bound.onClose);
+                var dom = privates.getDom.call(this, 'close');
+                $(dom).on('click', this._bound.onClose);
             },
             getHeaderDom: function () {
                 return privates.getDom.call(this, 'header');
@@ -175,6 +171,8 @@ define('ui/Dialog', [
                 privates.getFooterDom.call(this).innerHTML = content;
             },
             adjustPos: function () {
+                var main = $(this.main);
+                var win = $(window);
                 var left = this.options.left;
                 var top = this.options.top;
                 if (this.options.fixed) {
@@ -184,22 +182,20 @@ define('ui/Dialog', [
                         };
                     if (!left) {
                         cssOpt.left = '50%';
-                        cssOpt.marginLeft = -this.main.offsetWidth / 2 + 'px';
+                        cssOpt.marginLeft = -main.width() / 2 + 'px';
                     }
                     if (!top) {
-                        cssOpt.top = (lib.getViewHeight() - this.main.offsetHeight) * 0.35 + 'px';
+                        cssOpt.top = 0.35 * (win.height() - main.height()) + 'px';
                     }
-                    lib.setStyles(this.main, cssOpt);
+                    $(this.main).css(cssOpt);
                 } else {
                     if (!left) {
-                        var scrollLeft = window.pageXOffset || document.documentElement.scrollLeft || document.body.scrollLeft;
-                        left = scrollLeft + (lib.getViewWidth() - this.main.offsetWidth) / 2 + 'px';
+                        left = win.scrollLeft() + (win.width() - main.width()) / 2 + 'px';
                     }
                     if (!top) {
-                        var scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
-                        top = scrollTop + (lib.getViewHeight() - this.main.offsetHeight) * 0.35 + 'px';
+                        top = win.scrollTop() + (win.height() - main.height()) * 0.35 + 'px';
                     }
-                    lib.setStyles(this.main, {
+                    main.css({
                         position: 'absolute',
                         left: left,
                         top: top
@@ -208,26 +204,24 @@ define('ui/Dialog', [
                 this.mask && this.mask.repaint();
             },
             show: function () {
-                var me = this;
-                lib.on(window, 'resize', this._bound.onResize);
-                me.mask && me.mask.show();
-                lib.each(privates.getClass.call(this, 'hide').split(' '), function (className) {
-                    lib.removeClass(me.main, className);
-                });
-                me.adjustPos();
-                me.fire('show');
-                return me;
+                $(window).on('resize', this._bound.onResize);
+                if (this.mask) {
+                    this.mask.show();
+                }
+                $(this.main).removeClass(privates.getClass.call(this, 'hide'));
+                this.adjustPos();
+                this.fire('show');
+                return this;
             },
             hide: function () {
-                var me = this;
-                me.mask && me.mask.hide();
-                lib.each(privates.getClass.call(this, 'hide').split(' '), function (className) {
-                    lib.addClass(me.main, className);
-                });
-                me.fire('hide');
-                lib.un(window, 'resize', this._bound.onResize);
-                clearTimeout(me._resizeTimer);
-                return me;
+                if (this.mask) {
+                    this.mask.hide();
+                }
+                $(this.main).addClass(privates.getClass.call(this, 'hide'));
+                this.fire('hide');
+                $(window).off('resize', this._bound.onResize);
+                clearTimeout(this._resizeTimer);
+                return this;
             },
             render: function () {
                 var options = this.options;
@@ -246,21 +240,22 @@ define('ui/Dialog', [
                 return this;
             },
             setWidth: function (width) {
-                var me = this;
-                if (!me.rendered || width < 1) {
-                    return me;
+                if (!this.rendered || width < 1) {
+                    return this;
                 }
-                lib.setStyles(me.main, { width: width + 'px' });
-                me.adjustPos();
-                return me;
+                $(this.main).css({ width: width + 'px' });
+                this.adjustPos();
+                return this;
             },
             dispose: function () {
                 this.fire('beforedispose');
                 var bound = this._bound;
-                lib.un(privates.getDom.call(this, 'close'), 'click', bound.onClose);
-                lib.un(window, 'resize', bound.onResize);
+                $(privates.getDom.call(this, 'close')).off('click', bound.onClose);
+                $(window).off('resize', bound.onResize);
                 clearTimeout(this._resizeTimer);
-                this.mask && this.mask.dispose();
+                if (this.mask) {
+                    this.mask.dispose();
+                }
                 this.parent('dispose');
             }
         });

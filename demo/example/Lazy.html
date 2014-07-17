@@ -2,34 +2,77 @@
 <html>
 <head>
 <meta charset="utf-8" />
-<title>Lazy Loader</title>
-<link rel="stylesheet" href="common.css" />
-<script src="http://s1.bdstatic.com/r/www/cache/ecom/esl/1-6-8/esl.js"></script>
+<title>Lazy - Moye</title>
+<link rel="stylesheet" href="./css/common.css" />
 <style>
 img {
-    display: block;
     width: 270px;
     height: 129px;
 }
 </style>
 </head>
 <body>
+<div class="nav">
+  <a href="#" class="logo"><img src="./img/moye.png" alt=""></a>
+  <ul>
+    <li><a href="Calendar.html" class="">Calendar</a>
+    <li><a href="City.html" class="">City</a>
+    <li><a href="Filter.html" class="">Filter</a>
+    <li><a href="Lunar.html" class="">Lunar</a>
+    <li><a href="Tabs.html" class="">Tabs</a>
+    <li><a href="Dialog.html" class="">Dialog</a>
+    <li><a href="FloatTip.html" class="">FloatTip</a>
+    <li><a href="Lazy.html" class="active">Lazy</a>
+    <li><a href="Pager.html" class="">Pager</a>
+    <li><a href="Rating.html" class="">Rating</a>
+    <li><a href="PicUploader.html" class="">PicUploader</a>
+    <li><a href="Select.html" class="">Select</a>
+  </ul>
+</div>
+<div class="container">
+</div>
+<script src="http://s1.bdstatic.com/r/www/cache/ecom/esl/1-6-8/esl.js"></script>
+<script src="http://s1.bdstatic.com/r/www/cache/static/jquery/jquery-1.10.2.min_f2fb5194.js"></script>
 <script>
-(function () {
-    var html = ['<div class="lazy-img">']
-    for (var i = 0; i < 100; i++ ) {
-        html.push('<img width="270" height="129" src="http://tb2.bdstatic.com/tb/static-common/img/search_logo_039c9b99.png" _src="http://www.baidu.com/img/bdlogo.gif" />');
-    }
-    html.push('</div>');
-    document.write(html.join(''));
-    require.config({ 'baseUrl': '../src/ui' });
-    require(['LazyImg'], function (LazyImg) {
+require.config({ 'baseUrl': '../src/ui' });
+</script>
+<div class="markdown"><h1 id="lazy-">Lazy 懒加载</h1>
+<h2 id="-">示例</h2>
+<pre><code class="lang-js"><span class="keyword">var</span> html = [<span class="string">'&lt;div class="lazy-img"&gt;'</span>];
+<span class="keyword">var</span> img1 = <span class="string">'http://tb2.bdstatic.com/tb/static-common/img/search_logo_039c9b99.png'</span>;
+<span class="keyword">var</span> img2 = <span class="string">'http://www.baidu.com/img/bdlogo.gif'</span>;
+<span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; <span class="number">100</span>; i++ ) {
+    html.push(<span class="string">'&lt;img src="'</span> + img1 + <span class="string">'" _src="'</span> + img2 + <span class="string">'" /&gt;'</span>);
+}
+html.push(<span class="string">'&lt;/div&gt;'</span>);
+<span class="built_in">document</span>.write(html.join(<span class="string">''</span>));
 
-        LazyImg.load({offset: {y: 150}});
-
+<span class="built_in">require</span>([<span class="string">'LazyImg'</span>], <span class="function"><span class="keyword">function</span> <span class="params">(LazyImg)</span> </span>{
+    LazyImg.load({
+        offset: {
+            y: <span class="number">150</span>
+        }
     });
+});
+</code></pre>
+<h2 id="demo">DEMO</h2>
+</div><script>
+var html = ['<div class="lazy-img">'];
+var img1 = 'http://tb2.bdstatic.com/tb/static-common/img/search_logo_039c9b99.png';
+var img2 = 'http://www.baidu.com/img/bdlogo.gif';
+for (var i = 0; i < 100; i++ ) {
+    html.push('<img src="' + img1 + '" _src="' + img2 + '" />');
+}
+html.push('</div>');
+document.write(html.join(''));
 
-})();
+require(['LazyImg'], function (LazyImg) {
+    LazyImg.load({
+        offset: {
+            y: 150
+        }
+    });
+});
 </script>
 </body>
 </html>

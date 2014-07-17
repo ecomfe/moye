@@ -1,8 +1,10 @@
 define('ui/FloatTip', [
     'require',
+    'jquery',
     './lib',
     './Control'
 ], function (require) {
+    var $ = require('jquery');
     var lib = require('./lib');
     var Control = require('./Control');
     var privates = {
@@ -11,7 +13,7 @@ define('ui/FloatTip', [
                 return this.options.prefix + name;
             },
             getDom: function (name, scope) {
-                return lib.q(privates.getClass.call(this, name), lib.g(scope))[0];
+                return $('.' + privates.getClass.call(this, name), lib.g(scope))[0];
             },
             create: function () {
                 var opt = this.options;
@@ -20,19 +22,15 @@ define('ui/FloatTip', [
                         iconClass: privates.getClass.call(this, 'icon'),
                         contentClass: privates.getClass.call(this, 'content')
                     };
-                var main = this.createElement('div', { 'className': privates.getClass.call(this) });
-                lib.setStyles(main, {
+                this.main = $('<div>').addClass(privates.getClass.call(this)).css({
                     width: opt.width,
                     left: opt.left,
                     top: opt.top,
                     position: opt.fixed ? 'fixed' : 'absolute',
                     zIndex: opt.level
-                });
-                main.innerHTML = this.options.tpl.replace(/#\{([\w-.]+)\}/g, function ($0, $1) {
+                }).html(this.options.tpl.replace(/#\{([\w-.]+)\}/g, function ($0, $1) {
                     return cls[$1] || '';
-                });
-                document.body.appendChild(main);
-                this.main = main;
+                })).appendTo(document.body).get(0);
             }
         };
     var FloatTip = Control.extend({
@@ -64,6 +62,8 @@ define('ui/FloatTip', [
             adjustPos: function () {
                 var left = this.options.left;
                 var top = this.options.top;
+                var win = $(window);
+                var main = $(this.main);
                 if (this.options.fixed) {
                     var cssOpt = {
                             left: left,
@@ -71,24 +71,24 @@ define('ui/FloatTip', [
                         };
                     if (!left) {
                         cssOpt.left = '50%';
-                        cssOpt.marginLeft = -this.main.offsetWidth / 2 + 'px';
+                        cssOpt.marginLeft = -main.width() / 2 + 'px';
                     }
                     if (!top) {
-                        cssOpt.top = (lib.getViewHeight() - this.main.offsetHeight) * 0.4 + 'px';
+                        cssOpt.top = (win.height() - main.height()) * 0.4 + 'px';
                     }
-                    lib.setStyles(this.main, cssOpt);
+                    $(this.main).css(cssOpt);
                 } else {
                     if (left === '') {
-                        left = (lib.getViewWidth() - this.main.offsetWidth) / 2;
-                        left += lib.getScrollLeft();
+                        left = (win.width() - main.width()) / 2;
+                        left += win.scrollLeft();
                         left += 'px';
                     }
                     if (top === '') {
-                        top = (lib.getViewHeight() - this.main.offsetHeight) * 0.4;
-                        top += lib.getScrollTop();
+                        top = (win.height() - main.height()) * 0.4;
+                        top += win.scrollTop();
                         top += 'px';
                     }
-                    lib.setStyles(this.main, {
+                    main.css({
                         position: 'absolute',
                         left: left,
                         top: top
@@ -96,12 +96,12 @@ define('ui/FloatTip', [
                 }
             },
             show: function () {
-                lib.removeClass(this.main, privates.getClass.call(this, 'hide'));
+                $(this.main).show();
                 this.adjustPos();
                 return this;
             },
             hide: function () {
-                lib.addClass(this.main, privates.getClass.call(this, 'hide'));
+                $(this.main).hide();
                 return this;
             }
         });

@@ -8,6 +8,7 @@
  
 define(function (require) {
 
+    var $ = require('jquery');
     var lib = require('./lib');
     var Control = require('./Control');
     var Popup = require('./Popup');
@@ -78,7 +79,7 @@ define(function (require) {
          */
         onDisable: function () {
             this.popup.disable();
-            lib.addClass(this.target, this.options.prefix + '-disabled');
+            $(this.target).addClass(this.options.prefix + '-disabled');
         },
 
 
@@ -90,7 +91,7 @@ define(function (require) {
          */
         onEnable: function () {
             this.popup.enable();
-            lib.removeClass(this.target, this.options.prefix + '-disabled');
+            $(this.target).removeClass(this.options.prefix + '-disabled');
         },
 
 
@@ -107,13 +108,13 @@ define(function (require) {
                 return;
             }
 
-            var el = lib.getTarget(e);
+            var el = e.target;
             var tag = el.tagName;
 
             switch (tag) {
 
                 case 'A':
-                    lib.preventDefault(e);
+                    e.preventDefault();
 
                     privates.pick.call(this, el);
 
@@ -137,7 +138,7 @@ define(function (require) {
          */
         onBeforeShow: function (arg) {
 
-            lib.preventDefault(arg.event);
+            arg.event.preventDefault();
 
             if (this._disabled) {
                 return;
@@ -150,7 +151,7 @@ define(function (require) {
              */
             this.fire('beforeShow', arg);
 
-            lib.addClass(this.target, this.options.prefix + '-hl');
+            $(this.target).addClass(this.options.prefix + '-hl');
         },
 
         /**
@@ -159,7 +160,7 @@ define(function (require) {
          * @private
          */
         onHide: function () {
-            lib.removeClass(this.target, this.options.prefix + '-hl');
+            $(this.target).removeClass(this.options.prefix + '-hl');
         },
 
         /**
@@ -195,11 +196,11 @@ define(function (require) {
             var typeValue = options.isNumber ? (value | 0) : value;
 
             if (lastItem) {
-                lib.removeClass(lastItem, selectedClass);
+                $(lastItem).removeClass(selectedClass);
             }
 
             if (value) {
-                lib.addClass(el, selectedClass);
+                $(el).addClass(selectedClass);
             }
 
             this.lastItem = el;
@@ -241,7 +242,11 @@ define(function (require) {
             }
 
             var klass = options.prefix + '-checked';
-            lib[value ? 'addClass' : 'removeClass'](target, klass);
+            if(value === 'addClass'){
+                $(target).addClass(klass);
+            } else {
+                $(target).removeClass(klass);
+            }
 
             if (!isSilent) {
 
@@ -382,7 +387,7 @@ define(function (require) {
                 this.rendered = true;
 
                 this.target = lib.g(options.target);
-                this.realTarget = lib.dom.first(this.target) || this.target;
+                this.realTarget = $(this.target).first()[0] || this.target;
                 this.defaultValue = this.realTarget.innerHTML
                     || this.realTarget.value
                     || '';
@@ -409,11 +414,8 @@ define(function (require) {
                 this.main = popup.main;
 
                 if (options.cols > 1) {
-                    lib.addClass(
-                        this.main,
-                        options.prefix + '-cols' + options.cols
-                    );
-                    //lib.addClass(this.main, 'c-clearfix');
+                    $(this.main).addClass(options.prefix + '-cols' + options.cols);
+                    $(this.main).addClass('c-clearfix');
                 }
             }
             else {
@@ -472,7 +474,7 @@ define(function (require) {
                 return;
             }
 
-            if (!lib.isArray(datasource)) {
+            if (!$.isArray(datasource)) {
                 datasource = String(datasource).split(/\s*[,，]\s*/);
             }
 
@@ -481,7 +483,7 @@ define(function (require) {
             for (var i = 0; i < datasource.length; i++) {
                 var item = datasource[i];
 
-                if (!lib.isObject(item)) {
+                if (!($.type(item) === 'object')) {
                     var data = item.split(/\s*[:：]\s*/);
                     item = {text: data[0]};
                     item.value = data.length > 1
@@ -512,7 +514,7 @@ define(function (require) {
             var klass = options.prefix + '-' + options.selectedClass;
             var selected = this.popup.query(klass)[0];
             var value = selected ? selected.getAttribute('data-value') : '';
-            isNumber = lib.typeOf(isNumber) === 'boolean'
+            isNumber = $.type(isNumber) === 'boolean'
                 ? isNumber
                 : options.isNumber;
 
@@ -526,7 +528,7 @@ define(function (require) {
          * @public
          */
         reset: function () {
-            privates.pick.call(this, lib.dom.first(this.main), true);
+            privates.pick.call(this, $(this.main).first().get(0), true);
         }
     });
 

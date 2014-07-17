@@ -56,11 +56,11 @@ module.exports = function(config) {
     }, {
       pattern: 'test/spec/PicUploaderSpec.js',
       included: false
+    }, {
+      pattern: 'test/spec/SelectSpec.js',
+      included: false
     }
     // , {
-    //   pattern: 'test/spec/SliderSpec.js',
-    //   included: false
-    // }, {
     //   pattern: 'test/spec/SliderAnimSpec.js',
     //   included: false
     // }

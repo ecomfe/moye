@@ -2,42 +2,97 @@
 <html>
 <head>
 <meta charset="utf-8" />
-<title>picuploader</title>
-<link rel="stylesheet" href="css/FloatTip.css" />
-<script src="http://s1.bdstatic.com/r/www/cache/ecom/esl/1-6-8/esl.js"></script>
+<title>FloatTip - Moye</title>
+<link rel="stylesheet" href="./css/common.css" />
+<link rel="stylesheet" href="../src/css/FloatTip.css">
+
 </head>
 <body>
+<div class="nav">
+  <a href="#" class="logo"><img src="./img/moye.png" alt=""></a>
+  <ul>
+    <li><a href="Calendar.html" class="">Calendar</a>
+    <li><a href="City.html" class="">City</a>
+    <li><a href="Filter.html" class="">Filter</a>
+    <li><a href="Lunar.html" class="">Lunar</a>
+    <li><a href="Tabs.html" class="">Tabs</a>
+    <li><a href="Dialog.html" class="">Dialog</a>
+    <li><a href="FloatTip.html" class="active">FloatTip</a>
+    <li><a href="Lazy.html" class="">Lazy</a>
+    <li><a href="Pager.html" class="">Pager</a>
+    <li><a href="Rating.html" class="">Rating</a>
+    <li><a href="PicUploader.html" class="">PicUploader</a>
+    <li><a href="Select.html" class="">Select</a>
+  </ul>
+</div>
+<div class="container">
+<div class="markdown"><h1 id="filter">Filter</h1>
+<h3 id="demo">DEMO</h3>
+<hr>
+</div><div class="content">
+  <button id="floattip-show">显示</button>
+  <button id="floattip-hide">隐藏</button>
+  <button id="floattip-dispose">销毁</button>
+</div>
+<div class="markdown"><h3 id="-">源码</h3>
+<hr>
+<pre><code class="lang-html"><span class="tag">&lt;<span class="title">button</span> <span class="attribute">id</span>=<span class="value">"floattip-show"</span>&gt;</span>显示<span class="tag">&lt;/<span class="title">button</span>&gt;</span>
+<span class="tag">&lt;<span class="title">button</span> <span class="attribute">id</span>=<span class="value">"floattip-hide"</span>&gt;</span>隐藏<span class="tag">&lt;/<span class="title">button</span>&gt;</span>
+<span class="tag">&lt;<span class="title">button</span> <span class="attribute">id</span>=<span class="value">"floattip-dispose"</span>&gt;</span>销毁<span class="tag">&lt;/<span class="title">button</span>&gt;</span>
+</code></pre>
+<pre><code class="lang-js"><span class="built_in">require</span>([<span class="string">'FloatTip'</span>], <span class="function"><span class="keyword">function</span> <span class="params">(FloatTip)</span> </span>{
+  <span class="keyword">var</span> floattip = <span class="keyword">new</span> FloatTip({
+      content: <span class="string">'弹出提示层'</span>,
+      left: <span class="string">'50%'</span>,
+      top: <span class="string">'250px'</span>,
+      fixed: <span class="number">0</span>
+  });
 
-<button id="floattip-show">显示</button>
-<button id="floattip-hide">隐藏</button>
-<button id="floattip-dispose">销毁</button>
+  floattip.render();
+
+  $(<span class="string">'#floattip-show'</span>).on(<span class="string">'click'</span>, <span class="function"><span class="keyword">function</span><span class="params">()</span> </span>{
+      floattip.show();
+  });
+
+  $(<span class="string">'#floattip-hide'</span>).on(<span class="string">'click'</span>, <span class="function"><span class="keyword">function</span><span class="params">()</span> </span>{
+      floattip.hide();
+  });
+
+  $(<span class="string">'#floattip-dispose'</span>).on(<span class="string">'click'</span>, <span class="function"><span class="keyword">function</span><span class="params">()</span> </span>{
+      floattip.dispose();
+  });
+
+});
+</code></pre>
+</div></div>
+<script src="http://s1.bdstatic.com/r/www/cache/ecom/esl/1-6-8/esl.js"></script>
+<script src="http://s1.bdstatic.com/r/www/cache/static/jquery/jquery-1.10.2.min_f2fb5194.js"></script>
 <script>
-(function () {
-    require.config({ 'baseUrl': '../src/ui' });
-    require(['lib', 'FloatTip'], function (lib, FloatTip) {
-      var floattip = new FloatTip({
-          content: '弹出提示层',
-          left: '20px',
-          top: '40px',
-          fixed: 0
-      });
-      floattip.render();
-
-      lib.on( lib.g('floattip-show'), 'click', function() {
-          floattip.show();
-      });
-
-      lib.on( lib.g('floattip-hide'), 'click', function() {
-          floattip.hide();
-      });
-
-      lib.on( lib.g('floattip-dispose'), 'click', function() {
-          floattip.dispose();
-      });
-
-    });
-
-})();
+require.config({ 'baseUrl': '../src/ui' });
 </script>
-</body>
+<script>
+require(['FloatTip'], function (FloatTip) {
+  var floattip = new FloatTip({
+      content: '弹出提示层',
+      left: '50%',
+      top: '180px',
+      fixed: 0
+  });
+
+  floattip.render();
+
+  $('#floattip-show').on('click', function() {
+      floattip.show();
+  });
+
+  $('#floattip-hide').on('click', function() {
+      floattip.hide();
+  });
+
+  $('#floattip-dispose').on('click', function() {
+      floattip.dispose();
+  });
+
+});
+</script></body>
 </html>
