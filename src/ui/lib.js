@@ -173,7 +173,7 @@ define(function (require) {
                 case 'string':
                     return '"' + obj.replace(/[\x00-\x1f\\"]/g, escape) + '"';
                 case 'array':
-                    return '[' + map(obj, stringify) + ']';
+                    return '[' + $.map(obj, stringify) + ']';
                 case 'object':
                     var string = [];
                     $.each(obj, function (key, value) {
