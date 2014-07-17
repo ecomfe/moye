@@ -1,4 +1,4 @@
-{% target: filter(master=base) %}
+{% target: pager(master=base) %}
 
 {% content: style %}
 <link rel="stylesheet" href="../src/css/Pager.less" />
