@@ -1,6 +1,5 @@
 define(function (require) {
     var $ = require('jquery');
-    var lib = require('ui/lib');
     var Rating = require('ui/Rating');
     var rating;
 
