@@ -21,7 +21,7 @@ module.exports = function (grunt) {
         
         jshint: {
             options: grunt.file.readJSON('.jshintrc'),
-            files: ['<%=meta.src.main%>/ui/*.js', '<%=meta.src.test%>/*.js']
+            files: ['<%=meta.src.main%>/ui/*.js'/*, '<%=meta.src.test%>/*.js'*/]
         },
 
         less: {
