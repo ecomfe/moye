@@ -120,7 +120,7 @@ define(function (require) {
             var target       = $(this.target || this.triggers[0]);
             var main         = $(this.main);
             var dir          = options.dir;
-            var position     = target.position();
+            var position     = target.offset();
 
             // 目标的8个关键坐标点
             var top          = position.top;

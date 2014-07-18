@@ -45,7 +45,7 @@ define(function (require) {
                 }
 
                 // 图片的坐标数据
-                var cd = img.position();
+                var cd = img.offset();
 
                 cd.right = cd.left + img.width();
                 cd.bottom = cd.top + img.height();

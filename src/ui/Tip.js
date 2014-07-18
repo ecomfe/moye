@@ -8,32 +8,9 @@
 
 define(function (require) {
 
-    var lib = require('./lib');
-    var DOM = lib.dom;
-    var PAGE = lib.page;
+    var $       = require('jquery');
+    var lib     = require('./lib');
     var Control = require('./Control');
-
-    /**
-     * 从事件源查找目标DOM节点
-     * 
-     * @param {Event} e DOM事件对象
-     * @param {string} className 目标的className
-     * @return {?HTMLElement} 找到的目标对象
-     * @inner
-     */
-    var getTarget = function (e, className) {
-        var target = lib.getTarget(e);
-
-        if (!lib.hasClass(target, className)) {
-            target = lib.getAncestorByClass(target, className);
-
-            if (!target) {
-                return null;
-            }
-        }
-
-        return target;
-    };
 
     /**
      * 私有函数或方法
@@ -89,12 +66,12 @@ define(function (require) {
          */
         onDocClick: function (e) {
             var main = this.main;
-            var target = getTarget(e, this.options.flag);
+            var target = $(e.target).closest('.' + this.options.flag);
 
             if (
-                main === target
-                    || ~lib.array.indexOf(this.triggers, target)
-                    || DOM.contains(main, target)
+                target.is(main)
+                    || ~$.inArray(target[0], this.triggers)
+                    || $.contains(main, target)
             ) {
                 return;
             }
@@ -111,27 +88,29 @@ define(function (require) {
          * @private
          */
         onShow: function (e) {
-            var target = getTarget(e, this.options.flag);
+            var target = $(e.target).closest('.' + this.options.flag);
            
             privates.clear.call(this);
 
-            if (!target || this.current === target) {
+            if (!target.length || target.is(this.current)) {
                 return;
             }
 
             var events = this.events;
             var bound  = this._bound;
             if (events) {
-                lib.on(target, events.un, bound.onHide);
-                lib.un(target, events.on, bound.onShow);
+                target
+                    .on(events.un, bound.onHide)
+                    .off(events.on, bound.onShow);
 
                 if (this.current) {
-                    lib.on(this.current, events.on, bound.onShow);
-                    lib.un(this.current, events.un, bound.onHide);
+                    $(this.current)
+                        .on(events.on, bound.onShow)
+                        .off(events.un, bound.onHide);
                 }
 
                 if (this.options.mode === 'click') {
-                    lib.on(document, 'click', bound.onDocClick);
+                    $(document).on('click', bound.onDocClick);
                 }
             }
             
@@ -143,7 +122,7 @@ define(function (require) {
              * @property {HTMLElement} target 事件源 DOM 对象
              * @property {Event} e 事件源对象
              */
-            this.fire('beforeShow', { target: target, event: e });
+            this.fire('beforeShow', { target: target.get(0), event: e });
 
             var delay = this.options.showDelay;
             if (delay) {
@@ -207,26 +186,26 @@ define(function (require) {
          */
         computePosition: function () {
             var options      = this.options;
-            var target       = this.current;
-            var main         = this.main;
+            var target       = $(this.current);
+            var main         = $(this.main);
             var arrow        = this.elements.arrow;
             var dir          = options.arrow;
-            var position     = DOM.getPosition(target);
+            var position     = target.offset();
             var prefix       = options.prefix + '-arrow';
 
             // 目标的8个关键坐标点
             var top          = position.top;
             var left         = position.left;
-            var width        = target.offsetWidth;
-            var height       = target.offsetHeight;
+            var width        = target.width();
+            var height       = target.height();
             var right        = left + width;
             var bottom       = top + height;
             var center       = left + (width / 2);
             var middle       = top + (height / 2);
 
             // 提示层宽高
-            var mainWidth    = main.offsetWidth;
-            var mainHeight   = main.offsetHeight;
+            var mainWidth    = main.width();
+            var mainHeight   = main.height();
 
             // 箭头宽高
             // FIXME: 如果通过 tpl 修改了控件模板，
@@ -235,13 +214,13 @@ define(function (require) {
             var arrowHeight  = arrow.firstChild.offsetHeight;
 
             // 视窗范围
-            var scrollTop    = PAGE.getScrollTop();
-            var scrollLeft   = PAGE.getScrollLeft();
-            var scrollRight  = scrollLeft + PAGE.getViewWidth();
-            var scrollBottom = scrollTop + PAGE.getViewHeight();
+            var scrollTop    = lib.getScrollTop();
+            var scrollLeft   = lib.getScrollLeft();
+            var scrollRight  = scrollLeft + lib.getViewWidth();
+            var scrollBottom = scrollTop + lib.getViewHeight();
 
             // 属性配置优于实例配置
-            var dirFromAttr = target.getAttribute('data-tooltips');
+            var dirFromAttr = target.attr('data-tooltips');
             if (dirFromAttr) {
                 dir = /[trblc]{2}/.test(dirFromAttr) ? dirFromAttr : '1';
             }
@@ -363,13 +342,10 @@ define(function (require) {
 
             }
 
-            DOM.setStyles(
-                main, 
-                {
-                    left: left + 'px', 
-                    top: top + 'px'
-                }
-            );
+            main.css({
+                left: left + 'px', 
+                top: top + 'px'
+            });
 
         }
 
@@ -536,43 +512,31 @@ define(function (require) {
         render: function () {
 
             var me      = this;
-            var main    = this.main;
+            var main    = $(this.main);
             var options = this.options;
             var events  = this.events;
 
             if (!this.rendered) {
                 this.rendered = true;
 
-                document.body.appendChild(main);
+                main.appendTo(document.body);
 
                 var bound = this._bound;
-                lib.on(
-                    main,
-                    'click',
-                    bound.onClick
-                );
+
+                main.on('click', bound.onClick);
 
                 if (this.options.mode === 'over') {
-                    lib.on(
-                        main,
-                        'mouseenter',
-                        bound.onMouseEnter
-                    );
-
-                    lib.on(
-                        main,
-                        'mouseleave',
-                        bound.onMouseLeave
-                    );
+                    main.on('mouseenter', bound.onMouseEnter);
+                    main.on('mouseleave', bound.onMouseLeave);
                 }
 
                 var elements = this.elements = {};
                 var prefix = options.prefix + '-';
 
-                lib.each(
+                $.each(
                     'arrow,title,body'.split(','),
-                    function (name) {
-                        elements[name] = lib.q(prefix + name, main)[0];
+                    function (i, name) {
+                        elements[name] = main.find('.' + prefix + name)[0];
                     }
                 );
 
@@ -607,21 +571,23 @@ define(function (require) {
             var flag    = options.flag;
 
             this.triggers = typeof triggers === 'string'
-                ? lib.q(options.triggers)
-                : (triggers.length ? triggers : [triggers]);
+                ? $('.' + options.triggers)
+                : $(triggers);
 
             var onShow = this._bound.onShow;
-            if (events) {
-                lib.each(
-                    this.triggers,
-                    function (trigger) {
-                        if (!lib.hasClass(trigger, flag)) {
-                            lib.addClass(trigger, flag);
-                            lib.on(trigger, events.on, onShow);
-                        }
-                    }
-                );
+
+            if (!events) {
+                return;
             }
+
+            this.triggers.each(function (i, trigger) {
+                trigger = $(trigger);
+                if (!trigger.hasClass(flag)) {
+                    trigger.addClass(flag);
+                    trigger.on(events.on, onShow);
+                }
+            });
+
         },
 
         /**
@@ -636,28 +602,27 @@ define(function (require) {
          */
         refresh: function (triggers, parentNode) {
             var events  = this.events;
+            var bound = this._bound;
 
             triggers = typeof triggers === 'string'
-                ? lib.q(triggers, parentNode)
-                : (triggers.length ? triggers : [triggers]);
+                ? $('.' + triggers, parentNode)
+                : $(triggers);
 
-            var bound = this._bound;
-            if (events) {
-                if (this.triggers) {
-                    lib.each(
-                        triggers,
-                        function (trigger) {
-                            if (!triggers.parentElement) {
-                                lib.un(trigger, events.on, bound.onShow);
-                                lib.un(trigger, events.un, bound.onHide);
-                            }
-                        }
-                    );
-
-                }
-
-                this.addTriggers(triggers);
+            if (!events) {
+                return;
             }
+
+            if (this.triggers) {
+                triggers.each(function (i, trigger) {
+                    trigger = $(trigger);
+                    if (!trigger.parent().length) {
+                        trigger.off(events.on, bound.onShow);
+                        trigger.off(events.un, bound.onHide);
+                    }
+                });
+            }
+
+            this.addTriggers(triggers);
         },
 
         /**
@@ -675,15 +640,21 @@ define(function (require) {
            
             this.current = target;
 
-            lib.on(window, 'resize', this._bound.onResize);
+            $(window).on('resize', this._bound.onResize);
 
-            elements.title.innerHTML = this.title || '';
             elements.body.innerHTML  = this.content;
 
-            lib[this.title ? 'show' : 'hide'](elements.title);
+            var title = $(elements.title);
+
+            if (this.title) {
+                title.html(this.title).show();
+            }
+            else {
+                title.empty().hide();
+            }
 
             if (!options.arrow) {
-                lib.hide(elements.arrow);
+                $(elements.arrow).hide();
             }
 
             privates.computePosition.call(this);
@@ -711,11 +682,12 @@ define(function (require) {
             var bound  = this._bound;
 
             if (events && target) {
-                lib.on(target, events.on, bound.onShow);
-                lib.un(target, events.un, bound.onHide);
+                $(target)
+                    .on(events.on, bound.onShow)
+                    .off(events.un, bound.onHide);
 
                 if (this.options.mode === 'click') {
-                    lib.un(document, 'click', bound.onDocClick);
+                    $(document).off('click', bound.onDocClick);
                 }
             }
 
@@ -726,7 +698,7 @@ define(function (require) {
             this._visible = false;
 
             this.current = null;
-            lib.un(window, 'resize', bound.onResize);
+            $(window).off('resize', bound.onResize);
 
             /**
              * @event module:Tip#hide
@@ -756,10 +728,7 @@ define(function (require) {
          */
         setTitle: function (html) {
             this.title = html || '';
-
-            var elements = this.elements;
-            elements.title.innerHTML = this.title;
-            lib[this.title ? 'show' : 'hide'](elements.title);
+            $(this.elements.title)[this.title ? 'show' : 'hide']().html(this.title);
         },
 
         /**
@@ -783,30 +752,29 @@ define(function (require) {
             var events  = this.events;
             var bound   = this._bound;
 
-            if (events) {
-                var flag = options.flag;
-                lib.each(
-                    this.triggers || [],
-                    function (trigger) {
-                        if (lib.hasClass(trigger, flag)) {
-                            lib.removeClass(trigger, flag);
-                            lib.un(trigger, events.on, bound.onShow);
-                        }
-                    }
-                );
+            if (!events) {
+                return;
             }
 
+            var flag = options.flag;
+
+            $.each(this.triggers || [], function (i, trigger) {
+                trigger = $(trigger);
+                trigger.hasClass(flag) && trigger.removeClass(flag).off(events.on, bound.onShow);
+            });
+
             var main = this.main;
+
             if (options.mode === 'over') {
-                lib.un(main, 'mouseenter', bound.onMouseEnter);
-                lib.un(main, 'mouseleave', bound.onMouseLeave);
+                $(main).off('mouseenter', bound.onMouseEnter);
+                $(main).off('mouseleave', bound.onMouseLeave);
             }
             else {
-                lib.un(document, 'click', bound.onDocClick);
+                $(document).off('click', bound.onDocClick);
             }
 
             this.current = null;
-            this.parent('dispose');
+            this.parent();
         }
 
     });

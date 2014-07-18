@@ -93,7 +93,7 @@ define(function (require) {
                 var el = $(data[0]);
 
                 // 元素坐标
-                var cd = el.position();
+                var cd = el.offset();
 
                 var options = data[2] || {};
                 options.x = options.x || 10;

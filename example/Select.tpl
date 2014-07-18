@@ -15,7 +15,7 @@
 <div id='content_left'>
   <div class="result-op" srcid="16873" id="1" mu="http://baike.baidu.com/view/1758.htm" data-op="{'y':'FD9FFD6B'}">
 
-<div>
+<div class="content">
   筛选： 
   <a href="#" class="ecl-ui-sel-target"><b>商圈</b><i></i></a><a href="#" class="ecl-ui-sel-target"><b>价格</b><i></i></a><a href="#" class="ecl-ui-sel-target"><b>星级</b><i></i></a><a href="#" class="ecl-ui-sel-target"><b>品牌</b><i></i></a> <input class="ecl-ui-sel-target" value="直辖市">
   <p class="ecl-ui-sel c-clearfix">

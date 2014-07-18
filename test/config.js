@@ -77,6 +77,10 @@ module.exports = function(config) {
       {
         pattern: 'test/spec/SelectSpec.js',
         included: false
+      },
+      {
+        pattern: 'test/spec/TipSpec.js',
+        included: false
       }
     // , {
     //   pattern: 'test/spec/SliderAnimSpec.js',

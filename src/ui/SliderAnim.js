@@ -482,7 +482,6 @@ define(function (require) {
             var move = (this.targetPos - this.curPos) * this.easingFn(percent);
             var prop = this.yAxis ? 'scrollTop' : 'scrollLeft';
             this.slider.stage[prop] = this.curPos + move;
-            console.log(this.curPos + move);
         }
     }));
 
