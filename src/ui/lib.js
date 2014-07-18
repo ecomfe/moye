@@ -552,11 +552,13 @@ define(function (require) {
                     throw new Error('can not call private method:' + name);
                 }
 
+                var parent = this.parent;
+                var caller = this.$caller;
                 this.parent = parentMethod;
                 this.$caller = wrapper;
                 var result = method.apply(this, arguments);
-                this.parent = null;
-                this.$caller = null;
+                this.parent = parent;
+                this.$caller = caller;
 
                 return result;
             };
