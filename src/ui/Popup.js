@@ -46,7 +46,7 @@ define(function (require) {
          */
         onShow: function (e) {
 
-            var oldTarget = this.target;
+            // var oldTarget = this.target;
 
             if (this._disabled) {
                 return;
@@ -54,9 +54,9 @@ define(function (require) {
 
             var trigger = e.target;
 
-            if (oldTarget && oldTarget !== trigger) {
-                this.hide();
-            }
+            // if (oldTarget && oldTarget !== trigger) {
+            //     this.hide();
+            // }
 
             var $trigger = $(e.target);
             var liveTriggers = this.liveTriggers;
@@ -123,8 +123,10 @@ define(function (require) {
             var position     = target.offset();
 
             // 目标的8个关键坐标点
-            var top          = position.top;
-            var left         = position.left;
+            var marginTop = parseInt(target.css('margin-top'), 10);
+            var marginLeft = parseInt(target.css('margin-left'), 10);
+            var top          = position.top + marginTop;
+            var left         = position.left + marginLeft;
             var width        = target.outerWidth();  // target[0].offsetWidth;
             var height       = target.outerHeight(); // target[0].offsetHeight;
             var right        = left + width;

@@ -11,8 +11,9 @@
 
 {% /filter %}
 
-
-<div style="text-align:center"><div class="ecl-ui-pager c-clearfix"></div></div>
+<div class="content">
+    <div style="text-align:center"><div class="ecl-ui-pager c-clearfix"></div></div>
+</div>
 
 {% filter: markdown %}
 
