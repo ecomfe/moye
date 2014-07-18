@@ -123,10 +123,8 @@ define(function (require) {
             var position     = target.offset();
 
             // 目标的8个关键坐标点
-            var marginTop = parseInt(target.css('margin-top'), 10);
-            var marginLeft = parseInt(target.css('margin-left'), 10);
-            var top          = position.top + marginTop;
-            var left         = position.left + marginLeft;
+            var top = position.top;
+            var left = position.left;
             var width        = target.outerWidth();  // target[0].offsetWidth;
             var height       = target.outerHeight(); // target[0].offsetHeight;
             var right        = left + width;
