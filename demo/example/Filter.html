@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>Filter - Moye</title>
+<link rel="stylesheet" href="./css/common.css" />
+<link rel="stylesheet" href="../src/css/Filter.css">
+
+</head>
+<body>
+<div class="nav">
+  <a href="#" class="logo"><img src="./img/moye.png" alt=""></a>
+  <ul>
+    <li><a href="Calendar.html" class="">Calendar</a>
+    <li><a href="City.html" class="">City</a>
+    <li><a href="Filter.html" class="active">Filter</a>
+    <li><a href="Lunar.html" class="">Lunar</a>
+    <li><a href="Tabs.html" class="">Tabs</a>
+    <li><a href="Dialog.html" class="">Dialog</a>
+    <li><a href="FloatTip.html" class="">FloatTip</a>
+    <li><a href="Lazy.html" class="">Lazy</a>
+    <li><a href="Pager.html" class="">Pager</a>
+    <li><a href="Rating.html" class="">Rating</a>
+    <li><a href="PicUploader.html" class="">PicUploader</a>
+    <li><a href="Slider.html" class="">Slider</a>
+    <li><a href="Select.html" class="">Select</a>
+  </ul>
+</div>
+<div class="container">
+<div class="markdown"><h1 id="filter">Filter</h1>
+<h3 id="demo">DEMO</h3>
+<hr>
+</div>
+<div class="result-op" srcid="16873" id="1" mu="http://baike.baidu.com/view/1758.htm" data-op="{'y':'FD9FFD6B'}">
+    <form class="ecl-ui-filter" autocomplete="off">
+        <p>按类型：
+            <label class="checked"><input type="radio" name="type" value="" checked="checked" />全部</label>
+            <label><input type="radio" name="type" value="1" />角色扮演</label>
+            <label><input type="radio" name="type" value="2" />运动休闲</label>
+            <label><input type="radio" name="type" value="3" />射击游戏</label>
+            <label><input type="radio" name="type" value="4" />回合游戏</label>
+            <label><input type="radio" name="type" value="5" />策略经营</label>
+        </p>
+        <p>按特色：
+            <label data-all="all"><input type="checkbox" name="special" value="" />全部</label>
+            <label><input type="checkbox" name="special" value="1" />奇幻</label>
+            <label class="checked"><input type="checkbox" name="special" value="2" checked="checked" />玄幻</label>
+            <label><input type="checkbox" name="special" value="3" />武侠</label>
+            <label><input type="checkbox" name="special" value="4" />历史</label>
+            <label><input type="checkbox" name="special" value="5" />写实</label>
+            <label><input type="checkbox" name="special" value="6" />魔幻</label>
+            <label><input type="checkbox" name="special" value="7" />体育</label>
+            <label><input type="checkbox" name="special" value="8" />科幻</label>
+            <label><input type="checkbox" name="special" value="9" />狂欢</label>
+        </p>
+    </form>
+</div>
+
+<div class="markdown"><h3 id="-">源码</h3>
+<hr>
+<pre><code class="lang-html">&lt;form <span class="variable">class=</span><span class="string">"ecl-ui-filter"</span> <span class="variable">autocomplete=</span><span class="string">"off"</span>&gt;
+    &lt;p&gt;按类型：
+        &lt;label <span class="variable">class=</span><span class="string">"checked"</span>&gt;&lt;input <span class="variable">type=</span><span class="string">"radio"</span> <span class="variable">name=</span><span class="string">"type"</span> <span class="variable">value=</span><span class="string">""</span> <span class="variable">checked=</span><span class="string">"checked"</span> /&gt;全部&lt;/label&gt;
+        &lt;label&gt;&lt;input <span class="variable">type=</span><span class="string">"radio"</span> <span class="variable">name=</span><span class="string">"type"</span> <span class="variable">value=</span><span class="string">"1"</span> /&gt;角色扮演&lt;/label&gt;
+        &lt;label&gt;&lt;input <span class="variable">type=</span><span class="string">"radio"</span> <span class="variable">name=</span><span class="string">"type"</span> <span class="variable">value=</span><span class="string">"2"</span> /&gt;运动休闲&lt;/label&gt;
+        &lt;label&gt;&lt;input <span class="variable">type=</span><span class="string">"radio"</span> <span class="variable">name=</span><span class="string">"type"</span> <span class="variable">value=</span><span class="string">"3"</span> /&gt;射击游戏&lt;/label&gt;
+        &lt;label&gt;&lt;input <span class="variable">type=</span><span class="string">"radio"</span> <span class="variable">name=</span><span class="string">"type"</span> <span class="variable">value=</span><span class="string">"4"</span> /&gt;回合游戏&lt;/label&gt;
+        &lt;label&gt;&lt;input <span class="variable">type=</span><span class="string">"radio"</span> <span class="variable">name=</span><span class="string">"type"</span> <span class="variable">value=</span><span class="string">"5"</span> /&gt;策略经营&lt;/label&gt;
+    &lt;/p&gt;
+    &lt;p&gt;按特色：
+        &lt;label <span class="variable">data-all=</span><span class="string">"all"</span>&gt;&lt;input <span class="variable">type=</span><span class="string">"checkbox"</span> <span class="variable">name=</span><span class="string">"special"</span> <span class="variable">value=</span><span class="string">""</span> /&gt;全部&lt;/label&gt;
+        &lt;label&gt;&lt;input <span class="variable">type=</span><span class="string">"checkbox"</span> <span class="variable">name=</span><span class="string">"special"</span> <span class="variable">value=</span><span class="string">"1"</span> /&gt;奇幻&lt;/label&gt;
+        &lt;label <span class="variable">class=</span><span class="string">"checked"</span>&gt;&lt;input <span class="variable">type=</span><span class="string">"checkbox"</span> <span class="variable">name=</span><span class="string">"special"</span> <span class="variable">value=</span><span class="string">"2"</span> <span class="variable">checked=</span><span class="string">"checked"</span> /&gt;玄幻&lt;/label&gt;
+        &lt;label&gt;&lt;input <span class="variable">type=</span><span class="string">"checkbox"</span> <span class="variable">name=</span><span class="string">"special"</span> <span class="variable">value=</span><span class="string">"3"</span> /&gt;武侠&lt;/label&gt;
+        &lt;label&gt;&lt;input <span class="variable">type=</span><span class="string">"checkbox"</span> <span class="variable">name=</span><span class="string">"special"</span> <span class="variable">value=</span><span class="string">"4"</span> /&gt;历史&lt;/label&gt;
+        &lt;label&gt;&lt;input <span class="variable">type=</span><span class="string">"checkbox"</span> <span class="variable">name=</span><span class="string">"special"</span> <span class="variable">value=</span><span class="string">"5"</span> /&gt;写实&lt;/label&gt;
+        &lt;label&gt;&lt;input <span class="variable">type=</span><span class="string">"checkbox"</span> <span class="variable">name=</span><span class="string">"special"</span> <span class="variable">value=</span><span class="string">"6"</span> /&gt;魔幻&lt;/label&gt;
+        &lt;label&gt;&lt;input <span class="variable">type=</span><span class="string">"checkbox"</span> <span class="variable">name=</span><span class="string">"special"</span> <span class="variable">value=</span><span class="string">"7"</span> /&gt;体育&lt;/label&gt;
+        &lt;label&gt;&lt;input <span class="variable">type=</span><span class="string">"checkbox"</span> <span class="variable">name=</span><span class="string">"special"</span> <span class="variable">value=</span><span class="string">"8"</span> /&gt;科幻&lt;/label&gt;
+        &lt;label&gt;&lt;input <span class="variable">type=</span><span class="string">"checkbox"</span> <span class="variable">name=</span><span class="string">"special"</span> <span class="variable">value=</span><span class="string">"9"</span> /&gt;狂欢&lt;/label&gt;
+    &lt;/p&gt;
+&lt;/form&gt;
+</code></pre>
+<pre><code class="lang-js"><span class="built_in">require</span>([<span class="string">'Filter'</span>], <span class="function"><span class="keyword">function</span> <span class="params">(Filter)</span> </span>{
+
+    <span class="keyword">var</span> map = {
+        <span class="string">'1'</span>: [<span class="number">2</span>, <span class="number">3</span>, <span class="number">5</span>],
+        <span class="string">'2'</span>: [<span class="number">1</span>, <span class="number">2</span>, <span class="number">4</span>]
+    };
+
+    <span class="keyword">new</span> Filter({
+        prefix: <span class="string">'ecl-ui-filter'</span>,
+        main: $(<span class="string">'.ecl-ui-filter'</span>)[<span class="number">0</span>],
+        groups: <span class="string">'p'</span>,
+
+        onChange: <span class="function"><span class="keyword">function</span> <span class="params">(e)</span> </span>{
+
+            <span class="keyword">if</span> (e.key === <span class="string">'type'</span>) {
+                <span class="keyword">var</span> value = e.value[<span class="number">0</span>];
+
+                <span class="keyword">if</span> (map[value]) {
+                    <span class="keyword">this</span>.disableItems(<span class="string">'special'</span>, map[value]);
+                }
+                <span class="keyword">else</span> {
+                    <span class="keyword">this</span>.enableItems(<span class="string">'special'</span>);
+                }
+            }
+        }
+
+    }).render();
+});
+</code></pre>
+</div></div>
+<script src="http://s1.bdstatic.com/r/www/cache/ecom/esl/1-6-8/esl.js"></script>
+<script src="http://s1.bdstatic.com/r/www/cache/static/jquery/jquery-1.10.2.min_f2fb5194.js"></script>
+<script>
+require.config({ 'baseUrl': '../src/ui' });
+</script>
+<script>
+require(['Filter'], function (Filter) {
+	var map = {
+		'1': [2, 3, 5],
+		'2': [1, 2, 4]
+	};
+
+    new Filter({
+        prefix: 'ecl-ui-filter',
+        main: $('.ecl-ui-filter')[0],
+        groups: 'p',
+        
+        onChange: function (e) {
+
+        	if (e.key === 'type') {
+        		var value = e.value[0];
+
+        		if (map[value]) {
+        			this.disableItems('special', map[value]);
+        		}
+        		else {
+        			this.enableItems('special');
+        		}
+        	}
+        }
+
+    }).render();
+});
+</script></body>
+</html>

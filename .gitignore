@@ -7,3 +7,4 @@ doc/api
 test/coverage
 SpecRunner.html
 *.orig
+undefined/

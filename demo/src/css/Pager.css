@@ -1,0 +1,61 @@
+.ecl-ui-pager {
+  display: inline-block;
+  *display: inline;
+}
+.ecl-ui-pager a {
+  float: left;
+  margin: 3px;
+  text-decoration: none;
+  border: 1px solid #CCC;
+  overflow: hidden;
+  padding: 2px 5px;
+  color: #03C;
+  font: normal 12px/1.2 Arial, Helvetica, sans-serif;
+  text-align: center;
+}
+.ecl-ui-pager a em {
+  vertical-align: middle;
+  border: 5px solid #fff;
+  font-size: 0;
+  margin: auto 3px;
+  *zoom: 1;
+}
+.ecl-ui-pager a:hover {
+  background-color: #EFF4FA;
+}
+.ecl-ui-pager a:hover em {
+  border-color: #EFF4FA;
+}
+.ecl-ui-pager a.ecl-ui-pager-ellipsis {
+  border: none;
+}
+.ecl-ui-pager .ecl-ui-pager-current {
+  font-weight: 700;
+  border: none;
+  color: #666;
+  cursor: default;
+}
+.ecl-ui-pager .ecl-ui-pager-current:hover,
+.ecl-ui-pager .ecl-ui-pager-ellipsis:hover,
+.ecl-ui-pager .ecl-ui-pager-disabled:hover {
+  background: none;
+}
+.ecl-ui-pager .ecl-ui-pager-current:hover em,
+.ecl-ui-pager .ecl-ui-pager-ellipsis:hover em,
+.ecl-ui-pager .ecl-ui-pager-disabled:hover em {
+  border-color: #FFF;
+}
+.ecl-ui-pager .ecl-ui-pager-prev em,
+.ecl-ui-pager .ecl-ui-pager-prev:hover em {
+  border-right-color: #999;
+  border-left: none;
+}
+.ecl-ui-pager .ecl-ui-pager-next em,
+.ecl-ui-pager .ecl-ui-pager-next:hover em {
+  border-left-color: #999;
+  border-right: none;
+}
+.ecl-ui-pager .ecl-ui-pager-disabled {
+  color: #999;
+  cursor: default;
+}
