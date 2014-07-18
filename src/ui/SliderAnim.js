@@ -433,15 +433,14 @@ define(function (require) {
             if (this.rollCycle) {
                 //初始化要拷贝首节点到最后
                 if (!this.cycleNode) {
-                    var cloned = this.slider.stage.firstChild.cloneNode();
-                    this.slider.stage.appendChild(cloned);
+                    var stage = $(this.slider.stage);
+                    stage.children().first().clone().appendTo(stage);
                     this.cycleNode = true;
                 }
             }
 
             //这里为了避免reflow使用这种书写方式
             if (this.yAxis) {
-
                 if (this.isBusy()) {
                     this.curPos = this.slider.stage.scrollTop;
                 } else {
@@ -482,8 +481,8 @@ define(function (require) {
         tick: function (percent) {
             var move = (this.targetPos - this.curPos) * this.easingFn(percent);
             var prop = this.yAxis ? 'scrollTop' : 'scrollLeft';
-            console.log(this.curPos + move);
             this.slider.stage[prop] = this.curPos + move;
+            console.log(this.curPos + move);
         }
     }));
 

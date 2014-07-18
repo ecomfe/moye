@@ -326,7 +326,7 @@ define(function (require) {
 
             if (options.main) {
 
-                this.main = $(this.main)
+                this.main = $(options.main)
                     .addClass(options.prefix)
                     .on('mouseenter', bound.onEnter)
                     .on('mouseleave', bound.onLeave)

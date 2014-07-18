@@ -64,11 +64,11 @@ Moye (知心组件库)
 - [x] lib     清理完成
 - [x] 农历控件 [Lunar](http://ecomfe.github.io/moye/example/Lunar.html)
 - [x] 日历控件 [Calendar](http://ecomfe.github.io/moye/example/Calendar.html)
-- [ ] 日历扩展 [CalendarExtension](http://ecomfe.github.io/moye/example/CalendarExtension.html)
+- [x] 日历扩展 [CalendarExtension](http://ecomfe.github.io/moye/example/CalendarExtension.html)
 - [x] Cookie管理
 - [x] 城市选择 [City](http://ecomfe.github.io/moye/example/City.html)
 - [x] 分页控件 [Pager](http://ecomfe.github.io/moye/example/Pager.html)
-- [ ] 浮层提示 [Tip](http://ecomfe.github.io/moye/example/Tip.html)
+- [x] 浮层提示 [Tip](http://ecomfe.github.io/moye/example/Tip.html)
 - [x] 点击统计 [Log](http://ecomfe.github.io/moye/example/log.html)
 - [x] 条件过滤 [Filter](http://ecomfe.github.io/moye/example/Filter.html)
     1. 现在我们不再默认第一个选项为`全部`了，而是通过`label`上的data-all属性来识别。使用者可以在`options`中通过配置属性`allTag`来调整`data-all`，换成任意别的标签，比如`data-some-tag`;

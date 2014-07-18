@@ -27,7 +27,7 @@
     <div class="ecl-ui-slider-index">
       <i></i><i></i><i></i><i></i>
     </div>
-    <div id="ecl-ui-slider-stage" class="ecl-ui-slider-stage">
+    <div class="ecl-ui-slider-stage">
       <img src="http://pic.hefei.cc/newcms/2012/03/14/13316929284f6005808aa20.jpg"><img src="http://pic.hefei.cc/newcms/2012/03/14/13316929274f60057f72733.jpg"><img src="http://pic.hefei.cc/newcms/2012/03/14/13316929284f60058013da9.jpg"><img src="http://pic.hefei.cc/newcms/2012/03/14/13316929294f600581a07e5.jpg"></div>
   </div>
 </div>
@@ -69,7 +69,7 @@ def.render();
 {%/filter%}
 
 <div class="content">
-  <div id="slider-container" class="ecl-ui-slider">
+  <div id="slider-container-horizontal" class="ecl-ui-slider">
     <i id="ecl-ui-slider-prev" class="ecl-ui-slider-prev">&lt;</i>
     <i id="ecl-ui-slider-next" class="ecl-ui-slider-next">&gt;</i>
     <div class="ecl-ui-slider-index">
@@ -207,12 +207,10 @@ require(['lib', 'Slider'], function (lib, Slider) {
         console.log(e);
       }
     }
-  });
+  }).render();
 
-  staticSlider.render();
-
-  var slider = new Slider({
-    main: lib.g('slider-container'),
+  var horizontalSlider = new Slider({
+    main: $('#slider-container-horizontal')[0],
     anim: 'slide',
     animOptions: {
       easing:'easing', //easing, backIn, backOut, backBoth, lineer, bounce
@@ -222,9 +220,7 @@ require(['lib', 'Slider'], function (lib, Slider) {
     onChange: function(e) {
       console.log(e);
     }
-  });
-
-  slider.render();
+  }).render();
 
   var verticalSlider = new Slider({
     main: lib.g('slider-container-vertical'),
@@ -234,9 +230,7 @@ require(['lib', 'Slider'], function (lib, Slider) {
       easing:'bounce',
       interval: 500
     }
-  });
-
-  verticalSlider.render();
+  }).render();
 
   var opacitySlider = new Slider({
     main: lib.g('slider-container-opacity'),
@@ -246,9 +240,8 @@ require(['lib', 'Slider'], function (lib, Slider) {
       interval: 500
     },
     auto: true
-  });
+  }).render();
 
-  opacitySlider.render();
 
 });
 </script>
