@@ -1,4 +1,4 @@
-{% target: filter(master=base) %}
+{% target: Filter(master=base) %}
 
 {% content: style %}
 <link rel="stylesheet" href="../src/css/Filter.less">

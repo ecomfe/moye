@@ -1,7 +1,7 @@
-{% target: Calendar(master=base) %}
+{% target: CalenderExtension(master=base) %}
 
 {% content: style %}
-<link rel="stylesheet" href="../src/css/Calendar.less">
+<link rel="stylesheet" href="../src/css/CalendarExtension.less">
 <style>
   .line input {
     -moz-box-sizing: content-box;
@@ -24,38 +24,44 @@
 {% content: content %}
 
 {% filter: markdown %}
-# Calender 日历
+
+# CalenderExtension 扩展版日历
+
+扩展版日历可以快速选择年份与月份
 
 ### DEMO
 -----------------------
 
 {% /filter%}
-<div class="line">
-  <input type="text" class="calendar-trigger" />
-  <button type="button" class="calendar-trigger" >click</button>
-  <input type="text" class="calendar-trigger" />
-  <button type="button" class="calendar-trigger" >click</button>
+<div class="content">
+  <div class="line">
+    <input type="text" class="calendar-trigger" />
+    <button type="button" class="calendar-trigger">click</button>
+    <input type="text" class="calendar-trigger" />
+    <button type="button" class="calendar-trigger">click</button>
+  </div>
+
+  <div class="line live-holder">
+    <input type="text" class="calendar-target calendar-trigger1" />
+    <button type="button" class="calendar-trigger1">click</button>
+  </div>
+
+  <button type="button" class="create-button">create button</button>
+  <div class="embed-calendar-holder"></div>
 </div>
 
-<div class="line live-holder">
-  <input type="text" class="calendar-target calendar-trigger1" />
-  <button type="button" class="calendar-trigger1">click</button>
-</div>
-
-<button type="button" class="create-button">create button</button>
-
-<div class="embed-calendar-holder"></div>
 {% filter: markdown %}
-
 ### 源码
 -----------------------
 
 ```html
 <div class="line">
   <input type="text" class="calendar-trigger" />
-  <button type="button" class="calendar-trigger" >click</button>
+  <button type="button" class="calendar-trigger">click</button>
+</div>
+<div class="line">
   <input type="text" class="calendar-trigger" />
-  <button type="button" class="calendar-trigger" >click</button>
+  <button type="button" class="calendar-trigger">click</button>
 </div>
 
 <div class="line live-holder">
@@ -64,15 +70,16 @@
 </div>
 
 <button type="button" class="create-button">create button</button>
-
 <div class="embed-calendar-holder"></div>
 ```
 
 ```js
-require(['Calendar'], function (Calendar) {
+require(['CalendarExtension'], function (CalendarExtension) {
+
+  var $ = require('jquery');
 
   var addDays = function (date, days) {
-      return new Date(date.getTime() + days * 24 * 60 * 60 * 1000);
+    return new Date(date.getTime() + days * 24 * 60 * 60 * 1000);
   };
 
   var now = new Date();
@@ -81,11 +88,11 @@ require(['Calendar'], function (Calendar) {
 
   var triggers = $('.calendar-trigger');
 
-  new Calendar({
+  new CalendarExtension({
     prefix: 'ecl-ui-cal',
     // W为星期几，WW带周作前缀
     dateFormat: 'yyyy-MM-dd(WW)',
-    triggers: 'calendar-trigger',
+    triggers: triggers.toArray(),
     //value: '2012-03-30',
     // 显示几个月
     //monthes: 3,
@@ -114,32 +121,32 @@ require(['Calendar'], function (Calendar) {
     },
     // 不指定 target 时，需要在本事件中动态指定
     onBeforeShow: function (arg) {
-          var e = arg.event;
-          var target = e.target;
+      var e = arg.event;
+      var target = e.target;
 
-          // 更新定位及赋值关联的目标 target
-          target = target.tagName === 'INPUT' && target.type === 'text'
-                   ? target
-                   : target.previousSibling;
+      // 更新定位及赋值关联的目标 target
+      target = target.tagName === 'INPUT' && target.type === 'text'
+               ? target
+               : $(target).prev().get(0);
 
-          this.setTarget(target);
+      this.setTarget(target);
 
-          if ( target === triggers[0] ) {
-              // 设定开始的范围
-              this.setRange({begin: begin[0], end: begin[1]});
+      if ( target === triggers[0] ) {
+          // 设定开始的范围
+          this.setRange({begin: begin[0], end: begin[1]});
+      }
+      else {
+          if (triggers[0].value) {
+            var date = this.from(triggers[0].value);
+            // 在开始日期的后一天
+            end[0] = addDays(date, 1);
+            // 开始日期的30天结束
+            end[1] = addDays(date, 30);
           }
-          else {
-              if (triggers[0].value) {
-                var date = this.from(triggers[0].value);
-                // 在开始日期的后一天
-                end[0] = addDays(date, 1);
-                // 开始日期的30天结束
-                end[1] = addDays(date, 30);
-              }
 
-              // 设定结束的范围
-              this.setRange({begin: end[0], end: end[1]});
-          }
+          // 设定结束的范围
+          this.setRange({begin: end[0], end: end[1]});
+      }
     },
     // 选取日期的后续处理
     // arg = { value:, week:, date: }
@@ -151,7 +158,7 @@ require(['Calendar'], function (Calendar) {
     }
   }).render();
 
-  new Calendar({
+  new CalendarExtension({
     prefix: 'ecl-ui-cal',
     main: $('.embed-calendar-holder')[0],
     triggers: 'calendar-trigger1',
@@ -163,10 +170,10 @@ require(['Calendar'], function (Calendar) {
   }).render();
 
   $('.create-button').on('click', function () {
-    $('<button>')
-      .addClass('calendar-trigger1')
-      .html('new btn')
-      .appendTo('.live-holder');
+    var btn = document.createElement('button')
+    btn.className = 'calendar-trigger1';
+    btn.innerHTML = 'new btn';
+    $('.live-holder')[0].appendChild(btn);
   });
 
 });
@@ -174,10 +181,12 @@ require(['Calendar'], function (Calendar) {
 {% /filter %}
 {% content: script %}
 <script>
-require(['Calendar'], function (Calendar) {
+require(['CalendarExtension'], function (CalendarExtension) {
+
+  var $ = require('jquery');
 
   var addDays = function (date, days) {
-      return new Date(date.getTime() + days * 24 * 60 * 60 * 1000);
+    return new Date(date.getTime() + days * 24 * 60 * 60 * 1000);
   };
 
   var now = new Date();
@@ -186,11 +195,11 @@ require(['Calendar'], function (Calendar) {
 
   var triggers = $('.calendar-trigger');
 
-  new Calendar({
+  new CalendarExtension({
     prefix: 'ecl-ui-cal',
     // W为星期几，WW带周作前缀
     dateFormat: 'yyyy-MM-dd(WW)',
-    triggers: 'calendar-trigger',
+    triggers: triggers.toArray(),
     //value: '2012-03-30',
     // 显示几个月
     //monthes: 3,
@@ -219,32 +228,32 @@ require(['Calendar'], function (Calendar) {
     },
     // 不指定 target 时，需要在本事件中动态指定
     onBeforeShow: function (arg) {
-          var e = arg.event;
-          var target = e.target;
+      var e = arg.event;
+      var target = e.target;
 
-          // 更新定位及赋值关联的目标 target
-          target = target.tagName === 'INPUT' && target.type === 'text'
-                   ? target
-                   : $(target).prev().get(0);
+      // 更新定位及赋值关联的目标 target
+      target = target.tagName === 'INPUT' && target.type === 'text'
+               ? target
+               : $(target).prev().get(0);
 
-          this.setTarget(target);
+      this.setTarget(target);
 
-          if ( target === triggers[0] ) {
-              // 设定开始的范围
-              this.setRange({begin: begin[0], end: begin[1]});
+      if ( target === triggers[0] ) {
+          // 设定开始的范围
+          this.setRange({begin: begin[0], end: begin[1]});
+      }
+      else {
+          if (triggers[0].value) {
+            var date = this.from(triggers[0].value);
+            // 在开始日期的后一天
+            end[0] = addDays(date, 1);
+            // 开始日期的30天结束
+            end[1] = addDays(date, 30);
           }
-          else {
-              if (triggers[0].value) {
-                var date = this.from(triggers[0].value);
-                // 在开始日期的后一天
-                end[0] = addDays(date, 1);
-                // 开始日期的30天结束
-                end[1] = addDays(date, 30);
-              }
 
-              // 设定结束的范围
-              this.setRange({begin: end[0], end: end[1]});
-          }
+          // 设定结束的范围
+          this.setRange({begin: end[0], end: end[1]});
+      }
     },
     // 选取日期的后续处理
     // arg = { value:, week:, date: }
@@ -256,7 +265,7 @@ require(['Calendar'], function (Calendar) {
     }
   }).render();
 
-  new Calendar({
+  new CalendarExtension({
     prefix: 'ecl-ui-cal',
     main: $('.embed-calendar-holder')[0],
     triggers: 'calendar-trigger1',
@@ -268,10 +277,10 @@ require(['Calendar'], function (Calendar) {
   }).render();
 
   $('.create-button').on('click', function () {
-    $('<button>')
-      .addClass('calendar-trigger1')
-      .html('new btn')
-      .appendTo('.live-holder');
+    var btn = document.createElement('button')
+    btn.className = 'calendar-trigger1';
+    btn.innerHTML = 'new btn';
+    $('.live-holder')[0].appendChild(btn);
   });
 
 });

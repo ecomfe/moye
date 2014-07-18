@@ -483,7 +483,7 @@ define(function (require) {
             for (var i = 0; i < datasource.length; i++) {
                 var item = datasource[i];
 
-                if (!($.type(item) === 'object')) {
+                if ($.type(item) !== 'object') {
                     var data = item.split(/\s*[:：]\s*/);
                     item = {text: data[0]};
                     item.value = data.length > 1

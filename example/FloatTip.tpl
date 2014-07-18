@@ -1,4 +1,4 @@
-{% target: filter(master=base) %}
+{% target: FilterTip(master=base) %}
 
 {% content: style %}
 <link rel="stylesheet" href="../src/css/FloatTip.less">
@@ -6,7 +6,7 @@
 {% content: content %}
 
 {% filter: markdown %}
-# Filter
+# FilterTip 浮动提示
 
 ### DEMO
 -----------------------

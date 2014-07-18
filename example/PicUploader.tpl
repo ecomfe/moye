@@ -1,11 +1,11 @@
-{% target: filter(master=base) %}
+{% target: PicUploader(master=base) %}
 
 {% content: style %}
 <link rel="stylesheet" href="../src/css/PicUploader.less">
 {% content: content %}
 
 {% filter: markdown %}
-# Rating 打分组件
+# PicUploader 图片上传组件
 
 ### DEMO
 -----------------------

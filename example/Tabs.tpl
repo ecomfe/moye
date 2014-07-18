@@ -1,4 +1,4 @@
-{% target: filter(master=base) %}
+{% target: Tabs(master=base) %}
 {% content: style %}
 <link rel="stylesheet" href="../src/css/Tabs.less">
 <style>

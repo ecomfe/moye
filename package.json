@@ -32,22 +32,22 @@
       "name": "Calendar"
     },
     {
+      "name": "CalendarExtension"
+    },
+    {
       "name": "City"
-    },
-    {
-      "name": "Filter"
-    },
-    {
-      "name": "Lunar"
-    },
-    {
-      "name": "Tabs"
     },
     {
       "name": "Dialog"
     },
     {
+      "name": "Filter"
+    },
+    {
       "name": "FloatTip"
+    },
+    {
+      "name": "Lunar"
     },
     {
       "name": "Lazy"
@@ -56,10 +56,13 @@
       "name": "Pager"
     },
     {
+      "name": "PicUploader"
+    },
+    {
       "name": "Rating"
     },
     {
-      "name": "PicUploader"
+      "name": "Tabs"
     },
     {
       "name": "Slider"

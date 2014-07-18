@@ -1,4 +1,4 @@
-{% target: filter(master=base) %}
+{% target: Lazy(master=base) %}
 {% content: style %}
 <style>
 img {

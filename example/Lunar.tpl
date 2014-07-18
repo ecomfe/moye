@@ -1,4 +1,4 @@
-{% target: lunar(master=base) %}
+{% target: Lunar(master=base) %}
 
 {% content: style %}
 <link rel="stylesheet" href="../src/css/Lunar.less" />
