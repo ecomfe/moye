@@ -391,14 +391,15 @@ define(function (require) {
                 throw new Error('invalid main');
             }
 
-            var main = this.main;
+            var main = $(this.main);
 
             if (this.total > 1 || this.options.showAlways) {
-                main.innerHTML = privates.build.call(this);
-                $(main).show();
+                main
+                    .html(privates.build.call(this))
+                    .show();
             }
             else {
-                $(main).hide();
+                main.hide();
             }
 
             return this;
