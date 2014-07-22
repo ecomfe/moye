@@ -46,17 +46,27 @@ define(function (require) {
          */
         onShow: function (e) {
 
-            // var oldTarget = this.target;
 
             if (this._disabled) {
                 return;
             }
 
             var trigger = e.target;
+            var oldTarget = this.target;
 
-            // if (oldTarget && oldTarget !== trigger) {
-            //     this.hide();
-            // }
+            // 这里针对于同一Popup实例，在多个target间切换时的处理逻辑
+            // 效果是从target A切换到target B时，Popup实例直接显示在target B上，而不是隐藏。
+            // 之所以会被隐藏是因为document上的`click`钩子
+            // 判断当前的target是不是原有target，或者在原有target内部
+            // 如果不是，那么先将它隐藏。
+            // 这里隐藏主要作用是取消挂载到document上的`click`事件处理，而不是真的想要隐藏它。
+            // 如果不把钩子去掉，那会让接下来`显示`之后，事件冒泡上来到钩子上，又把它给隐藏了。
+            if (oldTarget 
+                && oldTarget !== trigger 
+                && !$.contains(oldTarget, trigger)
+            ) {
+                this.hide();
+            }
 
             var $trigger = $(e.target);
             var liveTriggers = this.liveTriggers;
@@ -85,10 +95,17 @@ define(function (require) {
 
             this.trigger = trigger;
 
+            var guid = this.guid;
             var bound = this._bound;
+
             this._timer = setTimeout(function () {
-                $(document).on('click', bound.onHide);
-                $(window).on('resize', bound.onResize);
+
+                // 这里使用了guid作为事件类型的namespace
+                // 因为这里貌似有个问题，off的时候会把document上的所有click都给干掉
+                // 只能用namespace来加以区分，来能避免多个popup之间钩子的干扰
+                $(document).on('click.' + guid, bound.onHide);
+                $(window).on('resize.' + guid, bound.onResize);
+
             }, 0);
         },
 
@@ -391,6 +408,7 @@ define(function (require) {
          * @private
          */
         init: function (options) {
+            this.guid = lib.guid();
             this._disabled  = options.disabled;
             this.content   = options.content;
 
@@ -507,8 +525,12 @@ define(function (require) {
             this.fire('hide');
 
             var bound = this._bound;
-            $(document).off('click', bound.onHide);
-            $(window).off('resize', bound.onResize);
+
+            // 这里使用了guid作为事件类型的namespace
+            // 因为这里貌似有个问题，off的时候会把document上的所有click都给干掉
+            // 只能用namespace来加以区分，来能避免多个popup之间钩子的干扰
+            $(document).off('click.' + this.guid, bound.onHide);
+            $(window).off('resize.' + this.guid, bound.onResize);
 
             clearTimeout(this._timer);
             clearTimeout(this._resizeTimer);
