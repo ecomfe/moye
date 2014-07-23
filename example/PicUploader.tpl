@@ -11,12 +11,14 @@
 -----------------------
 
 {% /filter%}
-<div id="uploader-container"></div>
-<button id="uploader-dispose">注销</button>
-<button id="uploader-del">删除路径与第一张图片相同的所有图片</button>
-<button id="uploader-del-index">删除第一个</button>
-<button id="uploader-enable">启用</button>
-<button id="uploader-disable">禁用</button>
+<div class="content">
+  <div id="uploader-container"></div>
+  <button id="uploader-dispose">注销</button>
+  <button id="uploader-del">删除路径与第一张图片相同的所有图片</button>
+  <button id="uploader-del-index">删除第一个</button>
+  <button id="uploader-enable">启用</button>
+  <button id="uploader-disable">禁用</button>
+</div>
 {% filter: markdown %}
 
 ### 源码
