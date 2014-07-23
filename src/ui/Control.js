@@ -76,10 +76,10 @@ define(function (require) {
 
             options = this.setOptions(options);
 
-            me.changeStage('NEW');
-            me.currentStates = {};
+            this.changeStage('NEW');
+            this.currentStates = {};
 
-            options = me.setOptions(options);
+            options = this.setOptions(options);
 
             /**
              * 控件的主元素
@@ -88,19 +88,19 @@ define(function (require) {
              * @protected
              * @readonly
              */
-            me.main = options.main ? options.main : document.createElement('div');
+            this.main = options.main ? options.main : document.createElement('div');
 
             if (options.hasOwnProperty('skin')) {
-                me.skin = options.skin;
+                this.skin = options.skin;
             }
 
             if (options.hasOwnProperty('states')) {
-                me.states = options.states;
+                this.states = options.states;
                 this.init = null;
             }
 
             if (options.hasOwnProperty('id')) {
-                me.id = options.id;
+                this.id = options.id;
             }
 
             delete options.id;
@@ -110,14 +110,14 @@ define(function (require) {
                 lib.binds(this, this.binds);
             }
 
-            if (me.init) {
-                me.init(options);
-                me.init = null;
+            if (this.init) {
+                this.init(options);
+                this.init = null;
             }
 
-            me.children = [];
+            this.children = [];
 
-            me.changeStage('INITED');
+            this.changeStage('INITED');
         },
 
 

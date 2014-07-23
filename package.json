@@ -73,19 +73,19 @@
       "name": "Rating"
     },
     {
-      "name": "Tabs"
-    },
-    {
-      "name": "Tip"
-    },
-    {
-      "name": "Select"
+      "name": "ScrollBar"
     },
     {
       "name": "Slider"
     },
     {
-      "name": "ScrollBar"
+      "name": "Select"
+    },
+    {
+      "name": "Tabs"
+    },
+    {
+      "name": "Tip"
     }
   ],
   "directories": {
