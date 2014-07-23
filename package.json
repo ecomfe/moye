@@ -68,10 +68,13 @@
       "name": "Tip"
     },
     {
+      "name": "Select"
+    },
+    {
       "name": "Slider"
     },
     {
-      "name": "Select"
+      "name": "ScrollBar"
     }
   ],
   "directories": {

@@ -496,24 +496,25 @@ define(function (require) {
             var options = this.options;
             var prefix = options.prefix;
             var range  = this.range;
-            var prev = $(prefix + '-pre', this.main);
-            var next = $(prefix + '-next', this.main);
+            var prev = $('.' + prefix + '-pre', this.main);
+            var next = $('.' + prefix + '-next', this.main);
 
             date = date || this.date || this.from(this.value);
 
             var dateYYYYMM = privates.getYYYYMM.call(this, date);
 
-            prev[!range 
-                    || !range.begin
-                    || privates.getYYYYMM.call(this, range.begin) < dateYYYYMM
-                        ? 'show' : 'hide'
-                ]();
+            var act = !range 
+                || !range.begin
+                || privates.getYYYYMM.call(this, range.begin) < dateYYYYMM ? 'show' : 'hide';
 
-            next[!range
-                    || !range.end
-                    || privates.getYYYYMM.call(this, range.end) > dateYYYYMM
-                        ? 'show' : 'hide'
-                ]();
+            prev[act]();
+
+            act = !range
+                || !range.end
+                || privates.getYYYYMM.call(this, range.end) > dateYYYYMM ? 'show' : 'hide'
+
+            next[act]();
+
         },
 
         /**

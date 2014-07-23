@@ -11,10 +11,9 @@
 -----------------------
 
 {% /filter%}
-
-
-<div class="ecl-ui-lunar c-clearfix" id="lunar"></div>
-
+<div class="content">
+  <div class="ecl-ui-lunar c-clearfix" id="lunar"></div>
+</div>
 {% filter: markdown %}
 
 ### 源码
@@ -55,7 +54,7 @@ require(['Lunar'], function (Lunar) {
     // lang: {
     //   days: '一,二,三,四,五,六,日'
     // },
-    value: '2010-02-17',
+    value: '2014-07-17',
     main: document.getElementById('lunar'),
     process: function (el, klass, value, inRange) {
       if (~value.indexOf('02-14')) {
@@ -64,7 +63,9 @@ require(['Lunar'], function (Lunar) {
         el.appendChild(div);
       }
     }
-  }).render();
+  });
+
+  lunar.render();
 
 });
 </script>
