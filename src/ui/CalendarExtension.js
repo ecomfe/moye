@@ -8,6 +8,7 @@
 
 define(function (require) {
 
+    var $ = require('jquery');
     var lib = require('./lib');
     var Control = require('./Control');
     var Calendar = require('./Calendar');
@@ -51,35 +52,38 @@ define(function (require) {
          * @private
          */
         onClick: function (e) {
-            var target = lib.getTarget(e);
+            var target = $(e.target);
 
-            if (target.tagName === 'A') {
-
-                lib.stopPropagation(e);
-
-                /**
-                 * @event CalendarExtension~Menu#click
-                 * @type {Object}
-                 * @property {HTMLElement} target 当前点击的元素
-                 */
-                this.fire('click', { target: target });
-
-                if (this.check(target)) {
-                    var value = target.innerHTML;
-                    this.target.innerHTML = value;
-                    this.select(value);
-                    this.hide();
-
-                    /**
-                     * @event CalendarExtension~Menu#pick
-                     * @type {Object}
-                     * @property {string} value 当前选中的值
-                     * @property {HTMLElement} target 当前点击的元素
-                     */
-                    this.fire('pick', {value: value, target:  this.target});
-                }
-
+            if (!target.is('a')) {
+                return;
             }
+
+            e.stopPropagation();
+
+            /**
+             * @event CalendarExtension~Menu#click
+             * @type {Object}
+             * @property {HTMLElement} target 当前点击的元素
+             */
+            this.fire('click', { target: target.get(0) });
+
+            if (!this.check(target)) {
+                return;
+            }
+
+            var value = target.html();
+            this.target.innerHTML = value;
+            this.select(value);
+            this.hide();
+
+            /**
+             * @event CalendarExtension~Menu#pick
+             * @type {Object}
+             * @property {string} value 当前选中的值
+             * @property {HTMLElement} target 当前点击的元素
+             */
+            this.fire('pick', {value: value, target:  this.target});
+
         }      
     };
 
@@ -126,8 +130,9 @@ define(function (require) {
          * @private
          */
         init: function (options) {
-            var main = this.main = document.createElement('div');
-            lib.addClass(main, options.className);
+            this.main = $('<div>')
+                .addClass(options.className)
+                .get(0);
             this.bindEvents(menuPrivites);
         },
 
@@ -144,14 +149,15 @@ define(function (require) {
             if (!this.rendered) {
                 this.rendered = true;
 
-                var main = this.main;
                 this.build(options.start, options.end);
-                this.elements = main.getElementsByTagName('a');
 
                 var bound = this._bound;
-                lib.on(main, 'mouseenter', bound.onShow);
-                lib.on(main, 'mouseleave', bound.onHide);
-                lib.on(main, 'click', bound.onClick);
+                var main = $(this.main)
+                    .on('mouseenter', bound.onShow)
+                    .on('mouseleave', bound.onHide)
+                    .on('click', bound.onClick);
+
+                this.elements = main.find('a').toArray();
 
                 if (options.target) {
                     this.setTarget(lib.g(options.target));
@@ -170,7 +176,7 @@ define(function (require) {
          */
         build: function (start, end) {
 
-            if (lib.isArray(start)) {
+            if ($.isArray(start)) {
                 end = start[1];
                 start = start[0];
             }
@@ -210,13 +216,14 @@ define(function (require) {
         select: function (value) {
             var options = this.options;
             var klass = options.selectedClass;
-            var selected = this.query(klass)[0];
-            var selectedValue = selected && selected.innerHTML;
+            var selected = $('.' + klass, this.main);
+            var selectedValue = selected.html();
 
-            selected && lib.removeClass(selected, klass);
+            selected.removeClass(klass);
+
             if (selectedValue !== value) {
                 var el = this.elements[value - this.start];
-                el && lib.addClass(el, klass);
+                el && $(el).addClass(klass);
             }
         },
         /**
@@ -236,13 +243,13 @@ define(function (require) {
              */
             !noEvent && this.fire('beforeShow', { target:　target　});
 
-            var main = this.main;
+            var main = $(this.main);
             if (target !== this.target) {
                 this.setTarget(target);
-                target.parentNode.parentNode.appendChild(main);
+                $(target).parent().parent().append(main);
             }
             this.select(target.innerHTML | 0);
-            lib.show(main);
+            main.show();
         },
         /**
          * 隐藏选择菜单
@@ -250,7 +257,7 @@ define(function (require) {
          * @public
          */
         hide: function () {
-            lib.hide(this.main);
+            $(this.main).hide();
         },
 
         /**
@@ -327,7 +334,7 @@ define(function (require) {
 
 
         menu.check = function (el) {
-            return !el.getAttribute('data-cmd');
+            return !$(el).attr('data-cmd');
         };
         return menu.render();
     };
@@ -362,19 +369,14 @@ define(function (require) {
                     var links = head.getElementsByTagName('a');
                     var year = links[0].innerHTML | 0;
                     var month = links[1].innerHTML | 0;
-
                     var monthElement = head.parentNode;
-
-                    lib.each(
-                        lib.q(monthElement.className, monthElement.parentNode),
-                        function (el, i) {
-                            if (el === monthElement) {
-                                var date = new Date(year, month - 1, 1);
-                                date.setMonth(month - i - 1);
-                                calendar.setValue(date);
-                            }
+                    $('.' + monthElement.className, monthElement.parentNode).each(function (i, el) {
+                        if (el === monthElement) {
+                            var date = new Date(year, month - 1, 1);
+                            date.setMonth(month - i - 1);
+                            calendar.setValue(date);
                         }
-                    );
+                    });
                 });
             }
             menu.show(related);
@@ -387,15 +389,14 @@ define(function (require) {
          * @private
          */
         onOver: function (e) {
-            var el = lib.getTarget(e);
+            var el = e.target;
             var type = el.getAttribute('data-menu-type');
             if (type) {
                 privates.renderMenu.call(this, el, type);
-
-                var main = this.main;
                 var bound = this._bound;
-                lib.un(main, 'mouseover', bound.onOver);
-                lib.on(main, 'mouseout', bound.onOut);
+                $(this.main)
+                    .off('mouseover', bound.onOver)
+                    .on('mouseout', bound.onOut);
             }
         },
 
@@ -406,17 +407,19 @@ define(function (require) {
          * @private
          */
         onOut: function (e) {
-            var el = lib.getTarget(e);
+            var el = e.target;
             var type = el.getAttribute('data-menu-type');
-            if (type) {
-                var menu = this.menus[type];
-                menu && menu.hide();
 
-                var main = this.main;
-                var bound = this._bound;
-                lib.on(main, 'mouseover', bound.onOver);
-                lib.un(main, 'mouseout', bound.onOut);
+            if (!type) {
+                return;
             }
+
+            var menu = this.menus[type];
+            var bound = this._bound;
+            menu && menu.hide();
+            $(this.main)
+                .on('mouseover', bound.onOver)
+                .off('mouseout', bound.onOut);
         },
 
         /**
@@ -436,10 +439,10 @@ define(function (require) {
          * @private
          */
         onHide: function (e) {
-            lib.forIn(this.menus, function (menu) {
+            $.each(this.menus, function (i, menu) {
                 menu.hide();
             });
-        }        
+        }
     };
 
     /**
@@ -496,13 +499,13 @@ define(function (require) {
         render: function () {
             var calendar = this.calendar;
             var value = calendar.render.apply(calendar, arguments);
-
             var main = this.main = calendar.main;
-
             var bound = this._bound;
-            lib.on(main, 'mouseover', bound.onOver);
-            lib.on(main, 'mouseout', bound.onOut);
-            lib.on(main, 'click', bound.onClick);
+
+            $(main)
+                .on('mouseover', bound.onOver)
+                .on('mouseout', bound.onOut)
+                .on('click', bound.onClick);
 
             calendar.on('hide', bound.onHide);
 
@@ -515,15 +518,17 @@ define(function (require) {
          * @public
          */
         dispose: function () {
-            lib.forIn(this.menus, function (menu) {
+
+            $.each(this.menus, function (i, menu) {
                 menu.dispose();
             });
 
-            var main = this.main;
             var bound = this._bound;
-            lib.un(main, 'mouseover', bound.onOver);
-            lib.un(main, 'mouseout', bound.onOut);
-            lib.un(main, 'click', bound.onClick);
+
+            $(this.main)
+                .off('mouseover', bound.onOver)
+                .off('mouseout', bound.onOut)
+                .off('click', bound.onClick);
 
             this.calendar.un('hide', bound.onHide);
             this.calendar.dispose();

@@ -1,4 +1,6 @@
 define(function (require) {
+
+    var $ = require('jquery');
     var lib = require('ui/lib');
     var Tip = require('ui/Tip');
     
@@ -75,7 +77,7 @@ define(function (require) {
             tip.on('beforeShow', onBeforeShow);
             tip.on('hide', onHide);
 
-            lib.fire(target.firstChild, 'click');
+            $(target.firstChild).trigger('click');
 
             expect(tip.isVisible()).toBeTruthy();
             expect(tip.elements.title.innerHTML).toBe('title');
@@ -84,14 +86,14 @@ define(function (require) {
             tip.setTitle();
             expect(tip.elements.title.offsetWidth).toBe(0);
 
-            lib.fire(target, 'click');
+            $(target).trigger('click');
             expect(tip.isVisible()).toBeFalsy();
 
-            lib.fire(target.parentNode, 'click');
+            $(target.parentNode).trigger('click');
             expect(tip.isVisible()).toBeFalsy();
 
             target = links[1];
-            lib.fire(target, 'click');
+            $(target).trigger('click');
 
             tip.un('beforeShow', onBeforeShow);
             tip.un('hide', onHide);
@@ -116,7 +118,7 @@ define(function (require) {
             tip.on('beforeShow', onBeforeShow);
             tip.on('hide', onHide);
 
-            lib.fire(target, 'mouseenter');
+            $(target).trigger('mouseenter');
 
             expect(tip.isVisible()).toBeTruthy();
             expect(tip.elements.title.innerHTML).toBe('title');
@@ -125,14 +127,14 @@ define(function (require) {
             tip.setTitle();
             expect(tip.elements.title.offsetWidth).toBe(0);
 
-            lib.fire(target, 'mouseleave');
+            $(target).trigger('mouseleave');
             expect(tip.isVisible()).toBeFalsy();
 
-            lib.fire(target.parentNode, 'mouseenter');
+            $(target.parentNode).trigger('mouseenter');
             expect(tip.isVisible()).toBeFalsy();
 
             target = links[1];
-            lib.fire(target, 'mouseenter');
+            $(target).trigger('mouseenter');
 
             tip.un('beforeShow', onBeforeShow);
             tip.un('hide', onHide);
@@ -156,13 +158,13 @@ define(function (require) {
             var links = document.getElementById('tipContainer').getElementsByTagName('a');
             var target = links[0];
 
-            lib.fire(target, 'click');
+            $(target).trigger('click');
 
             expect(tip.isVisible()).toBeFalsy();
             jasmine.Clock.tick(delay);
             expect(tip.isVisible()).toBeTruthy();
 
-            lib.fire(target.parentNode, 'click');
+            $(target.parentNode).trigger('click');
 
             expect(tip.isVisible()).toBeTruthy();
             jasmine.Clock.tick(delay);

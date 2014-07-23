@@ -8,19 +8,9 @@
 
 define(function (require) {
 
+    var $ = require('jquery');
     var lib = require('./lib');
     var Control = require('./Control');
-
-    /**
-     * 移除当前的元素
-     *
-     * @param {HTMLDomElement} domElement 当前元素
-     * @inner
-     */
-
-    function remove(domElement) {
-        domElement && domElement.parentNode.removeChild(domElement);
-    }
 
     /**
      * 对目标字符串进行格式化
@@ -78,23 +68,25 @@ define(function (require) {
          * @private
          */
         initialize: function (opts) {
-            var div = document.createElement('div');
-            div.className = opts.className;
-            lib.setStyles(div, opts.styles);
-            document.body.appendChild(div);
-            this.mask = div;
+            this.mask = $('<div>')
+                .addClass(opts.className)
+                .css(opts.styles)
+                .appendTo(document.body)
+                .get(0);
+
             Mask.curMasks++;
 
             if (6 === lib.browser.ie && !Mask.ie6frame) {
-                Mask.ie6frame = document.createElement(''
+                var frame = ''
                     + '<iframe'
                     + ' src="about:blank"'
                     + ' frameborder="0"'
                     + ' style="position:absolute;left:0;top:0;z-index:1;'
                     + 'filter:alpha(opacity=0)"'
-                    + '></iframe>'
-                );
-                document.body.appendChild(Mask.ie6frame);
+                    + '></iframe>';
+                Mask.ie6frame = $(frame)
+                    .appendTo(document.body)
+                    .get(0);
             }
         },
 
@@ -106,21 +98,23 @@ define(function (require) {
          * @public
          */
         repaint: function () {
-            var width = Math.max(
-            document.documentElement.clientWidth, Math.max(
-            document.body.scrollWidth, document.documentElement.scrollWidth));
 
-            var height = Math.max(
-            document.documentElement.clientHeight, Math.max(
-            document.body.scrollHeight, document.documentElement.scrollHeight));
+            var doc = $(document);
+            var width = doc.width();
+            var height = doc.height();
 
-            this.mask.style.width = width + 'px';
-            this.mask.style.height = height + 'px';
+            $(this.mask).css({
+                width: width + 'px',
+                height: height + 'px'
+            });
 
             if (Mask.ie6frame) {
-                Mask.ie6frame.style.width = width + 'px';
-                Mask.ie6frame.style.height = height + 'px';
+                $(Mask.ie6frame).css({
+                    width: width + 'px',
+                    height: height + 'px'
+                });
             }
+
         },
 
         /**
@@ -130,10 +124,11 @@ define(function (require) {
          */
         show: function () {
             if (Mask.ie6frame) {
-                Mask.ie6frame.style.zIndex = this.mask.style.zIndex - 1;
-                lib.show(Mask.ie6frame);
+                $(Mask.ie6frame)
+                    .css('z-index', this.mask.style.zIndex - 1)
+                    .show();
             }
-            lib.show(this.mask);
+            $(this.mask).show();
         },
 
         /**
@@ -143,9 +138,9 @@ define(function (require) {
          */
         hide: function () {
             if (Mask.ie6frame) {
-                lib.hide(Mask.ie6frame);
+                $(Mask.ie6frame).hide();
             }
-            lib.hide(this.mask);
+            $(this.mask).hide();
         },
 
         /**
@@ -154,11 +149,11 @@ define(function (require) {
          * @public
          */
         dispose: function () {
-            remove(this.mask);
+            $(this.mask).remove();
             Mask.curMasks--;
 
             if (Mask.curMasks <= 0 && Mask.ie6frame) {
-                remove(Mask.ie6frame);
+                $(Mask.ie6frame).remove();
                 Mask.curMasks = 0;
                 Mask.ie6frame = null;
             }
@@ -175,14 +170,14 @@ define(function (require) {
     /**
      * 创建一个遮罩层
      *
-     * @param {Object} opts 遮罩选项
-     * @param {string} opts.id 编号
-     * @param {string} opts.className 类别名称
-     * @param {Object} opts.styles 样式集合
+     * @param {Object} options 遮罩选项
+     * @param {string} options.id 编号
+     * @param {string} options.className 类别名称
+     * @param {Object} options.styles 样式集合
      * @return {HTMLElement} 遮罩元素
      */
-    Mask.create = function (opts) {
-        return new Mask(opts);
+    Mask.create = function (options) {
+        return new Mask(options);
     };
 
     /**
@@ -202,7 +197,7 @@ define(function (require) {
          * @private
          */
         getDom:  function (name) {
-            return lib.q(this.options.prefix + '-' + name, this.main)[0];
+            return $('.' + this.options.prefix + '-' + name, this.main)[0];
         },
 
         /**
@@ -237,21 +232,17 @@ define(function (require) {
             };
 
             //渲染主框架内容
-            var main = this.createElement('div', {
-                'className': privates.getClass.call(this)
-            });
-
-            lib.setStyles(main, {
-                width: opt.width,
-                top: opt.top,
-                position: opt.fixed ? 'fixed' : 'absolute',
-                zIndex: opt.level
-            });
-
-            main.innerHTML = format(this.options.tpl, data);
-
-            document.body.appendChild(main);
-            this.main = main;
+            this.main = $('<div>')
+                .addClass(privates.getClass.call(this))
+                .css({
+                    width: opt.width,
+                    top: opt.top,
+                    position: opt.fixed ? 'fixed' : 'absolute',
+                    zIndex: opt.level
+                })
+                .html(format(this.options.tpl, data))
+                .appendTo(document.body)
+                .get(0);
 
             //如果显示mask，则需要创建mask对象
             if (this.options.showMask) {
@@ -270,13 +261,10 @@ define(function (require) {
          * @private
          */
         bind: function () {
-            //绑定关闭按钮
-            lib.on(
-                privates.getDom.call(this, 'close'),
-                'click',
-                this._bound.onClose
-            );
 
+            //绑定关闭按钮
+            var dom = privates.getDom.call(this, 'close');
+            $(dom).on('click', this._bound.onClose);
         },
 
         /**
@@ -523,6 +511,8 @@ define(function (require) {
          * @public
          */
         adjustPos: function () {
+            var main = $(this.main);
+            var win = $(window);
             var left = this.options.left;
             var top = this.options.top;
 
@@ -535,41 +525,30 @@ define(function (require) {
 
                 if (!left) {
                     cssOpt.left = '50%';
-                    cssOpt.marginLeft = (-this.main.offsetWidth / 2) + 'px';
+                    cssOpt.marginLeft = (-main.width() / 2) + 'px';
                 }
 
                 if (!top) {
                     //这里固定为0.35的位置
-                    cssOpt.top = (
-                    lib.getViewHeight() - this.main.offsetHeight) * 0.35 + 'px';
+                    cssOpt.top = 0.35 * (win.height() - main.height()) + 'px';
                 }
 
-                lib.setStyles(this.main, cssOpt);
+                $(this.main).css(cssOpt);
             }
 
             //absolute则需要动态计算left，top使dialog在视窗的指定位置
             else {
+
                 if (!left) {
-                    var scrollLeft = window.pageXOffset
-                        || document.documentElement.scrollLeft
-                        || document.body.scrollLeft;
-                    left = (scrollLeft
-                        + (lib.getViewWidth()
-                        - this.main.offsetWidth) / 2)
-                        + 'px';
+                    left = (win.scrollLeft() + (win.width() - main.width()) / 2) + 'px';
                 }
 
                 if (!top) {
-                    var scrollTop = window.pageYOffset
-                        || document.documentElement.scrollTop
-                        || document.body.scrollTop;
                     //这里固定为0.35的位置
-                    top = (scrollTop
-                        + (lib.getViewHeight() - this.main.offsetHeight) * 0.35)
-                        + 'px';
+                    top = (win.scrollTop() + (win.height() - main.height()) * 0.35) + 'px';
                 }
 
-                lib.setStyles(this.main, {
+                main.css({
                     position: 'absolute',
                     left: left,
                     top: top
@@ -586,25 +565,28 @@ define(function (require) {
          * @fires module:Dialog#show
          */
         show: function () {
-            var me = this;
 
-            lib.on(window, 'resize', this._bound.onResize);
+            // 绑定窗口调整事件
+            $(window).on('resize', this._bound.onResize);
 
-            me.mask && me.mask.show();
+            // 显示遮罩
+            if (this.mask) {
+                this.mask.show();
+            }
 
+            
             //移除hide状态的class
-            lib.each(privates.getClass.call(this, 'hide').split(' '), function (className) {
-                lib.removeClass(me.main, className);
-            });
+            $(this.main).removeClass(privates.getClass.call(this, 'hide'));
 
-            me.adjustPos();
+            // 调整位置
+            this.adjustPos();
 
             /**
              * @event module:Dialog#show
              */
-            me.fire('show');
+            this.fire('show');
 
-            return me;
+            return this;
         },
 
 
@@ -615,24 +597,24 @@ define(function (require) {
          * @fires module:Dialog#hide
          */
         hide: function () {
-            var me = this;
-            me.mask && me.mask.hide();
+            // 隐藏遮罩
+            if (this.mask) {
+                this.mask.hide();
+            } 
 
             //添加hide的class
-            lib.each(privates.getClass.call(this, 'hide').split(' '), function (className) {
-                lib.addClass(me.main, className);
-            });
-
+            $(this.main).addClass(privates.getClass.call(this, 'hide'));
 
             /**
              * @event module:Dialog#hide
              */
-            me.fire('hide');
+            this.fire('hide');
 
             //注销resize
-            lib.un(window, 'resize', this._bound.onResize);
-            clearTimeout(me._resizeTimer);
-            return me;
+            $(window).off('resize', this._bound.onResize);
+            clearTimeout(this._resizeTimer);
+
+            return this;
         },
 
         /**
@@ -671,19 +653,17 @@ define(function (require) {
          */
         setWidth: function (width) {
 
-            var me = this;
-
-            if (!me.rendered || width < 1) {
-                return me;
+            if (!this.rendered || width < 1) {
+                return this;
             }
 
-            lib.setStyles(me.main, {
+            $(this.main).css({
                 width: width + 'px'
             });
 
-            me.adjustPos();
+            this.adjustPos();
 
-            return me;
+            return this;
 
         },
 
@@ -703,12 +683,16 @@ define(function (require) {
 
             //注销dom事件
             var bound = this._bound;
-            lib.un(privates.getDom.call(this, 'close'), 'click', bound.onClose);
-            lib.un(window, 'resize', bound.onResize);
+
+            $(privates.getDom.call(this, 'close')).off('click', bound.onClose);
+            $(window).off('resize', bound.onResize);
 
             clearTimeout(this._resizeTimer);
 
-            this.mask && this.mask.dispose();
+            // 销毁遮罩
+            if (this.mask) {
+                this.mask.dispose();
+            }
 
             /**
              * @event module:Dialog#dispose

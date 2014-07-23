@@ -1,5 +1,10 @@
+/**
+ * @file 浮层测试用例
+ * @author chris <wfsr@foxmail.com>
+ * @author ludafa <leonlu@outlook.com>
+ */
 define(function (require) {
-    var lib = require('ui/lib');
+    var $ = require('jquery');
     var FloatTip = require('ui/FloatTip');
 
     beforeEach(function () {
@@ -19,28 +24,26 @@ define(function (require) {
 
     afterEach(function () {
         floatTip.dispose();
-        var n = lib.g('FloatTipContainer');
-        n.parentNode.removeChild(n);
+        $('#FloatTipContainer').remove();
     });
 
     describe('基本接口', function () {
 
         it('show', function () {
             floatTip.show();
-            expect(floatTip.main.style.display).not.toBe('none');
+            expect($(floatTip.main).css('display')).not.toBe('none');
         });
 
         it('hide', function () {
             floatTip.hide();
-            floatTip.offsetWidth;
-            expect(lib.getStyle(floatTip.main, 'display')).toBe('none');
+            expect($(floatTip.main).css('display')).toBe('none');
         });
 
 
         it('setContent', function () {
             var contentElement = floatTip.query('ecl-ui-floattip-content')[0];
-            expect(contentElement.innerHTML)
-            .toBe(floatTip.options.content);
+
+            expect(contentElement.innerHTML).toBe(floatTip.options.content);
 
             floatTip.setContent('XXXX');
             expect(contentElement.innerHTML).toBe('XXXX');
@@ -60,8 +63,8 @@ define(function (require) {
             adjFloatTip.render();
             adjFloatTip.show();
 
-            expect(lib.getStyle(adjFloatTip.main, 'left')).toBe('20px');
-            expect(lib.getStyle(adjFloatTip.main, 'top')).toBe('40px');
+            expect($(adjFloatTip.main).css('left')).toBe('20px');
+            expect($(adjFloatTip.main).css('top')).toBe('40px');
 
             adjFloatTip.dispose();
         });

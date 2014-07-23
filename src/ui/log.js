@@ -8,6 +8,7 @@
 
 define(function (require) {
 
+    var $ = require('jquery');
     var lib = require('./lib');
     
     /**
@@ -51,7 +52,7 @@ define(function (require) {
                 delete list[index];
             };
 
-            var url = options.action + lib.toQueryString(data);
+            var url = options.action + $.param(data);
 
             // 新规范无时间戳字段上报，自动加上以防止缓存
             list[index].src = url + '&' + (+new Date()).toString(36);
@@ -85,7 +86,7 @@ define(function (require) {
 
         var rsvData = el.getAttribute('data-rsv');
         if (rsvData) {
-            data.rsv = lib.extend(data, {rsv: parseJSON(rsvData)});
+            data.rsv = $.extend(data, {rsv: parseJSON(rsvData)});
         }
 
         var i = 0;
@@ -99,12 +100,12 @@ define(function (require) {
 
             clickData = el.getAttribute('data-click');
             if (clickData) {
-                data = lib.extend(parseJSON(clickData), data);
+                data = $.extend(parseJSON(clickData), data);
             }
 
             rsvData = el.getAttribute('data-rsv');
             if (rsvData) {
-                data.rsv = lib.extend(parseJSON(rsvData), data.rsv);
+                data.rsv = $.extend(parseJSON(rsvData), data.rsv);
             }
 
             if (el.href) {
@@ -143,7 +144,7 @@ define(function (require) {
         if (from !== to) {
             clickData = to.getAttribute('data-click');
             if (clickData) {
-                data = lib.extend(parseJSON(clickData), data);
+                data = $.extend(parseJSON(clickData), data);
             }            
         }
 
@@ -257,7 +258,7 @@ define(function (require) {
             }
         }
         
-        data.txt = lib.trim(title).replace(/<[^>]+?>/g, '');
+        data.txt = $.trim(title).replace(/<[^>]+?>/g, '');
     };
 
     /**
@@ -485,23 +486,21 @@ define(function (require) {
      * @inner
      */
     var onClick = function (e, el) {
-        var target = el || lib.getTarget(e);
+        var target = $(el || e.target);
         var klass = options.main;
-        var main = lib.hasClass(target, klass)
-            ? target
-            : lib.getAncestorByClass(target, klass);
+        var main = $(target).closest('.' + klass);
 
-        if (!main || main.getAttribute('data-nolog') === '1') {
+        if (!main.length || main.attr('data-nolog') === '1') {
             return;
         }
 
-        var data = target.getAttribute('data-click');
+        var data = target.attr('data-click');
 
         if (data) {
             data = parseJSON(data);
         }
 
-        data = fill(data || {}, target, main);
+        data = fill(data || {}, target[0], main[0]);
 
         // 某个上级节点配置了 data-nolog 之后
         if (!data) {
@@ -510,20 +509,17 @@ define(function (require) {
 
         // 合并公共数据，最低优先级
         if (options.data) {
-            data = lib.extend(lib.extend({}, options.data), data);
+            data = $.extend({}, options.data, data);
         }
 
         // 仅当首次点击或有新加入节点时计算 p1 序号值
         if (!('p1' in data)) {
-            lib.each(
-                lib.q(options.main),
-                function (el, i) {
-                    if (el === main) {
-                        data.p1 = i + 1;
-                    }
-                    bindP1(el, i + 1);
+            $('.' + options.main).each(function (i, el) {
+                if (el === main) {
+                    data.p1 = i + 1;
                 }
-            );
+                bindP1(el, i + 1);
+            });
         }
 
         /**
@@ -534,7 +530,7 @@ define(function (require) {
          * @property {string} target 点击事件源对象
          * @property {string} main 当前统计区域（卡片）主容器
          */
-        exports.fire('click', {data: data, target: target, main: main});
+        exports.fire('click', {data: data, target: target[0], main: main[0]});
 
         send(data);
     };
@@ -584,7 +580,7 @@ define(function (require) {
          * @return {module:log} log
          */
         config: function (ops) {
-            lib.extend(options, ops);
+            $.extend(options, ops);
 
             return this;
         },
@@ -596,7 +592,7 @@ define(function (require) {
          * @fires module:log#start
          */
         start: function () {
-            lib.on(document, 'mousedown', onClick);
+            $(document).on('mousedown', onClick);
 
             /**
              * @event module:log#start
@@ -614,7 +610,7 @@ define(function (require) {
          * @return {module:log} log
          */
         stop: function () {
-            lib.un(document, 'mousedown', onClick);
+            $(document).on('mousedown', onClick);
 
             return this;
         },
@@ -644,7 +640,7 @@ define(function (require) {
                 if (clickData) {
 
                     // 就近原则，自定义属性比通用配置具有更高优先级
-                    data = lib.extend(parseJSON(clickData), data);
+                    data = $.extend(parseJSON(clickData), data);
                 }
                 element.setAttribute('data-click', lib.stringify(data));
             }
@@ -671,7 +667,7 @@ define(function (require) {
                 });
             }
 
-            lib.extend(map, obj);
+            $.extend(map, obj);
 
             return this;
         },
@@ -687,7 +683,7 @@ define(function (require) {
          */
         send: function (data) {
 
-            send(lib.extend(lib.clone(options.data), data));
+            send($.extend(lib.clone(options.data), data));
 
             return this;
         }
@@ -716,7 +712,7 @@ define(function (require) {
      * @param {string} type 事件类型
      * @param {Object} args 透传的事件数据对象
      */
-    lib.extend(exports, lib.clone(lib.observable));
+    $.extend(exports, lib.observable);
 
     return exports;
 });

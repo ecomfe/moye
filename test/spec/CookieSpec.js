@@ -1,3 +1,9 @@
+/**
+ * @file Cookie组件测试用例
+ * @author chris <wfsr@foxmail.com>
+ * @author ludafa <leonlu@outlook.com>
+ */
+
 define(function (require) {
 
     var Cookie = require('ui/Cookie');

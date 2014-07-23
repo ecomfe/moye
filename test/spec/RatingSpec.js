@@ -1,17 +1,20 @@
+/**
+ * @file 农历组件测试用例
+ * @author chris <wfsr@foxmail.com>
+ * @author ludafa <leonlu@outlook.com>
+ */
+
 define(function (require) {
-    var lib = require('ui/lib');
-
+    var $ = require('jquery');
     var Rating = require('ui/Rating');
-
     var rating;
-
-    lib;
 
     beforeEach(function () {
         document.body.insertAdjacentHTML(
             'beforeEnd',
             '<div class="ecl-ui-rating" id="rating"></div>'
         );
+
         rating = new Rating({
             main: 'rating',
             value: 1,
@@ -29,7 +32,7 @@ define(function (require) {
     describe('评分组件', function () {
         // 点亮第一颗星，其他都不亮
         it('init rating with a value', function () {
-            var result = lib.q('ecl-ui-rating-star-on', rating.main);
+            var result = $('.ecl-ui-rating-star-on', rating.main);
 
             expect(result.length).toBe(1);
 
@@ -44,16 +47,13 @@ define(function (require) {
         it('preview rating when mouseover', function () {
             var rndIndex = 1;
 
-            lib.fire(rating.stars[rndIndex], 'mouseover');
+            $(rating.stars[rndIndex]).trigger('mouseover');
 
-            setTimeout(
-                function () {
-                    var result = lib.q('ecl-ui-rating-star-on', rating.main);
+            setTimeout(function () {
+                var result = $('.ecl-ui-rating-star-on', rating.main);
+                expect(result.length).toBe(rndIndex + 1);
+            }, 0);
 
-                    expect(result.length).toBe(rndIndex + 1);
-                },
-                0
-            );
             jasmine.Clock.tick(10);
 
         });
@@ -62,16 +62,12 @@ define(function (require) {
         it('reset rating when mouseout', function () {
             var rndIndex = 1;
 
-            lib.fire(rating.stars[rndIndex], 'mouseout');
+            $(rating.stars[rndIndex]).trigger('mouseout');
 
-            setTimeout(
-                function () {
-                    var result = rating.query('ecl-ui-rating-star-on');
-
-                    expect(result.length).toBe(rating.options.value);
-                },
-                0
-            );
+            setTimeout(function () {
+                var result = rating.query('ecl-ui-rating-star-on');
+                expect(result.length).toBe(rating.options.value);
+            }, 0);
 
             jasmine.Clock.tick(10);
         });
@@ -81,11 +77,11 @@ define(function (require) {
             var rndIndex = 1;
 
             var onRated = function (e) {
-                    expect(e.value).toBe(rndIndex + 1);
-                };
+                expect(e.value).toBe(rndIndex + 1);
+            };
 
             rating.on('rated', onRated);
-            lib.fire(rating.stars[rndIndex], 'click');
+            $(rating.stars[rndIndex]).trigger('click');
             rating.un('rated');
         });
     });

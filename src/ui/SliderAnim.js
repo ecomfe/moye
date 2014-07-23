@@ -81,6 +81,8 @@ define(function (require) {
      */
     var SliderAnim = lib.newClass( /** @lends module:SliderAnim.prototype */ {
 
+        type: 'SliderAnim',
+
         /**
          * 初始化函数
          *
@@ -258,6 +260,8 @@ define(function (require) {
      */
     var TimeLine = SliderAnim.extend( /** @lends module:SliderAnim~TimeLine.prototype */ {
 
+        type: 'TimeLine',
+
         /**
          * 初始化函数
          *
@@ -366,6 +370,9 @@ define(function (require) {
      * @name module:SliderAnim.anims.no
      */
     SliderAnim.add('no', SliderAnim.extend( /** @lends module:SliderAnim.anims.no.prototype */ {
+            
+        type: 'SliderAnimNo',
+
         /**
          * 切换到指定的索引
          *
@@ -385,6 +392,8 @@ define(function (require) {
      */
     SliderAnim.add('slide', TimeLine.extend( /** @lends module:SliderAnim.anims.slide.prototype */ {
 
+        type: 'SliderAnimSlide',
+
         /**
          * 初始化函数
          *
@@ -396,7 +405,8 @@ define(function (require) {
          * @see module:SliderAnim.TimeLine#initialize
          */
         initialize: function (slider, options) {
-            this.parent('initialize', slider, options);
+
+            this.parent(slider, options);
 
             //设置滑动门的方向 `horizontal` or `vertical`
             this.yAxis = options.direction === 'vertical';
@@ -415,7 +425,6 @@ define(function (require) {
          */
         beforeSwitch: function (index, lastIndex) {
 
-
             var stageWidth = this.slider.stageWidth;
             var stageHeight = this.slider.stageHeight;
             var maxIndex = this.slider.count - 1;
@@ -424,15 +433,14 @@ define(function (require) {
             if (this.rollCycle) {
                 //初始化要拷贝首节点到最后
                 if (!this.cycleNode) {
-                    var cloned = this.slider.stage.firstChild.cloneNode();
-                    this.slider.stage.appendChild(cloned);
+                    var stage = $(this.slider.stage);
+                    stage.children().first().clone().appendTo(stage);
                     this.cycleNode = true;
                 }
             }
 
             //这里为了避免reflow使用这种书写方式
             if (this.yAxis) {
-
                 if (this.isBusy()) {
                     this.curPos = this.slider.stage.scrollTop;
                 } else {
@@ -472,8 +480,8 @@ define(function (require) {
          */
         tick: function (percent) {
             var move = (this.targetPos - this.curPos) * this.easingFn(percent);
-            this.slider.stage[
-            this.yAxis ? 'scrollTop' : 'scrollLeft'] = this.curPos + move;
+            var prop = this.yAxis ? 'scrollTop' : 'scrollLeft';
+            this.slider.stage[prop] = this.curPos + move;
         }
     }));
 
@@ -483,6 +491,8 @@ define(function (require) {
      * @name module:SliderAnim.anims.opacity
      */
     SliderAnim.add('opacity', TimeLine.extend( /** @lends module:SliderAnim.anims.opacity.prototype */ {
+
+        type: 'SliderAnimOpacity',
 
         /**
          * 设置目标元素的透明度
@@ -498,8 +508,7 @@ define(function (require) {
          * @protected
          */
         beforeSwitch: function (index) {
-            var childNodes = this.slider.getChildren(
-            this.slider.stage);
+            var childNodes = this.slider.getChildren(this.slider.stage);
             var l = childNodes.length;
 
             if (undefined === this.index) {
@@ -514,17 +523,16 @@ define(function (require) {
             this.setOpacity(childNodes[this.index], 1);
 
             // 移出顶层元素
-            lib.removeClass(childNodes[this.index], this.slider.getClass('top'));
+            $(childNodes[this.index]).removeClass(this.slider.getClass('top'));
             //将顶层元素作为背景
-            lib.removeClass(childNodes[this.lastIndex], this.slider.getClass('cover'));
+            $(childNodes[this.lastIndex]).removeClass(this.slider.getClass('cover'));
             //移出背景元素
-            lib.addClass(childNodes[this.index], this.slider.getClass('cover'));
-
+            $(childNodes[this.index]).addClass(this.slider.getClass('cover'));
 
             this.lastIndex = this.index;
 
             //设置当前元素
-            lib.addClass(childNodes[this.index = index], this.slider.getClass('top'));
+            $(childNodes[this.index = index]).addClass(this.slider.getClass('top'));
 
             this.setOpacity(this.curElement = childNodes[index], 0);
         },

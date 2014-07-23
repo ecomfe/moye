@@ -1,4 +1,6 @@
 define(function (require) {
+
+    var $ = require('jquery');
     var lib = require('ui/lib');        
     var Select = require('ui/Select');
     
@@ -25,8 +27,8 @@ define(function (require) {
 
         select = new Select({
             prefix: 'ecl-ui-sel',
-            main: lib.q('ecl-ui-sel')[0],
-            target: lib.q('ecl-ui-sel-target')[0],
+            main: $('.ecl-ui-sel')[0],
+            target: $('.ecl-ui-sel-target')[0],
             maxLength: 8,
             cols: 2,
             offset: {
@@ -71,14 +73,16 @@ define(function (require) {
         it('beforeShow', function () {
             var onBeforeShow = jasmine.createSpy('onBeforeShow');
             select.once('beforeShow', onBeforeShow);
-            lib.fire(select.target, 'click');
+            // lib.fire(select.target, 'click');
+            $(select.target).trigger('click');
             expect(onBeforeShow).toHaveBeenCalled();
         });
 
         it('选择：有事件', function () {
             var target = select.main.getElementsByTagName('a')[1];
             select.once('pick', onPick);
-            lib.fire(target, 'click');
+            // lib.fire(target, 'click');
+            $(target).trigger('click');
 
             expect(onPick).toHaveBeenCalledWith({
                 value: target.getAttribute('data-value') | 0,
@@ -92,7 +96,8 @@ define(function (require) {
             var target = select.main.getElementsByTagName('a')[2];
             select.once('pick', onPick);
 
-            lib.fire(target, 'click');
+            // lib.fire(target, 'click');
+            $(target).trigger('click');
             expect(onPick).toHaveBeenCalledWith({
                 value: target.getAttribute('data-value') | 0,
                 text: target.innerHTML,
@@ -108,14 +113,17 @@ define(function (require) {
             expect(select.isDisabled()).toBeTruthy();
 
             select.once('pick', onPick);
-            lib.fire(target, 'click');
-            lib.fire(target, 'click');
+            // lib.fire(target, 'click');
+            // lib.fire(target, 'click');
+            $(target).trigger('click');
+            $(target).trigger('click');
             expect(onPick).not.toHaveBeenCalled();
 
             select.enable();
             expect(select.isDisabled()).toBeFalsy();
 
-            lib.fire(target, 'click');
+            // lib.fire(target, 'click');
+            $(target).trigger('click');
             expect(onPick).toHaveBeenCalled();
             select.un('pick', onPick);
         });
@@ -125,11 +133,14 @@ define(function (require) {
             var target = select.main.getElementsByTagName('a')[2];
             select.on('pick', onPick);
 
-            lib.fire(target, 'click');
+            // lib.fire(target, 'click');
+            $(target).trigger('click');
             expect(onPick.calls.length).toBe(1);
-            lib.fire(target, 'click');
+            // lib.fire(target, 'click');
+            $(target).trigger('click');
             expect(onPick.calls.length).toBe(1);
-            lib.fire(target, 'click');
+            // lib.fire(target, 'click');
+            $(target).trigger('click');
             expect(onPick.calls.length).toBe(1);
             select.un('pick', onPick);
         });
@@ -141,14 +152,16 @@ define(function (require) {
 
             select.on('pick', onPick);
             select.on('change', onChange);
-            lib.fire(options[2], 'click');
+            // lib.fire(options[2], 'click');
+            $(options[2]).trigger('click');
             expect(onPick.calls.length).toBe(1);
             expect(onChange.calls.length).toBe(1);
             options[3].setAttribute(
                 'data-value',
                 options[2].getAttribute('data-value')
             );
-            lib.fire(options[3], 'click');
+            // lib.fire(options[3], 'click');
+            $(options[3]).trigger('click');
             expect(onPick.calls.length).toBe(2);
             expect(onChange.calls.length).toBe(1);
             select.un('pick', onPick);
@@ -160,7 +173,8 @@ define(function (require) {
             select.on('pick', onPick);
             select.on('change', onChange);
 
-            lib.fire(select.main.getElementsByTagName('a')[2], 'click');
+            // lib.fire(select.main.getElementsByTagName('a')[2], 'click');
+            $(select.main.getElementsByTagName('a')[2]).trigger('click');
             expect(onPick).toHaveBeenCalled();
             expect(onChange).toHaveBeenCalled();
 
@@ -169,7 +183,7 @@ define(function (require) {
 
             select.reset();
             expect(select.getValue()).toBe(0);
-            expect(select.getValue(false)).toBe('0');
+            expect(select.getValue(false)).toBe('');
         });
 
         it('datasource', function () {
@@ -182,7 +196,7 @@ define(function (require) {
 
             select = new Select({
                 prefix: 'ecl-ui-sel',
-                target: lib.q('ecl-ui-sel-target')[0],
+                target: $('.ecl-ui-sel-target')[0],
                 datasource: cities,
                 valueUseIndex: false,
                 maxLength: 8
@@ -199,7 +213,8 @@ define(function (require) {
             }
 
             select.once('pick', onPick);
-            lib.fire(options[1], 'click');
+            // lib.fire(options[1], 'click');
+            $(options[1]).trigger('click');
 
             expect(onPick).toHaveBeenCalledWith({
                 value: cities[1],

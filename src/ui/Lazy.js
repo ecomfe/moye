@@ -4,10 +4,12 @@
  * 
  * @file 延迟按需加载
  * @author chris(wfsr@foxmail.com)
+ * @author ludafa <leonlu@outlook.com
  */
  
 define(function (require) {
 
+    var $ = require('jquery');
     var lib = require('./lib');
 
     /**
@@ -20,20 +22,23 @@ define(function (require) {
      */
     var fixSize = function (node, attr) {
         var size = 0;
+        node = $(node);
+
+        if (node.css('display') === 'none') {
+            return size;
+        }
 
         // 如果不是刻意隐藏的元素，按非常规布局计算
-        if (lib.getStyle(node, 'display') !== 'none') {
-            var prop = 'offset' + lib.capitalize(attr || 'Height');
+        var prop = 'offset' + lib.capitalize(attr || 'Height');
 
-            // 计算所有子元素的宽度或高度之和
-            lib.each(node.childNodes, function (el) {
-                var oh = el[prop];
-                if (!oh) {
-                    oh = fixSize(el, attr);
-                }
-                size += oh;
-            });
-        }
+        // 计算所有子元素的宽度或高度之和
+        node.children().each(function (i, el) {
+            var oh = el[prop];
+            if (!oh) {
+                oh = fixSize(el, attr);
+            }
+            size += oh;
+        });
 
         return size;
     };
@@ -78,48 +83,49 @@ define(function (require) {
 
             var els = this.els;
             for (var key in els) {
-                if (els.hasOwnProperty(key)) {
+                if (!els.hasOwnProperty(key)) {
+                    continue;
+                }
 
-                    // [HTMLElement, Function, Object]
-                    // @see module:Lazy#add
-                    var data = els[key];
+                // [HTMLElement, Function, Object]
+                // @see module:Lazy#add
+                var data = els[key];
+                var el = $(data[0]);
 
-                    // 元素坐标
-                    var cd = lib.getPosition(data[0]);
+                // 元素坐标
+                var cd = el.offset();
 
-                    var options = data[2] || {};
-                    options.x = options.x || 10;
-                    options.y = options.y || 10;
+                var options = data[2] || {};
+                options.x = options.x || 10;
+                options.y = options.y || 10;
 
-                    cd.width = data[0].offsetWidth;
-                    cd.height = data[0].offsetHeight;
+                cd.width = el.width();
+                cd.height = el.height();
 
-                    // 宽高为0时可能是非常规布局导致，不代表子元素宽高也为0，需实时计算修复
-                    if (cd.width > 0 && cd.height === 0) {
-                        cd.height = fixSize(data[0]);
+                // 宽高为0时可能是非常规布局导致，不代表子元素宽高也为0，需实时计算修复
+                if (cd.width > 0 && cd.height === 0) {
+                    cd.height = fixSize(data[0]);
+                }
+                else if (cd.width === 0 && cd.height > 0) {
+                    cd.width = fixSize(data[0], 'Width');
+                }
+
+                // 是否在可视区域之内
+                var visible = false;
+
+                var isOverRight = cd.left - options.x >= scroll.x + size.x;
+                var isOverBottom = cd.top - options.y >= scroll.y + size.y;
+                var isLessLeft = cd.left + cd.width + options.x <= scroll.x;
+                var isLessTop = cd.top + options.y + cd.height <= scroll.y;
+
+                if (!(isOverRight || isOverBottom) && !(isLessLeft || isLessTop)) {
+                    if (!options.trigger) {
+                        data[1](scroll, size, cd, dir, data[0]);
                     }
-                    else if (cd.width === 0 && cd.height > 0) {
-                        cd.width = fixSize(data[0], 'Width');
-                    }
-
-                    // 是否在可视区域之内
-                    var visible = false;
-
-                    var isOverRight = cd.left - options.x >= scroll.x + size.x;
-                    var isOverBottom = cd.top - options.y >= scroll.y + size.y;
-                    var isLessLeft = cd.left + cd.width + options.x <= scroll.x;
-                    var isLessTop = cd.top + options.y + cd.height <= scroll.y;
-                    if (!(isOverRight || isOverBottom) 
-                         && !(isLessLeft || isLessTop)
-                    ) {
-                        if (!options.trigger) {
-                            data[1](scroll, size, cd, dir, data[0]);
-                        }
-                        visible = true;
-                    }
-                    if (options.trigger) {
-                        data[1](visible, scroll, size, cd, dir, data);
-                    }
+                    visible = true;
+                }
+                if (options.trigger) {
+                    data[1](visible, scroll, size, cd, dir, data);
                 }
             }
         },
@@ -152,6 +158,8 @@ define(function (require) {
          */
         type: 'Lazy',
 
+        tag: 'data-lazy-id',
+
         /**
          * 初始化
          * 
@@ -171,14 +179,15 @@ define(function (require) {
             // 滚动条最后的坐标，主要用于判断滚动方向
             this.lastScroll = {
                 x: lib.getScrollLeft(),
-                y: lib.getScrollTop
+                y: lib.getScrollTop()
             };
 
             // 确保方法的上下文 this 是当前实例
             this._bound = {
-                onScroll: lib.bind(privates.onScroll, this),
-                compute: lib.bind(privates.compute, this)
+                onScroll: $.proxy(privates.onScroll, this),
+                compute: $.proxy(privates.compute, this)
             };
+
         },
 
 
@@ -192,16 +201,23 @@ define(function (require) {
          * @public
          */
         add: function (el, callback, options) {
-            this.els[lib.guid(el)] = [el, callback, options];
-            var onScroll = this._bound.onScroll;
-            if (!this.count) {
-                lib.on(window, 'scroll', onScroll);
-                lib.on(window, 'resize', onScroll);
+
+            var guid = el.getAttribute(this.tag) || lib.guid();
+
+            if (!this.els[guid]) {
+                el.setAttribute(this.tag, guid);
+                this.els[guid] = [el, callback, options];
+                if (!this.count) {
+                   $(window).on('scroll', this._bound.onScroll);
+                   $(window).on('resize', this._bound.onScroll);
+                }
+                this.count++;
             }
-            this.count++;
+
             if (!this.scrolled) {
-                onScroll();
+                this._bound.onScroll();
             }
+
             return this;
         },
 
@@ -213,13 +229,13 @@ define(function (require) {
          * @public
          */
         remove: function (el) {
-            var guid = lib.guid(el);
+            var guid = el.getAttribute(this.tag);
             if (guid in this.els) {
                 delete this.els[guid];
                 this.count--;
                 if (!this.count) {
-                    lib.un(window, 'scroll', this.onScroll);
-                    lib.un(window, 'resize', this.onScroll);
+                    $(window).off('scroll', this.onScroll);
+                    $(window).off('resize', this.onScroll);
                 }
             }
             return this;

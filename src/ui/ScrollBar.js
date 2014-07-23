@@ -8,6 +8,7 @@
 
 define(function (require) {
 
+    var $ = require('jquery');
     var lib = require('./lib');
     var Control = require('./Control');
 
@@ -26,22 +27,18 @@ define(function (require) {
      */
     var setTextNoSelect = (function (supportCss) {
         var selectEvent;
-        return (supportCss
-            ? function (enabled, noSelectClass) {
-                lib[enabled ? 'addClass' : 'removeClass'](document.body, noSelectClass);
-            }
-            : function (enabled) {
-                if (enabled) {
-                    selectEvent = document.body.onselectstart;
-                    document.body.onselectstart = new Function(
-                        'event.returnValue = false'
-                    );
-                }
-                else {
-                    document.body.onselectstart = selectEvent;
-                }
-            });
-    })(lib.browser.ie < 9 ? false : true);
+        return lib.browser.ie < 9 
+            ? function (enabled) {
+                var body = $(document.body)
+                var prevent = function (e) {
+                    e.preventDefault();
+                };
+                body[enabled ? 'on' : 'off']('selectstart', prevent);
+            } 
+            : function (enabled, noSelectClass) {
+                $(document.body)[enabled ? 'addClass' : 'removeClass'](noSelectClass);
+            };
+    })();
 
     /**
      * 私有函数或方法
@@ -68,8 +65,9 @@ define(function (require) {
                 : (e.pageY || e.clientY);
             this.thumbStart = parseInt(this.thumb.style[this.xAxis ? 'left' : 'top'], 10) || 0;
 
-            lib.on(document, 'mousemove', this._bound.onMousemove);
-            lib.on(document, 'mouseup', this._bound.onMouseup);
+            $(document)
+                .on('mousemove', this._bound.onMousemove)
+                .on('mouseup', this._bound.onMouseup);
         },
 
         /**
@@ -102,9 +100,9 @@ define(function (require) {
          */
         onMouseup: function () {
             setTextNoSelect(false, privates.getClass.call(this, 'noselect'));
-
-            lib.un(document, 'mousemove', this._bound.onMousemove);
-            lib.un(document, 'mouseup', this._bound.onMouseup);
+            $(document)
+                .off('mousemove', this._bound.onMousemove)
+                .off('mouseup', this._bound.onMouseup);
         },
 
         /**
@@ -114,7 +112,7 @@ define(function (require) {
          * @private
          */
         onTrackUp: function (e) {
-            if (this._disabled || lib.getTarget(e) !== this.track) {
+            if (this._disabled || e.target !== this.track) {
                 return;
             }
             var pos = Math.min(
@@ -132,7 +130,8 @@ define(function (require) {
             if (this._disabled) {
                 return;
             }
-            var delta = e.wheelDelta ? e.wheelDelta / 120 : -e.detail / 3;
+            var origin  = e.originalEvent || e;
+            var delta   = origin.wheelDelta ? (origin.wheelDelta / 120) : -(origin.detail / 3);
             var percent = delta * this.options.wheelspeed;
 
             //这里设置最多滚动距离为2屏
@@ -146,7 +145,7 @@ define(function (require) {
             if (this.options.preventWheelScroll
                 || (percent >= 0.005 && percent <= 0.995)
             ) {
-                lib.preventDefault(e);
+                e.preventDefault();
             }
 
         },
@@ -157,7 +156,7 @@ define(function (require) {
          * @private
          */
         onMainEnter: function () {
-            lib.addClass(this.main, privates.getClass.call(this, 'over'));
+            $(this.main).addClass(privates.getClass.call(this, 'over'));
         },
 
         /**
@@ -166,7 +165,7 @@ define(function (require) {
          * @private
          */
         onMainLeave: function () {
-            lib.removeClass(this.main, privates.getClass.call(this, 'over'));
+            $(this.main).removeClass(privates.getClass.call(this, 'over'));
         },
 
         /**
@@ -347,7 +346,7 @@ define(function (require) {
 
             //需要滚动的元素
             if (!opt.panel) {
-                this.panel = lib.q(privates.getClass.call(this, 'panel'), this.main)[0];
+                this.panel = $('.' + privates.getClass.call(this, 'panel'), this.main)[0];
             }
             else {
                 this.panel = lib.g(opt.panel);
@@ -355,7 +354,7 @@ define(function (require) {
 
             //滚动条按钮
             if (!opt.thumb) {
-                this.thumb = lib.q(privates.getClass.call(this, 'thumb'), this.main)[0];
+                this.thumb = $('.' + privates.getClass.call(this, 'thumb'), this.main)[0];
             }
             else {
                 this.thumb = lib.g(opt.thumb);
@@ -366,11 +365,12 @@ define(function (require) {
 
             var bound = this._bound;
 
-            lib.on(this.thumb, 'mousedown', bound.onThumbdown);
-            lib.on(this.track, 'mouseup', bound.onTrackUp);
-            lib.on(this.panel, wheelEvent, bound.onMouseWheel);
-            lib.on(this.main, 'mouseenter', bound.onMainEnter);
-            lib.on(this.main, 'mouseleave', bound.onMainLeave);
+            $(this.thumb).on('mousedown', bound.onThumbdown);
+            $(this.track).on('mouseup', bound.onTrackUp);
+            $(this.panel).on(wheelEvent, bound.onMouseWheel);
+            $(this.main)
+                .on('mouseenter', bound.onMainEnter)
+                .on('mouseleave', bound.onMainLeave);
 
         },
 
@@ -412,12 +412,12 @@ define(function (require) {
             //当前内容的缩放级别
             this.scrollRatio = this.main[this.clientProp] / this.panelSize;
 
-            //设置祖先元素为禁用
-            lib[
-                this.scrollRatio >= 1
+            var act = this.scrollRatio >= 1
                 ? 'addClass'
-                : 'removeClass'
-            ](this.main, privates.getClass.call(this, 'noscroll'));
+                : 'removeClass';
+
+            //设置祖先元素为禁用
+            $(this.main)[act](privates.getClass.call(this, 'noscroll'));
 
             //滑块轨道的大小
             var trackLen = this.track[this.clientProp];
@@ -465,8 +465,9 @@ define(function (require) {
          */
         setEnabled: function (enabled) {
             var disabled = !enabled;
+            var act = disabled ? 'addClass' : 'removeClass';
             //设置祖先元素为禁用
-            lib[disabled ? 'addClass' : 'removeClass'](this.main, privates.getClass.call(this, 'disable'));
+            $(this.main)[act](privates.getClass.call(this, 'disable'));
             this._disabled = disabled;
         },
 
@@ -499,19 +500,22 @@ define(function (require) {
 
             var bound = this._bound;
 
-            lib.removeClass(document.body, privates.getClass.call(this, 'noselect'));
-            lib.un(this.thumb, 'mousedown', bound.onThumbdown);
-            lib.un(this.track, 'mouseup', bound.onTrackUp);
-            lib.un(this.panel, wheelEvent, bound.onMouseWheel);
-            lib.un(document, 'mousemove', bound.onMousemove);
-            lib.un(document, 'mouseup', bound.onMouseup);
+            $(document.body).removeClass(privates.getClass.call(this, 'noselect'));
+            $(this.thumb).off('mousedown', bound.onThumbdown);
+            $(this.track).off('mouseup', bound.onTrackUp);
+            $(this.panel).off(wheelEvent, bound.onMouseWheel);
 
-            lib.un(this.main, 'mouseenter', bound.onMainEnter);
-            lib.un(this.main, 'mouseleave', bound.onMainLeave);
+            $(document)
+                .off('mousemove', bound.onMousemove)
+                .off('mouseup', bound.onMouseup);
+
+            $(this.main)
+                .off('mouseenter', bound.onMainEnter)
+                .off('mouseleave', bound.onMainLeave);
 
             this.main = this.panel = this.thumb = this.track = null;
 
-            this.parent('dispose');
+            this.parent();
         }
     });
 

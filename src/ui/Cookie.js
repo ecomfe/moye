@@ -7,6 +7,7 @@
  */
 define(function (require) {
 
+    var $ = require('jquery');
     var lib = require('./lib');
 
     /**
@@ -131,7 +132,7 @@ define(function (require) {
          */
         remove: function (key) {
             var options = this.options;
-            duration = options.duration;
+            var duration = options.duration;
             options.duration = -1;
             this.set(key || this.key);
             options.duration = duration;
@@ -142,7 +143,7 @@ define(function (require) {
     });
     Cookie.implement(lib.configurable);
 
-    lib.extend(Cookie, /** @lends module:Cookie */{
+    $.extend(Cookie, /** @lends module:Cookie */{
 
         /**
          * 读取指定键名的 Cookie 值

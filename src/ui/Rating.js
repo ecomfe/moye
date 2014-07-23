@@ -7,6 +7,7 @@
  */
 
 define(function (require) {
+    var $ = require('jquery');
     var lib = require('./lib');
     var Control = require('./Control');
 
@@ -27,13 +28,7 @@ define(function (require) {
         drain: function () {
             var options = this.options;
             var prefix = options.prefix;
-
-            var ons = this.query(prefix + '-star-on');
-
-            lib.each(
-            ons, function (star) {
-                lib.removeClass(star, prefix + '-star-on');
-            });
+            $('.' + prefix + '-star-on').removeClass(prefix + '-star-on');
         },
 
         /**
@@ -44,16 +39,10 @@ define(function (require) {
          */
         fill: function (value) {
             value = parseInt(value || 0, 10);
-
             var options = this.options;
             var prefix = options.prefix;
             var result = this.stars.slice(0, value);
-
-            lib.each(
-            result, function (star) {
-                lib.addClass(star, prefix + '-star-on');
-            });
-
+            $(result).addClass(prefix + '-star-on');
             return result;
         },
 
@@ -66,14 +55,8 @@ define(function (require) {
             var options = this.options;
             var value = options.value;
             var prefix = options.prefix;
-
             var result = this.stars.slice(0, value);
-
-            lib.each(
-            result, function (star) {
-                lib.addClass(star, prefix + '-star-on');
-            });
-
+            $(result).addClass(prefix + '-star-on');
             return result;
         },
 
@@ -87,16 +70,16 @@ define(function (require) {
         onClick: function (e) {
             var options = this.options;
             var prefix = options.prefix;
-            var target = lib.getTarget(e);
+            var target = $(e.target);
             var value = options.value;
 
             if (!e || this.disabled) {
                 return false;
             }
 
-            if (lib.hasClass(target, prefix + '-star')) {
-                var newValue = parseInt(
-                target.getAttribute('data-value'), 10);
+            if (target.hasClass(prefix + '-star')) {
+
+                var newValue = parseInt(target.attr('data-value'), 10);
 
                 // 如果星级没变化，则不处理
                 if (newValue === value) {
@@ -104,7 +87,6 @@ define(function (require) {
                 }
 
                 options.value = newValue;
-
                 privates.drain.call(this);
                 privates.resetRating.call(this);
 
@@ -128,15 +110,15 @@ define(function (require) {
         onMouseOver: function (e) {
             var options = this.options;
             var prefix = options.prefix;
-            var target = lib.getTarget(e);
+            var target = $(e.target);
 
             if (!e || this.disabled) {
                 return false;
             }
 
-            if (lib.hasClass(target, prefix + '-star')) {
+            if (target.hasClass(prefix + '-star')) {
                 privates.drain.call(this);
-                privates.fill.call(this, target.getAttribute('data-value'));
+                privates.fill.call(this, target.attr('data-value'));
             }
         },
 
@@ -149,17 +131,17 @@ define(function (require) {
         onMouseOut: function (e) {
             var options = this.options;
             var prefix = options.prefix;
-            var target = lib.getTarget(e);
+            var target = $(e.target);
 
             if (!e || this.disabled) {
                 return false;
             }
 
-            if (lib.hasClass(target, prefix + '-star')) {
+            if (target.hasClass(prefix + '-star')) {
                 privates.drain.call(this);
                 privates.resetRating.call(this);
             }
-        }        
+        }
     };
 
     /**
@@ -227,10 +209,9 @@ define(function (require) {
                 this.rendered = true;
 
                 // 生成星星
-                var html = [];
                 var prefix = options.prefix;
+                var html = ['<ul class="' + prefix + '-stars">'];
 
-                html.push('<ul class="' + prefix + '-stars">');
                 for (var i = 0; i < options.max; i++) {
                     html.push(
                         '<li ',
@@ -242,18 +223,17 @@ define(function (require) {
                         '</li>'
                     );
                 }
+
                 html.push('</ul>');
                 this.main.innerHTML = html.join('');
 
-                this.stars = this.query(prefix + '-star');
-
                 // 绑定事件
                 var bound = this._bound;
-                lib.each(this.stars, function (star) {
-                    lib.on(star, 'mouseover', bound.onMouseOver);
-                    lib.on(star, 'mouseout', bound.onMouseOut);
-                    lib.on(star, 'click', bound.onClick);
-                });
+                this.stars = $('.' + prefix + '-star')
+                    .hover(bound.onMouseOver, bound.onMouseOut)
+                    .on('click', bound.onClick)
+                    .toArray();
+
             }
 
             privates.resetRating.call(this);
@@ -269,8 +249,7 @@ define(function (require) {
          * @public
          */
         enable: function () {
-            lib.removeClass(this.main, this.options.prefix + '-disabled');
-
+            $(this.main).removeClass(this.options.prefix + '-disabled');
             this.parent('enable');
         },
 
@@ -280,8 +259,7 @@ define(function (require) {
          * @public
          */
         disable: function () {
-            lib.addClass(this.main, this.options.prefix + '-disabled');
-
+            $(this.main).addClass(this.options.prefix + '-disabled');
             this.parent('disable');
         },
 
@@ -293,12 +271,10 @@ define(function (require) {
         dispose: function () {
             var bound = this._bound;
 
-            // 释放事件
-            lib.each(this.stars, function (star) {
-                lib.un(star, 'click', bound.onClick);
-                lib.un(star, 'mouseover', bound.onMouseOver);
-                lib.un(star, 'mouseout', bound.onMouseOut);
-            });
+            $(this.stars)
+                .off('mouseover', bound.onMouseover)
+                .off('mouseout', bound.onMouseout)
+                .off('click', bound.onClick);
 
             delete this.stars;
 

@@ -7,9 +7,10 @@
  */
 define(function (require) {
 
-    var lib = require('./lib');
+    var $       = require('jquery');
+    var lib     = require('./lib');
     var Control = require('./Control');
-    var Anim = require('./SliderAnim');
+    var Anim    = require('./SliderAnim');
 
     /**
      * 获得当前元素的所有子元素
@@ -124,9 +125,10 @@ define(function (require) {
          */
         onIndexClick: function (e) {
             var me = this;
-            var target = lib.getTarget(e);
-            if (target['data-index'] !== '' && !me._switchDelayTimer) {
-                var index = target.getAttribute('data-index');
+            var target = e.target;
+            var index = target.getAttribute('data-index');
+
+            if (index && !me._switchDelayTimer) {
                 me._switchDelayTimer = setTimeout(function () {
                     privates.clearSwitchDelayTimer.call(me);
                     me.go(+index);
@@ -150,31 +152,22 @@ define(function (require) {
          * @private
          */
         setCurrent: function () {
-            var opt = this.options;
+
+            var options = this.options;
 
             //如果不是循环模式，则设置prev按钮为不可点击
-            if (opt.prevElement) {
-                lib[
-                    this.index === 0 && !opt.circle ? 'addClass' : 'removeClass'
-                ](opt.prevElement, this.getClass('prev-disable'));
-            }
+            var prevAct = this.index === 0 && !options.circle ? 'addClass' : 'removeClass';
+            this.prevElement && $(this.prevElement)[prevAct](this.getClass('prev-disable'));
 
             //如果不是循环模式，则设置next按钮为不可点击
-            if (opt.nextElement) {
-                lib[
-                    this.index === this.count - 1 && !opt.circle
-                    ? 'addClass'
-                    : 'removeClass'
-                ](opt.nextElement, this.getClass('next-disable'));
-            }
+            var nextAct = this.index === this.count - 1 && !options.circle ? 'addClass' : 'removeClass';
+            this.nextElement && $(this.nextElement)[nextAct](this.getClass('next-disable'));
 
             //选中索引条目
-            if (opt.indexElment) {
-                var elements = getChildren(opt.indexElment);
-                elements[this.lastIndex] && lib.removeClass(
-                elements[this.lastIndex], this.getClass('index-selected'));
-                elements[this.index] && lib.addClass(
-                elements[this.index], this.getClass('index-selected'));
+            if (this.indexElement) {
+                var elements = $(this.indexElement).children();
+                elements.eq(this.lastIndex).removeClass(this.getClass('index-selected'));
+                elements.eq(this.index).addClass(this.getClass('index-selected'));
             }
 
         }
@@ -232,7 +225,7 @@ define(function (require) {
          * @property {HTMLElement=} options.nextElement next按钮的容器，
          * 如果不设则按class规则查找`options.prefix` + `next`
          *
-         * @property {HTMLElement=} options.indexElment 轮播索引按钮的容器，
+         * @property {HTMLElement=} options.indexElement 轮播索引按钮的容器，
          * 会将第一级子元素设为索引元素，
          * 如果不设则按class规则查找`options.prefix` + `index`
          *
@@ -260,6 +253,8 @@ define(function (require) {
          */
         options: {
 
+            index: 0,
+
             // 控件主容器
             main: '',
 
@@ -273,7 +268,7 @@ define(function (require) {
             nextElement: '',
 
             //轮播索引按钮的容器，会将第一级子元素设为索引元素，
-            indexElment: '',
+            indexElement: '',
 
             //是否自动轮播
             auto: true,
@@ -300,17 +295,18 @@ define(function (require) {
             animOptions: {
 
                 //使用的动画算子
-                easing: '',
+                easing: 'easing',
 
                 //每次动画时间间隔
                 interval: 200,
 
                 //滑动门的滚动方向
-                direction: '',
+                direction: 'horizontal',
 
                 //是否用循环滚模式
                 rollCycle: ''
             }
+
         },
 
         /**
@@ -329,38 +325,45 @@ define(function (require) {
             var bound = this._bound;
 
             if (options.main) {
-                this.main = lib.g(options.main);
-                lib.addClass(this.main, options.prefix);
-                lib.on(this.main, 'mouseenter', bound.onEnter);
-                lib.on(this.main, 'mouseleave', bound.onLeave);
+
+                this.main = $(options.main)
+                    .addClass(options.prefix)
+                    .on('mouseenter', bound.onEnter)
+                    .on('mouseleave', bound.onLeave)
+                    .get(0);
+
+                this.index = options.index;
 
                 //根据class查找未知的元素
-                options.stage = lib.g(options.stage) || lib.q(this.getClass('stage'), this.main)[0];
+                this.stage = lib.g(options.stage) || this.query(this.getClass('stage'))[0];
 
                 //根据class查找未知的元素
-                options.prevElement = lib.g(options.prevElement) || this.query(this.getClass('prev'))[0];
+                this.prevElement = lib.g(options.prevElement) || this.query(this.getClass('prev'))[0];
 
-                options.nextElement = lib.g(options.nextElement) || this.query(this.getClass('next'))[0];
+                this.nextElement = lib.g(options.nextElement) || this.query(this.getClass('next'))[0];
 
-                options.indexElment = lib.g(options.indexElment) || this.query(this.getClass('index'))[0];
+                this.indexElement = lib.g(options.indexElement) || this.query(this.getClass('index'))[0];
 
-                if (options.prevElement) {
-                    lib.on(options.prevElement, 'click', bound.onPrevClick);
+
+                if (this.prevElement) {
+                    $(this.prevElement).on('click', bound.onPrevClick);
                 }
 
-                if (options.nextElement) {
-                    lib.on(options.nextElement, 'click', bound.onNextClick);
+                if (this.nextElement) {
+                    $(this.nextElement).on('click', bound.onNextClick);
                 }
 
-                if (options.indexElment) {
-                    lib.on(options.indexElment, 'click', bound.onIndexClick);
+                if (this.indexElement) {
+                    $(this.indexElement).on('click', bound.onIndexClick);
                 }
 
                 //设置当前的动画组件
                 var AnimClass = typeof options.anim === 'string'
                     ? Anim.anims[options.anim]
                     : options.anim;
+
                 this.curAnim = new AnimClass(this, options.animOptions);
+
             }
         },
 
@@ -417,7 +420,10 @@ define(function (require) {
         play: function () {
             if (this.options.auto) {
                 privates.clearSwitchTimer.call(this);
-                this._switchTimer = setTimeout(this._bound.onSwitch, this.options.autoInterval);
+                this._switchTimer = setTimeout(
+                    this._bound.onSwitch, 
+                    this.options.autoInterval
+                );
             }
         },
 
@@ -428,34 +434,27 @@ define(function (require) {
          * @public
          */
         refresh: function () {
+
             //使用第一个轮播元素的宽和高为舞台的宽和高
             var me = this;
-            var opt = this.options;
-            var childNodes = getChildren(opt.stage);
+            var stage = $(this.stage);
+            var children = stage.children();
 
             //设置item样式
-            lib.each(
-                childNodes,
-                function (item) {
-                    lib.addClass(item, me.getClass('item'));
-                }
-            );
+            children.each(function (i, item) {
+                $(item).addClass(me.getClass('item'));
+            });
 
             //设置索引项目
-            if (opt.indexElment) {
-                lib.each(
-                    getChildren(opt.indexElment),
-                    function (item, index) {
-                        item.setAttribute('data-index', index);
-                    }
-                );
-            }
+            this.indexElement && $(this.indexElement).children().each(function (index, item) {
+                item.setAttribute('data-index', index);
+            });
 
-            me.stage = opt.stage;
             me.index = 0;
-            me.count = childNodes.length;
-            me.stageWidth = opt.stage.clientWidth;
-            me.stageHeight = opt.stage.clientHeight;
+            me.count = children.length;
+            me.stageWidth = stage.width();
+            me.stageHeight = stage.height();
+            me.stage = stage.get(0);
 
             privates.setCurrent.call(this);
             me.curAnim.refresh();
@@ -553,20 +552,21 @@ define(function (require) {
             //注销按钮事件
             var options = this.options;
             if (options.prevElement) {
-                lib.un(options.prevElement, 'click', bound.onPrevClick);
+                $(options.prevElement).off('click', bound.onPrevClick);
             }
 
             if (options.nextElement) {
-                lib.un(options.nextElement, 'click', bound.onNextClick);
+                $(options.nextElement).off('click', bound.onNextClick);
             }
 
-            if (options.indexElment) {
-                lib.un(options.indexElment, 'click', bound.onIndexClick);
+            if (options.indexElement) {
+                $(options.indexElement).off('click', bound.onIndexClick);
             }
 
             //注销舞台事件
-            lib.un(this.main, 'mouseenter', bound.onEnter);
-            lib.un(this.main, 'mouseleave', bound.onLeave);
+            $(this.main)
+                .off('mouseenter', bound.onEnter)
+                .off('mouseleave', bound.onLeave);
 
             this.main = this.stage = this.options = null;
 

@@ -1,0 +1,120 @@
+/* 大搜索页面相关样式 */
+body,th,td {
+    font-family: arial;
+}
+
+p,form,ol,ul,li,dl,dt,dd,h3 {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+input {
+    padding-top: 0;
+    padding-bottom: 0;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+table,img {
+    border: 0;
+}
+
+td {
+    font-size: 9pt;
+    line-height: 18px;
+}
+
+em {
+    font-style: normal;
+    color: #cc0000;
+}
+
+a em {
+    text-decoration: underline;
+}
+
+cite {
+    font-style: normal;
+    color: #008000;
+}
+
+.c-clearfix:after {
+    content: ".";
+    display: block;
+    height: 0;
+    clear: both;
+    visibility: hidden;
+}
+
+.c-clearfix {
+    zoom: 1;
+}
+
+body {
+    padding-left: 180px;
+}
+
+.nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 160px;
+    background-color: #eee;
+    overflow-y: auto;
+
+    ul li a {
+        display: block;
+        height: 40px;
+        padding-left: 10px;
+        line-height: 40px;
+        color: #333;
+        text-decoration: none;
+
+        -webkit-transition: all .2s linear;
+        -moz-transition: all .2s linear;
+        -ms-transition: all .2s linear;
+        -o-transition: all .2s linear;
+        transition: all .2s linear;
+
+        &:visited {
+            color: #333;
+        }
+
+        &:hover {
+            background-color: #00b89c;
+            color: #fff;
+        }
+
+        &.active {
+            background-color: #009f86;
+            color: #fff;
+        }
+    }
+
+}
+
+.logo {
+    display: block;
+    width: 80px;
+    height: 80px;
+    padding: 40px;
+    img {
+        width: 80px;
+        height: 80px;
+    }
+}
+
+.container {
+    width: 800px;
+    margin: 0 auto;
+}
+
+.content {
+    margin: 20px 0;
+}
+
+@import (inline) './markdown.css';
+@import (inline) './highlight.tommorrow.css';

@@ -74,7 +74,7 @@ define(function (require) {
          */
         initialize: function (options) {
 
-            var me = this;
+            options = this.setOptions(options);
 
             me.changeStage('NEW');
             me.currentStates = {};
@@ -96,6 +96,7 @@ define(function (require) {
 
             if (options.hasOwnProperty('states')) {
                 me.states = options.states;
+                this.init = null;
             }
 
             if (options.hasOwnProperty('id')) {
@@ -104,6 +105,10 @@ define(function (require) {
 
             delete options.id;
             delete options.skin;
+
+            if (this.binds) {
+                lib.binds(this, this.binds);
+            }
 
             if (me.init) {
                 me.init(options);
@@ -216,7 +221,7 @@ define(function (require) {
          * @public
          */
         query: function (className) {
-            return lib.q(className, this.main);
+            return $('.' + className, this.main).toArray();
         },
         
         /**

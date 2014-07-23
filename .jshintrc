@@ -13,7 +13,7 @@
     "plusplus": false,
     "quotmark": "single",
     "regexp": false,
-    "undef": false,
+    "undef": true,
     "unused": "vars",
     "strict": false,
     "trailing": false,
@@ -65,7 +65,6 @@
 
     "predef": [
         "define",
-        "require",
-        "baidu"
+        "require"
     ]
 }

@@ -9,11 +9,9 @@
 
 define(function (require) {
 
+    var $ = require('jquery');
     var lib = require('./lib');
     var Control = require('./Control');
-
-    var DOM = lib.dom;
-    var PAGE = lib.page;
 
     /**
      * 私有函数或方法
@@ -48,27 +46,40 @@ define(function (require) {
          */
         onShow: function (e) {
 
-            var oldTarget = this.target;
 
             if (this._disabled) {
                 return;
             }
 
-            if (oldTarget !== this.target) {
+            var trigger = e.target;
+            var oldTarget = this.target;
+
+            // 这里针对于同一Popup实例，在多个target间切换时的处理逻辑
+            // 效果是从target A切换到target B时，Popup实例直接显示在target B上，而不是隐藏。
+            // 之所以会被隐藏是因为document上的`click`钩子
+            // 判断当前的target是不是原有target，或者在原有target内部
+            // 如果不是，那么先将它隐藏。
+            // 这里隐藏主要作用是取消挂载到document上的`click`事件处理，而不是真的想要隐藏它。
+            // 如果不把钩子去掉，那会让接下来`显示`之后，事件冒泡上来到钩子上，又把它给隐藏了。
+            if (oldTarget 
+                && oldTarget !== trigger 
+                && !$.contains(oldTarget, trigger)
+            ) {
                 this.hide();
             }
 
-            var trigger = lib.getTarget(e);
+            var $trigger = $(e.target);
             var liveTriggers = this.liveTriggers;
 
             if (liveTriggers) {
                 var cls = this.options.triggers;
-                var hasClass = lib.hasClass;
-                while (!hasClass(trigger, cls) && trigger !== liveTriggers) {
-                    trigger = trigger.parentNode;
+                while (!$trigger.hasClass(cls)) {
+                    if ($.inArray(trigger, this.liveTriggers) !== -1) {
+                        break;
+                    }
+                    trigger = trigger.parent();
                 }
-
-                if (!hasClass(trigger, cls)) {
+                if (!$trigger.hasClass(cls)) {
                     return;
                 }
             }
@@ -84,10 +95,17 @@ define(function (require) {
 
             this.trigger = trigger;
 
+            var guid = this.guid;
             var bound = this._bound;
+
             this._timer = setTimeout(function () {
-                lib.on(document, 'click', bound.onHide);
-                lib.on(window, 'resize', bound.onResize);
+
+                // 这里使用了guid作为事件类型的namespace
+                // 因为这里貌似有个问题，off的时候会把document上的所有click都给干掉
+                // 只能用namespace来加以区分，来能避免多个popup之间钩子的干扰
+                $(document).on('click.' + guid, bound.onHide);
+                $(window).on('resize.' + guid, bound.onResize);
+
             }, 0);
         },
 
@@ -97,10 +115,10 @@ define(function (require) {
          * @private
          */
         onHide: function (e) {
-            var target = lib.getTarget(e);
+            var target = e.target;
             var main   = this.main;
 
-            if (!main || main === target || DOM.contains(main, target)) {
+            if (!main || main === target || $.contains(main, target)) {
                 return;
             }
 
@@ -116,33 +134,36 @@ define(function (require) {
          */
         computePosition: function () {
             var options      = this.options;
-            var target       = this.target || this.triggers[0];
-            var main         = this.main;
+            var target       = $(this.target || this.triggers[0]);
+            var main         = $(this.main);
             var dir          = options.dir;
-            var position     = DOM.getPosition(target);
+            var position     = target.offset();
 
             // 目标的8个关键坐标点
-            var top          = position.top;
-            var left         = position.left;
-            var width        = target.offsetWidth;
-            var height       = target.offsetHeight;
+            var top = position.top;
+            var left = position.left;
+            var width        = target.outerWidth();  // target[0].offsetWidth;
+            var height       = target.outerHeight(); // target[0].offsetHeight;
             var right        = left + width;
             var bottom       = top + height;
             var center       = left + (width / 2);
             var middle       = top + (height / 2);
 
             // 提示层宽高
-            var mainWidth    = main.offsetWidth;
-            var mainHeight   = main.offsetHeight;
+            var mainWidth    = main.width();
+            var mainHeight   = main.height();
+
+
+            var win          = $(window);
 
             // 视窗范围
-            var scrollTop    = PAGE.getScrollTop();
-            var scrollLeft   = PAGE.getScrollLeft();
-            var scrollRight  = scrollLeft + PAGE.getViewWidth();
-            var scrollBottom = scrollTop + PAGE.getViewHeight();
+            var scrollTop    = win.scrollTop();
+            var scrollLeft   = win.scrollLeft();
+            var scrollRight  = scrollLeft + win.width();
+            var scrollBottom = scrollTop + win.height();
 
             // 属性配置优于实例配置
-            var dirFromAttr = target.getAttribute('data-popup');
+            var dirFromAttr = target.attr('data-popup');
             if (dirFromAttr) {
                 dir = /[trbl]{2}/.test(dirFromAttr) ? dirFromAttr : '1';
             }
@@ -235,8 +256,7 @@ define(function (require) {
 
             }
 
-            DOM.setStyles(
-                main, 
+            main.css( 
                 {
                     left: left + offset.x + 'px',
                     top: top + offset.y + 'px'
@@ -388,6 +408,7 @@ define(function (require) {
          * @private
          */
         init: function (options) {
+            this.guid = lib.guid();
             this._disabled  = options.disabled;
             this.content   = options.content;
 
@@ -398,16 +419,12 @@ define(function (require) {
             }
 
             var prefix = options.prefix;
-            var main   = this.main = options.main 
-                && lib.g(options.main)
-                || document.createElement('div');
+            var main   = $(options.main || '<div>');
 
-            if (options.main) {
-                lib.addClass(main, prefix);
-            }
-            else {
-                main.className  = prefix;
-                main.style.left = '-2000px';
+            main.addClass(prefix);
+
+            if (!options.main) {
+                main.css('left','-2000px');
             }
 
             var triggers     = options.triggers;
@@ -416,28 +433,28 @@ define(function (require) {
 
             if (liveTriggers) {
 
-                this.liveTriggers = lib.on(
-                    lib.g(liveTriggers),
-                    'click',
-                    bound.onShow
-                );
+                liveTriggers = lib.isString(liveTriggers) 
+                    ? $('.' + liveTriggers)
+                    : $(liveTriggers);
+
+                this.liveTriggers = liveTriggers
+                    .on('click', bound.onShow)
+                    .toArray();
+
             }
             else {
 
-                if (lib.isString(triggers)) {
-                    triggers = lib.q(options.triggers);
-                }
+                triggers = lib.isString(triggers) 
+                    ? $('.' + options.triggers)
+                    : $(options.triggers);
 
-                lib.each(
-                    lib.toArray(triggers),
-                    function (trigger) {
-                        lib.on(trigger, 'click', bound.onShow);
-                    }
-                );
-
-                this.triggers = triggers;
-
+                this.triggers = triggers
+                    .on('click', bound.onShow)
+                    .toArray();
             }
+
+            this.main = main.get(0);
+
         },
 
         /**
@@ -449,31 +466,29 @@ define(function (require) {
          * @public
          */
         render: function () {
-            var main = this.main;
+            var main = $(this.main);
 
             if (this.content) {
-                main.innerHTML = this.content;
+                main.html(this.content);
             }
 
             if (!this.rendered) {
-                this.rendered = true;
-                document.body.appendChild(main);
-
                 var me = this;
+                me.rendered = true;
+                main
+                    .appendTo(document.body)
+                    .on(
+                        'click', 
+                        function (e) {
 
-                lib.on(
-                    main,
-                    'click',
-                    function (e) {
-
-                        /**
-                         * @event module:Popup#click
-                         * @type {Object}
-                         * @property {Event} event 事件源对象
-                         */
-                        me.fire('click', { event: e });
-                    }
-                );
+                            /**
+                             * @event module:Popup#click
+                             * @type {Object}
+                             * @property {Event} event 事件源对象
+                             */
+                            me.fire('click', { event: e });
+                        }
+                    );
 
             }
 
@@ -510,8 +525,12 @@ define(function (require) {
             this.fire('hide');
 
             var bound = this._bound;
-            lib.un(document, 'click', bound.onHide);
-            lib.un(window, 'resize', bound.onResize);
+
+            // 这里使用了guid作为事件类型的namespace
+            // 因为这里貌似有个问题，off的时候会把document上的所有click都给干掉
+            // 只能用namespace来加以区分，来能避免多个popup之间钩子的干扰
+            $(document).off('click.' + this.guid, bound.onHide);
+            $(window).off('resize.' + this.guid, bound.onResize);
 
             clearTimeout(this._timer);
             clearTimeout(this._resizeTimer);

@@ -21,7 +21,7 @@ module.exports = function (grunt) {
         
         jshint: {
             options: grunt.file.readJSON('.jshintrc'),
-            files: ['<%=meta.src.main%>/ui/*.js', '<%=meta.src.test%>/*.js']
+            files: ['<%=meta.src.main%>/ui/*.js'/*, '<%=meta.src.test%>/*.js'*/]
         },
 
         less: {
@@ -72,7 +72,7 @@ module.exports = function (grunt) {
                 src: '**',
                 dest: '<%=meta.src.main%>/moye/' + build_prefix,
                 flatten: false,
-                filter: 'isFile',
+                filter: 'isFile'
             },
             doc: {
                 expand: true,
@@ -80,7 +80,7 @@ module.exports = function (grunt) {
                 src: '**',
                 dest: 'example/css',
                 flatten: false,
-                filter: 'isFile',               
+                filter: 'isFile'               
             }
         },
 
@@ -112,14 +112,14 @@ module.exports = function (grunt) {
                         {name: build_prefix + '/City'}
                     ]*/
                 }
-            },
+            }
 
         },
 
         connect: {
             test: {
                 options: {
-                    port: 8888
+                    port: 8910
                 }
             }
         },
@@ -139,7 +139,7 @@ module.exports = function (grunt) {
                     templateOptions: {
                         requireConfig: {
                             baseUrl: './<%=meta.src.main%>/',
-                            urlArgs: '?' + (+new Date).toString(36)
+                            urlArgs: '?' + (+new Date()).toString(36)
                         }
                     }
                 }
@@ -162,7 +162,7 @@ module.exports = function (grunt) {
                         templateOptions: {
                             requireConfig: {
                                 baseUrl: '.grunt/grunt-contrib-jasmine/<%= meta.src.main %>/',
-                                urlArgs: '?' + (+new Date).toString(36)
+                                urlArgs: '?' + (+new Date()).toString(36)
                             }
                         }
                     }
@@ -200,4 +200,4 @@ module.exports = function (grunt) {
     grunt.registerTask('example', ['less', 'copy:doc']);
     grunt.registerTask('page', ['example', 'jsdoc', 'gh-pages', 'clean:afterdoc']);
 
-}
+};
