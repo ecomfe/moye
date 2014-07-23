@@ -412,10 +412,12 @@ define(function (require) {
                 this.on('disable', bound.onDisable);
                 this.on('enable', bound.onEnable);
                 this.main = popup.main;
+                var main = $(this.main);
 
                 if (options.cols > 1) {
-                    $(this.main).addClass(options.prefix + '-cols' + options.cols);
-                    $(this.main).addClass('c-clearfix');
+                    main
+                        .addClass(options.prefix + '-cols' + options.cols)
+                        .addClass('c-clearfix');
                 }
             }
             else {

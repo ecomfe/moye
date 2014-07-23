@@ -256,7 +256,7 @@ define(function (require) {
 
             }
 
-            $(main).css( 
+            main.css( 
                 {
                     left: left + offset.x + 'px',
                     top: top + offset.y + 'px'
