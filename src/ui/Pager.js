@@ -136,8 +136,7 @@ define(function (require) {
 
         initEvents: function () {
             $(this.main)
-                .addClass(this.options.prefix)
-                .on('click', $.proxy(this.onMainClicked, this));
+                .on('click', $.proxy(this._onMainClicked, this));
         },
 
         repaint: painter.createRepaint(
@@ -329,7 +328,7 @@ define(function (require) {
          * @fires module:Pager#change
          * @private
          */
-        onMainClicked: function (e, target) {
+        _onMainClicked: function (e, target) {
             e.preventDefault();
             target = target || e.target;
 
