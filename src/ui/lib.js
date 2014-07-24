@@ -365,7 +365,7 @@ define(function (require) {
         while ((name = methods.pop())) {
             fn = name && me[name];
             if (fn) {
-                me[name] = $.bind(fn, me);
+                me[name] = $.proxy(fn, me);
             }
         }
     };
@@ -716,6 +716,7 @@ define(function (require) {
 
             var val;
             for (var name in options) {
+
                 if (!Object.prototype.hasOwnProperty.call(options, name)) {
                     continue;
                 }
@@ -731,8 +732,10 @@ define(function (require) {
 
                     delete options[name];
                 }
-                else if (name in thisOptions) {
 
+                // 由于基础组件Control添加了公共属性，不能将暂时移除此处限制
+                // else if (name in thisOptions) {
+                else {
                     thisOptions[name] = typeOf(val) === 'object'
                         ? $.extend(thisOptions[name] || {}, val)
                         : val;
@@ -818,6 +821,32 @@ define(function (require) {
     })();
 
     /**
+     * 控件库配置数据
+     *
+     * @type {Object}
+     * @ignore
+     */
+    var config = {
+        uiPrefix: 'data-ui',
+        instanceAttr: 'data-ctrl-id',
+        uiClassPrefix: 'ui',
+        skinClassPrefix: 'skin',
+        stateClassPrefix: 'state',
+        domIDPrefix: ''
+    };
+
+    /**
+     * 将参数用`-`连接成字符串
+     *
+     * @param {string...} args 需要连接的串
+     * @return {string}
+     * @ignore
+     */
+    function joinByStrike() {
+        return [].slice.call(arguments, 0).join('-');
+    }
+
+    /**
      * 获取控件部件相关的class数组
      * 
      * esui简化版本
@@ -845,16 +874,20 @@ define(function (require) {
         if (part) {
             classes.push(joinByStrike(prefix, type, part));
             if (skin) {
-                classes.push(joinByStrike(skinPrefix, skin, type, part));
+                for (var i = 0, len = skin.length; i < len; i++) {
+                    classes.push(joinByStrike(skinPrefix, skin[i], type, part));
+                }
             }
         }
         else {
             classes.push(joinByStrike(prefix, type));
             if (skin) {
-                classes.push(
-                    joinByStrike(skinPrefix, skin),
-                    joinByStrike(skinPrefix, skin, type)
-                );
+                for (var i = 0, len = skin.length; i < len; i++) {
+                    classes.push(
+                        joinByStrike(skinPrefix, skin[i]),
+                        joinByStrike(skinPrefix, skin[i], type)
+                    );
+                }
             }
         }
 
@@ -868,7 +901,7 @@ define(function (require) {
      * @return {string}
      */
     lib.getPartClassName = function (control, part) {
-        return getPartClasses(control, part).join(' ');
+        return lib.getPartClasses(control, part).join(' ');
     };
 
     /**
@@ -889,11 +922,9 @@ define(function (require) {
             return;
         }
 
-        var classes = lib.getPartClasses(control, part);
+        var classes = lib.getPartClassName(control, part);
 
-        for (var i = 0, len = classes.length; i < len; i++) {
-            lib.addClass(element, classes[i]);
-        }
+        $(element).addClass(classes);
 
     };
 
@@ -915,11 +946,9 @@ define(function (require) {
             return;
         }
 
-        var classes = lib.getPartClasses(control, part);
+        var classes = lib.getPartClassName(control, part);
 
-        for (var i = 0, len = classes.length; i < len; i++) {
-            lib.removeClass(element, classes[i]);
-        }
+        $(element).removeClass(classes);
 
     };
 
@@ -932,7 +961,7 @@ define(function (require) {
      * - `ui-{type}-{state}`
      * - `state-{state}`
      * - `skin-{skin}-{state}`
-     * - `skin-{skin}-{styleType}-{state}`
+     * - `skin-{skin}-{type}-{state}`
      *
      * @param {string} state 状态名称
      * @return {string[]}
@@ -947,12 +976,25 @@ define(function (require) {
         var skin = control.skin;
         if (skin) {
             var skinPrefix = config.skinClassPrefix;
-            classes.push(
-                joinByStrike(skinPrefix, skin, state),
-                joinByStrike(skinPrefix, skin, type, state)
-            );
+            for (var i = 0, len = skin.length; i < len; i++) {
+                classes.push(
+                    joinByStrike(skinPrefix, skin[i], state),
+                    joinByStrike(skinPrefix, skin[i], type, state)
+                );
+            }
+            
         }
         return classes;
+    };
+
+    /**
+     * 获取控件的状态样式字符串，具体可参考{@link lib#getStateClasses}方法
+     *
+     * @param {string} [part] 部件名称
+     * @return {string}
+     */
+    lib.getStateClassName = function (control, part) {
+        return lib.getStateClasses(control, part).join(' ');
     };
 
     /**
@@ -965,10 +1007,8 @@ define(function (require) {
         if (!element) {
             return;
         }
-        var classes = lib.getStateClasses(control, state);
-        for (var i = classes.length - 1; i >= 0; i--) {
-            lib.addClass(element, classes[i]);
-        };
+        var classes = lib.getStateClassName(control, state);
+        $(element).addClass(classes);
     };
 
     /**
@@ -982,11 +1022,8 @@ define(function (require) {
             return;
         }
 
-        var classes = lib.getStateClasses(control, state);
-
-        for (var i = classes.length - 1; i >= 0; i--) {
-            lib.removeClass(element, classes[i]);
-        };
+        var classes = lib.getStateClassName(control, state);
+        $(element).removeClass(classes);
     };
 
     /**
@@ -1007,7 +1044,7 @@ define(function (require) {
      * @param {string} [part] 部件名称，如不提供则生成控件主元素的id
      * @return {string}
      */
-    lib.getId = function (control, part) {
+    lib.getPartId = function (control, part) {
         part = part ? '-' + part : '';
         return 'ctrl-' + control.type.toLowerCase() + '-' + control.id + part;
     };

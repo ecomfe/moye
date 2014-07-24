@@ -21,7 +21,9 @@
 -----------------------
 
 ```html
-<div style="text-align:center"><div class="ecl-ui-pager c-clearfix"></div></div>
+<div class="content" style="text-align:center">
+    <div class="ecl-ui-pager c-clearfix"></div>
+</div>
 ```
 
 ```js
@@ -74,32 +76,20 @@ require(['lib', 'Pager'], function (lib, Pager) {
 
 {% content: script %}
 <script>
-    (function () {
-
-        require.config({
-          baseUrl: '../src/ui'
-        });
-
-        require(['lib', 'Pager'], function (lib, Pager) {
-
-            var pager = new Pager({
-                main: $('.ecl-ui-pager')[0],
-                page: 0,
-                first: 1,
-                total: 10,
-                onChange: function (e) {
-                  console.log(e);
-                }
-            });
-
-            pager.on('change', function (e) {
-                // load content
-                this.setPage(e.page);
-                this.render();
-            });
-
-            pager.render();
-        });
-
-    })();
+require(['Pager', 'jquery'], function (Pager, $) {
+    var pager = new Pager({
+        main: $('.ecl-ui-pager')[0],
+        page: 0,
+        first: 1,
+        total: 10,
+        skin: ['test'],
+        onChange: function (e) {
+          console.log(e);
+        }
+    })
+    .on('change', function (e) {
+        this.setPage(e.page);
+    })
+    .render();
+});
 </script>

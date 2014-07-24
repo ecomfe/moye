@@ -10,13 +10,7 @@ define(function (require) {
 
     var $ = require('jquery');
     var lib = require('./lib');
-
-    var LIFE_CYCLE = {
-        NEW: 0,
-        INITED: 1,
-        RENDERED: 2,
-        DISPOSED: 4
-    };
+    var Helper = require('./Helper');
 
     /**
      * 控件基类
@@ -47,7 +41,7 @@ define(function (require) {
 
 
         /**
-         * 将事件方法绑定 this
+         * 缓存被代理后的事件处理函数
          * 
          * @param {Object.<string, Function>} provider 提供事件方法的对象
          * @protected
@@ -74,9 +68,9 @@ define(function (require) {
          */
         initialize: function (options) {
 
-            options = this.setOptions(options);
+            this.helper = new Helper(this);
 
-            this.changeStage('NEW');
+            this.helper.changeStage('NEW');
             this.currentStates = {};
 
             options = this.setOptions(options);
@@ -88,27 +82,14 @@ define(function (require) {
              * @protected
              * @readonly
              */
-            this.main = options.main ? options.main : document.createElement('div');
-
-            if (options.hasOwnProperty('skin')) {
-                this.skin = options.skin;
-            }
-
-            if (options.hasOwnProperty('states')) {
-                this.states = options.states;
-                this.init = null;
-            }
-
-            if (options.hasOwnProperty('id')) {
-                this.id = options.id;
-            }
+            this.main   = options.main ? lib.g(options.main) : this.createMain();
+            this.id     = options.hasOwnProperty('id') ? options.id : lib.guid();
+            this.skin   = options.hasOwnProperty('skin') ? options.skin : [];
+            this.states = options.hasOwnProperty('states') ? options.states : [];
 
             delete options.id;
             delete options.skin;
-
-            if (this.binds) {
-                lib.binds(this, this.binds);
-            }
+            delete options.states;
 
             if (this.init) {
                 this.init(options);
@@ -117,7 +98,7 @@ define(function (require) {
 
             this.children = [];
 
-            this.changeStage('INITED');
+            this.helper.changeStage('INITED');
         },
 
 
@@ -129,43 +110,40 @@ define(function (require) {
          * @protected
          */
         render: function () {
-            var me = this;
 
-            if (me.isInStage('INITED')) {
+            if (this.helper.isInStage('INITED')) {
 
-                me.initStructure();
-                me.initEvents();
+                this.initStructure();
+                this.initEvents();
 
                 // 为控件主元素添加id
-                if (!me.main.id) {
-                    me.main.id = lib.getId(me);
-                }
+                $(this.main).attr('data-ui-id', this.helper.getPartId());
 
-                lib.addPartClasses(me);
+                this.helper.addPartClasses();
 
-                if (me.states) {
-                    for (var i = me.states.length - 1; i >= 0; i--) {
-                        me.addState(me.states[i]);
+                if (this.states) {
+                    for (var i = this.states.length - 1; i >= 0; i--) {
+                        this.addState(this.states[i]);
                     };
                 }
 
-                if (me.plugins) {
-                    for (var i = 0, len = me.plugins.length; i < len; i++) {
-                        me.plugins[i].execute(me);
+                if (this.plugins) {
+                    for (var i = 0, len = this.plugins.length; i < len; i++) {
+                        this.plugins[i].execute(this);
                     }
                 }
 
             }
 
             // 由子控件实现
-            me.repaint();
+            this.repaint();
 
-            if (me.isInStage('INITED')) {
+            if (this.helper.isInStage('INITED')) {
                 // 切换控件所属生命周期阶段
-                me.changeStage('RENDERED');
+                this.helper.changeStage('RENDERED');
             }
 
-            return me;
+            return this;
 
         },
                 
@@ -185,9 +163,6 @@ define(function (require) {
          * @return {Control} self
          */
         initEvents: function () {
-            if (this.binds) {
-               this.bindEvents(this.binds);
-            }
             return this;
         },
 
@@ -197,7 +172,93 @@ define(function (require) {
          * @abstract
          * @return {Control} self
          */
-        repaint: function () {},
+        repaint: function (changes, changesIndex) {
+            return this;
+        },
+
+        /**
+         * 设置属性值
+         * 
+         * 当设定的属性值与当前值不一致时，会触发repaint动作
+         * 
+         * @param {string} name 属性名
+         * @param {*} value 属性值
+         * @return {Control} SELF
+         */
+        set: function (name, value) {
+
+            var properties;
+
+            // 处理重载
+            if (lib.isObject(name)) {
+                properties = name;
+            }
+            else {
+                properties = {};
+                properties[name] = value;
+            }
+
+            // 如果不在RENDERED状态，直接赋值
+            if (!this.helper.isInStage('RENDERED')) {
+                $.extend(this, properties);
+                return this;
+            }
+
+            // 如果在RENDERED状态，检测属性值变化
+            var changes = [];
+            var changesIndex = {};
+
+            for (var key in properties) {
+                if (properties.hasOwnProperty(key)) {
+                    var newValue = properties[key];
+                    var oldValue = this[key];
+                    var isChanged = this.isPropertyChanged(key, newValue, oldValue);
+
+                    if (isChanged) {
+                        this[key] = newValue;
+                        var record = {
+                            name: key,
+                            oldValue: oldValue,
+                            newValue: newValue
+                        };
+                        changes.push(record);
+                        changesIndex[key] = record;
+                    }
+                }
+            }
+
+            // 如果有变化，那么触发repaint
+            if (changes.length) {
+                this.repaint(changes, changesIndex);
+            }
+
+            return this;
+        },
+
+        /**
+         * 返回属性值
+         * 
+         * @param {string} name 属性名
+         * @return {*} 属性值
+         */
+        get: function (name) {
+            return this[name];
+        },
+
+        /**
+         * 判断一个属性是否发生了变化
+         * 
+         * 默认算法就是判断是否完全相等
+         * 
+         * @protected
+         * @param {string} name 属性名
+         * @param {*} newValue 原属性值
+         * @param {*} oldValue 新属性值
+         * @return {boolean}
+         */
+        isPropertyChanged: function (name, newValue, oldValue) {
+            return newValue !==  oldValue;
+        },
 
         /**
          * 将控件添加到页面的某个元素中
@@ -225,20 +286,16 @@ define(function (require) {
         },
         
         /**
-         * 创建一个元素，并设置属性
+         * 创建主素
          * 
-         * @deprecated
-         * @param {string} tagName 标签名
-         * @param {Object=} properties 标签属性
-         * @deprecated
+         * 如果在options中不指定主元素，那么会自动生成一个div元素作为其主元素。
+         * 子类可以覆盖此方法来重写
+         * 
+         * @protected
          * @return {HTMLElement} 创建后的元素
          */
-        createElement: function (tagName, properties) {
-            var element = document.createElement(tagName || 'div');
-            for (var prop in properties) {
-                element[prop] = properties[prop];
-            }
-            return element;
+        createMain: function () {
+            return document.createElement('div');
         },
 
         /**
@@ -250,21 +307,19 @@ define(function (require) {
          */
         addState: function (state) {
 
-            var me = this;
-
-            if (me.hasState(state)) {
-                return me;
+            if (this.hasState(state)) {
+                return this;
             }
 
-            me.currentStates[state] = true;
-            lib.addStateClasses(me, state);
+            this.currentStates[state] = true;
+            lib.addStateClasses(this, state);
 
-            me.fire('statechange', {
+            this.fire('statechange', {
                 state: state,
                 action: 'add'
             });
 
-            return me;
+            return this;
         },
 
         /**
@@ -430,56 +485,28 @@ define(function (require) {
         },
 
         /**
-         * 判断控件是否处于相应的生命周期阶段
-         * 
-         * @param {string} stage 生命周期阶段
-         * @return {boolean}
-         */
-        isInStage: function (stage) {
-            if (LIFE_CYCLE[stage] == null) {
-                throw new Error('Invalid life cycle stage: ' + stage);
-            }
-            return this.stage === LIFE_CYCLE[stage];
-        },
-
-        /**
-         * 改变控件的生命周期阶段
-         * 
-         * @param {string} stage 生命周期阶段
-         * @return {SELF}
-         */
-        changeStage: function (stage) {
-            if (LIFE_CYCLE[stage] === null) {
-                throw new Error('Invalid life cycle stage: ' + stage);
-            }
-            this.stage = LIFE_CYCLE[stage];
-            return this;
-        },
-
-        /**
          * 使用插件
          * 
          * @public
          * @param {Plugin} plugin 插件
          */
         use: function (plugin) {
-            var me = this;
-            var plugins = me.plugins;
+            var plugins = this.plugins;
 
             // 存入队列
-            if (!me.plugins) {
-                plugins = me.plugins = [];
+            if (!this.plugins) {
+                plugins = this.plugins = [];
             }
 
             plugins.push(plugin);
 
             // 如果控件已经渲染过了，那么直接执行插件
             // 否则控件会在渲染时，执行插件
-            if (me.isInStage('RENDERED')) {
-                plugin.execute(me);
+            if (this.helper.isInStage('RENDERED')) {
+                plugin.execute(this);
             }
 
-            return me;
+            return this;
         }
 
     }).implement(lib.observable).implement(lib.configurable);
