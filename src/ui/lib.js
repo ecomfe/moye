@@ -548,7 +548,7 @@ define(function (require) {
                     throw new Error('parent Class has no method named ' + name);
                 }
 
-                if (isPrivate && !this.$caller) {
+                if (isPrivate && !(this.$caller || this instanceof newClass)) {
                     throw new Error('can not call private method:' + name);
                 }
 
