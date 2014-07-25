@@ -29,7 +29,7 @@
 ```
 
 ```js
-require(['FloatTip'], function (FloatTip) {
+require(['ui/FloatTip'], function (FloatTip) {
   var floattip = new FloatTip({
       content: '弹出提示层',
       left: '50%',
@@ -56,7 +56,7 @@ require(['FloatTip'], function (FloatTip) {
 {% /filter %}
 {% content: script %}
 <script>
-require(['FloatTip'], function (FloatTip) {
+require(['ui/FloatTip'], function (FloatTip) {
   var floattip = new FloatTip({
       content: '弹出提示层',
       left: '50%',

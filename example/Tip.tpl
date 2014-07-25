@@ -81,7 +81,7 @@ var tip = new Tip({
 
 {% content: script %}
 <script>
-require(['Tip'], function (Tip) {
+require(['ui/Tip'], function (Tip) {
 
     var $ = require('jquery');
     var content = $('.content');

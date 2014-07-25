@@ -9,7 +9,7 @@
 <script src="http://s1.bdstatic.com/r/www/cache/static/jquery/jquery-1.10.2.min_f2fb5194.js"></script>
 <script>
 require.config({
-  baseUrl: '../src/ui',
+  baseUrl: '../src',
 });
 </script>
 {% contentplaceholder: style %}

@@ -77,7 +77,7 @@ img {
 
 {%filter:markdown%}
 ```js
-require(['lib', 'ScrollBar', 'jquery'], function (lib, ScrollBar, $) {
+require(['ui/lib', 'ui/ScrollBar', 'jquery'], function (lib, ScrollBar, $) {
   var scrollbar = new ScrollBar({
     main: 'scrollbar',
     disabled: 0,
@@ -132,7 +132,7 @@ require(['lib', 'ScrollBar', 'jquery'], function (lib, ScrollBar, $) {
 </div>
 
 {%filter: markdown%}
-require(['lib', 'ScrollBar', 'jquery'], function (lib, ScrollBar, $) {
+require(['ui/lib', 'ui/ScrollBar', 'jquery'], function (lib, ScrollBar, $) {
   new ScrollBar({
     main: $('#ecl-ui-scrollbar-horizontal')[0],
     direction: 'horizontal'
@@ -143,7 +143,7 @@ require(['lib', 'ScrollBar', 'jquery'], function (lib, ScrollBar, $) {
 
 {% content: script %}
 <script>
-require(['lib', 'ScrollBar', 'jquery'], function (lib, ScrollBar, $) {
+require(['ui/lib', 'ui/ScrollBar', 'jquery'], function (lib, ScrollBar, $) {
   var scrollbar = new ScrollBar({
     main: 'scrollbar',
     disabled: 0,

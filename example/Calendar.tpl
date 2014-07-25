@@ -174,7 +174,7 @@ require(['Calendar'], function (Calendar) {
 {% /filter %}
 {% content: script %}
 <script>
-require(['Calendar'], function (Calendar) {
+require(['ui/Calendar'], function (Calendar) {
 
   var addDays = function (date, days) {
       return new Date(date.getTime() + days * 24 * 60 * 60 * 1000);

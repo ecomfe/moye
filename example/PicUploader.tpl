@@ -34,7 +34,7 @@
 ```
 
 ```js
-require(['PicUploader'], function (PicUploader) {
+require(['ui/PicUploader'], function (PicUploader) {
 
   var uploader = new PicUploader({
     main: $('#uploader-container')[0]
@@ -76,7 +76,7 @@ require(['PicUploader'], function (PicUploader) {
 {% /filter %}
 {% content: script %}
 <script>
-require(['PicUploader'], function (PicUploader) {
+require(['ui/PicUploader'], function (PicUploader) {
 
   var uploader = new PicUploader({
     main: $('#uploader-container')[0]

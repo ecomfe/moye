@@ -69,7 +69,7 @@
 ```
 
 ```js
-require(['Filter'], function (Filter) {
+require(['ui/Filter'], function (Filter) {
 
     var map = {
         '1': [2, 3, 5],
@@ -101,7 +101,7 @@ require(['Filter'], function (Filter) {
 {% /filter %}
 {% content: script %}
 <script>
-require(['Filter'], function (Filter) {
+require(['ui/Filter'], function (Filter) {
 	var map = {
 		'1': [2, 3, 5],
 		'2': [1, 2, 4]

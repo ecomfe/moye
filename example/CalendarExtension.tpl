@@ -181,7 +181,7 @@ require(['CalendarExtension'], function (CalendarExtension) {
 {% /filter %}
 {% content: script %}
 <script>
-require(['CalendarExtension'], function (CalendarExtension) {
+require(['ui/CalendarExtension'], function (CalendarExtension) {
 
   var $ = require('jquery');
 

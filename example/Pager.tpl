@@ -26,7 +26,7 @@
 </div>
 
 <script>
-require(['Pager'], function (Pager) {
+require(['ui/Pager'], function (Pager) {
     var pager1 = new Pager({
         main: 'pager1',
         page: 0,
@@ -45,7 +45,7 @@ require(['Pager'], function (Pager) {
 源码
 
 ```js
-require(['Pager'], function (Pager) {
+require(['ui/Pager'], function (Pager) {
     var pager1 = new Pager({
         main: 'pager1',
         page: 0,
@@ -130,7 +130,7 @@ require(['Pager'], function (Pager) {
 </div>
 
 <script>
-require(['jquery', 'Pager'], function ($, Pager) {
+require(['jquery', 'ui/Pager'], function ($, Pager) {
     $('.ecl-ui-mp-pager').each(function (i, pager) {
         new Pager({
             main: pager,
@@ -152,7 +152,7 @@ require(['jquery', 'Pager'], function ($, Pager) {
 源码
 
 ```js
-require(['jquery', 'Pager'], function ($, Pager) {
+require(['jquery', 'ui/Pager'], function ($, Pager) {
     $('.ecl-ui-mp-pager').each(function (i, pager) {
         new Pager({
             main: pager,
@@ -184,7 +184,7 @@ require(['jquery', 'Pager'], function ($, Pager) {
 </div>
 
 <script>
-require(['Pager'], function (Pager) {
+require(['ui/Pager'], function (Pager) {
     var pager = new Pager({
         main: $('#pager2'),
         total: 10
@@ -203,7 +203,7 @@ require(['Pager'], function (Pager) {
 {%filter: markdown%}
 
 ```js
-require(['Pager'], function (Pager) {
+require(['ui/Pager'], function (Pager) {
     var pager = new Pager({
         main: $('#pager2'),
         total: 10

@@ -196,7 +196,7 @@ var opacitySlider = new Slider({
 
 {% content: script %}
 <script>
-require(['lib', 'Slider'], function (lib, Slider) {
+require(['ui/lib', 'ui/Slider'], function (lib, Slider) {
 
   var staticSlider = new Slider({
     main: lib.g('slider-container-default'),

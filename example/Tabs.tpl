@@ -49,7 +49,7 @@ ul {
 ```
 
 ```js
-require(['Tabs'], function (Tabs) {
+require(['ui/Tabs'], function (Tabs) {
 
   var tabs = new Tabs({
     main: document.getElementById('tabs'),
@@ -71,7 +71,7 @@ require(['Tabs'], function (Tabs) {
 {% /filter %}
 {% content: script %}
 <script>
-require(['Tabs'], function (Tabs) {
+require(['ui/Tabs'], function (Tabs) {
 
   var tabs = new Tabs({
     main: document.getElementById('tabs'),

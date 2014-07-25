@@ -30,7 +30,7 @@
 ```
 
 ```js
-require(['Rating'], function (Rating) {
+require(['ui/Rating'], function (Rating) {
     var rating = new Rating({
         main: document.getElementById('rating'),
         value: 1,
@@ -45,7 +45,7 @@ require(['Rating'], function (Rating) {
 {% /filter %}
 {% content: script %}
 <script>
-require(['Rating'], function (Rating) {
+require(['ui/Rating'], function (Rating) {
     var rating = new Rating({
         main: document.getElementById('rating'),
         value: 1,

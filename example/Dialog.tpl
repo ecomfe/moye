@@ -30,7 +30,7 @@
 ```
 
 ```js
-require(['DialogFactory'], function (DialogFactory) {
+require(['ui/DialogFactory'], function (DialogFactory) {
 
   var newdlg; 
   $('#newDialog').on('click', function() {
@@ -122,7 +122,7 @@ require(['DialogFactory'], function (DialogFactory) {
 {%/filter%}
 {%content: script%}
 <script>
-require(['DialogFactory'], function (DialogFactory) {
+require(['ui/DialogFactory'], function (DialogFactory) {
 
   var newdlg; 
   $('#newDialog').on('click', function() {

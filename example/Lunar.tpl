@@ -24,7 +24,7 @@
 ```
 
 ```js
-require(['Lunar'], function (Lunar) {
+require(['ui/Lunar'], function (Lunar) {
 
   var lunar = new Lunar({
     // first: 1,
@@ -47,7 +47,7 @@ require(['Lunar'], function (Lunar) {
 {% /filter %}
 {% content: script %}
 <script>
-require(['Lunar'], function (Lunar) {
+require(['ui/Lunar'], function (Lunar) {
 
   var lunar = new Lunar({
     // first: 1,

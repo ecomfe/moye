@@ -119,7 +119,7 @@
 ```
 
 ```js
-require(['lib', 'Select'], function (lib, Select) {
+require(['ui/lib', 'ui/Select'], function (lib, Select) {
 
         var mains = Array.prototype.slice.call($('.ecl-ui-sel'), 0);
         var targets = Array.prototype.slice.call($('.ecl-ui-sel-target'), 0);
@@ -192,7 +192,7 @@ require(['lib', 'Select'], function (lib, Select) {
 
 {% content: script %}
 <script>
-require(['lib', 'Select'], function (lib, Select) {
+require(['ui/lib', 'ui/Select'], function (lib, Select) {
 
     var mains = Array.prototype.slice.call($('.ecl-ui-sel'), 0);
     var targets = Array.prototype.slice.call($('.ecl-ui-sel-target'), 0);

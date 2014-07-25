@@ -65,7 +65,7 @@
 ```
 
 ```js
-require(['City'], function (City) {
+require(['ui/City'], function (City) {
 
     var $ = require('jquery');
 
@@ -180,7 +180,7 @@ require(['City'], function (City) {
 {% /filter %}
 {% content: script %}
 <script>
-require(['City'], function (City) {
+require(['ui/City'], function (City) {
 
     var $ = require('jquery');
 

@@ -24,7 +24,7 @@ for (var i = 0; i < 100; i++ ) {
 html.push('</div>');
 document.write(html.join(''));
 
-require(['LazyImg'], function (LazyImg) {
+require(['ui/LazyImg'], function (LazyImg) {
     LazyImg.load({
         offset: {
             y: 150
@@ -46,7 +46,7 @@ for (var i = 0; i < 100; i++ ) {
 html.push('</div>');
 document.write(html.join(''));
 
-require(['LazyImg'], function (LazyImg) {
+require(['ui/LazyImg'], function (LazyImg) {
     LazyImg.load({
         offset: {
             y: 150
