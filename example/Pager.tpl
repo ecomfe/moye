@@ -2,90 +2,36 @@
 
 {% content: style %}
 <link rel="stylesheet" href="../src/css/Pager.less" />
+<link rel="stylesheet" href="../src/css/theme/Pager.mp.less" />
+<link rel="stylesheet" href="../src/css/theme/Pager.jinrong.less" />
+<link rel="stylesheet" href="../src/css/theme/Pager.jiaoyu.less" />
+<link rel="stylesheet" href="../src/css/theme/Pager.jiankang.less" />
+<link rel="stylesheet" href="../src/css/theme/Pager.weigou.less" />
+<link rel="stylesheet" href="../src/css/theme/Pager.youxi.less" />
+<link rel="stylesheet" href="../src/css/theme/Pager.hunqing.less" />
+<link rel="stylesheet" href="../src/css/theme/Pager.qiche.less" />
+<link rel="stylesheet" href="../src/css/Select.less" />
 {% content: content %}
 {% filter: markdown %}
 # Pager
 
-### DEMO
------------------------
+### 应用于大搜索卡片
+
+示例：
 
 {% /filter %}
 
-<div class="content">
-    <div style="text-align:center"><div class="ecl-ui-pager c-clearfix"></div></div>
+<div class="content" style="text-align:center;vertical-align:top;">
+    <div id="pager1" class="ecl-ui-pager"></div>
 </div>
 
-{% filter: markdown %}
-
-### 源码
------------------------
-
-```html
-<div class="content" style="text-align:center">
-    <div class="ecl-ui-pager c-clearfix"></div>
-</div>
-```
-
-```js
-require(['lib', 'Pager'], function (lib, Pager) {
-
-    var pager = new Pager({
-        main: $('.ecl-ui-pager')[0],
-        page: 0,
-        first: 1,
-        total: 10,
-        onChange: function (e) {
-          console.log(e);
-        }
-    });
-
-    pager.on('change', function (e) {
-        // load content
-        this.setPage(e.page);
-        this.render();
-    });
-
-    pager.render();
-});
-```
-
-使用`RequireJS`加载模块`lib`和`Pager`，`lib`是Moye UI基础库，当然还必须加载`Pager`模块。
-
-`Pager`控件的配置项如下：
-
-| 属性名      |     类型 |   说明   |
-| :-------- | --------:| :------: |
-| disabled    |   boolean |  控件的不可用状态  |
-| main    |   string、HTMLElement |  控件渲染容器  |
-| page    |   number |  当前页（第一页从0开始）  |
-| first    |   number |  起始页码，默认为0  |
-| padding    |   number |  当页数较多时，首尾显示页码的个数  |
-| showAlways    |   boolean |  是否一直显示分页控件  |
-| showCount    |   number |  当页数较多时，中间显示页码的个数  |
-| total    |   number |  总页数  |
-| prefix    |   string |  控件class前缀，同时将作为main的class之一  |
-| disabledClass    |   string |  分页项不用可时的class定义  |
-| lang    |   Object<string, string> |  用于显示上下页的文字  |
-| lang.prev    |   string |  上一页显示文字(支持HTML)  |
-| lang.next    |   string |  下一页显示文字(支持HTML)  |
-| lang.ellipsis    |   string |  省略处显示文字(支持HTML)  |
-
-在页面切换的时候可以绑定回调事件`onChange`。
-
-{% /filter %}
-
-{% content: script %}
 <script>
-require(['Pager', 'jquery'], function (Pager, $) {
-    var pager = new Pager({
-        main: $('.ecl-ui-pager')[0],
+require(['Pager'], function (Pager) {
+    var pager1 = new Pager({
+        main: 'pager1',
         page: 0,
         first: 1,
-        total: 10,
-        skin: ['test'],
-        onChange: function (e) {
-          console.log(e);
-        }
+        total: 10
     })
     .on('change', function (e) {
         this.setPage(e.page);
@@ -93,3 +39,206 @@ require(['Pager', 'jquery'], function (Pager, $) {
     .render();
 });
 </script>
+
+{%filter: markdown%}
+
+源码
+
+```js
+require(['Pager'], function (Pager) {
+    var pager1 = new Pager({
+        main: 'pager1',
+        page: 0,
+        first: 1,
+        total: 10
+    })
+    .on('change', function (e) {
+        this.setPage(e.page);
+    })
+    .render();
+});
+```
+
+###应用于中间页
+
+- 金融 ( 皮肤:`mp`, `jinrong` )
+
+{%/filter%}
+
+<div class="content" style="text-align:center;vertical-align:top;">
+    <div data-skin="jinrong" class="ecl-ui-pager ecl-ui-mp-pager"></div>
+</div>
+
+{%filter: markdown%}
+
+- 教育 ( 皮肤:`mp`, `jiaoyu` )
+
+{%/filter%}
+
+<div class="content" style="text-align:center;vertical-align:top;">
+    <div data-skin="jiaoyu" class="ecl-ui-pager ecl-ui-mp-pager"></div>
+</div>
+
+{%filter: markdown%}
+
+- 健康 ( 皮肤:`mp`, `jiankang` )
+
+{%/filter%}
+
+<div class="content" style="text-align:center;vertical-align:top;">
+    <div data-skin="jiankang" class="ecl-ui-pager ecl-ui-mp-pager"></div>
+</div>
+
+{%filter: markdown%}
+
+- 微购 ( 皮肤:`mp`, `weigou` )
+
+{%/filter%}
+
+<div class="content" style="text-align:center;vertical-align:top;">
+    <div data-skin="weigou" class="ecl-ui-pager ecl-ui-mp-pager"></div>
+</div>
+
+{%filter: markdown%}
+
+- 游戏 ( 皮肤:`mp`, `youxi` )
+
+{%/filter%}
+
+<div class="content" style="text-align:center;vertical-align:top;">
+    <div data-skin="youxi" class="ecl-ui-pager ecl-ui-mp-pager"></div>
+</div>
+
+{%filter: markdown%}
+
+- 汽车 ( 皮肤:`mp`, `qiche` )
+
+{%/filter%}
+
+<div class="content" style="text-align:center;vertical-align:top;">
+    <div data-skin="qiche" class="ecl-ui-pager ecl-ui-mp-pager"></div>
+</div>
+
+{%filter: markdown%}
+
+- 婚庆  ( 皮肤:`mp`, `hunqin` )
+
+{%/filter%}
+
+<div class="content" style="text-align:center;vertical-align:top;">
+    <div data-skin="hunqing" class="ecl-ui-pager ecl-ui-mp-pager"></div>
+</div>
+
+<script>
+require(['jquery', 'Pager'], function ($, Pager) {
+    $('.ecl-ui-mp-pager').each(function (i, pager) {
+        new Pager({
+            main: pager,
+            page: 0,
+            first: 1,
+            total: 10,
+            skin: [pager.getAttribute('data-skin'), 'mp']
+        })
+        .on('change', function (e) {
+            this.setPage(e.page);
+        })
+        .render();
+    });
+});
+</script>
+
+{% filter: markdown %}
+
+源码
+
+```js
+require(['jquery', 'Pager'], function ($, Pager) {
+    $('.ecl-ui-mp-pager').each(function (i, pager) {
+        new Pager({
+            main: pager,
+            page: 0,
+            first: 1,
+            total: 10,
+            skin: [pager.getAttribute('data-skin'), 'mp']
+        })
+        .on('change', function (e) {
+            this.setPage(e.page);
+        })
+        .render();
+    });
+});
+```
+
+### 设置总页数
+------------------------
+
+{%/filter%}
+
+<div class="content" style="text-align:center;vertical-align:top;">
+    <div id="pager2" class="ecl-ui-pager c-clearfix"></div>
+    <select id="page-size">
+        <option value="10" selected>10</option>
+        <option value="20">20</option>
+        <option value="30">30</option>
+    </select>
+</div>
+
+<script>
+require(['Pager'], function (Pager) {
+    var pager = new Pager({
+        main: $('#pager2'),
+        total: 10
+    })
+    .on('change', function (e) {
+        this.setPage(e.page);
+    })
+    .render();
+
+    $('#page-size').on('change', function (e) {
+        pager.setTotal($(this).val());
+    });
+});
+</script>
+
+{%filter: markdown%}
+
+```js
+require(['Pager'], function (Pager) {
+    var pager = new Pager({
+        main: $('#pager2'),
+        total: 10
+    })
+    .on('change', function (e) {
+        this.setPage(e.page);
+    })
+    .render();
+
+    $('#page-size').on('change', function (e) {
+        pager.setTotal($(this).val());
+    });
+});
+```
+
+### 全部配置参数
+------------------------
+
+| 属性名      |     类型 |   说明   |
+| :-------- |:--------| :------ |
+| disabled    |boolean|  控件的不可用状态  |
+| main    |string、HTMLElement |  控件渲染容器  |
+| page    |number |  当前页（第一页从0开始）  |
+| first    |number|  起始页码，默认为0  |
+| padding    |number|  当页数较多时，首尾显示页码的个数  |
+| showAlways    |boolean|  是否一直显示分页控件  |
+| showCount    |number|  当页数较多时，中间显示页码的个数  |
+| total    |number|  总页数  |
+| prefix    |string|  控件class前缀，同时将作为main的class之一  |
+| disabledClass    |string|  分页项不用可时的class定义  |
+| lang    |Object<string, string>|  用于显示上下页的文字  |
+| lang.prev    |string|  上一页显示文字(支持HTML)  |
+| lang.next    |string|  下一页显示文字(支持HTML)  |
+| lang.ellipsis    |string|  省略处显示文字(支持HTML)  |
+
+在页面切换的时候可以绑定回调事件`onChange`。
+
+{% /filter %}

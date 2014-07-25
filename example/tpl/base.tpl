@@ -5,6 +5,13 @@
 <meta charset="utf-8" />
 <title>${name} - Moye</title>
 <link rel="stylesheet" href="./css/common.less" />
+<script src="http://s1.bdstatic.com/r/www/cache/ecom/esl/1-6-8/esl.js"></script>
+<script src="http://s1.bdstatic.com/r/www/cache/static/jquery/jquery-1.10.2.min_f2fb5194.js"></script>
+<script>
+require.config({
+  baseUrl: '../src/ui',
+});
+</script>
 {% contentplaceholder: style %}
 </head>
 <body>
@@ -19,13 +26,6 @@
 <div class="container">
 {% contentplaceholder: content %}
 </div>
-<script src="http://s1.bdstatic.com/r/www/cache/ecom/esl/1-6-8/esl.js"></script>
-<script src="http://s1.bdstatic.com/r/www/cache/static/jquery/jquery-1.10.2.min_f2fb5194.js"></script>
-<script>
-require.config({
-  baseUrl: '../src/ui',
-});
-</script>
 {% contentplaceholder: script %}
 </body>
 </html>

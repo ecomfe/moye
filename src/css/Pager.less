@@ -1,20 +1,27 @@
-@pager-prefix: ecl-ui-pager;
+@import './variable.less';
 
 .@{pager-prefix} {
     display: inline-block;
     *display: inline;
+    vertical-align: top;
 
     a {
         float: left;
         margin: 3px; 
         text-decoration: none; 
-        border: 1px solid #CCC;
+        border: 1px solid @pager-item-border-color;
         overflow: hidden;
         padding: 2px 5px;
-        color: #03C;
+        color: @pager-item-color;
         font: normal 12px/1.2 Arial, Helvetica, sans-serif;
         text-align: center;
+        background-color: @pager-item-background-color;
 
+        &:hover {
+            background-color: @pager-item-hover-background-color;
+        }
+
+        // 小三角
         em { 
             vertical-align: middle;
             border: 5px solid #fff;
@@ -22,47 +29,57 @@
             margin: auto 3px;
             *zoom: 1;
         }
-        &:hover {
-            background-color: #EFF4FA; 
-        }
+
         &:hover em {
-            border-color: #EFF4FA; 
+            border-color: @pager-item-hover-background-color; 
         }
+
         &.@{pager-prefix}-ellipsis {
             border: none;
+            &:hover {
+                background: none;
+                em {
+                    border-color: @pager-item-hover-background-color;
+                }
+            }
         }
+
+        &.@{pager-prefix}-prev em,
+        &.@{pager-prefix}-prev:hover em {
+            border-right-color: @pager-item-triangle-color; 
+            border-left: none;
+        }
+
+        &.@{pager-prefix}-next em,
+        &.@{pager-prefix}-next:hover em {
+            border-left-color: @pager-item-triangle-color; 
+            border-right: none;
+        }
+
+        &.@{pager-prefix}-current {
+            font-weight: 700;
+            border: none;    
+            color: @pager-item-current-color;
+            cursor: default;
+    
+            &:hover {
+                background: none;
+                em {
+                    border-color: @pager-item-hover-background-color;
+                }
+            }
+        }
+
+        &.@{pager-prefix}-disabled {
+            color: @pager-item-disabled-color;
+            cursor: default;
+        }
+
     }
 
-    .@{pager-prefix}-current {
-        font-weight: 700;
-        border: none;    
-        color: #666;
+    &-disabled {
+        color: @pager-item-disabled-color;
         cursor: default;
     }
-
-    .@{pager-prefix}-current:hover,
-    .@{pager-prefix}-ellipsis:hover,
-    .@{pager-prefix}-disabled:hover {
-        background: none;
-        em {
-            border-color: #FFF;
-        }
-    }
-
-    .@{pager-prefix}-prev em,
-    .@{pager-prefix}-prev:hover em {
-        border-right-color: #999; 
-        border-left: none;
-    }
-
-    .@{pager-prefix}-next em,
-    .@{pager-prefix}-next:hover em {
-        border-left-color: #999; 
-        border-right: none;
-    }
-
-    .@{pager-prefix}-disabled {
-        color: #999;
-        cursor: default;
-    }
+    
 }
