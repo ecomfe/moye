@@ -3,6 +3,7 @@ node_modules
 .DS_Store
 dep
 asset
+example-dist
 doc/api
 test/coverage
 SpecRunner.html

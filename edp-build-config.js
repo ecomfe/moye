@@ -1,5 +1,5 @@
 exports.input = __dirname;
-exports.output = require( 'path' ).resolve( __dirname, 'demo' );
+exports.output = require( 'path' ).resolve( __dirname, 'example-dist' );
 
 var etpl = require('etpl');
 var marked = require('marked');
