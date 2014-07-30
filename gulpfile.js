@@ -17,6 +17,7 @@ var config = {
     js: 'src/*/*.js',
     css: 'src/css/*.css',
     less: ['src/css/*.less', '!src/css/grid.less'],
+    spec: 'test/spec/*.js',
     dir: {
         js: 'src/ui',
         css: 'src/css'
@@ -35,7 +36,7 @@ gulp.task('clean', function () {
 
 
 gulp.task('checkjs', function () {
-    return gulp.src(config.js)
+    return gulp.src([config.js, config.spec])
         .pipe(jshint())
         .pipe(jscs())
         .pipe(jshint.reporter('default'));
@@ -103,7 +104,7 @@ gulp.task('build1', function () {
 
 
 gulp.task('watch', function () {
-    gulp.watch(config.js, ['checkjs']);
+    gulp.watch([config.js, config.spec], ['checkjs']);
     gulp.watch(config.less, ['csslint']);
 });
 
