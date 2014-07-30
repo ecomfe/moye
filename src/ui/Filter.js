@@ -1,7 +1,7 @@
 /**
  * Moye (Zhixin UI)
  * Copyright 2014 Baidu Inc. All rights reserved.
- * 
+ *
  * @file 条件过滤器
  * @author chris(wfsr@foxmail.com)
  */
@@ -11,10 +11,10 @@ define(function (require) {
     var $ = require('jquery');
     var lib = require('./lib');
     var Control = require('./Control');
- 
+
     /**
      * 私有函数或方法
-     * 
+     *
      * @type {Object}
      * @namespace
      * @name module:Filter~privates
@@ -23,7 +23,7 @@ define(function (require) {
 
         /**
          * 处理选单点击事件
-         * 
+         *
          * @param {Event} e 事件源对象
          * @fires module:Filter#change
          * @fires module:Filter#click
@@ -143,7 +143,7 @@ define(function (require) {
             var name = $input.attr('name');
 
             var checkedData = isRadio
-                ? {key: name, value: [$input.attr('value')]}
+                ? { key: name, value: [ $input.attr('value') ] }
                 : me.getData(name);
 
             // 比较状态变化
@@ -172,7 +172,7 @@ define(function (require) {
 
     /**
      * 条件过滤器
-     * 
+     *
      * @extends module:Control
      * @requires lib
      * @requires Control
@@ -187,9 +187,9 @@ define(function (require) {
      *   prefix: 'ecl-ui-filter',
      *   main: me.qq('ecl-ui-filter'),
      *   groups: 'p',
-     *   
+     *
      *   onChange: function (e) {
-     *      
+     *
      *     // load data
      *
      *     // disable or enable items
@@ -212,7 +212,7 @@ define(function (require) {
 
         /**
          * 控件类型标识
-         * 
+         *
          * @type {string}
          * @override
          * @private
@@ -221,7 +221,7 @@ define(function (require) {
 
         /**
          * 控件配置项
-         * 
+         *
          * @name module:Filter#options
          * @type {Object}
          * @property {boolean} options.disabled 控件的不可用状态
@@ -252,7 +252,7 @@ define(function (require) {
 
         /**
          * 控件初始化
-         * 
+         *
          * @param {Object} options 控件配置项
          * @see module:Filter#options
          * @private
@@ -275,7 +275,7 @@ define(function (require) {
 
         /**
          * 绘制控件
-         * 
+         *
          * @param {(string= | HTMLElement=)} wrapper 作为组件根元素的DOM节点
          * @throws 如果控件根元素不存在将抛出异常
          * @return {module:Filter} 当前实例
@@ -284,7 +284,7 @@ define(function (require) {
          */
         render: function (wrapper) {
             var me      = this;
-            var $main    = typeof wrapper === 'string' 
+            var $main    = typeof wrapper === 'string'
                         ? $('#' + wrapper)            // 如果是string，那么是id
                         : $(wrapper || me.main);      // 如果是HTMLElement，那直接$包裹一下
                                                       // 如果是falsy，那么使用me.main
@@ -312,7 +312,7 @@ define(function (require) {
 
         /**
          * 获取指定键名的当前选中项数据
-         * 
+         *
          * @param {string} key 选择项键名
          * @return {Object} 返回指定键名的选中项数据
          * @public
@@ -363,7 +363,7 @@ define(function (require) {
 
         /**
          * 禁止指定选项组中指定值的项
-         * 
+         *
          * @param {string} key 选项组键名
          * @param {Array.<string>} values 要禁止的指定项的值
          * @public
@@ -398,7 +398,7 @@ define(function (require) {
 
         /**
          * 启用指定选项组
-         * 
+         *
          * @param {string} key 选项组关键字
          * @public
          */

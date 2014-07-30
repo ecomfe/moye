@@ -1,11 +1,11 @@
 /**
  * Moye (Zhixin UI)
  * Copyright 2014 Baidu Inc. All rights reserved.
- * 
+ *
  * @file 下拉选择菜单
  * @author chris(wfsr@foxmail.com)
  */
- 
+
 define(function (require) {
 
     var $ = require('jquery');
@@ -15,7 +15,7 @@ define(function (require) {
 
     /**
      * 取字符字节长度
-     * 
+     *
      * @param {string} str 目标字符
      * @return {number} 目标字符的字节长度
      * @inner
@@ -26,7 +26,7 @@ define(function (require) {
 
     /**
      * 文字溢出处理
-     * 
+     *
      * @param {string} str 目标字符串
      * @param {number} max 截取的字节长度
      * @param {?string=} ellipsis 超长后的附加后缀
@@ -38,33 +38,33 @@ define(function (require) {
         if (max >= bLength(str)) {
             return str;
         }
-        
+
         var i = 0;
         var l = 0;
         var rs = '';
         while (l < max) {
             rs += str.charAt(i);
             l += bLength(str.charAt(i));
-            i ++;
+            i++;
         }
-    
+
         if (l > max) {
             rs = rs.substr(0, rs.length - 1);
         }
-        
+
         var ellipsisLen = ellipsis ? bLength(ellipsis) : 0;
         if (ellipsisLen) {
             max -= ellipsisLen;
             rs = textOverflow(rs, max) + ellipsis;
         }
-        
+
         return rs;
     }
 
 
     /**
      * 私有函数或方法
-     * 
+     *
      * @type {Object}
      * @namespace
      * @name module:Select~privates
@@ -74,7 +74,7 @@ define(function (require) {
         /**
          * 处理 disable 事件
          * 监听自身的 disable 事件，增加 disabled class 标记，使控件忽略交互响应
-         * 
+         *
          * @private
          */
         onDisable: function () {
@@ -86,7 +86,7 @@ define(function (require) {
         /**
          * 处理 enable 事件
          * 监听自身的 enable 事件，移除 disabled class 标记，使控件可接受交互响应
-         * 
+         *
          * @private
          */
         onEnable: function () {
@@ -97,7 +97,7 @@ define(function (require) {
 
         /**
          * 处理选单点击事件
-         * 
+         *
          * @param {Object} args 从 Popup 传来的事件对象
          * @private
          */
@@ -131,7 +131,7 @@ define(function (require) {
 
         /**
          * 转发Popup的onBeforeShow事件
-         * 
+         *
          * @param {Object} arg 事件参数
          * @fires module:Select#beforeShow
          * @private
@@ -156,7 +156,7 @@ define(function (require) {
 
         /**
          * 隐藏浮层后的处理，主要是为了去掉高亮样式
-         * 
+         *
          * @private
          */
         onHide: function () {
@@ -165,7 +165,7 @@ define(function (require) {
 
         /**
          * 选取选项
-         * 
+         *
          * @param {HTMLElement} el 点击的当前事件源对象
          * @param {boolean} isSilent 静默模式，是否发送事件通知
          * @fires module:Select#pick
@@ -214,7 +214,7 @@ define(function (require) {
                  * @property {string} text 选中项的文字
                  * @property {Date} shortText 选中项的文字的切割值
                  */
-                this.fire('pick', { 
+                this.fire('pick', {
                     value: typeValue,
                     text: text,
                     shortText: shortText
@@ -222,7 +222,7 @@ define(function (require) {
 
             }
 
-            if (value === lastValue) {              
+            if (value === lastValue) {
                 return;
             }
 
@@ -242,9 +242,10 @@ define(function (require) {
             }
 
             var klass = options.prefix + '-checked';
-            if(value === 'addClass'){
+            if (value === 'addClass') {
                 $(target).addClass(klass);
-            } else {
+            }
+            else {
                 $(target).removeClass(klass);
             }
 
@@ -257,11 +258,11 @@ define(function (require) {
                  * @property {string} text 选中项的文字
                  * @property {Date} shortText 选中项的文字的切割值
                  */
-                this.fire('change', { 
+                this.fire('change', {
                     value: typeValue,
                     text: text,
                     shortText: shortText
-                });           
+                });
             }
 
         }
@@ -269,7 +270,7 @@ define(function (require) {
 
     /**
      * 下拉选择菜单
-     * 
+     *
      * @extends module:Control
      * @requires lib
      * @requires Control
@@ -291,7 +292,7 @@ define(function (require) {
 
         /**
          * 控件类型标识
-         * 
+         *
          * @type {string}
          * @private
          */
@@ -299,7 +300,7 @@ define(function (require) {
 
         /**
          * 控件配置项
-         * 
+         *
          * @private
          * @name module:Select#options
          * @type {Object}
@@ -314,7 +315,7 @@ define(function (require) {
          * @property {string} options.isNumber 控件值的类型是否限制为数字
          * @property {?Array=} options.datasource 填充下拉项的数据源
          * 推荐格式 { text: '', value: '' }, 未指定 value 时会根据 valueUseIndex 的
-         * 设置使用 text 或自动索引值，可简写成字符串 '北京, 上海, 广州' 或 
+         * 设置使用 text 或自动索引值，可简写成字符串 '北京, 上海, 广州' 或
          * '北京:010, 上海:021, 广州:020'
          * @property {bool} options.valueUseIndex datasource 未指定 value 时是否
          * 使用自动索引值
@@ -357,7 +358,7 @@ define(function (require) {
 
         /**
          * 控件初始化
-         * 
+         *
          * @param {Object} options 控件配置项
          * @see module:Select#options
          * @private
@@ -375,7 +376,7 @@ define(function (require) {
 
         /**
          * 绘制控件
-         * 
+         *
          * @return {module:Select} 当前实例
          * @override
          * @public
@@ -392,7 +393,7 @@ define(function (require) {
                     || this.realTarget.value
                     || '';
 
-                this.srcOptions.triggers = [this.target];
+                this.srcOptions.triggers = [ this.target ];
 
                 var popup = this.popup = new Popup(this.srcOptions);
                 this.addChild(popup);
@@ -429,7 +430,7 @@ define(function (require) {
 
         /**
          * 显示浮层
-         * 
+         *
          * @param {?HTMLElement=} target 触发显示浮层的节点
          * @fires module:Select#show 显示事件
          * @public
@@ -443,18 +444,18 @@ define(function (require) {
              * @type {object}
              * @property {?HTMLElement=} target 触发显示浮层的节点
              */
-            this.fire('show', {target: target});
+            this.fire('show', { target: target });
 
         },
 
         /**
          * 隐藏浮层
-         * 
+         *
          * @fires module:Select#hide 隐藏事件
          * @public
          */
         hide: function () {
-            
+
             this.popup.hide();
 
             /**
@@ -465,7 +466,7 @@ define(function (require) {
 
         /**
          * 填充数据
-         * 
+         *
          * @param {(Array | string)} datasource 要填充的数据源
          * 参考 options.datasource
          * @public
@@ -487,10 +488,10 @@ define(function (require) {
 
                 if ($.type(item) !== 'object') {
                     var data = item.split(/\s*[:：]\s*/);
-                    item = {text: data[0]};
+                    item = { text: data[0] };
                     item.value = data.length > 1
-                        ? data[1] 
-                        : (valueUseIndex ? i : data[0]); 
+                        ? data[1]
+                        : (valueUseIndex ? i : data[0]);
                 }
 
                 html.push(''
@@ -499,14 +500,14 @@ define(function (require) {
                     + '</a>'
                 );
             }
-            
+
             this.popup.main.innerHTML = html.join('');
 
         },
 
         /**
          * 获取控件当前值
-         * 
+         *
          * @param {bool} isNumber 是否需要返回数字类型的值
          * @return {(string | number)} 返回当前选中项的值
          * @public
@@ -525,7 +526,7 @@ define(function (require) {
 
         /**
          * 重置选项
-         * 
+         *
          * 将选项恢复到初始值，依赖于第一个选项，其值为 0 或空
          * @public
          */

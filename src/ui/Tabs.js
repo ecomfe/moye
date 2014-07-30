@@ -1,20 +1,20 @@
 /**
  * Moye (Zhixin UI)
  * Copyright 2014 Baidu Inc. All rights reserved.
- 
+
  * @file 选项卡组件
  * @author chris(wfsr@foxmail.com)
  */
- 
+
 define(function (require) {
 
     var $ = require('jquery');
     var lib = require('./lib');
     var Control = require('./Control');
-    
+
     /**
      * 私有函数或方法
-     * 
+     *
      * @type {Object}
      * @namespace
      * @name module:Tabs~privates
@@ -23,7 +23,7 @@ define(function (require) {
 
         /**
          * 点击事件处理
-         * 
+         *
          * @param {?Event} e DOM 事件对象
          * @fires module:Tabs#change
          * @private
@@ -72,13 +72,13 @@ define(function (require) {
                 }
             );
             this.selectedIndex = index;
-            
+
         }
     };
 
     /**
      * 选项卡组件
-     * 
+     *
      * @constructor
      * @extends module:Control
      * @requires Control
@@ -88,7 +88,7 @@ define(function (require) {
 
         /**
          * 控件类型标识
-         * 
+         *
          * @type {string}
          * @private
          */
@@ -96,7 +96,7 @@ define(function (require) {
 
         /**
          * 控件配置项
-         * 
+         *
          * @name module:Tabs#options
          * @type {Object}
          * @property {boolean} options.disabled 控件的不可用状态
@@ -122,7 +122,7 @@ define(function (require) {
 
         /**
          * 控件初始化
-         * 
+         *
          * @param {Object} options 控件配置项
          * @see module:Tabs#options
          * @private
@@ -138,7 +138,7 @@ define(function (require) {
 
         /**
          * 绘制控件
-         * 
+         *
          * @public
          */
         render: function () {
@@ -175,7 +175,7 @@ define(function (require) {
                 this.labels = labels;
 
                 if (selectedLabel) {
-                    this.selectedIndex = 
+                    this.selectedIndex =
                         selectedLabel.getAttribute('data-index') | 0;
                 }
                 else {
@@ -190,9 +190,9 @@ define(function (require) {
 
         /**
          * 切换选项卡前判定
-         * 
+         *
          * 主要用于业务逻辑判断是否允许切换选项卡，默认允许，不允许则需要明确返回 false
-         * 
+         *
          * @param {number} oldIndex 原选中项索引值
          * @param {number} newIndex 新选中项索引值
          * @return {boolean} 是否允许切换

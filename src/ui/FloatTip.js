@@ -15,7 +15,7 @@ define(function (require) {
 
     /**
      * 私有函数或方法
-     * 
+     *
      * @type {Object}
      * @namespace
      * @name module:FloatTip~privates
@@ -49,7 +49,7 @@ define(function (require) {
 
         /**
          * 构造主元素
-         * 
+         *
          * @private
          */
         create: function () {
@@ -60,7 +60,7 @@ define(function (require) {
                 contentClass: privates.getClass.call(this, 'content')
             };
 
-            //渲染主框架内容
+            // 渲染主框架内容
             this.main = $('<div>')
                 .addClass(privates.getClass.call(this))
                 .css({
@@ -79,7 +79,7 @@ define(function (require) {
                 .appendTo(document.body)
                 .get(0);
 
-        }        
+        }
     };
 
     /**
@@ -127,25 +127,25 @@ define(function (require) {
             // 控件class前缀，同时将作为main的class之一
             prefix: 'ecl-ui-floattip',
 
-            //提示内容
+            // 提示内容
             content: '',
 
-            //控件的默认宽度
+            // 控件的默认宽度
             width: '',
 
-            //控件距视窗上边缘的高度，默认为auto，会使组件相对于视窗垂直居中
+            // 控件距视窗上边缘的高度，默认为auto，会使组件相对于视窗垂直居中
             top: '',
 
-            //控件距视窗左边缘的宽度，默认为auto，会使组件相对于视窗水平居中
+            // 控件距视窗左边缘的宽度，默认为auto，会使组件相对于视窗水平居中
             left: '',
 
-            //是否固定，不随视窗滚动，不支持IE6，IE6自动设置为fixed=0
+            // 是否固定，不随视窗滚动，不支持IE6，IE6自动设置为fixed=0
             fixed: 1,
 
-            //提示框的层级
+            // 提示框的层级
             level: '',
 
-            //模板框架
+            // 模板框架
             tpl: ''
                 +   '<i class="#{iconClass}"></i>'
                 +   '<div class="#{contentClass}">#{content}</div>'
@@ -170,7 +170,7 @@ define(function (require) {
         render: function () {
             if (!this.rendered) {
                 var options = this.options;
-                //TODO IE6浏览器不支持fixed定位
+                // TODO IE6浏览器不支持fixed定位
                 if (options.fixed && 6 === lib.browser.ie) {
                     options.fixed = 0;
                 }
@@ -193,7 +193,7 @@ define(function (require) {
             var win = $(window);
             var main = $(this.main);
 
-            //如果fixed则需要修正下margin-left
+            // 如果fixed则需要修正下margin-left
             if (this.options.fixed) {
                 var cssOpt = {
                     left: left,
@@ -206,7 +206,7 @@ define(function (require) {
                 }
 
                 if (!top) {
-                    //这里固定为0.4的位置
+                    // 这里固定为0.4的位置
                     cssOpt.top = (win.height() - main.height())
                         * 0.4 + 'px';
                 }
@@ -214,7 +214,7 @@ define(function (require) {
                 $(this.main).css(cssOpt);
             }
 
-            //absolute则需要动态计算left，top使dialog在视窗的指定位置
+            // absolute则需要动态计算left，top使dialog在视窗的指定位置
             else {
                 if (left === '') {
                     left = (win.width() - main.width()) / 2;
@@ -223,7 +223,7 @@ define(function (require) {
                 }
 
                 if (top === '') {
-                    //这里固定为0.35的位置
+                    // 这里固定为0.35的位置
                     top = (win.height() - main.height()) * 0.4;
                     top += win.scrollTop();
                     top += 'px';
@@ -240,7 +240,7 @@ define(function (require) {
 
         /**
          * 显示组件
-         * 
+         *
          * @public
          */
         show: function () {
@@ -251,7 +251,7 @@ define(function (require) {
 
         /**
          * 隐藏组件
-         * 
+         *
          * @public
          */
         hide: function () {
@@ -259,9 +259,6 @@ define(function (require) {
             return this;
         }
 
-        // dispose: function () {
-        //     // this.parent.dispose();
-        // }
     });
 
     return FloatTip;

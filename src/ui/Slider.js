@@ -39,7 +39,7 @@ define(function (require) {
 
     /**
      * 私有函数或方法
-     * 
+     *
      * @type {Object}
      * @namespace
      * @name module:Slider~privates
@@ -72,7 +72,7 @@ define(function (require) {
          * @private
          */
         onLeave: function () {
-            //如果使用自动轮播，则触发轮播计时
+            // 如果使用自动轮播，则触发轮播计时
             if (this.options.auto) {
                 this.play();
             }
@@ -148,22 +148,22 @@ define(function (require) {
 
         /**
          * 切换到当前索引，设置选中项目
-         * 
+         *
          * @private
          */
         setCurrent: function () {
 
             var options = this.options;
 
-            //如果不是循环模式，则设置prev按钮为不可点击
+            // 如果不是循环模式，则设置prev按钮为不可点击
             var prevAct = this.index === 0 && !options.circle ? 'addClass' : 'removeClass';
             this.prevElement && $(this.prevElement)[prevAct](this.getClass('prev-disable'));
 
-            //如果不是循环模式，则设置next按钮为不可点击
+            // 如果不是循环模式，则设置next按钮为不可点击
             var nextAct = this.index === this.count - 1 && !options.circle ? 'addClass' : 'removeClass';
             this.nextElement && $(this.nextElement)[nextAct](this.getClass('next-disable'));
 
-            //选中索引条目
+            // 选中索引条目
             if (this.indexElement) {
                 var elements = $(this.indexElement).children();
                 elements.eq(this.lastIndex).removeClass(this.getClass('index-selected'));
@@ -245,8 +245,8 @@ define(function (require) {
          * @property {Number} options.animOptions.interval 每次动画时间间隔
          * @property {string} options.animOptions.direction 滑动门的滚动方向
          * `horizontal` or `vertical`
-         * 
-         * @property {boolean} options.animOptions.rollCycle 是否用循环滚模式 
+         *
+         * @property {boolean} options.animOptions.rollCycle 是否用循环滚模式
          *      默认滚动到头会直接滚回去，循环滚会平滑一点
          *
          * @private
@@ -261,49 +261,49 @@ define(function (require) {
             // 控件动画容器
             stage: '',
 
-            //prev按钮的容器
+            // prev按钮的容器
             prevElement: '',
 
-            //next按钮的容器
+            // next按钮的容器
             nextElement: '',
 
-            //轮播索引按钮的容器，会将第一级子元素设为索引元素，
+            // 轮播索引按钮的容器，会将第一级子元素设为索引元素，
             indexElement: '',
 
-            //是否自动轮播
+            // 是否自动轮播
             auto: true,
 
-            //是否播放到结尾时回到起始，在自动轮播下，需要设置为true
+            // 是否播放到结尾时回到起始，在自动轮播下，需要设置为true
             circle: true,
 
-            //自动切换动画的延迟时间
+            // 自动切换动画的延迟时间
             autoInterval: 2000,
 
-            //点击切换索引的延迟时间
+            // 点击切换索引的延迟时间
             switchDelay: 50,
 
-            //当播放索引改变时的事件
+            // 当播放索引改变时的事件
             onChange: null,
 
             // 控件class前缀，同时将作为main的class之一
             prefix: 'ecl-ui-slider',
 
-            //使用的轮播动画
+            // 使用的轮播动画
             anim: 'slide',
 
-            //轮播动画选项
+            // 轮播动画选项
             animOptions: {
 
-                //使用的动画算子
+                // 使用的动画算子
                 easing: 'easing',
 
-                //每次动画时间间隔
+                // 每次动画时间间隔
                 interval: 200,
 
-                //滑动门的滚动方向
+                // 滑动门的滚动方向
                 direction: 'horizontal',
 
-                //是否用循环滚模式
+                // 是否用循环滚模式
                 rollCycle: ''
             }
 
@@ -334,10 +334,10 @@ define(function (require) {
 
                 this.index = options.index;
 
-                //根据class查找未知的元素
+                // 根据class查找未知的元素
                 this.stage = lib.g(options.stage) || this.query(this.getClass('stage'))[0];
 
-                //根据class查找未知的元素
+                // 根据class查找未知的元素
                 this.prevElement = lib.g(options.prevElement) || this.query(this.getClass('prev'))[0];
 
                 this.nextElement = lib.g(options.nextElement) || this.query(this.getClass('next'))[0];
@@ -357,7 +357,7 @@ define(function (require) {
                     $(this.indexElement).on('click', bound.onIndexClick);
                 }
 
-                //设置当前的动画组件
+                // 设置当前的动画组件
                 var AnimClass = typeof options.anim === 'string'
                     ? Anim.anims[options.anim]
                     : options.anim;
@@ -393,9 +393,11 @@ define(function (require) {
 
             if (index === 'start') {
                 goTo = 0;
-            } else if (index === 'end') {
+            }
+            else if (index === 'end') {
                 goTo = this.count - 1;
-            } else {
+            }
+            else {
                 goTo = +index || 0;
             }
 
@@ -405,7 +407,8 @@ define(function (require) {
 
             if (goTo >= this.count) {
                 goTo = this.options.circle ? 0 : this.count - 1;
-            } else if (goTo < 0) {
+            }
+            else if (goTo < 0) {
                 goTo = this.options.circle ? this.count - 1 : 0;
             }
 
@@ -421,7 +424,7 @@ define(function (require) {
             if (this.options.auto) {
                 privates.clearSwitchTimer.call(this);
                 this._switchTimer = setTimeout(
-                    this._bound.onSwitch, 
+                    this._bound.onSwitch,
                     this.options.autoInterval
                 );
             }
@@ -435,17 +438,17 @@ define(function (require) {
          */
         refresh: function () {
 
-            //使用第一个轮播元素的宽和高为舞台的宽和高
+            // 使用第一个轮播元素的宽和高为舞台的宽和高
             var me = this;
             var stage = $(this.stage);
             var children = stage.children();
 
-            //设置item样式
+            // 设置item样式
             children.each(function (i, item) {
                 $(item).addClass(me.getClass('item'));
             });
 
-            //设置索引项目
+            // 设置索引项目
             this.indexElement && $(this.indexElement).children().each(function (index, item) {
                 item.setAttribute('data-index', index);
             });
@@ -510,7 +513,7 @@ define(function (require) {
                 return;
             }
 
-            //如果可以切换到当前的索引
+            // 如果可以切换到当前的索引
             if (false !== this.curAnim.switchTo(goTo, this.index)) {
 
                 this.lastIndex = this.index;
@@ -534,13 +537,13 @@ define(function (require) {
 
         /**
          * 销毁，注销事件，解除引用
-         * 
+         *
          * @fires module:Slider#dispose
          * @override
          * @public
          */
         dispose: function () {
-            //停止动画
+            // 停止动画
             privates.clearSwitchDelayTimer.call(this);
             privates.clearSwitchTimer.call(this);
 
@@ -549,7 +552,7 @@ define(function (require) {
 
             var bound = this._bound;
 
-            //注销按钮事件
+            // 注销按钮事件
             var options = this.options;
             if (options.prevElement) {
                 $(options.prevElement).off('click', bound.onPrevClick);
@@ -563,7 +566,7 @@ define(function (require) {
                 $(options.indexElement).off('click', bound.onIndexClick);
             }
 
-            //注销舞台事件
+            // 注销舞台事件
             $(this.main)
                 .off('mouseenter', bound.onEnter)
                 .off('mouseleave', bound.onLeave);

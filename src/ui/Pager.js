@@ -1,7 +1,7 @@
 /**
  * Moye (Zhixin UI)
  * Copyright 2014 Baidu Inc. All rights reserved.
- * 
+ *
  * @file 分页控件
  * @author  chris(wfsr@foxmail.com)
  */
@@ -14,7 +14,7 @@ define(function (require) {
 
     /**
      * 私有函数或方法
-     * 
+     *
      * @type {Object}
      * @namespace
      * @name module:Pager~privates
@@ -23,7 +23,7 @@ define(function (require) {
 
         /**
          * 生成所有页码
-         * 
+         *
          * @return {string} 分页的HTML代码
          * @private
          */
@@ -43,9 +43,9 @@ define(function (require) {
                 if (showAlways) {
                     setSpecial(0, 'prev', true);
                     setSpecial(0, 'current');
-                    setSpecial(0, 'next', true);                   
+                    setSpecial(0, 'next', true);
                 }
-                
+
                 return html.join('');
             }
 
@@ -54,7 +54,7 @@ define(function (require) {
             var wing = (showCount - showCount % 2) / 2;
 
             function setNum(i) {
-                html[htmlLength ++] = ''
+                html[htmlLength++] = ''
                     + '<a href="#" data-page="' + (i - 1) + '">'
                     +   i
                     + '</a>';
@@ -65,9 +65,9 @@ define(function (require) {
                 if (disabled) {
                     klass += ' ' + prefix + 'disabled';
                 }
-                html[htmlLength ++] = ''
+                html[htmlLength++] = ''
                     + '<a href="#" data-page="'
-                    +   i + '" class="' + klass + '">' 
+                    +   i + '" class="' + klass + '">'
                     +   (lang[name] || i + 1)
                     + '</a>';
             }
@@ -94,9 +94,9 @@ define(function (require) {
             }
 
             // padding-left
-            for (i = 0; i < padding; i ++) {
+            for (i = 0; i < padding; i++) {
                 if (i + 1 < start) {
-                    setNum(i + 1);              
+                    setNum(i + 1);
                 }
             }
 
@@ -108,7 +108,7 @@ define(function (require) {
             if (start === padding + 2) {
                 setNum(padding + 1);
             }
-            
+
             // current page & wing
             var current = page;
             for (var i = start; i <= end; i++) {
@@ -128,9 +128,9 @@ define(function (require) {
             // padding-right
             for (i = 0; i < padding; i++) {
                 if (pos + i + 1 > end) {
-                    setNum(pos + i + 1);            
+                    setNum(pos + i + 1);
                 }
-            }               
+            }
 
             // next page
             if (page < total || showAlways) {
@@ -142,7 +142,7 @@ define(function (require) {
 
         /**
          * 页码改变时
-         * 
+         *
          * @param {Event} e 事件对象
          * @fires module:Pager#click
          * @fires module:Pager#change
@@ -164,7 +164,7 @@ define(function (require) {
 
             if (target.tagName !== 'A') {
                 target = $(target).closest('A', main)[0];
-                
+
                 if (target === undefined || target === main) {
                     return;
                 }
@@ -178,7 +178,7 @@ define(function (require) {
 
             var page = this.page;
 
-            if ( 
+            if (
                 current !== null
                 && 0 <= current
                 && current < this.total
@@ -198,7 +198,7 @@ define(function (require) {
 
     /**
      * 分页控件
-     * 
+     *
      * 提供Ajax及本地数据分页功能
      * @extends module:Control
      * @requires lib
@@ -220,7 +220,7 @@ define(function (require) {
 
         /**
          * 控件类型标识
-         * 
+         *
          * @type {string}
          * @private
          */
@@ -228,7 +228,7 @@ define(function (require) {
 
         /**
          * 控件配置项
-         * 
+         *
          * @name module:Pager#optioins
          * @type {Object}
          * @property {boolean} options.disabled 控件的不可用状态
@@ -295,7 +295,7 @@ define(function (require) {
 
         /**
          * 需要绑定 this 的方法名，多个方法以半角逗号分开
-         * 
+         *
          * @type {string}
          * @private
          */
@@ -303,7 +303,7 @@ define(function (require) {
 
         /**
          * 控件初始化
-         * 
+         *
          * @param {Object} options 控件配置项
          * @see module:Pager#options
          * @private
@@ -333,7 +333,7 @@ define(function (require) {
 
         /**
          * 设置页码
-         * 
+         *
          * @param {number} page 新页码
          * @public
          */
@@ -348,7 +348,7 @@ define(function (require) {
 
         /**
          * 获取当前页码
-         * 
+         *
          * @return {number} 控件当前页码
          * @public
          */
@@ -358,7 +358,7 @@ define(function (require) {
 
         /**
          * 设置总页数
-         * 
+         *
          * @param {number} total 要设置的总页数
          * @public
          */
@@ -369,7 +369,7 @@ define(function (require) {
 
         /**
          * 获取总页数
-         * 
+         *
          * @return {number} 控件总页数
          * @public
          */
@@ -381,7 +381,7 @@ define(function (require) {
         /**
          * 绘制控件
          * 页数小于2页时可配置控件隐藏
-         * 
+         *
          * @return {module:Pager} 当前实例
          * @override
          * @public
@@ -408,7 +408,7 @@ define(function (require) {
 
     /**
      * 当页数较多时，中间显示页码的个数
-     * 
+     *
      * @const
      * @type {number}
      */
