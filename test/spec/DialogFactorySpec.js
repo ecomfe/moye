@@ -1,9 +1,12 @@
 define(function (require) {
     var $ = require('jquery');
     var DialogFactory = require('ui/DialogFactory');
-    var alertDialog, confirmDialog;
-    var onConfirm, onCancel, confirmCount = 0,
-        cancelCount = 0;
+    var alertDialog;
+    var confirmDialog;
+    var onConfirm;
+    var onCancel;
+    var confirmCount = 0;
+    var cancelCount = 0;
 
     beforeEach(function () {
 
@@ -157,7 +160,5 @@ define(function (require) {
 
 
     });
-
-
 
 });

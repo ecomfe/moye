@@ -118,7 +118,7 @@ define(function (require) {
                 var data = json.data;
                 expect(data.foo).toBe('bar');
             };
-            log.config({data: {foo: 'bar'}});
+            log.config({ data: { foo: 'bar' } });
             log.on('click', onClick);
             $(container.getElementsByTagName('div')[0]).trigger('click');
             log.un('click', onClick);
@@ -199,7 +199,7 @@ define(function (require) {
                 log.un('send', arguments.callee);
             });
 
-            log.send({foo: 'bar'});
+            log.send({ foo: 'bar' });
         });
 
         it('xpath - div(other)', function () {

@@ -71,7 +71,7 @@ define(function (require) {
 
 
         it('控件类型', function () {
-            //console.log(slider);
+            // console.log(slider);
             expect(slider.type).toBe('Slider');
         });
 

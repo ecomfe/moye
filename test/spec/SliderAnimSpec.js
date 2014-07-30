@@ -1,5 +1,4 @@
 define(function (require) {
-    var $ = require('jquery');
     var lib = require('ui/lib');
     var Anim = require('ui/SliderAnim');
 
@@ -63,13 +62,13 @@ define(function (require) {
         });
 
         it('默认动画测试:no', function () {
-            var anim = new Anim.anims['no'](slider, slider.options.animOptions);
+            var anim = new Anim.anims.no(slider, slider.options.animOptions);
             anim.switchTo(1, 0);
             expect(slider.stage.scrollLeft).toBe(200);
         });
 
         it('滑动门动画测试:slide', function (done) {
-            var anim = new Anim.anims['slide'](slider, slider.options.animOptions);
+            var anim = new Anim.anims.slide(slider, slider.options.animOptions);
             anim.switchTo(1, 0);
             setTimeout(function () {
                 expect(slider.stage.scrollLeft).toBe(200);
@@ -78,7 +77,7 @@ define(function (require) {
         });
 
         it('滑动门动画测试:slide vertical', function (done) {
-            var anim = new Anim.anims['slide'](
+            var anim = new Anim.anims.slide(
             slider, lib.extend(slider.options.animOptions, {
                 direction: 'vertical'
             }));
@@ -123,7 +122,7 @@ define(function (require) {
 
 
         it('opacity动画测试:opacity', function () {
-            //此处dom元素操作比较多，在Slider中测试
+            // 此处dom元素操作比较多，在Slider中测试
         });
     });
 

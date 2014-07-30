@@ -99,12 +99,7 @@ define(function (require) {
                     calendar.format(date, 'yyyy-MM-dd')
                 );
 
-                var el = $(checked).next()
-                    || dom._matchNode(
-                        target,
-                        'previousSibling',
-                        'previousSibling'
-                    );
+                var el = $(checked).next();
 
                 lib.fire(el, 'click');
 
@@ -148,7 +143,7 @@ define(function (require) {
             var value = '2013-05-01';
             calendar.target.value = value;
 
-            calendar.setRange({begin: '2013-06-01'});
+            calendar.setRange({ begin: '2013-06-01' });
             expect(calendar.validate()).toBeFalsy();
 
             calendar.setRange({

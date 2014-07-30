@@ -36,7 +36,7 @@ define(function (require) {
 
 
         it('event:pickerror', function () {
-            //这里想直接塞入文件不太容易，使用fake的元素来模拟
+            // 这里想直接塞入文件不太容易，使用fake的元素来模拟
             
             var uploader = new PicUploader({
                 main: lib.g('picUploaderContainer1'),
@@ -67,7 +67,7 @@ define(function (require) {
             var ieVer = lib.browser.ie;
             lib.browser.ie = 8;
 
-            //测试IE8
+            // 测试IE8
             fileBtn.value = 'fakeimg.fake';
 
             uploader.on('pick', function (e) {
@@ -82,7 +82,7 @@ define(function (require) {
 
         });
 
-        //如果支持Blob对象
+        // 如果支持Blob对象
         if (typeof window.Blob === 'function') {
             it('event:pick', function () {
                 var uploader = new PicUploader({
@@ -100,7 +100,7 @@ define(function (require) {
                 var curPan = $('.ecl-ui-picuploader-cur', uploader.options.main)[0];
                 var fileBtn = $('.ecl-ui-picuploader-file', curPan)[0];
 
-                fileBtn.files = [new Blob(['fakeimg'])];
+                fileBtn.files = [ new Blob([ 'fakeimg' ]) ];
                 fileBtn.value = 'fakeimg.jpg';
 
                 uploader.on('pick', function (e) {

@@ -7,12 +7,15 @@ define(function (require) {
     var calendarExtension;
 
     beforeEach(function () {
+        var html = ''
+            + '<div id="calendarExtensionContainer">'
+            + ' <input type="text" class="calendar-extension-trigger" />'
+            + ' <input type="button" value="click" class="calendar-extension-trigger" />'
+            + '</div>';
+
         document.body.insertAdjacentHTML(
-            'beforeEnd', ''
-                + '<div id="calendarExtensionContainer">'
-                + ' <input type="text" class="calendar-extension-trigger" />'
-                + ' <input type="button" value="click" class="calendar-extension-trigger" />'
-                + '</div>'
+            'beforeEnd',
+            html
         );
 
         var triggers = $('.calendar-extension-trigger');
@@ -101,6 +104,5 @@ define(function (require) {
         });
         
     });
-
 
 });

@@ -226,5 +226,4 @@ define(function (require) {
         });
 
     });
-
 });
