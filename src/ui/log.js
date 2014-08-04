@@ -1,7 +1,7 @@
 /**
  * Moye (Zhixin UI)
  * Copyright 2013 Baidu Inc. All rights reserved.
- * 
+ *
  * @file  知心中间页日志统计模块
  * @author  chris(wfsr@foxmail.com)
  */
@@ -10,10 +10,10 @@ define(function (require) {
 
     var $ = require('jquery');
     var lib = require('./lib');
-    
+
     /**
      * 将字符串解析成 JSON 对象
-     * 
+     *
      * @memberof module:log
      * @param {string} data 需要解析的字符串
      * @return {Object} 解析结果 JSON 对象
@@ -30,10 +30,10 @@ define(function (require) {
 
     /**
      * 发送日志请求
-     * 
+     *
      * @memberof module:log
      * @method module:log~send
-     * @param {string} url 日志完整地址
+     * @param {Object} data 日志完整地址
      * @fires module:log#send
      * @inner
      */
@@ -62,14 +62,14 @@ define(function (require) {
              * @type {Object}
              * @property {string} url 当前统计请求的完整地址
              */
-            exports.fire('send', {url: url});
+            exports.fire('send', { url : url });
         };
     })();
 
     /**
      * 填充数据
      * 根据当前点击对象，解释对象所处 XPath 及 url
-     * 
+     *
      * @memberof module:log
      * @param {Object} data 待发送的数据对象
      * @param {HTMLElement} from 当前点击对象
@@ -86,7 +86,7 @@ define(function (require) {
 
         var rsvData = el.getAttribute('data-rsv');
         if (rsvData) {
-            data.rsv = $.extend(data, {rsv: parseJSON(rsvData)});
+            data.rsv = $.extend(data, { rsv: parseJSON(rsvData) });
         }
 
         var i = 0;
@@ -145,7 +145,7 @@ define(function (require) {
             clickData = to.getAttribute('data-click');
             if (clickData) {
                 data = $.extend(parseJSON(clickData), data);
-            }            
+            }
         }
 
         if (nolog) {
@@ -159,7 +159,7 @@ define(function (require) {
         if (!type
                 && /^(a|img|input|button|select|datalist|textarea)$/.test(tag)
             ) {
-            type = {a: 'link'}[tag] || 'input';
+            type = { a: 'link' }[tag] || 'input';
 
             url = from.href || from.src || url;
         }
@@ -189,7 +189,7 @@ define(function (require) {
 
     /**
      * 设置点击标题文字
-     * 
+     *
      * @memberof module:log
      * @param {Object} data 已收集的数据对象
      * @param {HTMLElement} from 当前点击的节点
@@ -249,7 +249,7 @@ define(function (require) {
                         if (el.className
                             && (/\bOP_LOG_[A-Z]+\b/.test(el.className))
                         ) {
-                            title = get(el);   
+                            title = get(el);
                             break;
                         }
                         el = el.parentNode;
@@ -257,13 +257,13 @@ define(function (require) {
                 }
             }
         }
-        
+
         data.txt = $.trim(title).replace(/<[^>]+?>/g, '');
     };
 
     /**
      * 从多方获取数据值给指定字段
-     * 
+     *
      * @memberof module:log
      * @param {Object} data 已收集的数据对象
      * @param {HTMLElement} from 当前点击的节点
@@ -282,7 +282,7 @@ define(function (require) {
 
     /**
      * 配置项
-     * 
+     *
      * @memberof module:log
      * @type {Object}
      * @property {string} action 日志统计服务接口地址
@@ -293,62 +293,62 @@ define(function (require) {
      * @property {string} btn xpath 中 btn 类型的 className
      * @property {string} input xpath 中 input 类型的 className
      * @property {string} others xpath 中 others 类型的 className
-     * 
+     *
      * @property {Object} data 统计公共部分数据
      * @property {string} data.url 访问的 url, 页面加载或者点击的 url。不允许为默认值 -。
      * @property {(number | string)} data.pid 产品线 id。
      * 对应 nsclick 的 pid 概念。Nsclick 用 pid 将不同产品线的日志进行分割。
      * 不允许为默认值 -。
-     * 
+     *
      * @property {string} data.cat 对全站不同类型的页面的划分。
      * 比如 cat=home 表示人工编辑的首 页,cat=product 表示商品陈列页。
      * 类比知 道 type 字段,type=2030 为检索页,2014 为问题页。
-     * 
+     *
      * @property {string} data.page 某一类具体页面。
      * 在粒度上, cat > page > 具体 url。比如 cat=home&page= baby 表示 首页下的
      * 母婴产品目录页。如果 cat 字段 符合层级结构,可以不使用此字段: cat=home-baby。
-     * 
+     *
      * @property {string} data.fr 对 pv 的来源进行分类。
      * 或者在某次实验中 记录特定的导流来源。粒度大于 refer。
-     * 
+     *
      * @property {string} data.pvid 记录一次 pv 的唯一 id。
-     * 类似于大搜 索的 qid (query id)。应当由由后台生成, 保证前端日志和后端日志可以 merge。 
+     * 类似于大搜 索的 qid (query id)。应当由由后台生成, 保证前端日志和后端日志可以 merge。
      * 如果系统不能生成,最简单的方法是用进入页 面的时间戳。从页面发起的所有点击 pvid 一致,
      * 用于串联一次页面上的点击。
-     * 
+     *
      * @property {string} data.rqid 页面可能使用异步刷新。
      * 一次 pv 下发出多个 request。每一个 request 用 rqid 唯一标识。
-     * 
+     *
      * @property {string} data.qid 大搜索一次检索唯一标识
      * 用来 merge 大搜 索和中间页的点击日志。不允许为默认值 -
-     * 
+     *
      * @property {(string | number)} data.psid 大搜索的抽样 id，传导进入中间页
      * @property {(string | number)} data.sid 中间页的抽样 id。
      * 如果由抽样平台统一接管, 则 psid = sid。
-     * 
+     *
      * @property {(string | number)} data.pn 搜索结果页、商品列表页翻页的次数
      * @property {string} data.act 用户动作类型。
      * act=pv 表示页面加载, act=a[\w+]表示点击一个链接(离开本页)。
      * act=b[\w+]表示在页面内的一个操作(筛选, 下拉菜单等,操作完毕后仍然停留在本页)。
      * 一些重要的 b[\w+]操作可以单独列出。比如下单操作重要性高于筛选操作。
-     * 
+     *
      * @property {string} data.mod 对页面进行分块统计。
      * 标识一些常用组件,在不同页面中保持稳定。通常可以 为页面 dom 元素的 id。
      * 比如首页和商品页 都有 mod=recommend-left 的“热门商品推荐”。
-     * 
+     *
      * @property {string} data.item 点击或者操作对象。
      * 在微购中 item 对应商 品 id。在游戏中间页汇总,item 对应游戏 id。
-     * 
+     *
      * @property {(string | number)} data.p1 点击 item 对象在页面中的顺序号。
      * 类似于大搜索结果的 1~10 位。
-     * 
+     *
      * @property {string} data.xpath 点击元素的 xpath。
      * 如果记录绝对 path 或者相对 path。
      * 比如热门商品推荐在不同的不稳定,可以记录相对于 mod 的 xpath。不允许为默认值 -。
-     * 
+     *
      * @property {number} data.f 表示搜索页面的加载来源。
      * 参照大搜索的 f 字段, 1(主动改写)、2(下侧推荐)、3(sug)。
-     * 
+     *
      * @property {string} data.txt 点击元素的文本(锚文字)
      * @property {string} data.q 用户的检索 query
      * @property {?Object=} data.rsv Reserve 字段。
@@ -386,7 +386,7 @@ define(function (require) {
         data: {
 
             // 不允许为默认值 -
-            url: (window.location || document.location || {href: '-'}).href,
+            url: (window.location || document.location || { href: '-' }).href,
 
             // 对应 nsclick 的 pid 概念。Nsclick 用 pid 将不同产品线的日志进行分割。
             // 不允许为默认值 -
@@ -424,7 +424,7 @@ define(function (require) {
             // 搜索结果页、商品列表页翻页的次数
             pn: '-',
 
-            // act=pv 表示页面加载, act=a[\w+]表示点击一个链接(离开本页)。 
+            // act=pv 表示页面加载, act=a[\w+]表示点击一个链接(离开本页)。
             // act=b[\w+]表示在页面内的一个操作(筛选, 下拉菜单等,操作完毕后仍然停留在本页)。
             // 一些重要的 b[\w+]操作可以单独列出。比如下单操作重要性高于筛选操作。
             act: '-',
@@ -461,7 +461,7 @@ define(function (require) {
 
     /**
      * 绑定 P1 参数索引值
-     * 
+     *
      * @memberof module:log
      * @param {HTMLElement } el 点击统计的容器
      * @param {number} index 点击统计容器的序号
@@ -478,7 +478,7 @@ define(function (require) {
     /**
      * 页面点击监听
      * @see http://fe.baidu.com/doc/aladdin/#standard/aladdin_click.text
-     * 
+     *
      * @memberof module:log
      * @param {?Event} e DOM 事件对象
      * @param {HTMLElement=} el 指定触发统计的 HTMLElement
@@ -530,14 +530,14 @@ define(function (require) {
          * @property {string} target 点击事件源对象
          * @property {string} main 当前统计区域（卡片）主容器
          */
-        exports.fire('click', {data: data, target: target[0], main: main[0]});
+        exports.fire('click', { data: data, target: target[0], main: main[0] });
 
         send(data);
     };
 
     /**
      * 中间页日志统计模块
-     * 
+     *
      * @requires lib
      * @module log
      * @example
@@ -574,7 +574,7 @@ define(function (require) {
 
         /**
          * 配置项
-         * 
+         *
          * @see module:log~options
          * @param {Object} ops 可配置项
          * @return {module:log} log
@@ -587,7 +587,7 @@ define(function (require) {
 
         /**
          * 开始监听页面点击日志
-         * 
+         *
          * @return {module:log} log
          * @fires module:log#start
          */
@@ -606,7 +606,7 @@ define(function (require) {
 
         /**
          * 停止监听页面点击日志
-         * 
+         *
          * @return {module:log} log
          */
         stop: function () {
@@ -617,7 +617,7 @@ define(function (require) {
 
         /**
          * 模拟点击指定的 HTMLElement 以发送统计
-         * 
+         *
          * @param {HTMLElement} el 需要模拟点击触发统计的 HTMLElement
          * @return {module:log} log
          */
@@ -629,7 +629,7 @@ define(function (require) {
 
         /**
          * 为指定节点集统一填充数据
-         * 
+         *
          * @param {(Array.<HTMLElement> | HTMLCollection)} elements 节点集
          * @param {Object} data 待填充的数据
          * @return {module:log} log
@@ -650,7 +650,7 @@ define(function (require) {
 
         /**
          * 动态捕获点击节点处理上报数据
-         * 
+         *
          * @param {Object.<string, Function>} obj 对于 mod 级别的动态处理绑定
          * @return {module:log} log
          */
@@ -674,7 +674,7 @@ define(function (require) {
 
         /**
          * 手动发送统计请求
-         * 
+         *
          * @method module:log.send
          * @param {Object} data 要发送的数据
          * @return {module:log} log
@@ -691,7 +691,7 @@ define(function (require) {
 
     /**
      * 添加事件绑定
-     * 
+     *
      * @method module:log.on
      * @param {?string} type 事件类型
      * @param {Function} listner 要添加绑定的监听器
@@ -699,7 +699,7 @@ define(function (require) {
 
     /**
      * 解除事件绑定
-     * 
+     *
      * @method module:log.un
      * @param {string=} type 事件类型
      * @param {Function=} listner 要解除绑定的监听器
@@ -707,7 +707,7 @@ define(function (require) {
 
     /**
      * 触发指定事件
-     * 
+     *
      * @method module:log.fire
      * @param {string} type 事件类型
      * @param {Object} args 透传的事件数据对象

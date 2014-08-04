@@ -1,7 +1,7 @@
 /**
  * Moye (Zhixin UI)
  * Copyright 2014 Baidu Inc. All rights reserved.
- * 
+ *
  * @file 对 Calendar 的扩展
  * @author chris(wfsr@foxmail.com)
  */
@@ -15,7 +15,7 @@ define(function (require) {
 
     /**
      * 私有函数或方法
-     * 
+     *
      * @type {Object}
      * @namespace
      * @name module:CalendarExtension~Menu~privates
@@ -24,7 +24,7 @@ define(function (require) {
 
         /**
          * 显示前事件处理
-         * 
+         *
          * @param {Event} e DOM 事件源对象
          * @private
          */
@@ -35,7 +35,7 @@ define(function (require) {
 
         /**
          * 选择菜单隐藏前处理
-         * 
+         *
          * @param {Event} e DOM 事件源对象
          * @private
          */
@@ -45,7 +45,7 @@ define(function (require) {
 
         /**
          * 点击事件处理
-         * 
+         *
          * @param {Event} e DOM 事件源对象
          * @fires CalendarExtension~Menu#click
          * @fires CalendarExtension~Menu#pick
@@ -82,14 +82,14 @@ define(function (require) {
              * @property {string} value 当前选中的值
              * @property {HTMLElement} target 当前点击的元素
              */
-            this.fire('pick', {value: value, target:  this.target});
+            this.fire('pick', { value: value, target:  this.target });
 
-        }      
+        }
     };
 
     /**
      * 年月选择菜单
-     * 
+     *
      * @memberof module:CalendarExtension
      * @extends module:Control
      * @inner
@@ -98,7 +98,7 @@ define(function (require) {
 
         /**
          * 控件类型标识
-         * 
+         *
          * @type {string}
          * @private
          */
@@ -106,7 +106,7 @@ define(function (require) {
 
         /**
          * 控件配置项
-         * 
+         *
          * @name CalendarExtension~Menu#options
          * @type {Object}
          * @property {number} start 初始化时的起始数字
@@ -124,7 +124,7 @@ define(function (require) {
 
         /**
          * 控件初始化
-         * 
+         *
          * @param {Object} options 控件配置项
          * @see CalendarExtension~Menu#options
          * @private
@@ -138,7 +138,7 @@ define(function (require) {
 
         /**
          * 绘制控件
-         * 
+         *
          * @return {Menu} 当前实例
          * @override
          * @public
@@ -169,7 +169,7 @@ define(function (require) {
 
         /**
          * 构建HTML
-         * 
+         *
          * @param {number} start 起始数字
          * @param {number} end 结束数字
          * @public
@@ -197,7 +197,7 @@ define(function (require) {
 
         /**
          * 设置当前的绑定目标元素
-         * 
+         *
          * @param {HTMLElement} target 新的目标鲜红
          * @public
          */
@@ -209,7 +209,7 @@ define(function (require) {
 
         /**
          * 根据值选中选项
-         * 
+         *
          * @param {(number | string)} value 要选中项的值
          * @public
          */
@@ -228,7 +228,7 @@ define(function (require) {
         },
         /**
          * 显示选择菜单
-         * 
+         *
          * @param {HTMLElement} target 选单显示时要参考的元素
          * @param {boolean} noEvent 是否不广播 beforeShow 事件
          * @fires CalendarExtension~Menu#beforeShow
@@ -253,7 +253,7 @@ define(function (require) {
         },
         /**
          * 隐藏选择菜单
-         * 
+         *
          * @public
          */
         hide: function () {
@@ -262,7 +262,7 @@ define(function (require) {
 
         /**
          * 检查是否选中可用的数字
-         * 
+         *
          * @return {boolean} 可用数字点击时返回 true，否则 false
          * @public
          */
@@ -273,7 +273,7 @@ define(function (require) {
 
     /**
      * 月选择菜单工厂方法
-     * 
+     *
      * @param {Object} options 选择菜单参数
      * @see Menu#options
      * @return {Menu} 月选择菜单实例
@@ -285,7 +285,7 @@ define(function (require) {
 
     /**
      * 年选择菜单工厂方法
-     * 
+     *
      * @param {Object} options 选择菜单参数
      * @see Menu#options
      * @return {Menu} 年选择菜单实例
@@ -298,7 +298,7 @@ define(function (require) {
             var remainder = value % size;
             var start = value - remainder + 1;
             var end = start + size - 1;
-            return [start, end];            
+            return [ start, end ];
         };
 
         menu.on('build', function (e) {
@@ -341,7 +341,7 @@ define(function (require) {
 
     /**
      * 私有函数或方法
-     * 
+     *
      * @type {Object}
      * @namespace
      * @name module:CalendarExtension~privates
@@ -350,7 +350,7 @@ define(function (require) {
 
         /**
          * 绘制选择菜单
-         * 
+         *
          * @param {HTMLElement} related 作参考绑定的元素
          * @param {string} type 要绘制的选择菜单类型
          * @private
@@ -384,7 +384,7 @@ define(function (require) {
 
         /**
          * 鼠标进入事件处理
-         * 
+         *
          * @param {Event} e DOM 事件源对象
          * @private
          */
@@ -402,7 +402,7 @@ define(function (require) {
 
         /**
          * 鼠标移出事件处理
-         * 
+         *
          * @param {Event} e DOM 事件源对象
          * @private
          */
@@ -424,7 +424,7 @@ define(function (require) {
 
         /**
          * 鼠标点击事件处理
-         * 
+         *
          * @param {Event} e DOM 事件源对象
          * @private
          */
@@ -434,7 +434,7 @@ define(function (require) {
 
         /**
          * 隐藏前事件处理
-         * 
+         *
          * @param {Event} e DOM 事件源对象
          * @private
          */
@@ -447,9 +447,9 @@ define(function (require) {
 
     /**
      * Calendar 扩展类
-     * 
+     *
      * 增加年份和月份的快速选择跳转
-     * 
+     *
      * @requires lib
      * @requires Control
      * @requires Calendar
@@ -465,12 +465,11 @@ define(function (require) {
      *     target: '.input'
      *  }).render();
      */
-    var CalendarExtension = lib.newClass(
-        /** @lends module:CalendarExtension.prototype */{
+    var CalendarExtension = lib.newClass(/** @lends module:CalendarExtension.prototype */{
 
         /**
          * 初始化
-         * 
+         *
          * @param {Object} options 透传给 module:Calendar 的配置参数
          * @see module:Calendar#options
          * @private
@@ -491,7 +490,7 @@ define(function (require) {
 
         /**
          * 绘制控件
-         * 
+         *
          * @return {module:Calendar} module:Calendar 实例
          * @see module:Calendar#render
          * @public
@@ -514,7 +513,7 @@ define(function (require) {
 
         /**
          * 销毁控件
-         * 
+         *
          * @public
          */
         dispose: function () {
@@ -535,7 +534,7 @@ define(function (require) {
         }
 
     });
-    
+
     return CalendarExtension;
 
 });

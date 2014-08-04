@@ -83,7 +83,7 @@ define(function (require) {
         it('setRange', function () {
             lunar.setValue('2013-05-01');
 
-            lunar.setRange({begin: '2013-06-01'});
+            lunar.setRange({ begin: '2013-06-01' });
 
             var prev = $('.ecl-ui-lunar-pre', lunar.main)[0];
             var next = $('.ecl-ui-lunar-next', lunar.main)[0];

@@ -1,11 +1,11 @@
 /**
  * Moye (Zhixin UI)
  * Copyright 2014 Baidu Inc. All rights reserved.
- * 
+ *
  * @file 图片延迟加载
  * @author chris(wfsr@foxmail.com)
  */
- 
+
 define(function (require) {
 
     var $ = require('jquery');
@@ -14,7 +14,7 @@ define(function (require) {
 
     /**
      * 私有函数或方法
-     * 
+     *
      * @type {Object}
      * @namespace
      * @name module:LazyImg~privates
@@ -23,7 +23,7 @@ define(function (require) {
 
         /**
          * 加载在可视区域的图片
-         * 
+         *
          * @param {Object} scroll 滚动条坐标
          * @param {Object} size 窗口大小
          * @private
@@ -72,11 +72,11 @@ define(function (require) {
             if (!this.imgs.length) {
                 Lazy.remove(this.main);
             }
-        }  
+        }
     };
     /**
      * 图片延迟加载
-     * 
+     *
      * @requires lib
      * @requires Lazy
      * @exports LazyImg
@@ -85,7 +85,7 @@ define(function (require) {
 
         /**
          * 控件类型标识
-         * 
+         *
          * @type {string}
          * @private
          */
@@ -93,7 +93,7 @@ define(function (require) {
 
         /**
          * 控件配置项
-         * 
+         *
          * @name module:LazyImg#options
          * @type {Object}
          * @property {(string | HTMLElement)} options.main 控件渲染容器
@@ -123,7 +123,7 @@ define(function (require) {
 
         /**
          * 控件初始化
-         * 
+         *
          * @param {Object} options 控件配置项
          * @see module:LazyImg#options
          * @private
@@ -135,12 +135,12 @@ define(function (require) {
 
             Lazy.add(main, $.proxy(privates.load, this), options.offset);
         }
-     
+
     }).implement(lib.configurable);
 
     /**
      * 图片延迟加载的快捷 API
-     * 
+     *
      * @param {?string=} className 要延迟加载的元素区域的 className
      * @param {?Object=} options 实例化 LazyImg 的配置参数
      * @see module:LazyImg#options
@@ -161,8 +161,8 @@ define(function (require) {
             /* jshint -W031 */
             new LazyImg(
                 $.extend(
-                    options, 
-                    {  
+                    options,
+                    {
                         main: el
                     }
                 )

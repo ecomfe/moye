@@ -1,12 +1,12 @@
 /**
  * Moye (Zhixin UI)
  * Copyright 2014 Baidu Inc. All rights reserved.
- * 
+ *
  * @file 延迟按需加载
  * @author chris(wfsr@foxmail.com)
  * @author ludafa <leonlu@outlook.com
  */
- 
+
 define(function (require) {
 
     var $ = require('jquery');
@@ -14,7 +14,7 @@ define(function (require) {
 
     /**
      * 修复非常规布局下的元素宽高
-     * 
+     *
      * @param {HTMLElement} node 元素节点
      * @param {?string=} attr 指定要修复的宽度或高度
      * @return {number} 实时计算后的宽度或高度
@@ -45,7 +45,7 @@ define(function (require) {
 
     /**
      * 私有函数或方法
-     * 
+     *
      * @type {Object}
      * @namespace
      * @name module:Lazy~privates
@@ -53,7 +53,7 @@ define(function (require) {
     var privates = /** @lends module:Lazy~privates */ {
         /**
          * 计算在可视区域内的延迟加载元素
-         * 
+         *
          * @private
          */
         compute: function () {
@@ -132,7 +132,7 @@ define(function (require) {
 
         /**
          * 窗口滚动时执行的事件
-         * 
+         *
          * @private
          */
         onScroll: function () {
@@ -144,7 +144,7 @@ define(function (require) {
 
     /**
      * 延迟按需加载
-     * 
+     *
      * @requires lib
      * @exports Lazy
      */
@@ -152,7 +152,7 @@ define(function (require) {
 
         /**
          * 控件类型标识
-         * 
+         *
          * @private
          * @type {string}
          */
@@ -162,7 +162,7 @@ define(function (require) {
 
         /**
          * 初始化
-         * 
+         *
          * @private
          */
         initialize: function () {
@@ -193,7 +193,7 @@ define(function (require) {
 
         /**
          * 添加延迟操作的元素
-         * 
+         *
          * @param {HTMLElement} el 用于判断是否在可视区域的的参考元素
          * @param {Function} callback 判断到元素在可视区域后执行的回调
          * @param {Object} options 用于调整判断是否在可视区域的配置
@@ -206,10 +206,10 @@ define(function (require) {
 
             if (!this.els[guid]) {
                 el.setAttribute(this.tag, guid);
-                this.els[guid] = [el, callback, options];
+                this.els[guid] = [ el, callback, options ];
                 if (!this.count) {
-                   $(window).on('scroll', this._bound.onScroll);
-                   $(window).on('resize', this._bound.onScroll);
+                    $(window).on('scroll', this._bound.onScroll);
+                    $(window).on('resize', this._bound.onScroll);
                 }
                 this.count++;
             }
@@ -223,7 +223,7 @@ define(function (require) {
 
         /**
          * 移除延迟操作的元素
-         * 
+         *
          * @param {HTMLElement} el 用于判断是否在可视区域的的参考元素
          * @return {module:Lazy} 当前实例
          * @public
@@ -242,13 +242,13 @@ define(function (require) {
         }
     });
 
-    
+
     (function (Lazy) {
         var lazy;
 
         /**
          * 获取 Lazy 的共享实例
-         * 
+         *
          * @return {module:Lazy} 共享的 module#Lazy 实例
          * @inner
          */
@@ -258,7 +258,7 @@ define(function (require) {
 
         /**
          * 添加延迟操作的元素
-         * 
+         *
          * @see module:Lazy#add
          * @static
          */
@@ -268,7 +268,7 @@ define(function (require) {
 
         /**
          * 移除延迟操作的元素
-         * 
+         *
          * @see module:Lazy#remove
          * @static
          */

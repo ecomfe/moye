@@ -1,22 +1,23 @@
-var gulp = require('gulp');
-var jshint = require('gulp-jshint');
-var uglify = require('gulp-uglify');
-var cssMin = require('gulp-minify-css');
-var less = require('gulp-less');
-var csslint = require('gulp-csslint');
-var sourcemaps = require('gulp-sourcemaps');
-var jsdoc = require('gulp-jsdoc');
-var rimraf = require('gulp-rimraf');
-var rename = require('gulp-rename');
+var gulp         = require('gulp');
+var jshint       = require('gulp-jshint');
+var jscs         = require('gulp-jscs');
+var uglify       = require('gulp-uglify');
+var cssMin       = require('gulp-minify-css');
+var less         = require('gulp-less');
+var csslint      = require('gulp-csslint');
+var sourcemaps   = require('gulp-sourcemaps');
+var jsdoc        = require('gulp-jsdoc');
+var rimraf       = require('gulp-rimraf');
+var rename       = require('gulp-rename');
 var amdOptimizer = require('gulp-amd-optimizer');
-var amdOptimize = require('amd-optimize');
-
+var amdOptimize  = require('amd-optimize');
 
 
 var config = {
     js: 'src/*/*.js',
     css: 'src/css/*.css',
     less: ['src/css/*.less', '!src/css/grid.less'],
+    spec: 'test/spec/*.js',
     dir: {
         js: 'src/ui',
         css: 'src/css'
@@ -33,9 +34,11 @@ gulp.task('clean', function () {
         .pipe(rimraf());
 });
 
-gulp.task('jshint', function () {
-    return gulp.src(config.js)
+
+gulp.task('checkjs', function () {
+    return gulp.src([config.js, config.spec])
         .pipe(jshint())
+        .pipe(jscs())
         .pipe(jshint.reporter('default'));
 });
 
@@ -95,16 +98,16 @@ gulp.task('build1', function () {
                 jquery: '../dep/jquery'
             }
         }))
-        // .pipe(uglify())
+        .pipe(uglify())
         .pipe(gulp.dest(config.asset.js));
 });
 
 
 gulp.task('watch', function () {
-    gulp.watch(config.js, ['jshint']);
+    gulp.watch([config.js, config.spec], ['checkjs']);
     gulp.watch(config.less, ['csslint']);
 });
 
 gulp.task('minify', ['uglify', 'cssmin']);
-gulp.task('lint', ['jshint', 'csslint']);
+gulp.task('lint', ['checkjs', 'csslint']);
 gulp.task('default', ['lint']);

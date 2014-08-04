@@ -83,6 +83,7 @@ define(function (require) {
 
             index = 4;
             var iTag = tabs.labels[index].getElementsByTagName('i')[0];
+            var selected = lib.q('ecl-ui-tabs-selected', main)[0];
             tabs.on('change', function (e) {
                 expect(e.newIndex).toBe(index);
                 expect(e.selected).toBe(selected);
@@ -122,6 +123,4 @@ define(function (require) {
             expect(onChange).not.toHaveBeenCalled();
         });
     });
-
-
 });

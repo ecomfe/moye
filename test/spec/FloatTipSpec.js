@@ -6,6 +6,7 @@
 define(function (require) {
     var $ = require('jquery');
     var FloatTip = require('ui/FloatTip');
+    var floatTip;
 
     beforeEach(function () {
 
@@ -70,7 +71,4 @@ define(function (require) {
         });
 
     });
-
-
-
 });

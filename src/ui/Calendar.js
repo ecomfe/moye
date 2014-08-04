@@ -1,7 +1,7 @@
 /**
  * Moye (Zhixin UI)
  * Copyright 2014 Baidu Inc. All rights reserved.
- * 
+ *
  * @file 比 PC-UI WCal 好用的日历控件
  * @author chris(wfsr@foxmail.com)
  */
@@ -15,7 +15,7 @@ define(function (require) {
 
     /**
      * 标准日期格式
-     * 
+     *
      * @const
      * @type {string}
      */
@@ -24,7 +24,7 @@ define(function (require) {
 
     /**
      * 补齐数字位数
-     * 
+     *
      * @param {(number | string)} n 需要补齐的数字
      * @return {string} 补齐两位后的字符
      * @inner
@@ -36,7 +36,7 @@ define(function (require) {
 
     /**
      * 每个月的HTML缓存
-     * 
+     *
      * @type {Object}
      */
     var cache = {};
@@ -44,7 +44,7 @@ define(function (require) {
 
     /**
      * 私有函数或方法
-     * 
+     *
      * @type {Object}
      * @namespace
      * @name module:Calendar~privates
@@ -53,7 +53,7 @@ define(function (require) {
 
         /**
          * 处理选单点击事件
-         * 
+         *
          * @param {Object} args 从 Popup 传来的事件对象
          * @private
          */
@@ -117,7 +117,7 @@ define(function (require) {
 
         /**
          * 转发Popup的onBeforeShow事件
-         * 
+         *
          * @param {Object} arg 事件参数
          * @fires module:Calendar#beforeShow
          * @private
@@ -173,7 +173,7 @@ define(function (require) {
 
         /**
          * 监听 module:Popup 的隐藏事件
-         * 
+         *
          * @fires module:Calendar#hide 隐藏事件
          * @private
          */
@@ -188,7 +188,7 @@ define(function (require) {
 
         /**
          * 切换到上个月
-         * 
+         *
          * @private
          */
         showPreMonth: function () {
@@ -199,7 +199,7 @@ define(function (require) {
 
         /**
          * 切换到下个月
-         * 
+         *
          * @private
          */
         showNextMonth: function () {
@@ -214,7 +214,7 @@ define(function (require) {
         /* jshint boss: true */
         /**
          * 根据选择的日期和当前日期更新每个日期的状态
-         * 
+         *
          * @private
          */
         updateStatus: function () {
@@ -249,7 +249,16 @@ define(function (require) {
             var weekendClass = prefix + '-weekend';
 
             var monthes = this.main.getElementsByTagName('p');
-            var i, len, j, day, days, klass, value, className, inRange;
+            var i;
+            var len;
+            var j;
+            var day;
+            var days;
+            var klass;
+            var value;
+            var className;
+            var inRange;
+
             for (i = 0, len = monthes.length; i < len; i++) {
                 days  = monthes[i].getElementsByTagName('a');
 
@@ -267,7 +276,7 @@ define(function (require) {
                     var mod = j % 7;
                     if (
                         mod === 6
-                        ||  first && mod === 5 
+                        ||  first && mod === 5
                         || !first && mod === 0
                     ) {
                         klass.push(weekendClass);
@@ -288,7 +297,7 @@ define(function (require) {
                         if (inRange && value === checkedValue) {
                             klass.push(checkedClass);
                         }
-                        
+
                     }
 
                     if (process) {
@@ -302,7 +311,7 @@ define(function (require) {
 
         /**
          * 取得指定日期的 yyyyMM 格式化后字符串值
-         * 
+         *
          * @param {?Date=} date 待格式化的日期
          * @return {string} 按 yyyyMM格式化后的日期字符串
          * @private
@@ -317,7 +326,7 @@ define(function (require) {
 
         /**
          * 构建HTML
-         * 
+         *
          * @private
          */
         build: function (date) {
@@ -349,7 +358,7 @@ define(function (require) {
 
         /**
         * 构建指定日期所在月的HTML
-        * 
+        *
         * @private
         */
         buildMonth: function (date) {
@@ -370,11 +379,11 @@ define(function (require) {
 
             var options = this.options;
             var prefix  = options.prefix;
-            var html    = ['<div class="' + prefix + '-month">'];
+            var html    = [ '<div class="' + prefix + '-month">' ];
 
-            var json = { year: year, month: month, prefix: prefix};
+            var json = { year: year, month: month, prefix: prefix };
             var title = options.lang.title.replace(
-                /\{([^\}]+)\}/g, 
+                /\{([^\}]+)\}/g,
                 function ($, key) {
                     return json[key] || '';
                 }
@@ -389,7 +398,7 @@ define(function (require) {
             html.push('<ul class="c-clearfix">');
 
             for (i = 0, len = days.length; i < len; i++) {
-                klass = i === weeks - 1 
+                klass = i === weeks - 1
                     || firstDay && i === weeks - 2
                     || !firstDay && i === firstDay
                     ? ' class="' + prefix + '-weekend"'
@@ -418,7 +427,7 @@ define(function (require) {
                 y = date.getFullYear();
                 M = date.getMonth() + 1;
                 d = date.getDate();
-                yM = [y, pad(M), ''].join(separator);
+                yM = [ y, pad(M), '' ].join(separator);
                 klass = prefix + '-pre-month';
 
                 for (i = d - len + 1; i <= d; i++) {
@@ -432,7 +441,7 @@ define(function (require) {
                         +   i
                         + '</a>'
                     );
-                    week++; 
+                    week++;
                 }
 
                 date.setDate(d + 1);
@@ -443,7 +452,7 @@ define(function (require) {
             date.setMonth(month);
             date.setDate(0);
 
-            yM = [year, pad(month), ''].join(separator);
+            yM = [ year, pad(month), '' ].join(separator);
 
             // 处理当前月
             for (i = 1, len = date.getDate(); i <= len; i++) {
@@ -463,7 +472,7 @@ define(function (require) {
             date.setDate(len + 1);
             y = date.getFullYear();
             M = date.getMonth() + 1;
-            yM = [y, pad(M), ''].join(separator);
+            yM = [ y, pad(M), '' ].join(separator);
             klass = prefix + '-next-month';
 
             len = weeks * rows - (len + Math.max(0, first - firstDay));
@@ -491,7 +500,7 @@ define(function (require) {
 
         /**
          * 更新上下月按钮状态
-         * 
+         *
          * @param {?Date=} date 当前日期
          * @private
          */
@@ -504,7 +513,7 @@ define(function (require) {
 
             date = date || this.date || this.from(this.value);
 
-            prev[!range 
+            prev[!range
                 || !range.begin
                 || privates.getYYYYMM.call(this, range.begin) < privates.getYYYYMM.call(this, date)
                     ? 'show' : 'hide'
@@ -525,7 +534,7 @@ define(function (require) {
 
         /**
          * 选择日期
-         * 
+         *
          * @param {HTMLElement} el 点击的当前事件源对象
          * @fires module:Calendar#pick
          * @private
@@ -556,7 +565,7 @@ define(function (require) {
              * @property {string} week 选中日期的格式化星期
              * @property {Date} date 选中的日期对象
              */
-            this.fire('pick', { 
+            this.fire('pick', {
                 value: value,
                 week: this.options.lang.week + this.days[week],
                 date: date
@@ -568,7 +577,7 @@ define(function (require) {
 
     /**
      * 比PC-UI WCal好用的日历控件
-     * 
+     *
      * @extends module:Control
      * @requires lib
      * @requires Control
@@ -587,7 +596,7 @@ define(function (require) {
 
         /**
          * 控件类型标识
-         * 
+         *
          * @type {string}
          * @private
          */
@@ -595,7 +604,7 @@ define(function (require) {
 
         /**
          * 控件配置项
-         * 
+         *
          * @name module:Calendar#options
          * @see module:Popup#options
          * @type {Object}
@@ -672,7 +681,7 @@ define(function (require) {
 
         /**
          * 控件初始化
-         * 
+         *
          * @param {Object} options 控件配置项
          * @see module:Calendar#options
          * @private
@@ -681,7 +690,7 @@ define(function (require) {
             this.bindEvents(privates);
 
             this._disabled   = options.disabled;
-            this.dateFormat = 
+            this.dateFormat =
                 options.dateFormat
                 || Calendar.DATE_FORMAT
                 || DATE_FORMAT;
@@ -690,13 +699,13 @@ define(function (require) {
             this.value = this.format(this.from(options.value));
             var key = this.cacheKey = options.first + '-' + options.lang.title;
             cache[key] = cache[key] || {};
-            
+
             this.setRange(options.range || Calendar.RANGE);
         },
 
         /**
          * 解释日期类型
-         * 
+         *
          * @param {(string | Date)} value 源日期字符串或对象
          * @param {string} format 日期格式
          * @return {Date} 解释到的日期对象
@@ -731,7 +740,7 @@ define(function (require) {
                     || ((map.yy < 50 ? '20' : '19') + map.yy);
 
                 var month = (map.m || map.mm) | 0;
-                var date  = (map.d || map.dd) | 0; 
+                var date  = (map.d || map.dd) | 0;
                 return new Date(year | 0, month - 1, date);
             }
 
@@ -740,7 +749,7 @@ define(function (require) {
 
         /**
          * 格式化日期
-         * 
+         *
          * @param {Date} date 源日期对象
          * @param {string=} format 日期格式，默认为当前实例的dateFormat
          * @return {string} 格式化后的日期字符串
@@ -789,7 +798,7 @@ define(function (require) {
 
         /**
          * 绘制控件
-         * 
+         *
          * @return {module:Calendar} 当前实例
          * @override
          * @public
@@ -807,7 +816,7 @@ define(function (require) {
                 popup.on('click', bound.onClick);
                 popup.on('hide', bound.onHide);
                 popup.on('beforeShow', bound.onBeforeShow);
-                
+
                 this.main = popup.main;
                 $(this.main).addClass('c-clearfix');
 
@@ -823,7 +832,7 @@ define(function (require) {
 
         /**
          * 动态更新 target
-         * 
+         *
          * @param {HTMLElement} target 新的 target 节点
          * @public
          */
@@ -831,7 +840,7 @@ define(function (require) {
             if (!target || target.nodeType !== 1) {
                 throw new Error('target 为 null 或非 Element 节点');
             }
-            
+
             this.target = target;
 
             if (this.popup) {
@@ -840,7 +849,7 @@ define(function (require) {
         },
         /**
          * 显示浮层
-         * 
+         *
          * @param {?HTMLElement=} target 触发显示浮层的节点
          * @fires module:Calendar#show 显示事件
          * @public
@@ -854,12 +863,12 @@ define(function (require) {
              * @type {object}
              * @property {?HTMLElement=} target 触发显示浮层的节点
              */
-            this.fire('show', {target: target});
+            this.fire('show', { target: target });
 
         },
         /**
          * 隐藏浮层
-         * 
+         *
          * @public
          */
         hide: function () {
@@ -868,7 +877,7 @@ define(function (require) {
 
         /**
          * 验证控件输入状态
-         * 
+         *
          * @return {boolean} 是否为指定格式的日期值
          * @public
          */
@@ -878,7 +887,7 @@ define(function (require) {
 
         /**
          * 获取当前选中的日期
-         * 
+         *
          * @return {string} 当前日期格式化值
          * @public
          */
@@ -890,7 +899,7 @@ define(function (require) {
 
         /**
          * 获取当前选中的日期
-         * 
+         *
          * @return {Date} 获取到的日期
          * @public
          */
@@ -900,7 +909,7 @@ define(function (require) {
 
         /**
          * 设置允许选中的日期区间
-         * 
+         *
          * @param {Object} range 允许选择的日期区间
          * @public
          */
@@ -925,7 +934,7 @@ define(function (require) {
 
         /**
          * 设置当前选中的日期
-         * 
+         *
          * @param {string} value 要设置的日期
          * @public
          */
@@ -938,7 +947,7 @@ define(function (require) {
 
         /**
          * 验证控件
-         * 
+         *
          * @return {boolean} 验证结果
          * @public
          */
@@ -977,7 +986,7 @@ define(function (require) {
 
     /**
      * 全局日期格式
-     * 
+     *
      * @const
      * @type {string}
      */
@@ -985,7 +994,7 @@ define(function (require) {
 
     /**
      * 可选中的日期区间
-     * 
+     *
      * @const
      * @type {?Object}
      */

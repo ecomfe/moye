@@ -1,7 +1,7 @@
 /**
  * Moye (Zhixin UI)
  * Copyright 2014 Baidu Inc. All rights reserved.
- * 
+ *
  * @file  弹出层
  * @author  chris(wfsr@foxmail.com)
  */
@@ -15,7 +15,7 @@ define(function (require) {
 
     /**
      * 私有函数或方法
-     * 
+     *
      * @type {Object}
      * @namespace
      * @name module:Popup~privates
@@ -24,7 +24,7 @@ define(function (require) {
 
         /**
          * 浏览器可视尺寸改变时处理
-         * 
+         *
          * @private
          */
         onResize: function () {
@@ -39,7 +39,7 @@ define(function (require) {
 
         /**
          * 显示浮层前处理
-         * 
+         *
          * @param {Event} e DOM 事件对象
          * @fires module:Popup#beforeShow 显示前事件
          * @private
@@ -61,8 +61,8 @@ define(function (require) {
             // 如果不是，那么先将它隐藏。
             // 这里隐藏主要作用是取消挂载到document上的`click`事件处理，而不是真的想要隐藏它。
             // 如果不把钩子去掉，那会让接下来`显示`之后，事件冒泡上来到钩子上，又把它给隐藏了。
-            if (oldTarget 
-                && oldTarget !== trigger 
+            if (oldTarget
+                && oldTarget !== trigger
                 && !$.contains(oldTarget, trigger)
             ) {
                 this.hide();
@@ -111,7 +111,7 @@ define(function (require) {
 
         /**
          * 隐藏浮层前处理
-         * 
+         *
          * @private
          */
         onHide: function (e) {
@@ -129,7 +129,7 @@ define(function (require) {
 
         /**
          * 计算浮层及箭头显示位置
-         * 
+         *
          * @private
          */
         computePosition: function () {
@@ -168,7 +168,8 @@ define(function (require) {
                 dir = /[trbl]{2}/.test(dirFromAttr) ? dirFromAttr : '1';
             }
 
-            var second, first;
+            var second;
+            var first;
 
             // 未指定方向时自动按下右上左顺序计算可用方向（以不超出视窗为原则）
             if (dir === 'auto') {
@@ -227,7 +228,7 @@ define(function (require) {
             var offset = options.offset;
 
             // 提示层在目标上部或下部显示时的定位处理
-            if ({t: 1, b: 1}[first]) {
+            if ({ t: 1, b: 1 }[first]) {
                 left = {
                     l: left,
                     c: center - (mainWidth / 2),
@@ -242,7 +243,7 @@ define(function (require) {
             }
 
             // 提示层在目标左边或右边显示时的定位处理
-            else if ({l: 1, r: 1}[first]) {
+            else if ({ l: 1, r: 1 }[first]) {
                 top = {
                     t: top,
                     c: middle - (mainHeight / 2),
@@ -256,7 +257,7 @@ define(function (require) {
 
             }
 
-            main.css( 
+            main.css(
                 {
                     left: left + offset.x + 'px',
                     top: top + offset.y + 'px'
@@ -268,7 +269,7 @@ define(function (require) {
 
     /**
      * 弹出层控件
-     * 
+     *
      * @extends module:Control
      * @requires lib
      * @requires Control
@@ -280,7 +281,7 @@ define(function (require) {
 
         /**
          * 控件类型标识
-         * 
+         *
          * @type {string}
          * @private
          */
@@ -288,7 +289,7 @@ define(function (require) {
 
         /**
          * 控件配置项
-         * 
+         *
          * @name module:Popup#options
          * @type {Object}
          * @property {boolean} disabled 控件的不可用状态
@@ -312,7 +313,7 @@ define(function (require) {
 
             /**
              * 提示框的不可用状态，默认为false。处于不可用状态的提示框不会出现。
-             * 
+             *
              * @type {boolean}
              * @default
              */
@@ -320,55 +321,55 @@ define(function (require) {
 
             /**
              * 控件渲染主容器
-             * 
+             *
              * @type {(string | HTMLElement)}
              */
             main: '',
 
             /**
              * 计算弹出层相对位置的目标对象
-             * 
+             *
              * @type {(string | HTMLElement)}
              */
             target: '',
 
             /**
              * 触发显示弹出层的节点class
-             * 
+             *
              * 当指定了 liveTriggers 时只能用 string 类型指定 class
-             * 
+             *
              * @type {string | Array.<HTMLElement>}
              */
             triggers: '',
 
             /**
              * 动态 triggers 的父元素节点
-             * 
+             *
              * @type {string | HTMLElement}
              */
             liveTriggers: '',
 
             /**
              * 显示的内容
-             * 
+             *
              * @type {string}
              */
             content: '',
 
             /**
              * 弹出层显示在 trigger 的相对位置
-             * 
+             *
              * 可选值：tr | rt | rb | br | bl | lb | lt | tl | tc | rc | bc | lc
              * 也可通过在 triggers 上设置 data-popup来指定
-             * 
+             *
              * @type {string}
              * @defaultvalue
-             */ 
+             */
             dir: 'bl',
 
             /**
              * 控件class前缀，同时将作为main的class之一
-             * 
+             *
              * @type {string}
              * @defaultvalue
              */
@@ -376,14 +377,14 @@ define(function (require) {
 
             /**
              * 浮层显示的偏移量
-             * 
+             *
              * @type {string}
              */
             offset: {
 
                 /**
                  * x 轴方向偏移量
-                 * 
+                 *
                  * @type {number}
                  * @defaultvalue
                  */
@@ -391,7 +392,7 @@ define(function (require) {
 
                 /**
                  * y 轴方向偏移量
-                 * 
+                 *
                  * @type {string}
                  * @defaultvalue
                  */
@@ -402,8 +403,8 @@ define(function (require) {
 
         /**
          * 控件初始化
-         * 
-         * @params {Object} options 配置项
+         *
+         * @param {Object} options 配置项
          * @see module:Popup#options
          * @private
          */
@@ -415,7 +416,7 @@ define(function (require) {
             this.bindEvents(privates);
 
             if (options.target) {
-                this.target = lib.g(options.target);                
+                this.target = lib.g(options.target);
             }
 
             var prefix = options.prefix;
@@ -424,7 +425,7 @@ define(function (require) {
             main.addClass(prefix);
 
             if (!options.main) {
-                main.css('left','-2000px');
+                main.css('left', '-2000px');
             }
 
             var triggers     = options.triggers;
@@ -433,7 +434,7 @@ define(function (require) {
 
             if (liveTriggers) {
 
-                liveTriggers = lib.isString(liveTriggers) 
+                liveTriggers = lib.isString(liveTriggers)
                     ? $('.' + liveTriggers)
                     : $(liveTriggers);
 
@@ -444,7 +445,7 @@ define(function (require) {
             }
             else {
 
-                triggers = lib.isString(triggers) 
+                triggers = lib.isString(triggers)
                     ? $('.' + options.triggers)
                     : $(options.triggers);
 
@@ -459,7 +460,7 @@ define(function (require) {
 
         /**
          * 绘制控件
-         * 
+         *
          * @fires module:Popup#click 点击事件
          * @return {module:Popup} 当前实例
          * @override
@@ -478,7 +479,7 @@ define(function (require) {
                 main
                     .appendTo(document.body)
                     .on(
-                        'click', 
+                        'click',
                         function (e) {
 
                             /**
@@ -497,7 +498,7 @@ define(function (require) {
 
         /**
          * 显示浮层
-         * 
+         *
          * @fires module:Popup#show 显示事件
          * @public
          */
@@ -512,7 +513,7 @@ define(function (require) {
 
         /**
          * 隐藏浮层
-         * 
+         *
          * @fires module:Popup#hide 隐藏事件
          * @public
          */

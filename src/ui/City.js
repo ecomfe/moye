@@ -1,7 +1,7 @@
 /**
  * Moye (Zhixin UI)
  * Copyright 2014 Baidu Inc. All rights reserved.
- * 
+ *
  * @file 国内城市选择提示层
  * @author chris(wfsr@foxmail.com)
  */
@@ -15,7 +15,7 @@ define(function (require) {
 
     /**
      * 私有函数或方法
-     * 
+     *
      * @type {Object}
      * @namespace
      * @name module:City~privates
@@ -25,7 +25,7 @@ define(function (require) {
 
         /**
          * 构建选单HTML
-         * 
+         *
          * @private
          */
         build: function () {
@@ -57,7 +57,7 @@ define(function (require) {
                             + '<a href="#" title="' + city + '">'
                             + city
                             + '</a>'
-                        );                        
+                        );
                     }
                 });
 
@@ -79,7 +79,7 @@ define(function (require) {
 
         /**
          * 处理选单点击事件
-         * 
+         *
          * @param {Object} args 从 Popup 传来的事件对象
          * @fires module:City#click 点击事件
          * @private
@@ -136,7 +136,7 @@ define(function (require) {
 
         /**
          * 转发Popup的onBeforeShow事件
-         * 
+         *
          * @param {Object} arg 事件参数
          * @fires module:City#beforeShow 显示前事件
          * @private
@@ -163,7 +163,7 @@ define(function (require) {
         },
         /**
          * 选择城市
-         * 
+         *
          * @param {HTMLElement} el 点击的当前事件源对象
          * @fires module:City#pick
          * @private
@@ -191,10 +191,10 @@ define(function (require) {
             this.hide();
         }
     };
-    
+
     /**
      * 国内城市选择控件
-     * 
+     *
      * @extends module:Control
      * @requires lib
      * @requires Control
@@ -213,7 +213,7 @@ define(function (require) {
 
         /**
          * 控件类型标识
-         * 
+         *
          * @type {string}
          * @private
          */
@@ -221,7 +221,7 @@ define(function (require) {
 
         /**
          * 控件配置项
-         * 
+         *
          * @name module:City#options
          * @see module:Popup#options
          * @type {Object}
@@ -265,7 +265,7 @@ define(function (require) {
 
         /**
          * 需要绑定 this 的方法名，多个方法以半角逗号分开
-         * 
+         *
          * @type {string}
          * @private
          */
@@ -273,7 +273,7 @@ define(function (require) {
 
         /**
          * 控件初始化
-         * 
+         *
          * @param {Object} options 控件配置项
          * @see module:City#options
          * @private
@@ -324,8 +324,8 @@ define(function (require) {
 
         /**
          * 填充城市标签数据
-         * 
-         * @param {(Array | string)} tabs 城市数组，
+         *
+         * @param {(Array | string)} tabsOrItem 城市数组，
          * 每项格式为 "标签|城市A,城市B,城市C" 当参数为字符类型时仅作为一个城市标签项
          * @return {module:City} 当前 City 实例
          * @public
@@ -346,7 +346,7 @@ define(function (require) {
 
         /**
          * 绘制控件
-         * 
+         *
          * @return {module:City} 当前实例
          * @override
          * @public
@@ -363,7 +363,7 @@ define(function (require) {
 
                 popup.on('click', $.proxy(bound.onClick, this));
                 popup.on('beforeShow', $.proxy(bound.onBeforeShow, this));
-                
+
                 this.main = popup.main;
 
                 if (options.target) {
@@ -378,7 +378,7 @@ define(function (require) {
 
         /**
          * 动态更新 target
-         * 
+         *
          * @param {HTMLElement} target 新的 target 节点
          * @throws 如果 target 为非 Element 节点将抛出异常
          * @public
@@ -397,7 +397,7 @@ define(function (require) {
 
         /**
          * 切换标签
-         * 
+         *
          * @param {number} i 要切换到的目标标签索引
          * @public
          */
@@ -425,7 +425,7 @@ define(function (require) {
 
         /**
          * 显示浮层
-         * 
+         *
          * @param {?HTMLElement=} target 触发显示浮层的节点
          * @fires module:City#show 显示事件
          * @public
@@ -445,12 +445,12 @@ define(function (require) {
 
         /**
          * 隐藏浮层
-         * 
+         *
          * @fires module:City#hide 隐藏事件
          * @public
          */
         hide: function () {
-            
+
             this.popup.hide();
 
             /**
@@ -463,4 +463,4 @@ define(function (require) {
 
     return City;
 });
-        
+

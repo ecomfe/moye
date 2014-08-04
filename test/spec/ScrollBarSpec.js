@@ -24,11 +24,11 @@ define(function (require) {
 
         document.body.insertAdjacentHTML('beforeEnd', html);
 
-        $("<link/>", {
-           rel: "stylesheet",
-           type: "text/css",
-           href: "/src/css/ScrollBar.less"
-        }).appendTo("head");
+        $('<link/>', {
+            rel: 'stylesheet',
+            type: 'text/css',
+            href: '/src/css/ScrollBar.less'
+        }).appendTo('head');
 
         scrollbar = new ScrollBar({
             main: lib.g('ecl-ui-scrollbar'),
@@ -53,11 +53,6 @@ define(function (require) {
         });
 
         it('scrollTo begin', function () {
-            var scrollSize = scrollbar.panel.scrollHeight
-                - scrollbar.main.clientHeight;
-            var trackSize = scrollbar.track.clientHeight
-                - scrollbar.thumb.offsetHeight;
-
             scrollbar.scrollTo('begin');
             expect(scrollbar.thumb.style.top).toBe('0px');
             expect(scrollbar.panel.scrollTop).toBe(0);
@@ -75,11 +70,6 @@ define(function (require) {
         });
 
         it('scrollTo ab', function () {
-
-            var scrollSize = scrollbar.panel.scrollHeight
-                - scrollbar.main.clientHeight;
-            var trackSize = scrollbar.track.clientHeight
-                - scrollbar.thumb.offsetHeight;
 
             scrollbar.scrollTo('ab');
             expect(scrollbar.thumb.style.top).toBe('0px');
@@ -152,7 +142,7 @@ define(function (require) {
             scrollbar.disable();
             expect($(scrollbar.main).hasClass('ecl-ui-scrollbar-disable')).toBe(true);
             scrollbar.scrollTo(0.5);
-            //disable 不影响接口调用
+            // disable 不影响接口调用
             expect(scrollbar.thumb.style.top)
                 .toBe(Math.round(trackSize / 2) + 'px');
             expect(scrollbar.panel.scrollTop).toBe(Math.round(scrollSize / 2));
