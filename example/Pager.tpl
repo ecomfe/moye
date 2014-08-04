@@ -15,6 +15,8 @@
     <div style="text-align:center"><div class="ecl-ui-pager c-clearfix"></div></div>
 </div>
 
+<button id="dispose">dispose</button>
+
 {% filter: markdown %}
 
 ### 源码
@@ -74,26 +76,27 @@ require(['lib', 'Pager'], function (lib, Pager) {
 
 {% content: script %}
 <script>
-(function () {
+require(['lib', 'Pager'], function (lib, Pager) {
 
-    require.config({
-      baseUrl: '../src/ui'
+    var pager = new Pager({
+        main: $('.ecl-ui-pager')[0],
+        page: 0,
+        first: 1,
+        total: 10
+    })
+    .on('change', function (e) {
+        // load content
+        this.setPage(e.page);
+        this.render();
+    })
+    .render();
+
+    console.log(pager);
+
+    $('#dispose').on('click', function () {
+        pager.dispose();
+        console.log(pager);
     });
 
-    require(['lib', 'Pager'], function (lib, Pager) {
-        new Pager({
-            main: $('.ecl-ui-pager')[0],
-            page: 0,
-            first: 1,
-            total: 10
-        })
-        .on('change', function (e) {
-            // load content
-            this.setPage(e.page);
-            this.render();
-        })
-        .render();
-    });
-
-})();
+});
 </script>

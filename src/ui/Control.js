@@ -11,6 +11,8 @@ define(function (require) {
     var $ = require('jquery');
     var lib = require('./lib');
 
+    var guid = 0;
+
     /**
      * 控件基类
      *
@@ -60,7 +62,10 @@ define(function (require) {
 
         /**
          * 将DOM元素element的eventName事件处理函数handler的作用域绑定到当前Control实例
-         * 从第四个参数开始，其他的参数都将成为handler的额外参数
+         * 
+         * 每个handler的代理函数都会被缓存，并重复利用。
+         * 但element/eventName并不会被区别对待。
+         * 也就是说，如果handler是同一函数，那么会使用之前生成的代理函数。
          * 
          * @param {string} eventName 事件类型
          * @param {DOMElement} element 事件来源DOMElement
@@ -69,46 +74,44 @@ define(function (require) {
          */
         delegate: function (element, eventName, handler) {
 
-            // 借用jquery提供的缓存机制，提供代理函数的缓存池
-            var cache = $.data(element, 'moye/delegate');
+            var cache = this._delegation;
 
+            // 初始化缓存池
             if (!cache) {
-                cache = $.data(element, 'moye/delegate', {});
+                cache = this._delegation = {};
             }
+
+            var guid = handler.guid;
 
             // 函数代理
             var proxy;
 
-            // 如果缓存的proxy函数存在，那么直接返回缓存的
-            if (cache 
-                && cache[eventName] 
-                && handler.guid 
-                && cache[eventName][handler.guid]
-            ) {
-                proxy = cache[eventName][handler.guid];
+            // 如果缓存的proxy函数存在，那么直接使用缓存的
+            if (guid && cache[guid]) {
+                proxy = cache[guid].proxy;
             }
-
             // 否则新生成一个代理函数
             else {
-
-                // 整理额外参数
-                var extra = [].slice.call(arguments, 3);
-                var args = [handler, this].concat(extra);
-
-                proxy = $.proxy.apply($, args);
+                proxy = $.proxy(handler, this);
+                guid = handler.guid;
             }
 
-            // 如果没有此事件类型的缓存池，那么初始化缓存池
-            if (!cache[eventName]) {
-                cache[eventName] = {};
-            }
+            var handleObj = cache[guid];
 
             // 写缓存
-            cache[eventName][proxy.guid] = proxy;
+            if (!cache[guid]) {
+                handleObj = cache[guid] = {
+                    total: 0
+                };
+            }
+
+            handleObj.total++;
+            handleObj.proxy = proxy;
 
             // 通过命名空间来保证$(element).off(xxx)可以正确地解除事件绑定
             // 如果不使用命名空间，$(element).off(xxx)会把所有的处理函数全都取消掉
-            var fullEventName = eventName + '.' + proxy.guid;
+            // 这里第一级是eventName，第二级是Control实例id，第三级是代理函数id
+            var fullEventName = eventName + '.' + this.guid + '.' + guid;
 
             // 绑定事件
             $(element).on(eventName, proxy);
@@ -126,45 +129,47 @@ define(function (require) {
          */
         undelegate: function (element, eventName, handler) {
 
-            var cache = $.data(element, 'moye/delegate');
+            var cache = this._delegation;
+            var guid = handler.guid;
 
             // 我们的代理函数缓存在缓存池中
             // 如果缓存池中没有代理函数，直接返回
             if (
                 // 整个缓存池为空
                 !cache 
-                // 事件类型缓存池为空
-                || !cache[eventName]
                 // 我们的代理过的handler一定会有guid，没有guid就无法位置缓存
                 // 如果handler.guid为空，就直接返回
-                || !handler.guid
+                || !guid
                 // 代理函数不存在 -- 这个应该不会发生的。。。
-                || !cache[eventName][handler.guid]
+                || !cache[guid]
             ) {
                 return this;
             }
 
-            var proxy = cache[eventName][handler.guid];
-            var fullEventName = eventName + '.' + proxy.guid;
+            // 通过命名空间来保证$(element).off(xxx)可以正确地解除事件绑定
+            // 如果不使用命名空间，$(element).off(xxx)会把绑定的所有代理函数全都取消掉
+            // 这里第一级是eventName，第二级是Control实例id，第三级是代理函数id
+            var fullEventName = eventName + '.' + this.guid + '.' + guid;
+            var handleObj = cache[guid];
+            var proxy = handleObj.proxy;
 
-            // 清洗缓存对象
-            delete cache[eventName][handler.guid];
-
-            // 如果事件缓存池为空，那么清除事件缓存池
-            if ($.isEmptyObject(cache[eventName])) {
-                delete cache[eventName];
-            }
-
-            // 如果全局缓存池为空，那么清除全局缓存池
-            if ($.isEmptyObject(cache)) {
-                $.removeData(element, 'moye/delegate');
-            }
+            // 计数减1
+            handleObj.total--;
 
             // 解绑事件
             $(element).off(fullEventName, proxy);
 
-            return this;
+            // 清洗缓存对象
+            if (!handleObj.total) {
+                delete cache[guid];
+            }
 
+            // 如果缓存池为空，那么清除缓存池
+            if ($.isEmptyObject(cache)) {
+                delete this._delegation;
+            }
+
+            return this;
         },
 
         /**
@@ -184,6 +189,11 @@ define(function (require) {
             if (this.init) {
                 this.init(options);
                 this.init = null;
+            }
+
+            // 强制添加guid
+            if (this.id === undefined) {
+                this.id = guid++;
             }
 
             this.children = [];
