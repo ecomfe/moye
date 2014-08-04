@@ -8,3 +8,4 @@ test/coverage
 SpecRunner.html
 *.orig
 undefined/
+example-dist
