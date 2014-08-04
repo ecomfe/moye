@@ -148,9 +148,10 @@ define(function (require) {
          * @fires module:Pager#change
          * @private
          */
-        onChange: function (e, target) {
+        onChange: function (e) {
             e.preventDefault();
-            target = target || e.target;
+
+            var target = e.target;
 
             /**
              * @event module:Pager#click
@@ -326,8 +327,11 @@ define(function (require) {
             lang.next.replace(/\{prefix\}/gi, options.prefix);
 
             if (options.main) {
-                this.main = lib.g(options.main);
-                $(this.main).addClass(options.prefix).on('click', this._bound.onChange);
+                this.main = $(lib.g(options.main))
+                    .addClass(options.prefix)
+                    .get(0);
+
+                this.delegate(this.main, 'click', privates.onChange);
             }
         },
 
@@ -403,7 +407,13 @@ define(function (require) {
             }
 
             return this;
+        },
+
+        dispose: function () {
+            this.undelegate(this.main, 'click', privates.onChange);
+            this.parent();
         }
+
     });
 
     /**

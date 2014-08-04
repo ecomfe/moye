@@ -74,32 +74,26 @@ require(['lib', 'Pager'], function (lib, Pager) {
 
 {% content: script %}
 <script>
-    (function () {
+(function () {
 
-        require.config({
-          baseUrl: '../src/ui'
-        });
+    require.config({
+      baseUrl: '../src/ui'
+    });
 
-        require(['lib', 'Pager'], function (lib, Pager) {
+    require(['lib', 'Pager'], function (lib, Pager) {
+        new Pager({
+            main: $('.ecl-ui-pager')[0],
+            page: 0,
+            first: 1,
+            total: 10
+        })
+        .on('change', function (e) {
+            // load content
+            this.setPage(e.page);
+            this.render();
+        })
+        .render();
+    });
 
-            var pager = new Pager({
-                main: $('.ecl-ui-pager')[0],
-                page: 0,
-                first: 1,
-                total: 10,
-                onChange: function (e) {
-                  console.log(e);
-                }
-            });
-
-            pager.on('change', function (e) {
-                // load content
-                this.setPage(e.page);
-                this.render();
-            });
-
-            pager.render();
-        });
-
-    })();
+})();
 </script>
