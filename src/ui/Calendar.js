@@ -223,14 +223,16 @@ define(function (require) {
             var process = options.process;
             var first   = options.first;
             var now     = new Date();
+            var current = this.format(this.value);
 
             var checkedValue = this.target.value
                 && this.format(this.from(this.value), DATE_FORMAT);
 
-            var nowValue = this.format(now, DATE_FORMAT);
-            var range    = this.range;
-            var min      = '';
-            var max      = '9999-12-31';
+            var nowValue     = this.format(now, DATE_FORMAT);
+            var currentValue = this.format(current, DATE_FORMAT);
+            var range        = this.range;
+            var min          = '';
+            var max          = '9999-12-31';
 
             if (range) {
                 min = range.begin
@@ -247,6 +249,7 @@ define(function (require) {
             var todayClass   = prefix + '-today';
             var checkedClass = prefix + '-checked';
             var weekendClass = prefix + '-weekend';
+            var currentClass = prefix + '-current';
 
             var monthes = this.main.getElementsByTagName('p');
             var i;
@@ -287,6 +290,9 @@ define(function (require) {
                     }
                     else if (~className.indexOf(nextClass)) {
                         klass.push(nextClass);
+                    }
+                    else if (currentValue === value) {
+                        klass.push(currentClass);
                     }
                     else {
 
@@ -366,7 +372,7 @@ define(function (require) {
             var month    = date.getMonth() + 1;
             var today    = date.getDate();
             var day      = date.getDay();
-            var cached = cache[this.cacheKey];
+            var cached   = cache[this.cacheKey];
             var cacheKey = year + pad(month);
 
             if (cached[cacheKey]) {
@@ -381,13 +387,19 @@ define(function (require) {
             var prefix  = options.prefix;
             var html    = [ '<div class="' + prefix + '-month">' ];
 
-            var json = { year: year, month: month, prefix: prefix };
+            var json = {
+                year: year, 
+                month: month, 
+                prefix: prefix
+            };
+
             var title = options.lang.title.replace(
                 /\{([^\}]+)\}/g,
                 function ($, key) {
                     return json[key] || '';
                 }
             );
+
             html.push('<h3>' + title + '</h3>');
 
             var i;
@@ -395,7 +407,7 @@ define(function (require) {
             var klass;
             var firstDay = options.first;
             var days = this.days;
-            html.push('<ul class="c-clearfix">');
+            html.push('<ul>');
 
             for (i = 0, len = days.length; i < len; i++) {
                 klass = i === weeks - 1
@@ -407,7 +419,7 @@ define(function (require) {
                 html.push('<li' + klass + '>' + days[i] + '</li>');
             }
             html.push('</ul>');
-            html.push('<p class="c-clearfix">');
+            html.push('<p>');
 
             var y;
             var M;
@@ -417,7 +429,7 @@ define(function (require) {
             // 星期标识
             var week = 0;
 
-           // 计算1号星期几
+            // 计算1号星期几
             var first = (weeks + day + 1 - today % weeks) % weeks;
 
             // 处理上月
@@ -809,7 +821,14 @@ define(function (require) {
             if (!this.rendered) {
                 this.rendered = true;
 
-                var popup = this.popup = new Popup(this.srcOptions);
+                var popup = this.popup = new Popup($.extend(
+                    {},
+                    this.srcOptions,
+                    {
+                        prefix: options.prefix
+                    }
+                ));
+
                 this.addChild(popup);
 
                 var bound = this._bound;
@@ -818,7 +837,6 @@ define(function (require) {
                 popup.on('beforeShow', bound.onBeforeShow);
 
                 this.main = popup.main;
-                $(this.main).addClass('c-clearfix');
 
                 if (options.target) {
                     this.setTarget(lib.g(options.target));
@@ -827,8 +845,6 @@ define(function (require) {
 
             return this;
         },
-
-
 
         /**
          * 动态更新 target

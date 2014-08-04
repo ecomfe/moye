@@ -1,4 +1,5 @@
-@cal-prefix: ecl-ui-cal;
+@import "./variable.less";
+@import "./mixin.less";
 
 .@{cal-prefix} h3,
 .@{cal-prefix}-pre,
@@ -12,6 +13,7 @@
     background: #fff;
     text-align: center;
     left: -2000px;
+    .clearfix();
     
     h3 {
         margin: 0;
@@ -32,6 +34,7 @@
 
     ul {
         color: #666;
+        .clearfix();
     }
 
     li,
@@ -41,26 +44,33 @@
         font: 12px Arial;
     }
 
-    p a {
-        color: #000;
-        height: 18px;
-        line-height: 18px;
-        margin-top: 3px;
-        text-decoration: none;
-        outline: none;
-        overflow: hidden;
+    p {
+        .clearfix();
 
-        &:hover {
-            color: #fff;
-            background: #eb4f03;
+        a {
+            color: #000;
+            height: 18px;
+            line-height: 18px;
+            margin-top: 3px;
+            text-decoration: none;
+            outline: none;
+            overflow: hidden;
+
+            &:hover,
+            &.@{cal-prefix}-current {
+                color: #fff;
+                background: #eb4f03;
+            }
+
+            &.@{cal-prefix}-disabled,
+            &.@{cal-prefix}-disabled:hover {
+                color: #ddd;
+                cursor: not-allowed;
+                background: none;
+            }
+
         }
 
-        &.@{cal-prefix}-disabled,
-        &.@{cal-prefix}-disabled:hover {
-            color: #ddd;
-            cursor: not-allowed;
-            background: none;
-        }
     }
 
 } 

@@ -373,7 +373,7 @@ define(function (require) {
              * @type {string}
              * @defaultvalue
              */
-            prefix: 'ecl-hotel-ui-popup',
+            prefix: 'ecl-ui-popup',
 
             /**
              * 浮层显示的偏移量
