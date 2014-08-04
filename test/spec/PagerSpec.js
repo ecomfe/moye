@@ -157,5 +157,4 @@ define(function (require) {
         });
 
     });
-
 });

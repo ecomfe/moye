@@ -25,7 +25,7 @@ define(function (require) {
     function getClass(opts, name) {
         name = name ? '-' + name : '';
         var skin = opts.skin;
-        return (opts.prefix || 'ecl-ui-dialog') 
+        return (opts.prefix || 'ecl-ui-dialog')
             + name
             + (skin ? ' ' + skin + name : '');
     }
@@ -47,7 +47,7 @@ define(function (require) {
 
         var footer = opts.footer || '';
 
-        //设置取消按钮
+        // 设置取消按钮
         if (opts.cancel) {
             var id = 'btn-' + lib.guid();
             var cls = getClass(opts, 'cancel-btn');
@@ -59,7 +59,7 @@ define(function (require) {
             opts.cancelId = id;
         }
 
-        //设置确定按钮
+        // 设置确定按钮
         if (opts.confirm) {
             var id = 'btn-'  + lib.guid();
             var cls = getClass(opts, 'confirm-btn');
@@ -73,11 +73,11 @@ define(function (require) {
 
         opts.footer = footer;
 
-        //创建对话框
+        // 创建对话框
         var dlg = new Dialog(opts);
         dlg.render();
 
-        //绑定确定事件
+        // 绑定确定事件
         if (opts.confirmId) {
 
             dlg.onConfirm && dlg.on('confirm', dlg.onConfirm);
@@ -92,7 +92,7 @@ define(function (require) {
             $('#' + opts.confirmId).on('click', opts.confirmHandler);
         }
 
-        //绑定取消事件
+        // 绑定取消事件
         if (opts.cancelId) {
 
             dlg.onCancel && dlg.on('cancel', dlg.onCancel);
@@ -107,7 +107,7 @@ define(function (require) {
             $('#' + opts.cancelId).on('click', opts.cancelHandler);
         }
 
-        //绑定注销事件
+        // 绑定注销事件
         dlg.on('beforedispose', function () {
             dlg.un('confirm');
             dlg.un('cancel');
@@ -119,7 +119,7 @@ define(function (require) {
             if (opts.cancelId) {
                 $('#' + opts.cancelId).off('click', opts.cancelHandler);
             }
-            
+
             opts = null;
         });
         return dlg;

@@ -48,7 +48,7 @@ define(function (require) {
             });
  
             // 剔除已处理的 DIV
-            els = remain;
+            var els = remain;
 
             // 如果图片全部加载过，可从监听集合中移除
             if (!els.length) {

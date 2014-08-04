@@ -25,20 +25,17 @@ define(function (require) {
      * @param {string} noSelectClass 使用class设置禁止选择
      * @type {Function}
      */
-    var setTextNoSelect = (function (supportCss) {
-        var selectEvent;
-        return lib.browser.ie < 9 
-            ? function (enabled) {
-                var body = $(document.body)
-                var prevent = function (e) {
-                    e.preventDefault();
-                };
-                body[enabled ? 'on' : 'off']('selectstart', prevent);
-            } 
-            : function (enabled, noSelectClass) {
-                $(document.body)[enabled ? 'addClass' : 'removeClass'](noSelectClass);
+    var setTextNoSelect = lib.browser.ie < 9
+        ? function (enabled) {
+            var body = $(document.body);
+            var prevent = function (e) {
+                e.preventDefault();
             };
-    })();
+            body[enabled ? 'on' : 'off']('selectstart', prevent);
+        }
+        : function (enabled, noSelectClass) {
+            $(document.body)[enabled ? 'addClass' : 'removeClass'](noSelectClass);
+        };
 
     /**
      * 私有函数或方法
@@ -77,7 +74,7 @@ define(function (require) {
          * @private
          */
         onMousemove: function (e) {
-            //如果滚动条可用
+            // 如果滚动条可用
             if (this.scrollRatio < 1) {
 
                 var moveLength = (
@@ -134,14 +131,14 @@ define(function (require) {
             var delta   = origin.wheelDelta ? (origin.wheelDelta / 120) : -(origin.detail / 3);
             var percent = delta * this.options.wheelspeed;
 
-            //这里设置最多滚动距离为2屏
+            // 这里设置最多滚动距离为2屏
             if (percent * (1 - this.scrollRatio) > 2 * this.scrollRatio) {
                 percent = 2 * this.scrollRatio;
             }
 
             var percent = this.curPos - percent;
             privates.setScrollPercent.call(this, percent);
-            //在滚动范围内取消默认行为
+            // 在滚动范围内取消默认行为
             if (this.options.preventWheelScroll
                 || (percent >= 0.005 && percent <= 0.995)
             ) {
@@ -177,7 +174,7 @@ define(function (require) {
          */
         setScrollPercent: function (pos) {
 
-            //取消舍入误差
+            // 取消舍入误差
             if (pos < 0.005) {
                 pos = 0;
             }
@@ -279,37 +276,37 @@ define(function (require) {
          */
         options: {
 
-            //是否禁用组件
+            // 是否禁用组件
             disabled: false,
 
-            //组件控制的主元素
+            // 组件控制的主元素
             main: '',
 
-            //需要滚动的元素
+            // 需要滚动的元素
             panel: '',
 
-            //组件控制的滑动按钮
+            // 组件控制的滑动按钮
             thumb: '',
 
-            //滚轮速度
+            // 滚轮速度
             wheelspeed: 0.05,
 
-            //滑动门方向`horizontal` or `vertical`
+            // 滑动门方向`horizontal` or `vertical`
             direction: 'vertical',
 
             // 控件class前缀，同时将作为main的class之一
             prefix: 'ecl-ui-scrollbar',
 
-            //使用的模式，scrollTop模式or style.top模式，使用的css是不一样的
+            // 使用的模式，scrollTop模式or style.top模式，使用的css是不一样的
             mode: '',
 
-            //如果true会始终阻止滚轮滚动页面，即使当前已经滚动到头
+            // 如果true会始终阻止滚轮滚动页面，即使当前已经滚动到头
             preventWheelScroll: false,
 
-            //是否自动调整thumb的高度
+            // 是否自动调整thumb的高度
             autoThumbSize: true,
 
-            //最小的thumb高度,px
+            // 最小的thumb高度,px
             minThumbSize: 30
         },
 
@@ -326,12 +323,12 @@ define(function (require) {
             }
 
             var opt = this.options;
-            this._disabled = !! opt.disabled;
+            this._disabled = !!opt.disabled;
             this.curPos = 0;
 
             this.bindEvents(privates);
 
-            //当前滚动坐标
+            // 当前滚动坐标
             this.xAxis = opt.direction === 'horizontal';
 
             var sizeProp = this.xAxis ? 'Width' : 'Height';
@@ -341,10 +338,10 @@ define(function (require) {
             this.scrollDirection = 'scroll' + (this.xAxis ? 'Left' : 'Top');
             this.posMode = opt.mode === 'position';
 
-            //滚动主元素
+            // 滚动主元素
             this.main = lib.g(opt.main);
 
-            //需要滚动的元素
+            // 需要滚动的元素
             if (!opt.panel) {
                 this.panel = $('.' + privates.getClass.call(this, 'panel'), this.main)[0];
             }
@@ -352,7 +349,7 @@ define(function (require) {
                 this.panel = lib.g(opt.panel);
             }
 
-            //滚动条按钮
+            // 滚动条按钮
             if (!opt.thumb) {
                 this.thumb = $('.' + privates.getClass.call(this, 'thumb'), this.main)[0];
             }
@@ -360,7 +357,7 @@ define(function (require) {
                 this.thumb = lib.g(opt.thumb);
             }
 
-            //滚动条
+            // 滚动条
             this.track = this.thumb.offsetParent;
 
             var bound = this._bound;
@@ -388,11 +385,11 @@ define(function (require) {
             else if (pos === 'end') {
                 pos = 1;
             }
-            //滚动距离
+            // 滚动距离
             else if (pos > 1) {
                 pos = pos / (this.panelSize * (1 - this.scrollRatio));
             }
-            //滚动百分比
+            // 滚动百分比
             else {
                 pos = pos * 1 || 0;
             }
@@ -409,17 +406,17 @@ define(function (require) {
 
             this.panelSize = this.panel[this.scrollProp];
 
-            //当前内容的缩放级别
+            // 当前内容的缩放级别
             this.scrollRatio = this.main[this.clientProp] / this.panelSize;
 
             var act = this.scrollRatio >= 1
                 ? 'addClass'
                 : 'removeClass';
 
-            //设置祖先元素为禁用
+            // 设置祖先元素为禁用
             $(this.main)[act](privates.getClass.call(this, 'noscroll'));
 
-            //滑块轨道的大小
+            // 滑块轨道的大小
             var trackLen = this.track[this.clientProp];
 
             if (this.options.autoThumbSize && this.scrollRatio < 1) {
@@ -466,7 +463,7 @@ define(function (require) {
         setEnabled: function (enabled) {
             var disabled = !enabled;
             var act = disabled ? 'addClass' : 'removeClass';
-            //设置祖先元素为禁用
+            // 设置祖先元素为禁用
             $(this.main)[act](privates.getClass.call(this, 'disable'));
             this._disabled = disabled;
         },

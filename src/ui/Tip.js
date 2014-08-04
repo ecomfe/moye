@@ -1,7 +1,7 @@
 /**
  * Moye
  * Copyright 2014 Baidu Inc. All rights reserved.
- * 
+ *
  * @file  提示层控件
  * @author  chris(wfsr@foxmail.com)
  */
@@ -14,7 +14,7 @@ define(function (require) {
 
     /**
      * 私有函数或方法
-     * 
+     *
      * @type {Object}
      * @namespace
      * @name module:Tip~privates
@@ -22,7 +22,7 @@ define(function (require) {
     var privates = /** @lends module:Tip~privates */ {
         /**
          * 清除各种定时器
-         * 
+         *
          * @private
          */
         clear: function () {
@@ -43,7 +43,7 @@ define(function (require) {
 
         /**
          * 浏览器可视尺寸改变时处理
-         * 
+         *
          * @private
          */
         onResize: function () {
@@ -60,7 +60,7 @@ define(function (require) {
 
         /**
          * 处理文档中的单击事件
-         * 
+         *
          * @param {Event} e 原生事件对象
          * @private
          */
@@ -82,14 +82,14 @@ define(function (require) {
 
         /**
          * 显示浮层前处理
-         * 
+         *
          * @param {Event} e DOM 事件对象
          * @fires module:Tip#beforeShow 显示前事件
          * @private
          */
         onShow: function (e) {
             var target = $(e.target).closest('.' + this.options.flag);
-           
+
             privates.clear.call(this);
 
             if (!target.length || target.is(this.current)) {
@@ -113,7 +113,7 @@ define(function (require) {
                     $(document).on('click', bound.onDocClick);
                 }
             }
-            
+
             this.current = target;
 
             /**
@@ -139,7 +139,7 @@ define(function (require) {
 
         /**
          * 隐藏浮层前处理
-         * 
+         *
          * @private
          */
         onHide: function () {
@@ -181,7 +181,7 @@ define(function (require) {
 
         /**
          * 计算浮层及箭头显示位置
-         * 
+         *
          * @private
          */
         computePosition: function () {
@@ -225,7 +225,8 @@ define(function (require) {
                 dir = /[trblc]{2}/.test(dirFromAttr) ? dirFromAttr : '1';
             }
 
-            var second, first;
+            var second;
+            var first;
 
             // 未指定方向时自动按下右上左顺序计算可用方向（以不超出视窗为原则）
             if (!dir || dir === '1') {
@@ -293,7 +294,7 @@ define(function (require) {
             arrowHeight = arrow.firstChild.offsetHeight;
 
             // 提示层在目标上部或下部显示时的定位处理
-            if ({t: 1, b: 1}[first]) {
+            if ({ t: 1, b: 1 }[first]) {
                 left = {
                     l: left + offset.x,
                     c: center - (mainWidth / 2),
@@ -306,7 +307,7 @@ define(function (require) {
                 }[first];
 
                 var middleX = (width - arrowWidth) / 2;
-                
+
                 // 在目标宽于提示层或 dir 为 tc 或 bc 时，箭头相对提示层水平居中
                 arrow.style.left = {
                     c: (mainWidth - arrowWidth) / 2,
@@ -318,7 +319,7 @@ define(function (require) {
             }
 
             // 提示层在目标左边或右边显示时的定位处理
-            else if ({l: 1, r: 1}[first]) {
+            else if ({ l: 1, r: 1 }[first]) {
                 top = {
                     t: top + offset.y,
                     c: middle - (mainHeight / 2),
@@ -343,7 +344,7 @@ define(function (require) {
             }
 
             main.css({
-                left: left + 'px', 
+                left: left + 'px',
                 top: top + 'px'
             });
 
@@ -353,7 +354,7 @@ define(function (require) {
 
     /**
      * 提示层控件
-     * 
+     *
      * @extends module:Control
      * @requires lib
      * @requires Control
@@ -367,13 +368,13 @@ define(function (require) {
      *       this.title = Math.random();
      *     }
      * }).render();
-     * 
+     *
      */
     var Tip = Control.extend(/** @lends module:Tip.prototype */{
 
         /**
          * 控件类型标识
-         * 
+         *
          * @type {string}
          * @private
          */
@@ -381,7 +382,7 @@ define(function (require) {
 
         /**
          * 控件配置项
-         * 
+         *
          * @name module:Tip#options
          * @type {Object}
          * @property {boolean} disabled 控件的不可用状态
@@ -465,7 +466,7 @@ define(function (require) {
 
         /**
          * 控件初始化
-         * 
+         *
          * @param {Object} options 控件配置项
          * @see module:Tip#options
          * @private
@@ -487,7 +488,7 @@ define(function (require) {
 
             this.events = {
                 over: {
-                    on: 'mouseenter', 
+                    on: 'mouseenter',
                     un: 'mouseleave'
                 },
                 click: {
@@ -503,7 +504,7 @@ define(function (require) {
 
         /**
          * 绘制控件
-         * 
+         *
          * @fires module:Tip#click
          * @return {module:Tip} 当前实例
          * @override
@@ -560,8 +561,8 @@ define(function (require) {
 
         /**
          * 增加触发 tips 的 DOM
-         * 
-         * @param {(string | HTMLElement | HTMLCollection | Array)} triggers 
+         *
+         * @param {(string | HTMLElement | HTMLCollection | Array)} triggers
          * className/dom节点/dom集合或dom节点数组
          * @public
          */
@@ -592,10 +593,10 @@ define(function (require) {
 
         /**
          * 刷新触发器
-         * 
+         *
          * 用于经常更新的内容，在更新内容后调用此方法会
          * 解除旧 DOM 节点的绑定，再重新查找绑定新节点
-         * 
+         *
          * @param {string} triggers 触发器的 class
          * @param {HTMLElement=} parentNode 指定触发器的共同容器
          * @public
@@ -627,7 +628,7 @@ define(function (require) {
 
         /**
          * 显示浮层
-         * 
+         *
          * @param {?HTMLElement=} target 触发显示浮层的节点
          * @fires module:Tip#show 显示事件
          * @public
@@ -635,9 +636,9 @@ define(function (require) {
         show: function (target) {
             var options  = this.options;
             var elements = this.elements;
- 
+
             privates.clear.call(this);
-           
+
             this.current = target;
 
             $(window).on('resize', this._bound.onResize);
@@ -671,7 +672,7 @@ define(function (require) {
 
         /**
          * 隐藏浮层
-         * 
+         *
          * @fires module:Tip#hide 隐藏事件
          * @public
          */
@@ -694,7 +695,7 @@ define(function (require) {
             privates.clear.call(this);
 
             var arrow = this.elements.arrow;
-            main.style.left = - main.offsetWidth - arrow.offsetWidth + 'px';
+            main.style.left = -main.offsetWidth - arrow.offsetWidth + 'px';
             this._visible = false;
 
             this.current = null;
@@ -708,7 +709,7 @@ define(function (require) {
 
         /**
          * 判断提示层是否可见
-         * 
+         *
          * @return {boolean} 可见的状态
          * @public
          */
@@ -720,9 +721,9 @@ define(function (require) {
 
         /**
          * 设置提示层的标题部分内容
-         * 
+         *
          * 如果参数为空，则隐藏提示层的标题部分
-         * 
+         *
          * @param {string} html
          * @public
          */
@@ -733,18 +734,18 @@ define(function (require) {
 
         /**
          * 设置提示层显示的内容
-         * 
+         *
          * @param {string} html 要提示的内容的HTML
          * @public
          */
         setContent: function (html) {
             this.content = html || '';
-            this.elements.body.innerHTML = this.content; 
+            this.elements.body.innerHTML = this.content;
         },
 
         /**
          * 销毁控件
-         * 
+         *
          * @override
          */
         dispose: function () {

@@ -5,7 +5,6 @@
  * @file 弹框组件
  * @author mengke(mengke01@baidu.com)
  */
-
 define(function (require) {
 
     var $ = require('jquery');
@@ -52,7 +51,7 @@ define(function (require) {
 
     /**
      * 遮罩层管理类，提供遮罩层的操作函数
-     * 
+     *
      * @requires lib
      * @requires Dialog
      * @module Mask
@@ -93,7 +92,7 @@ define(function (require) {
         /**
          * 重新绘制遮盖层的位置
          * 参考esui2
-         * 
+         *
          * @see https://github.com/erik168/ER/blob/master/src/esui/Mask.js
          * @public
          */
@@ -182,7 +181,7 @@ define(function (require) {
 
     /**
      * 私有函数或方法
-     * 
+     *
      * @type {Object}
      * @namespace
      * @name module:Dialog~privates
@@ -231,7 +230,7 @@ define(function (require) {
                 footer: opt.footer
             };
 
-            //渲染主框架内容
+            // 渲染主框架内容
             this.main = $('<div>')
                 .addClass(privates.getClass.call(this))
                 .css({
@@ -244,7 +243,7 @@ define(function (require) {
                 .appendTo(document.body)
                 .get(0);
 
-            //如果显示mask，则需要创建mask对象
+            // 如果显示mask，则需要创建mask对象
             if (this.options.showMask) {
                 this.mask = Mask.create({
                     className: privates.getClass.call(this, 'mask'),
@@ -262,7 +261,7 @@ define(function (require) {
          */
         bind: function () {
 
-            //绑定关闭按钮
+            // 绑定关闭按钮
             var dom = privates.getDom.call(this, 'close');
             $(dom).on('click', this._bound.onClose);
         },
@@ -299,7 +298,7 @@ define(function (require) {
 
         /**
          * 处理关闭窗口
-         * 
+         *
          * @private
          */
         onClose: function (e) {
@@ -308,7 +307,7 @@ define(function (require) {
 
         /**
          * 当视窗大小改变的时候，调整窗口位置
-         * 
+         *
          * @private
          */
         onResize: function () {
@@ -321,7 +320,7 @@ define(function (require) {
 
         /**
          * 当触发展示的时候
-         * 
+         *
          * @fires module:Dialog#beforeshow
          * @private
          */
@@ -341,7 +340,7 @@ define(function (require) {
 
         /**
          * 当触发隐藏的时候
-         * 
+         *
          * @fires module:Dialog#beforehide
          * @private
          */
@@ -422,40 +421,40 @@ define(function (require) {
             // 控件class前缀，同时将作为main的class之一
             prefix: 'ecl-ui-dialog',
 
-            //控件标题
+            // 控件标题
             title: '',
 
-            //控件内容，如果没有指定主渲染容器，则content内容塞到dialog的body中
+            // 控件内容，如果没有指定主渲染容器，则content内容塞到dialog的body中
             content: '',
 
-            //控件脚注
+            // 控件脚注
             footer: '',
 
-            //控件的皮肤
+            // 控件的皮肤
             skin: '',
 
-            //控件的默认宽度
+            // 控件的默认宽度
             width: '',
 
-            //控件距视窗上边缘的高度，默认为auto，会使组件相对于视窗垂直居中
+            // 控件距视窗上边缘的高度，默认为auto，会使组件相对于视窗垂直居中
             top: '',
 
-            //控件距视窗左边缘的宽度，默认为auto，会使组件相对于视窗水平居中
+            // 控件距视窗左边缘的宽度，默认为auto，会使组件相对于视窗水平居中
             left: '',
 
-            //是否固定，不随视窗滚动，不支持IE6，IE6自动设置为fixed=0
+            // 是否固定，不随视窗滚动，不支持IE6，IE6自动设置为fixed=0
             fixed: 1,
 
-            //是否显示覆盖层
+            // 是否显示覆盖层
             showMask: 1,
 
-            //当前dialog的z-index
+            // 当前dialog的z-index
             level: 10,
 
-            //是否可以拖动,暂未实现
+            // 是否可以拖动,暂未实现
             dragable: 1,
 
-            //模板框架
+            // 模板框架
             tpl: ''
                 + '<div class="#{closeClass}">×</div>'
                 + '<div class="#{headerClass}">#{title}</div>'
@@ -516,7 +515,7 @@ define(function (require) {
             var left = this.options.left;
             var top = this.options.top;
 
-            //如果fixed则需要修正下margin-left
+            // 如果fixed则需要修正下margin-left
             if (this.options.fixed) {
                 var cssOpt = {
                     left: left,
@@ -529,14 +528,14 @@ define(function (require) {
                 }
 
                 if (!top) {
-                    //这里固定为0.35的位置
+                    // 这里固定为0.35的位置
                     cssOpt.top = 0.35 * (win.height() - main.height()) + 'px';
                 }
 
                 $(this.main).css(cssOpt);
             }
 
-            //absolute则需要动态计算left，top使dialog在视窗的指定位置
+            // absolute则需要动态计算left，top使dialog在视窗的指定位置
             else {
 
                 if (!left) {
@@ -544,7 +543,7 @@ define(function (require) {
                 }
 
                 if (!top) {
-                    //这里固定为0.35的位置
+                    // 这里固定为0.35的位置
                     top = (win.scrollTop() + (win.height() - main.height()) * 0.35) + 'px';
                 }
 
@@ -555,7 +554,7 @@ define(function (require) {
                 });
             }
 
-            //修正mask的遮罩
+            // 修正mask的遮罩
             this.mask && this.mask.repaint();
         },
 
@@ -574,8 +573,8 @@ define(function (require) {
                 this.mask.show();
             }
 
-            
-            //移除hide状态的class
+
+            // 移除hide状态的class
             $(this.main).removeClass(privates.getClass.call(this, 'hide'));
 
             // 调整位置
@@ -600,9 +599,9 @@ define(function (require) {
             // 隐藏遮罩
             if (this.mask) {
                 this.mask.hide();
-            } 
+            }
 
-            //添加hide的class
+            // 添加hide的class
             $(this.main).addClass(privates.getClass.call(this, 'hide'));
 
             /**
@@ -610,7 +609,7 @@ define(function (require) {
              */
             this.fire('hide');
 
-            //注销resize
+            // 注销resize
             $(window).off('resize', this._bound.onResize);
             clearTimeout(this._resizeTimer);
 
@@ -627,14 +626,14 @@ define(function (require) {
             var options = this.options;
             if (!this.rendered) {
 
-                //TODO IE6浏览器不支持fixed定位
+                // TODO IE6浏览器不支持fixed定位
                 if (options.fixed && 6 === lib.browser.ie) {
                     options.fixed = 0;
                 }
 
                 privates.renderDOM.call(this);
 
-                //设置渲染的内容
+                // 设置渲染的内容
                 if (options.main) {
                     var ctl = lib.g(options.main);
                     ctl && privates.getBodyDom.call(this).appendChild(ctl);
@@ -648,7 +647,7 @@ define(function (require) {
 
         /**
          * 调整Dialog大小
-         * 
+         *
          * @param {Number} width 宽度
          */
         setWidth: function (width) {
@@ -681,7 +680,7 @@ define(function (require) {
              */
             this.fire('beforedispose');
 
-            //注销dom事件
+            // 注销dom事件
             var bound = this._bound;
 
             $(privates.getDom.call(this, 'close')).off('click', bound.onClose);

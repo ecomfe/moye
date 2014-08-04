@@ -58,7 +58,7 @@ define(function (require) {
 
     /**
      * 私有函数或方法
-     * 
+     *
      * @type {Object}
      * @namespace
      * @name module:PicUploader~privates
@@ -129,7 +129,7 @@ define(function (require) {
 
             if (!filePath.match(this.options.fileType)) {
 
-                //IE浏览器不允许设置file.value这里移除之后再创建一个
+                // IE浏览器不允许设置file.value这里移除之后再创建一个
                 if (lib.browser.ie) {
 
                     // 这里用cloneNode会出现一堆诡异的问题
@@ -144,7 +144,7 @@ define(function (require) {
                         .off('change', bound.onFileChange)
                         .remove();
 
-                    //重新绑定事件
+                    // 重新绑定事件
                     $(newTarget).on('change', bound.onFileChange);
 
                 }
@@ -192,12 +192,12 @@ define(function (require) {
                     .removeClass(privates.getClass.call(this, 'error'))
                     .addClass(privates.getClass.call(this, 'picked'));
 
-                //解绑事件
+                // 解绑事件
                 target.off('change', bound.onFileChange);
 
                 this.count++;
 
-                //如果没有超过限制，则继续生成一个上传框
+                // 如果没有超过限制，则继续生成一个上传框
                 if (this.count < this.options.maxCount) {
                     privates.create.call(this);
                 }
@@ -226,7 +226,7 @@ define(function (require) {
             var fileName = privates.getDom.call(this, 'file', picker).value;
             var bound = this._bound;
 
-            //解绑事件
+            // 解绑事件
             $(privates.getDom.call(this, 'file', picker)).off('change', bound.onFileChange);
             $(privates.getDom.call(this, 'close', picker)).off('click', bound.onCloseClick);
 
@@ -234,7 +234,7 @@ define(function (require) {
 
             this.count--;
 
-            //如果当前个数小于最大个数减1，则生成一个选择框
+            // 如果当前个数小于最大个数减1，则生成一个选择框
             if (this.count === this.options.maxCount - 1) {
                 privates.create.call(this);
             }
@@ -258,10 +258,10 @@ define(function (require) {
         bindPicker: function (id) {
             var bound = this._bound;
 
-            //绑定文件选择
+            // 绑定文件选择
             $(privates.getDom.call(this, 'file', id)).on('change', bound.onFileChange);
 
-            //绑定关闭
+            // 绑定关闭
             $(privates.getDom.call(this, 'close', id)).on('click', bound.onCloseClick);
         },
 
@@ -278,23 +278,22 @@ define(function (require) {
                 wrapperClass: privates.getClass.call(this, 'wrapper')
             };
 
-            var clazz = privates.getClass.call(this, 'picker') 
-                + ' ' 
-                + privates.getClass.call(this, 'cur');
+            // 渲染主框架内容
+            var picker = this.createElement('div', {
+                'className': privates.getClass.call(this, 'picker')
+                        + ' '
+                        + privates.getClass.call(this, 'cur')
+            });
 
-            //渲染主框架内容
-            this.curPicker = $('<div>')
-                .addClass(clazz)
-                .html(this.options.tpl.replace(
-                    /#\{([\w-.]+)\}/g,
-                    function ($0, $1) {
-                        return cls[$1] || '';
-                    }
-                ))
-                .appendTo(this.options.main)
-                .get(0);
-            
-            privates.bindPicker.call(this, this.curPicker);
+            picker.innerHTML = this.options.tpl.replace(
+                /#\{([\w-.]+)\}/g,
+                function ($0, $1) {
+                    return cls[$1] || '';
+                }
+            );
+
+            this.options.main.appendChild(picker);
+            privates.bindPicker.call(this, this.curPicker = picker);
         }
 
     };
@@ -347,13 +346,13 @@ define(function (require) {
             // 控件class前缀，同时将作为main的class之一
             prefix: 'ecl-ui-picuploader',
 
-            //最多选择图片的个数
+            // 最多选择图片的个数
             maxCount: 3,
 
-            //支持上传的文件类型
+            // 支持上传的文件类型
             fileType: /\.(jpg|png|gif|jpeg)$/,
 
-            //模板框架
+            // 模板框架
             tpl: ''
                 +   '<div class="#{closeClass}" title="关闭">×</div>'
                 +   '<div class="#{picClass}"></div>'

@@ -86,7 +86,7 @@ define(function (require) {
             $(city.target).trigger('click');
 
             var target = city.labels[1];
-            var event = {target: target};
+            var event = { target: target };
             var value;
 
             var onPick = function (data) {

@@ -13,7 +13,7 @@ define(function (require) {
 
     /**
      * 私有函数或方法
-     * 
+     *
      * @type {Object}
      * @namespace
      * @name module:Rating~privates
@@ -210,7 +210,7 @@ define(function (require) {
 
                 // 生成星星
                 var prefix = options.prefix;
-                var html = ['<ul class="' + prefix + '-stars">'];
+                var html = [ '<ul class="' + prefix + '-stars">' ];
 
                 for (var i = 0; i < options.max; i++) {
                     html.push(
