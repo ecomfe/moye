@@ -75,11 +75,11 @@ define(function (require) {
          */
         delegate: function (element, eventName, handler) {
 
-            var cache = this._delegation;
+            var cached = this._delegation;
 
             // 初始化缓存池
-            if (!cache) {
-                cache = this._delegation = {};
+            if (!cached) {
+                cached = this._delegation = {};
             }
 
             var guid = handler.guid;
@@ -88,8 +88,8 @@ define(function (require) {
             var proxy;
 
             // 如果缓存的proxy函数存在，那么直接使用缓存的
-            if (guid && cache[guid]) {
-                proxy = cache[guid].proxy;
+            if (guid && cached[guid]) {
+                proxy = cached[guid].proxy;
             }
             // 否则新生成一个代理函数
             else {
@@ -97,11 +97,11 @@ define(function (require) {
                 guid = handler.guid;
             }
 
-            var handleObj = cache[guid];
+            var handleObj = cached[guid];
 
             // 写缓存
-            if (!cache[guid]) {
-                handleObj = cache[guid] = {
+            if (!cached[guid]) {
+                handleObj = cached[guid] = {
                     total: 0
                 };
             }
@@ -131,19 +131,19 @@ define(function (require) {
          */
         undelegate: function (element, eventName, handler) {
 
-            var cache = this._delegation;
+            var cached = this._delegation;
             var guid = handler.guid;
 
             // 我们的代理函数缓存在缓存池中
             // 如果缓存池中没有代理函数，直接返回
             if (
                 // 整个缓存池为空
-                !cache 
+                !cached 
                 // 我们的代理过的handler一定会有guid，没有guid就无法位置缓存
                 // 如果handler.guid为空，就直接返回
                 || !guid
                 // 代理函数不存在 -- 这个应该不会发生的。。。
-                || !cache[guid]
+                || !cached[guid]
             ) {
                 return this;
             }
@@ -152,7 +152,7 @@ define(function (require) {
             // 如果不使用命名空间，$(element).off(xxx)会把绑定的所有代理函数全都取消掉
             // 这里第一级是eventName，第二级是Control实例id，第三级是代理函数id
             var fullEventName = eventName + '.' + this.guid + '.' + guid;
-            var handleObj = cache[guid];
+            var handleObj = cached[guid];
             var proxy = handleObj.proxy;
 
             // 计数减1
@@ -163,11 +163,11 @@ define(function (require) {
 
             // 清洗缓存对象
             if (!handleObj.total) {
-                delete cache[guid];
+                delete cached[guid];
             }
 
             // 如果缓存池为空，那么清除缓存池
-            if ($.isEmptyObject(cache)) {
+            if ($.isEmptyObject(cached)) {
                 delete this._delegation;
             }
 
@@ -194,7 +194,7 @@ define(function (require) {
             }
 
             // 强制添加guid
-            if (this.id === undefined) {
+            if ($.type(this.id) === 'undefined') {
                 this.id = guid++;
             }
 
