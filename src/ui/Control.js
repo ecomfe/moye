@@ -67,8 +67,9 @@ define(function (require) {
          * 但element/eventName并不会被区别对待。
          * 也就是说，如果handler是同一函数，那么会使用之前生成的代理函数。
          * 
+         * @protected
+         * @param {HTMLElement} element 事件来源HTMLElement
          * @param {string} eventName 事件类型
-         * @param {DOMElement} element 事件来源DOMElement
          * @param {[type]} handler 事件处理函数
          * @return {Control} SELF
          */
@@ -122,8 +123,9 @@ define(function (require) {
         /**
          * 取消一个代理
          * 
+         * @protected
+         * @param {HTMLElement} element 事件来源HTMLElement
          * @param {string} eventName 事件类型
-         * @param {DOMElement} element 事件来源DOMElement
          * @param {[type]} handler 事件处理函数
          * @return {Control} SELF
          */
