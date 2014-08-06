@@ -63,16 +63,10 @@
     "passfail": false,
     "white": true,
 
+    "jasmine": true,
+
     "predef": [
         "define",
-        "require",
-        "jasmine",
-        "beforeEach",
-        "afterEach",
-        "describe",
-        "it",
-        "expect",
-        "runs",
-        "waitsFor"
+        "require"
     ]
 }
