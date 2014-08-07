@@ -12,6 +12,8 @@ define(function (require) {
     var lib = require('./lib');
     var Helper = require('./Helper');
 
+    var guid = 0;
+
     /**
      * 控件基类
      *
@@ -59,6 +61,119 @@ define(function (require) {
             this._bound = bound;
         },
 
+        /**
+         * 将DOM元素element的eventName事件处理函数handler的作用域绑定到当前Control实例
+         * 
+         * 每个handler的代理函数都会被缓存，并重复利用。
+         * 但element/eventName并不会被区别对待。
+         * 也就是说，如果handler是同一函数，那么会使用之前生成的代理函数。
+         * 
+         * @protected
+         * @param {HTMLElement} element 事件来源HTMLElement
+         * @param {string} eventName 事件类型
+         * @param {[type]} handler 事件处理函数
+         * @return {Control} SELF
+         */
+        delegate: function (element, eventName, handler) {
+
+            var cached = this._delegation;
+
+            // 初始化缓存池
+            if (!cached) {
+                cached = this._delegation = {};
+            }
+
+            var guid = handler.guid;
+
+            // 函数代理
+            var proxy;
+
+            // 如果缓存的proxy函数存在，那么直接使用缓存的
+            if (guid && cached[guid]) {
+                proxy = cached[guid].proxy;
+            }
+            // 否则新生成一个代理函数
+            else {
+                proxy = $.proxy(handler, this);
+                guid = handler.guid;
+            }
+
+            var handleObj = cached[guid];
+
+            // 写缓存
+            if (!cached[guid]) {
+                handleObj = cached[guid] = {
+                    total: 0
+                };
+            }
+
+            handleObj.total++;
+            handleObj.proxy = proxy;
+
+            // 通过命名空间来保证$(element).off(xxx)可以正确地解除事件绑定
+            // 如果不使用命名空间，$(element).off(xxx)会把所有的处理函数全都取消掉
+            // 这里第一级是eventName，第二级是Control实例id，第三级是代理函数id
+            var fullEventName = eventName + '.' + this.guid + '.' + guid;
+
+            // 绑定事件
+            $(element).on(fullEventName, proxy);
+
+            return this;
+        },
+
+        /**
+         * 取消一个代理
+         * 
+         * @protected
+         * @param {HTMLElement} element 事件来源HTMLElement
+         * @param {string} eventName 事件类型
+         * @param {[type]} handler 事件处理函数
+         * @return {Control} SELF
+         */
+        undelegate: function (element, eventName, handler) {
+
+            var cached = this._delegation;
+            var guid = handler.guid;
+
+            // 我们的代理函数缓存在缓存池中
+            // 如果缓存池中没有代理函数，直接返回
+            if (
+                // 整个缓存池为空
+                !cached 
+                // 我们的代理过的handler一定会有guid，没有guid就无法位置缓存
+                // 如果handler.guid为空，就直接返回
+                || !guid
+                // 代理函数不存在 -- 这个应该不会发生的。。。
+                || !cached[guid]
+            ) {
+                return this;
+            }
+
+            // 通过命名空间来保证$(element).off(xxx)可以正确地解除事件绑定
+            // 如果不使用命名空间，$(element).off(xxx)会把绑定的所有代理函数全都取消掉
+            // 这里第一级是eventName，第二级是Control实例id，第三级是代理函数id
+            var fullEventName = eventName + '.' + this.guid + '.' + guid;
+            var handleObj = cached[guid];
+            var proxy = handleObj.proxy;
+
+            // 计数减1
+            handleObj.total--;
+
+            // 解绑事件
+            $(element).off(fullEventName, proxy);
+
+            // 清洗缓存对象
+            if (!handleObj.total) {
+                delete cached[guid];
+            }
+
+            // 如果缓存池为空，那么清除缓存池
+            if ($.isEmptyObject(cached)) {
+                delete this._delegation;
+            }
+
+            return this;
+        },
 
         /**
          * 控件初始化
@@ -94,6 +209,11 @@ define(function (require) {
             if (this.init) {
                 this.init(options);
                 this.init = null;
+            }
+
+            // 强制添加guid
+            if ($.type(this.id) === 'undefined') {
+                this.id = guid++;
             }
 
             this.children = [];

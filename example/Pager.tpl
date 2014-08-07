@@ -242,3 +242,28 @@ require(['ui/Pager'], function (Pager) {
 在页面切换的时候可以绑定回调事件`onChange`。
 
 {% /filter %}
+
+{% content: script %}
+<script>
+require(['lib', 'Pager'], function (lib, Pager) {
+
+    var pager = new Pager({
+        main: $('.ecl-ui-pager')[0],
+        page: 0,
+        first: 1,
+        total: 10
+    })
+    .on('change', function (e) {
+        // load content
+        this.setPage(e.page);
+        this.render();
+    })
+    .render();
+
+    $('#dispose').on('click', function () {
+        pager.dispose();
+        console.log(pager);
+    });
+
+});
+</script>

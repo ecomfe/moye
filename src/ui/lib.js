@@ -93,6 +93,24 @@ define(function (require) {
         return $.type(obj) === 'object';
     };
 
+    /**
+     * 判断是否为函数
+     * 
+     * @method module:lib.isFunction
+     * @param {*} obj 待判断的输入
+     * @return {boolean}
+     */
+    lib.isFunction = $.isFunction;
+
+    /**
+     * 判断是否为数组
+     *
+     * @method module:lib.isObject
+     * @param {*} obj 待判断的输入
+     * @return {boolean} 类型判断结果
+     */
+    lib.isArray = $.isArray;
+
     /* ========================== lib.array ========================== */
     /**
      * @namespace module:lib.array

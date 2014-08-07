@@ -15,8 +15,6 @@ Moye (知心组件库)
 
 以下方法由jquery相应的方法替代而被移除
 + typeOf 由$.type替代
-+ isArray 由$.isArray替代
-+ isFunctoin 由$.isFunction替代
 + each/array.each 由$.each替代
 + indexOf/array.indexOf 由$.inArray替代
 + toArray 由$.makeArray替代
@@ -33,16 +31,14 @@ Moye (知心组件库)
 + preventDefault() 由于on方法由jquery管理而jquery所管理的事件会自动做兼容处理，因此移除
 + stopPropagation() 由于on方法由jquery管理而jquery所管理的事件会自动做兼容处理，因此移除
 + setStyles()/dom.setStyles() 由jquery.css替代
-+ page.getScrollLeft() 由$(window).scrollLeft()替代
-+ page.getScrollTop() 由$(window).scrollTop()替代
-+ page.getViewWidth() 由$(window).width()替代
-+ page.getViewHeight() 由$(window).height()替代
 + dom下所有相关方法 由jquery中dom相关方法替代
 
 以下方法被保留，但交由jquery实现
 + isObject 由$.type来实现
 + isDate 由$.type来实现
 + isString 由$.type来实现
++ isArray 由$.isArray实现
++ isFunctoin 由$.isFunction实现
 + clone/object.clone 由$.extend实现
 
 由于jquery不能提供当前功能，以下方法保留
@@ -57,29 +53,16 @@ Moye (知心组件库)
 + configurable
 + fire/event.fire
 + browser
+
+由于jquery调用方法不够简洁，以下方法保留
++ page.getScrollLeft()
++ page.getScrollTop()
++ page.getViewWidth()
++ page.getViewHeight()
     
+## 其他变更
 
-### 目前组件重构进度
+### Select
 
-- [x] lib     清理完成
-- [x] 农历控件 [Lunar](http://ecomfe.github.io/moye/example/Lunar.html)
-- [x] 日历控件 [Calendar](http://ecomfe.github.io/moye/example/Calendar.html)
-- [x] 日历扩展 [CalendarExtension](http://ecomfe.github.io/moye/example/CalendarExtension.html)
-- [x] Cookie管理
-- [x] 城市选择 [City](http://ecomfe.github.io/moye/example/City.html)
-- [x] 分页控件 [Pager](http://ecomfe.github.io/moye/example/Pager.html)
-- [x] 浮层提示 [Tip](http://ecomfe.github.io/moye/example/Tip.html)
-- [x] 点击统计 [Log](http://ecomfe.github.io/moye/example/log.html)
-- [x] 条件过滤 [Filter](http://ecomfe.github.io/moye/example/Filter.html)
-    1. 现在我们不再默认第一个选项为`全部`了，而是通过`label`上的data-all属性来识别。使用者可以在`options`中通过配置属性`allTag`来调整`data-all`，换成任意别的标签，比如`data-some-tag`;
-    2. 现在选中`全部`在调用`getData()`时会在返回值中会包含所有的选项值，而不是空数组了。
-- [x] 下拉选项 [Select](http://ecomfe.github.io/moye/example/Select.html)
-- [x] 延迟加载 [Lazy](http://ecomfe.github.io/moye/example/Lazy.html)
-- [x] 选 项 卡 [Tabs](http://ecomfe.github.io/moye/example/Tabs.html)
-- [x] 对 话 框 [Dialog](http://ecomfe.github.io/moye/example/Dialog.html)
-- [x] 浮动提示 [FloatTip](http://ecomfe.github.io/moye/example/FloatTip.html)
-- [x] 图片上传 [PicUploader](http://ecomfe.github.io/moye/example/PicUploader.html)
-- [x] 星号评级 [Rating](http://ecomfe.github.io/moye/example/Rating.html)
-- [ ] 滚 动 条 [ScrollBar](http://ecomfe.github.io/moye/example/ScrollBar.html)
-- [x] 图片轮播 [Slider](http://ecomfe.github.io/moye/example/Slider.html)
-- [x] 浮出层
+1. 现在我们不再默认第一个选项为`全部`了，而是通过`label`上的data-all属性来识别。使用者可以在`options`中通过配置属性`allTag`来调整`data-all`，换成任意别的标签，比如`data-some-tag`;
+2. 现在选中`全部`在调用`getData()`时会在返回值中会包含所有的选项值，而不是空数组了。
