@@ -9,3 +9,4 @@ SpecRunner.html
 *.orig
 undefined/
 example-dist
+npm-debug.log
