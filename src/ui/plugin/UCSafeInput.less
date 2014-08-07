@@ -1,0 +1,32 @@
+.uc-safe-input {
+    // width: 208px;               /* 宽 必须 */
+    // height: 30px;               /* 高 必须 */
+    line-height: 30px;          /* 行高 必须 */
+    // border: #D3E0F0 1px solid;  /* 边框 可选 */
+    display: inline-block;      /* 这个能处理大多数的布局 推荐 */
+    *zoom: 1;                   /* hack inline-block */
+    *display: inline;           /* hack inline-block */
+    overflow: hidden;           /* 超出的隐藏 必须 */
+    background-color: #fff;     /* 背景颜色 统一白色 必须 */
+}
+
+.ucsl-install-plug {
+    display: block;
+    font-size: 12px;
+    width: 100%;
+    height: 100%;
+    line-height: 26px;
+    text-align: center;
+    background: #fff;
+}
+
+.ucsl-layermask {
+    z-index: 999;
+    position: absolute;
+    top: 0;
+    left: 0;
+    // todo
+    background-color: silver;
+    filter: alpha(opacity=25);
+    opacity: .25;
+}
