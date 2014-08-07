@@ -1,3 +1,11 @@
+/**
+ * MOYE
+ * Copyright 2014 Baidu Inc. All rights reserved.
+ * 
+ * @file 常用mixin
+ * @author leon <leonlu@outlook.com>
+ */
+
 // 清除浮动
 .clearfix() {
     *zoom: 1;
@@ -10,4 +18,11 @@
     &:after {
         clear: both;
     }
+}
+
+// ie6兼容 inline-block
+.inline-block() {
+    display: inline-block;
+    *display: inline;
+    *zoom: 1;
 }

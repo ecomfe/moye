@@ -1,6 +1,14 @@
-@pager-prefix: ecl-ui-tabs;
+/**
+ * MOYE
+ * Copyright 2014 Baidu Inc. All rights reserved.
+ * 
+ * @file 选项卡样式
+ * @author leon <leonlu@outlook.com>
+ */
 
-.@{pager-prefix}-labels {
+@import './variable.less';
+
+.@{tabs-prefix}-labels {
     list-style: none;
     background-color: #2c99ff;
     display: inline-block;
@@ -40,7 +48,7 @@
         }
     }
 
-    .@{pager-prefix}-selected {
+    .@{tabs-prefix}-selected {
         z-index: 1;
         height: 26px;
         line-height: 23px;
