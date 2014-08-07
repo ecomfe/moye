@@ -1,4 +1,14 @@
-.uc-safe-input {
+/**
+ * MOYE
+ * Copyright 2014 Baidu Inc. All rights reserved.
+ * 
+ * @file TextBoxPlugin UC安全控件样式
+ * @author leon <leonlu@outlook.com>
+ */
+ 
+@import '../variable.less';
+
+.@{@uc-safe-input-prefix} {
     // width: 208px;               /* 宽 必须 */
     // height: 30px;               /* 高 必须 */
     line-height: 30px;          /* 行高 必须 */
@@ -10,6 +20,7 @@
     background-color: #fff;     /* 背景颜色 统一白色 必须 */
 }
 
+// 以下样式是对UE安全控件样式BUG的hack处理
 .ucsl-install-plug {
     display: block;
     font-size: 12px;
@@ -25,8 +36,7 @@
     position: absolute;
     top: 0;
     left: 0;
-    // todo
-    background-color: silver;
+    background-color: #cbcbcb;
     filter: alpha(opacity=25);
     opacity: .25;
 }
