@@ -2,6 +2,7 @@
  * @file 短信校验码控件
  * @author leon <leonlu@outlook.com>
  */
+
 define(function (require) {
 
     var Control = require('./Control');
@@ -28,42 +29,50 @@ define(function (require) {
         init: function (options) {
             var me = this;
             $.extend(me, options);
-            var $main = $(me.main);
-            me.main = $main.get(0);
+            me.main = $(me.main).get(0);
             me.send = options.send;
             me.text = options.text;
         },
 
+        /**
+         * 初始化事件处理
+         * 
+         * @protected
+         */
         initEvents: function () {
             var me = this;
-            var $main = $(me.main);
-            var send = me.send;
-            var success = $.proxy(me.__onSendSuccess, me);
-            var fail = $.proxy(me.__onSendFail, me);
+            var main = $(me.main);
+            var success = $.proxy(me._onSendSuccess, me);
+            var fail = $.proxy(me._onSendFail, me);
 
-            $main.on('click', function () {
+            main.on('click', function () {
                 if (me.hasState('disabled')) {
                     return;
                 }
-                me.addState('disabled').__showMessage(me.text.sending);
+                me.addState('disabled')._showMessage(me.text.sending);
                 me.send.call(me).then(success, fail);
             });
-
         },
 
-        __cooldown: function () {
+        /**
+         * 倒计时
+         * 
+         * @private
+         * @return {Control} SELF
+         */
+        _cooldown: function () {
 
             var me = this;
             var interval = me.interval;
 
-            me.__clearCooldown();
-            me.__cooldownCounter = me.cooldown;
-            me.__cooldownTimer = setInterval(function () {
-                me.__cooldownCounter -= interval;
-                var counter = me.__cooldownCounter;
+            me._clearCooldown();
+            me._cooldownCounter = me.cooldown;
+            me._cooldownTimer = setInterval(function () {
+                me._cooldownCounter -= interval;
+                var counter = me._cooldownCounter;
 
                 if (counter > 0) {
-                    me.__showMessage(
+                    me._showMessage(
                         me.text.cooldown.replace(/\${time}/g, counter / interval)
                     );
                     return;
@@ -73,46 +82,75 @@ define(function (require) {
 
             }, interval);
 
+            return me;
+
         },
 
-        __clearCooldown: function () {
+        /**
+         * 清除倒计时
+         * 
+         * @private
+         * @return {Control} SELF
+         */
+        _clearCooldown: function () {
             var me = this;
-            me.__cooldownCounter = 0;
-            if (me.__cooldownTimer) {
-                clearInterval(me.__cooldownTimer)
-                me.__cooldownTimer = 0;
+            me._cooldownCounter = 0;
+            if (me._cooldownTimer) {
+                clearInterval(me._cooldownTimer);
+                me._cooldownTimer = 0;
             }
             return me;
         },
 
-        __onSendSuccess: function () {
+        /**
+         * 校验码发送成功事件处理函数
+         * 
+         * @private
+         */
+        _onSendSuccess: function () {
             var me = this;
-            me.__showMessage(me.text.success);
+            me._showMessage(me.text.success);
             setTimeout(function () {
-                me.__cooldown();
+                me._cooldown();
             }, 1000);
         },
 
-        __onSendFail: function () {
-            var me = this;
-            me.__showMessage(me.text.fail);
-            me.removeState('disabled');
+        /**
+         * 发送校验码请求失败事件处理函数
+         * 
+         * @private
+         */
+        _onSendFail: function () {
+            this._showMessage(this.text.fail);
+            this.removeState('disabled');
         },
 
-        __showMessage: function (tip) {
+        /**
+         * 显示提示信息
+         * 
+         * @private
+         * @param {string} tip 提示信息
+         * @return {Control} SELF
+         */
+        _showMessage: function (tip) {
             $(this.main).text(tip);
             return this;
         },
 
+        /**
+         * 重置为初始状态
+         * 
+         * @return {Control} SELF
+         */
         reset: function () {
-            var me = this;
-            me.__clearCooldown();
-            me.__showMessage(me.text.normal);
-            me.removeState('disabled');
-            return me;
+            this._clearCooldown();
+            this._showMessage(this.text.normal);
+            this.removeState('disabled');
+            return this;
         }
 
     });
 
     return MessageAuthCode;
 });
+

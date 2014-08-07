@@ -237,14 +237,14 @@ define(function (require) {
                 this.initEvents();
 
                 // 为控件主元素添加id
-                $(this.main).attr('data-ui-id', this.helper.getPartId());
+                $(this.main).attr('data-ctrl-id', this.helper.getPartId());
 
                 this.helper.addPartClasses();
 
                 if (this.states) {
                     for (var i = this.states.length - 1; i >= 0; i--) {
                         this.addState(this.states[i]);
-                    };
+                    }
                 }
 
                 if (this.plugins) {

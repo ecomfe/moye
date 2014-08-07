@@ -1,3 +1,8 @@
+/**
+ * @file 生命周期辅助工具
+ * @author leon <leonlu@outlook.com>
+ */
+
 define(function (require) {
 
 
@@ -42,3 +47,4 @@ define(function (require) {
     };
 
 });
+

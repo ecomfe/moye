@@ -1,3 +1,8 @@
+/**
+ * @file 重绘工具
+ * @author leon <leonlu@outlook.com>
+ */
+
 define(function (require) {
 
     return {
@@ -59,12 +64,13 @@ define(function (require) {
                             }
                         }
                     }
+
                     if (!shouldPaint) {
                         continue;
                     }
 
                     // 收集所有属性的值
-                    var properties = [painter];
+                    var properties = [ painter ];
                     for (var j = 0; j < propertyNames.length; j++) {
                         var name = propertyNames[j];
                         properties.push(this[name]);
@@ -81,3 +87,4 @@ define(function (require) {
     };
 
 });
+

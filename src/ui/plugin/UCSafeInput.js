@@ -2,12 +2,15 @@
  * @file UC安全控件插件
  * @author leon <lupengyu@bfaidu.com>
  */
+
+
+/* global ucsl */
 define(function (require) {
 
     var $ = require('jquery');
     var lib = require('../lib');
     var host = 'http://cas.baidu.com';
-    var url = host + '/ucsl/ucsl.js?appid=228&d=' + Math.floor((+new Date)/(864e5));
+    var url = host + '/ucsl/ucsl.js?appid=228&d=' + Math.floor((+new Date()) / (864e5));
 
     function SafeInput(options) {
         $.extend(this, options);
@@ -17,7 +20,6 @@ define(function (require) {
         var me = this;
 
         var target = me.target = input;
-        var parent = $(target.input).parent()[0];
 
         target.safer = me;
 
@@ -68,7 +70,7 @@ define(function (require) {
         });
 
         return this;
-    }
+    };
 
     /**
      * 安全控件库加载完成回调处理
@@ -101,7 +103,7 @@ define(function (require) {
         return {
             sid: inputs[0].value,
             pwd: inputs[1].value
-        }
+        };
 
     };
 

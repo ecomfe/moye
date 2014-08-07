@@ -1,10 +1,11 @@
 /**
  * @file MOYE校验插件
+ * @author leon <leonlu@outlook.com>
  */
+
 define(function (require) {
     
     var $ = require('jquery');
-    var lib = require('../lib');
     var Validity = require('./Validity');
 
     function Validitor(options) {
@@ -17,7 +18,7 @@ define(function (require) {
 
         options: {
             auto: true,
-            listen: ['blur']
+            listen: [ 'blur' ]
         },
 
         execute: function (control) {
@@ -81,10 +82,12 @@ define(function (require) {
 
             // 如果schema是一个函数，那么包装一下这货
             if ($.isFunction(schema)) {
-                schema = me.schema = [{
-                    type: 'function',
-                    check: schema
-                }];
+                schema = me.schema = [
+                    {
+                        type: 'function',
+                        check: schema
+                    }
+                ];
             }
 
             // 基于schema的校验规则

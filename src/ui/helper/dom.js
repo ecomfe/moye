@@ -5,6 +5,7 @@
  */
 define(function (require) {
 
+    var lib = require('../lib');
 
     /**
      * 将参数用`-`连接成字符串
@@ -156,13 +157,13 @@ define(function (require) {
          * @return {string[]}
          */
         getStateClasses: function (state) {
-            var type = control.type.toLowerCase();
+            var type = this.control.type.toLowerCase();
             var classes = [
                 joinByStrike(config.uiClassPrefix, type, state),
                 joinByStrike(config.stateClassPrefix, state)
             ];
 
-            var skin = control.skin;
+            var skin = this.control.skin;
             if (skin) {
                 var skinPrefix = config.skinClassPrefix;
                 for (var i = 0, len = skin.length; i < len; i++) {
@@ -192,7 +193,7 @@ define(function (require) {
          * @param {string} state 状态名称
          */
         addStateClasses: function (state) {
-            var element = control.main;
+            var element = this.control.main;
             if (!element) {
                 return;
             }
@@ -206,7 +207,7 @@ define(function (require) {
          * @param {string} state 状态名称
          */
         removeStateClasses: function (state) {
-            var element = control.main;
+            var element = this.control.main;
             if (!element) {
                 return;
             }
@@ -256,3 +257,4 @@ define(function (require) {
         }
     };
 });
+

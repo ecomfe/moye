@@ -529,3 +529,4 @@ define(function (require) {
 
     return PicUploader;
 });
+

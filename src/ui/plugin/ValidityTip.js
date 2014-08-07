@@ -6,8 +6,6 @@ define(function (require) {
 
     var $ = require('jquery');
     var Control = require('../Control');
-    var lib = require('../lib');
-
 
     var ValidityTip = Control.extend({
 
@@ -36,22 +34,19 @@ define(function (require) {
          */
         show: function (validity) {
 
-            var me = this;
-            var main = $(me.main);
+            var main = $(this.main);
             var state = validity.getValidState();
-            var valid = validity.isValid();
+            var message = this._getIconHTML(state) + this._getMessage(validity);
 
-            message = me.__getIconHTML(state) + me.__getMessage(validity);
-
-            if (me.__validState !== state) {
-                me.removeState(me.__validState);
-                me.addState(state);
-                me.__validState = state;
+            if (this._validState !== state) {
+                this.removeState(this._validState);
+                this.addState(state);
+                this._validState = state;
             }
 
             main.html(message);
 
-            return me;
+            return this;
         },
 
         /**
@@ -75,7 +70,7 @@ define(function (require) {
          * @param {Validity} validity 校验合法性实例
          * @return {string}
          */
-        __getMessage: function (validity) {
+        _getMessage: function (validity) {
 
             if (validity.isValid()) {
                 return '';
@@ -93,7 +88,7 @@ define(function (require) {
                 if (!states[i].getState()) {
                     return states[i].getMessage();
                 }
-            };
+            }
 
         },
 
@@ -104,7 +99,7 @@ define(function (require) {
          * @param {string} type icon类型
          * @return {string}
          */
-        __getIconHTML: function (type) {
+        _getIconHTML: function (type) {
 
             var conf = this.icon;
 
@@ -149,24 +144,18 @@ define(function (require) {
          */
         execute: function (target) {
 
-            var me = this;
+            this.target = target;
+            this.render();
+            this.place(this.main, target);
 
-            me.target = target;
+            target.tip = this;
 
-            // lib.addPartClasses(me.target, 'validity-tip', me.main);
-            // me.skin.push(me.target.type);
-
-            me.render();
-            me.place(me.main, target);
-
-            target.tip = me;
-
-            if (!me.auto) {
+            if (!this.auto) {
                 return;
             }
 
-            target.on('invalid', $.proxy(me.__onValidityChange, me));
-            target.on('valid', $.proxy(me.__onValidityChange, me));
+            target.on('invalid', $.proxy(this._onValidityChange, this));
+            target.on('valid', $.proxy(this._onValidityChange, this));
 
         },
 
@@ -176,7 +165,7 @@ define(function (require) {
          * @private
          * @param {Event} e 校验合法性改变事件
          */
-        __onValidityChange: function (e) {
+        _onValidityChange: function (e) {
             this.show(e.validity);
         },
 
@@ -196,3 +185,4 @@ define(function (require) {
     };
 
 });
+

@@ -35,7 +35,7 @@ define(function (require) {
      */
     Validity.prototype.addState = function (name, state) {
 
-        //如果状态名已存在
+        // 如果状态名已存在
         if (this.stateIndex[name]) {
             // 同样的状态对象，不处理
             if (this.stateIndex[name] === state) {
@@ -117,7 +117,7 @@ define(function (require) {
             if (!states[i].getState()) {
                 return false;
             }
-        };
+        }
 
         return true;
     };

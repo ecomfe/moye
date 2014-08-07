@@ -6,7 +6,6 @@ define(function (require) {
 
     var $       = require('jquery');
     var Control = require('./Control');
-    var helper  = require('./helper');
     
     var TextBox = Control.extend({
 
@@ -17,35 +16,55 @@ define(function (require) {
             plugins: []
         },
 
+        /**
+         * 初始化参数
+         * 
+         * @param {object} options 参数
+         * @protected
+         */
         init: function (options) {
             var me = this;
-            var $main = $(options.main);
+            var main = $(options.main);
 
-            me.main = $main.get(0);
-            me.id = options.id || helper.guid();
-            me.input = options.input ? $(options.input) : $main.find('input');
-            me.plugins = options.plugins;
+            me.input = options.input ? $(options.input) : main.find('input');
+            me.input = me.input.get(0);
+            me.main = main.get(0);
         },
 
+        /**
+         * 初始化事件绑定
+         * 
+         * @protected
+         */
         initEvents: function () {
             var me = this;
-            var main = $(me.main);
-            var input = me.input;
+            var input = $(me.input);
 
-            Control.prototype.initEvents.apply(me);
+            // 将HTMLElement事件代理到`Control`事件
+            input   
+                .delegate('input', input, me._on)
+                .delegate('blur',  input, me._on)
+                .delegate('focus', input, me._on);
 
-            input.on('input', $.proxy(me._on, me));
-            input.on('blur', $.proxy(me._on, me));
-            input.on('focus', $.proxy(me._on, me));
-
-            main.attr('data-ctrl-id', me.id);
             return me;
         },
 
+        /**
+         * HTMLElement事件处理函数
+         * 
+         * @private
+         * @param {Event} e HTMLElement事件
+         */
         _on: function (e) {
             this.fire(e.type, e);
         },
 
+        /**
+         * 返回控件值
+         * 
+         * @public
+         * @return {string}
+         */
         getValue: function () {
             return this.input.val();
         }
@@ -55,3 +74,4 @@ define(function (require) {
     return TextBox;
 
 });
+
