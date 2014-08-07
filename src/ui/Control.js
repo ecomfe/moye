@@ -115,7 +115,7 @@ define(function (require) {
             var fullEventName = eventName + '.' + this.guid + '.' + guid;
 
             // 绑定事件
-            $(element).on(eventName, proxy);
+            $(element).on(fullEventName, proxy);
 
             return this;
         },
