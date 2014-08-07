@@ -5,19 +5,24 @@
  * @file TextBoxPlugin UC安全控件样式
  * @author leon <leonlu@outlook.com>
  */
- 
+
 @import '../variable.less';
+@import '../mixin.less';
 
 .@{@uc-safe-input-prefix} {
-    // width: 208px;               /* 宽 必须 */
-    // height: 30px;               /* 高 必须 */
-    line-height: 30px;          /* 行高 必须 */
-    // border: #D3E0F0 1px solid;  /* 边框 可选 */
-    display: inline-block;      /* 这个能处理大多数的布局 推荐 */
-    *zoom: 1;                   /* hack inline-block */
-    *display: inline;           /* hack inline-block */
-    overflow: hidden;           /* 超出的隐藏 必须 */
-    background-color: #fff;     /* 背景颜色 统一白色 必须 */
+    .inline-block();
+    /* 宽 必须 */
+    // width: 208px;
+    /* 高 必须 */
+    // height: 30px;
+    /* 行高 必须 */   
+    line-height: 30px;          
+    /* 背景颜色 统一白色 必须 */
+    background-color: #fff;
+    /* 边框 可选 */
+    // border: #D3E0F0 1px solid;  
+    /* 超出的隐藏 必须 */
+    overflow: hidden;
 }
 
 // 以下样式是对UE安全控件样式BUG的hack处理
