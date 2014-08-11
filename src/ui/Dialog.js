@@ -319,6 +319,26 @@ define(function (require) {
         },
 
         /**
+         * 当触发展示的时候
+         *
+         * @fires module:Dialog#beforeshow
+         * @private
+         */
+        onShow: function (e) {
+            var me = this;
+
+            /**
+             * @event module:Dialog#beforeshow
+             * @type {Object}
+             * @property {DOMEvent} event 事件源对象
+             */
+            me.fire('beforeshow', {
+                event: e
+            });
+            me.show();
+        },
+
+        /**
          * 当触发隐藏的时候
          *
          * @fires module:Dialog#beforehide
@@ -628,7 +648,7 @@ define(function (require) {
         /**
          * 调整Dialog大小
          *
-         * @param {number} width 宽度
+         * @param {Number} width 宽度
          */
         setWidth: function (width) {
 

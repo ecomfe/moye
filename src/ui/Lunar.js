@@ -809,7 +809,7 @@ define(function (require) {
      * @requires Control
      * @exports Lunar
      * @example
-     * <div id="lunar"></div>
+     * &lt;div id="lunar"&gt;&lt;/div&gt;
      * new Lunar({
      *     main: lib.g('lunar')
      *  }).render();

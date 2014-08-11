@@ -201,8 +201,8 @@ define(function (require) {
      * @requires Popup
      * @exports City
      * @example
-     * <input type="text" class="input triggers" />
-     * <input type="button" value="click" class="triggers" />
+     * &lt;input type="text" class="input triggers" /&gt;
+     * &lt;input type="button" value="click" class="triggers" /&gt;
      * new City({
      *     triggers: '.triggers',
      *     target: '.input'

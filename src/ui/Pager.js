@@ -206,7 +206,7 @@ define(function (require) {
      * @requires Control
      * @exports Pager
      * @example
-     * <div class="pager-container"></div>
+     * &lt;div class="pager-container"&gt;&lt;/div&gt;
      * new Pager({
      *     main: lib.q('pager-container')[0],
      *     total: 10,
