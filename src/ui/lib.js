@@ -242,7 +242,7 @@ define(function (require) {
      *
      * @return {string} 解析结果字符串，其中值将被URI编码
      */
-    var toQueryString = function (object, base) {
+    var toQueryString = lib.toQueryString = function (object, base) {
         var queryString = [];
         $.each(object, function (key, value) {
             if (base) {
