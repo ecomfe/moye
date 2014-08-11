@@ -78,7 +78,7 @@ define(function (require) {
 
         it('滑动门动画测试:slide vertical', function (done) {
             var anim = new Anim.anims.slide(
-            slider, lib.extend(slider.options.animOptions, {
+            slider, $.extend(slider.options.animOptions, {
                 direction: 'vertical'
             }));
 
