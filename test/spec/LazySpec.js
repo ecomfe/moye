@@ -35,7 +35,7 @@ define(function (require) {
                 var isLessTop = cd.bottom <= scroll.y;
 
                 // 如果在可视区域之内
-                if (!(isOverRight || isOverBottom) 
+                if (!(isOverRight || isOverBottom)
                      && !(isLessLeft || isLessTop)
                 ) {
                     el.innerHTML = '1';
@@ -46,7 +46,7 @@ define(function (require) {
                 }
 
             });
- 
+
             // 剔除已处理的 DIV
             var els = remain;
 
@@ -57,8 +57,6 @@ define(function (require) {
 
         });
 
-        jasmine.Clock.useMock();
-
     });
 
 
@@ -67,7 +65,7 @@ define(function (require) {
         main.parentNode.removeChild(main);
         main = null;
     });
-  
+
     describe('基本接口', function () {
 
         it('单例模式', function () {
@@ -81,7 +79,7 @@ define(function (require) {
 
         });
 
-        it('滚动可见', function () {
+        it('滚动可见', function (done) {
 
             var callback = jasmine.createSpy('onView');
 
@@ -90,8 +88,10 @@ define(function (require) {
             main.scrollIntoView();
             $(window).trigger('scroll');
 
-            jasmine.Clock.tick(1000);
-            expect(callback).toHaveBeenCalled();
+            setTimeout(function () {
+                expect(callback).toHaveBeenCalled();
+                done();
+            }, 1000);
         });
 
     });
