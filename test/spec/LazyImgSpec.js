@@ -12,7 +12,7 @@ define(function (require) {
 
     // var holder = 'http://tb2.bdstatic.com/tb/static-common/img/search_logo_039c9b99.png';
     // var dist = 'http://www.baidu.com/img/bdlogo.gif';
-    
+
     var holder = '/test/spec/img/1.jpg';
     var dist = '/test/spec/img/2.jpg';
 
@@ -37,70 +37,48 @@ define(function (require) {
         main.parentNode.removeChild(main);
         main = null;
     });
-  
+
     describe('基本接口', function () {
 
-        it('创建实例', function () {
+        it('创建实例', function (done) {
 
-            var img;
-
-            runs(function () {
-                lazyImg = new LazyImg({
-                    main: main
-                });
-
-                var imgs = main.getElementsByTagName('img');
-                img = imgs[Math.random() * imgs.length | 0];
-
-                expect(img.src.indexOf(holder) !== -1).toBe(true);
-                img.scrollIntoView();
-                $(window).trigger('scroll');
-
+            lazyImg = new LazyImg({
+                main: main
             });
 
-            waitsFor(function() {
-                if (img.src.indexOf(holder) !== -1) {
-                    return true;
-                }
-                return false;
-            }, '图片地址应该被替换', 10000);
-            
-            runs(function() {
+            var imgs = main.getElementsByTagName('img');
+            var img = imgs[Math.random() * imgs.length | 0];
+
+            expect(img.src.indexOf(holder) !== -1).toBe(true);
+            img.scrollIntoView();
+            $(window).trigger('scroll');
+
+            setTimeout(function() {
                 expect(img.src.indexOf(dist) !== -1).toBe(true);
-            });
+                done();
+            }, 1000);
 
         });
 
 
-        it('静态方法: load', function() {
-            
-            var img;
+        it('静态方法: load', function(done) {
 
-            runs(function() {
-                lazyImg = LazyImg.load({
-                    main: main
-                });
-
-                var imgs = main.getElementsByTagName('img');
-
-                img = imgs[Math.random() * imgs.length | 0];
-
-                expect(img.src.indexOf(holder) !== -1).toBe(true);
-                img.scrollIntoView();
-                $(window).trigger('scroll');
-
+            lazyImg = LazyImg.load({
+                main: main
             });
 
-            waitsFor(function() {
-                if (img.src.indexOf(holder) !== -1) {
-                    return true;
-                }
-                return false;
-            }, '图片地址应该被替换', 10000);
+            var imgs = main.getElementsByTagName('img');
+            var img = imgs[Math.random() * imgs.length | 0];
 
-            runs(function() {
+            expect(img.src.indexOf(holder) !== -1).toBe(true);
+            img.scrollIntoView();
+            $(window).trigger('scroll');
+
+
+            setTimeout(function() {
                 expect(img.src.indexOf(dist) !== -1).toBe(true);
-            });
+                done();
+            }, 1000);
 
         });
 
