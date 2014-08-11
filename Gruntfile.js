@@ -1,5 +1,5 @@
 module.exports = function (grunt) {
-    
+
     var build_prefix = grunt.option('prefix') || 'ecomui';
     var pkg = grunt.file.readJSON('package.json');
 
@@ -18,7 +18,7 @@ module.exports = function (grunt) {
             after: ['src/moye'],
             afterdoc: ['example/css']
         },
-        
+
         jshint: {
             options: grunt.file.readJSON('.jshintrc'),
             files: ['<%=meta.src.main%>/ui/*.js'/*, '<%=meta.src.test%>/*.js'*/]
@@ -48,7 +48,7 @@ module.exports = function (grunt) {
         },
 
         jsdoc : {
-            files: ['src/**/*.js'], 
+            files: ['src/**/*.js'],
             options: {
                 configure: '.jsdocrc',
                 destination: 'doc/api'
@@ -80,7 +80,7 @@ module.exports = function (grunt) {
                 src: '**',
                 dest: 'example/css',
                 flatten: false,
-                filter: 'isFile'               
+                filter: 'isFile'
             }
         },
 
@@ -192,10 +192,11 @@ module.exports = function (grunt) {
     );
 
 
-    grunt.registerTask('base', ['clean:before', 'jshint', 'lesslint', 'less', 'csslint']);
+    grunt.registerTask('base', ['jshint', 'lesslint', 'less', 'csslint']);
     grunt.registerTask('build', ['base', 'copy:build', 'requirejs:build', 'clean:after']);
     grunt.registerTask('test', ['base', 'connect', 'jasmine:requirejs']);
     grunt.registerTask('cover', ['base', 'connect', 'jasmine:istanbul']);
+    grunt.registerTask('lint', ['jshint', 'lesslint', 'csslint']);
     grunt.registerTask('default', ['base']);
     grunt.registerTask('example', ['less', 'copy:doc']);
     grunt.registerTask('page', ['example', 'jsdoc', 'gh-pages', 'clean:afterdoc']);
