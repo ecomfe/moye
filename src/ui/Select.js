@@ -393,7 +393,7 @@ define(function (require) {
                     || this.realTarget.value
                     || '';
 
-                this.srcOptions.triggers = [ this.target ];
+                this.srcOptions.triggers = [this.target];
 
                 var popup = this.popup = new Popup(this.srcOptions);
                 this.addChild(popup);

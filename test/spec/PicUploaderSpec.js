@@ -31,13 +31,13 @@ define(function (require) {
         document.body.removeChild(lib.g('picUploaderContainer'));
         document.body.removeChild(lib.g('picUploaderContainer1'));
     });
-  
+
     describe('基本接口', function () {
 
 
         it('event:pickerror', function () {
             // 这里想直接塞入文件不太容易，使用fake的元素来模拟
-            
+
             var uploader = new PicUploader({
                 main: lib.g('picUploaderContainer1'),
                 tpl: ''
@@ -100,7 +100,7 @@ define(function (require) {
                 var curPan = $('.ecl-ui-picuploader-cur', uploader.options.main)[0];
                 var fileBtn = $('.ecl-ui-picuploader-file', curPan)[0];
 
-                fileBtn.files = [ new Blob([ 'fakeimg' ]) ];
+                fileBtn.files = [new Blob(['fakeimg'])];
                 fileBtn.value = 'fakeimg.jpg';
 
                 uploader.on('pick', function (e) {
@@ -120,7 +120,7 @@ define(function (require) {
 
         it('remove', function () {
 
-            picUploader.remove('xxxxxx', 
+            picUploader.remove('xxxxxx',
                 function (removePath, filePath,  index) {
                     expect(removePath).toBeTruthy();
                 }
@@ -152,7 +152,7 @@ define(function (require) {
             });
 
             var closeBtn = $(
-                '.ecl-ui-picuploader-close', 
+                '.ecl-ui-picuploader-close',
                 picUploader.options.main
             )[0];
 
@@ -170,7 +170,7 @@ define(function (require) {
             });
 
             picUploader.removeAt(0);
-            
+
         });
     });
 

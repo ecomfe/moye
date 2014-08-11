@@ -298,7 +298,7 @@ define(function (require) {
             var remainder = value % size;
             var start = value - remainder + 1;
             var end = start + size - 1;
-            return [ start, end ];
+            return [start, end];
         };
 
         menu.on('build', function (e) {

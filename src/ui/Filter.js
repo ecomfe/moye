@@ -143,7 +143,7 @@ define(function (require) {
             var name = $input.attr('name');
 
             var checkedData = isRadio
-                ? { key: name, value: [ $input.attr('value') ] }
+                ? { key: name, value: [$input.attr('value')] }
                 : me.getData(name);
 
             // 比较状态变化

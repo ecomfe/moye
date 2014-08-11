@@ -210,7 +210,7 @@ define(function (require) {
 
                 // 生成星星
                 var prefix = options.prefix;
-                var html = [ '<ul class="' + prefix + '-stars">' ];
+                var html = ['<ul class="' + prefix + '-stars">'];
 
                 for (var i = 0; i < options.max; i++) {
                     html.push(

@@ -7,17 +7,17 @@
 define(function (require) {
     var $ = require('jquery');
     var lib = require('ui/lib');
-    
+
 
     beforeEach(function () {
 
-        
+
     });
 
 
     afterEach(function () {
     });
-  
+
     describe('类型判断', function () {
 
         /* jshint -W053 */
@@ -35,7 +35,7 @@ define(function (require) {
         });
 
         it('数组判断及转换', function () {
-            var array = [ 1, 2 ];
+            var array = [1, 2];
             expect(lib.clone(array) === array).toBeFalsy();
         });
 
@@ -72,7 +72,7 @@ define(function (require) {
 
     describe('JSON处理', function () {
         it('toQueryString', function () {
-            var input = { a: [ 1, 2 ], b: 1, c: 'c', d: { e: 1 } };
+            var input = { a: [1, 2], b: 1, c: 'c', d: { e: 1 } };
 
             // 'a[1]=2&a[0]=1&b=1&c=c&d[e]=1';
             var output = lib.toQueryString(input);
@@ -108,13 +108,13 @@ define(function (require) {
             expect(lib.slice).toBeDefined();
             expect(lib.array.slice).toBeDefined();
 
-            var input = [ 1, 2, 3 ];
+            var input = [1, 2, 3];
             // 返回的是副本
             expect(lib.slice(input)).not.toBe(input);
             expect(lib.slice(input)).toEqual(input);
 
-            expect(lib.slice(input, 1)).toEqual([ 2, 3 ]);
-            expect(lib.slice(input, 1, -1)).toEqual([ 2 ]);
+            expect(lib.slice(input, 1)).toEqual([2, 3]);
+            expect(lib.slice(input, 1, -1)).toEqual([2]);
         });
 
     });
@@ -144,7 +144,7 @@ define(function (require) {
                 say: function () {
                     return 'Miao~';
                 }
-            });                
+            });
         });
 
         afterEach(function () {
@@ -195,7 +195,7 @@ define(function (require) {
                     return 'Fish';
                 }
             });
-            
+
             var Lion = Cat.extend({
                 initialize: function () {
                     this.name = 'Sinbad';
@@ -231,7 +231,7 @@ define(function (require) {
                     return 'Fish';
                 }
             });
-            
+
             var Lion = Cat.extend({
                 initialize: function () {
                     this.name = 'Sinbad';
@@ -388,7 +388,7 @@ define(function (require) {
                     this.age = options.age;
                 }
             }).implement(lib.configurable);
-            
+
 
             var lion = new Lion({
                 name: 'Sid',

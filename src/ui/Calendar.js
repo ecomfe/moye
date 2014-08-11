@@ -379,7 +379,7 @@ define(function (require) {
 
             var options = this.options;
             var prefix  = options.prefix;
-            var html    = [ '<div class="' + prefix + '-month">' ];
+            var html    = ['<div class="' + prefix + '-month">'];
 
             var json = { year: year, month: month, prefix: prefix };
             var title = options.lang.title.replace(
@@ -427,7 +427,7 @@ define(function (require) {
                 y = date.getFullYear();
                 M = date.getMonth() + 1;
                 d = date.getDate();
-                yM = [ y, pad(M), '' ].join(separator);
+                yM = [y, pad(M), ''].join(separator);
                 klass = prefix + '-pre-month';
 
                 for (i = d - len + 1; i <= d; i++) {
@@ -452,7 +452,7 @@ define(function (require) {
             date.setMonth(month);
             date.setDate(0);
 
-            yM = [ year, pad(month), '' ].join(separator);
+            yM = [year, pad(month), ''].join(separator);
 
             // 处理当前月
             for (i = 1, len = date.getDate(); i <= len; i++) {
@@ -472,7 +472,7 @@ define(function (require) {
             date.setDate(len + 1);
             y = date.getFullYear();
             M = date.getMonth() + 1;
-            yM = [ y, pad(M), '' ].join(separator);
+            yM = [y, pad(M), ''].join(separator);
             klass = prefix + '-next-month';
 
             len = weeks * rows - (len + Math.max(0, first - firstDay));

@@ -95,7 +95,7 @@ define(function (require) {
 
     /**
      * 判断是否为函数
-     * 
+     *
      * @method module:lib.isFunction
      * @param {*} obj 待判断的输入
      * @return {boolean}
@@ -827,7 +827,7 @@ define(function (require) {
     (function () {
         var reg = /(opera|ie|firefox|chrome|version)[\s\/:]([\w\d\.]+)?.*?(safari|version[\s\/:]([\w\d\.]+)|$)/;
         var UA = navigator.userAgent.toLowerCase().match(reg)
-            || [ null, 'unknown', 0 ];
+            || [null, 'unknown', 0];
         var mode = UA[1] === 'ie' && document.documentMode;
 
         /**

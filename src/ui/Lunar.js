@@ -251,7 +251,7 @@ define(function (require) {
      */
     function getSolarWeakFestival(date) {
         var day = date.getDay();
-        var keys = [ pad(date.getMonth() + 1), day ];
+        var keys = [pad(date.getMonth() + 1), day];
         var today = date.getDate();
         var firstDay = (7 + day - (today - 1)) % 7;
         var lastDate = new Date(date.getFullYear(), keys[0], 0);
@@ -360,7 +360,7 @@ define(function (require) {
         var lunar = getLunarInfo(date);
         var month = lunar.month;
         var day = lunar.day;
-        var decimals = [ '初', '十', '廿', '卅', '卌' ];
+        var decimals = ['初', '十', '廿', '卅', '卌'];
         var units = [
             '日', '一', '二', '三', '四',
             '五', '六', '七', '八', '九', '十'
@@ -532,7 +532,7 @@ define(function (require) {
                 y = date.getFullYear();
                 M = date.getMonth() + 1;
                 d = date.getDate();
-                yM = [ y, pad(M), '' ].join(separator);
+                yM = [y, pad(M), ''].join(separator);
                 klass = prefix + '-pre-month';
                 for (i = d - len + 1; i <= d; i++) {
                     week = week % weeks;
@@ -555,7 +555,7 @@ define(function (require) {
             date.setDate(1);
             date.setMonth(month);
             date.setDate(0);
-            yM = [ year, pad(month), '' ].join(separator);
+            yM = [year, pad(month), ''].join(separator);
             // 处理当前月
             for (i = 1, len = date.getDate(); i <= len; i++) {
                 week = week % weeks;
@@ -575,7 +575,7 @@ define(function (require) {
             date.setDate(len + 1);
             y = date.getFullYear();
             M = date.getMonth() + 1;
-            yM = [ y, pad(M), '' ].join(separator);
+            yM = [y, pad(M), ''].join(separator);
             klass = prefix + '-next-month';
             len = (len + Math.max(0, first - firstDay)) % 7;
             len = len > 0 ? 7 - len : 0;
@@ -730,7 +730,7 @@ define(function (require) {
             var value;
             var className;
             var inRange;
-            
+
             for (i = 0, len = monthes.length; i < len; i++) {
                 days  = monthes[i].getElementsByTagName('a');
                 for (j = 0; day = days[j]; j++) {

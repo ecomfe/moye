@@ -206,7 +206,7 @@ define(function (require) {
 
             if (!this.els[guid]) {
                 el.setAttribute(this.tag, guid);
-                this.els[guid] = [ el, callback, options ];
+                this.els[guid] = [el, callback, options];
                 if (!this.count) {
                     $(window).on('scroll', this._bound.onScroll);
                     $(window).on('resize', this._bound.onScroll);

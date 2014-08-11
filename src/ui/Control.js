@@ -62,15 +62,15 @@ define(function (require) {
 
         /**
          * 将DOM元素element的eventName事件处理函数handler的作用域绑定到当前Control实例
-         * 
+         *
          * 每个handler的代理函数都会被缓存，并重复利用。
          * 但element/eventName并不会被区别对待。
          * 也就是说，如果handler是同一函数，那么会使用之前生成的代理函数。
-         * 
+         *
          * @protected
          * @param {HTMLElement} element 事件来源HTMLElement
          * @param {string} eventName 事件类型
-         * @param {[type]} handler 事件处理函数
+         * @param {Function} handler 事件处理函数
          * @return {Control} SELF
          */
         delegate: function (element, eventName, handler) {
@@ -122,11 +122,11 @@ define(function (require) {
 
         /**
          * 取消一个代理
-         * 
+         *
          * @protected
          * @param {HTMLElement} element 事件来源HTMLElement
          * @param {string} eventName 事件类型
-         * @param {[type]} handler 事件处理函数
+         * @param {Function} handler 事件处理函数
          * @return {Control} SELF
          */
         undelegate: function (element, eventName, handler) {
@@ -138,7 +138,7 @@ define(function (require) {
             // 如果缓存池中没有代理函数，直接返回
             if (
                 // 整个缓存池为空
-                !cached 
+                !cached
                 // 我们的代理过的handler一定会有guid，没有guid就无法位置缓存
                 // 如果handler.guid为空，就直接返回
                 || !guid

@@ -2,7 +2,7 @@ define(function (require) {
 
     var Filter = require('ui/Filter');
     var $      = require('jquery');
-    
+
     var filter;
 
     beforeEach(function () {
@@ -91,7 +91,7 @@ define(function (require) {
         });
 
         filter.render();
-        
+
     });
 
 
@@ -99,7 +99,7 @@ define(function (require) {
         $('#filterContainer').remove();
         filter.dispose();
     });
-  
+
     describe('基本接口', function () {
 
         it('控件类型', function () {
@@ -109,18 +109,18 @@ define(function (require) {
         });
 
         it('getData', function () {
-            
+
             expect(filter.getData('type'))
-                .toEqual({ key: 'type', value: [ '1' ] });
-            
+                .toEqual({ key: 'type', value: ['1'] });
+
             expect(filter.getData('special'))
-                .toEqual({ key: 'special', value: [ '2', '3' ] });
+                .toEqual({ key: 'special', value: ['2', '3'] });
 
         });
 
         it('disable & enable Items', function () {
-            
-            filter.disableItems('type', [ '1', '2' ]);
+
+            filter.disableItems('type', ['1', '2']);
             var inputs = filter.groups.type.getElementsByTagName('input');
 
             expect(inputs[1].checked).toBeFalsy();
@@ -191,7 +191,7 @@ define(function (require) {
                         var $input = $('input[value=' + value + '][name=special]');
                         expect($input.prop('checked')).toBe(false);
                     });
-                    
+
                     return;
                 }
 
