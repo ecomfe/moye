@@ -456,8 +456,8 @@ define(function (require) {
      * @exports CalendarExtension
      * @see module:Calendar
      * @example
-     * &lt;input type="text" class="input triggers" /&gt;
-     * &lt;input type="button" value="click" class="triggers" /&gt;
+     * <input type="text" class="input triggers" />
+     * <input type="button" value="click" class="triggers" />
      * 与 Calendar 使用方式一致
      * new CalendarExtension({
      *     dateFormat: 'yyyy-MM-dd(WW)',    // W为星期几，WW带周作前缀

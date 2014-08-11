@@ -584,8 +584,8 @@ define(function (require) {
      * @requires Popup
      * @exports Calendar
      * @example
-     * &lt;input type="text" class="input triggers" /&gt;
-     * &lt;input type="button" value="click" class="triggers" /&gt;
+     * <input type="text" class="input triggers" />;
+     * <input type="button" value="click" class="triggers" />
      * new Calendar({
      *     dateFormat: 'yyyy-MM-dd(WW)',    // W为星期几，WW带周作前缀
      *     triggers: '.triggers',
