@@ -115,6 +115,27 @@ define(function (require) {
             expect(dialog.mask).toBeTruthy();
         });
 
+        it('setWidth', function () {
+            var width = 500;
+            dialog.show();
+            dialog.setWidth(width);
+            $(window).trigger('resize');
+            expect($(dialog.main).width()).toBe(width);
+        });
+
+        it('show & hide', function () {
+            var show = jasmine.createSpy('onShow');
+            var hide = jasmine.createSpy('onHide');
+            dialog.on('show', show);
+            dialog.on('hide', hide);
+            dialog.show();
+            expect(show).toHaveBeenCalled();
+            dialog.hide();
+            expect(hide).toHaveBeenCalled();
+            dialog.un('show', show);
+            dialog.un('hide', hide);
+        });
+
         it('event:dispose', function () {
             dialog.on('dispose', function () {
                 expect(!!dialog.main).toBeFalsy();

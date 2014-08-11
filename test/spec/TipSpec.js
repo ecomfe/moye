@@ -3,7 +3,7 @@ define(function (require) {
     var $ = require('jquery');
     var lib = require('ui/lib');
     var Tip = require('ui/Tip');
-    
+
     var tip;
 
     beforeEach(function () {
@@ -31,7 +31,7 @@ define(function (require) {
         tip.render();
 
         jasmine.Clock.useMock();
-        
+
     });
 
 
@@ -39,7 +39,7 @@ define(function (require) {
         tip.dispose();
         document.body.removeChild(lib.g('tipContainer'));
     });
-  
+
     describe('基本接口', function () {
 
         it('控件类型', function () {
@@ -135,6 +135,7 @@ define(function (require) {
 
             target = links[1];
             $(target).trigger('mouseenter');
+            tip.refresh('tooltips');
 
             tip.un('beforeShow', onBeforeShow);
             tip.un('hide', onHide);
@@ -153,7 +154,7 @@ define(function (require) {
                 showDelay: delay,
                 hideDelay: delay
             });
-            tip.render();        
+            tip.render();
 
             var links = document.getElementById('tipContainer').getElementsByTagName('a');
             var target = links[0];

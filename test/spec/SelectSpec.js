@@ -1,9 +1,9 @@
 define(function (require) {
 
     var $ = require('jquery');
-    var lib = require('ui/lib');        
+    var lib = require('ui/lib');
     var Select = require('ui/Select');
-    
+
     var select;
     var onPick;
 
@@ -38,7 +38,7 @@ define(function (require) {
         select.render();
 
         onPick = jasmine.createSpy('onPick');
-        
+
     });
 
 
@@ -47,7 +47,7 @@ define(function (require) {
         select.dispose();
         onPick = null;
     });
-  
+
     describe('基本接口', function () {
 
         it('控件类型', function () {
@@ -56,18 +56,23 @@ define(function (require) {
 
         });
 
-        it('显示/隐藏', function () {
+        it('显示/隐藏', function (done) {
             var onShow = jasmine.createSpy('onShow');
             select.once('show', onShow);
-            select.show();
+            $(select.target).trigger('click');
 
-            expect(onShow).toHaveBeenCalled();
 
             var onHide = jasmine.createSpy('onHide');
             select.once('hide', onHide);
-            select.hide();
 
-            expect(onHide).toHaveBeenCalled();
+            setTimeout(function () {
+                expect(onShow).toHaveBeenCalled();
+                $(document).trigger('click');
+                $(window).trigger('resize');
+                expect(onHide).toHaveBeenCalled();
+                done();
+            }, 100);
+
         });
 
         it('beforeShow', function () {
