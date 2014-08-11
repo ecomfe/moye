@@ -94,7 +94,7 @@ define(function (require) {
      * @extends module:Control
      * @inner
      */
-    var Menu = Control.extend(/** @lends CalendarExtension~Menu.prototype */{
+    var Menu = Control.extend(/** @lends module:CalendarExtension~Menu.prototype */{
 
         /**
          * 控件类型标识
@@ -107,7 +107,7 @@ define(function (require) {
         /**
          * 控件配置项
          *
-         * @name CalendarExtension~Menu#options
+         * @name module:CalendarExtension~Menu#options
          * @type {Object}
          * @property {number} start 初始化时的起始数字
          * @property {number} end 初始化时的结束数字
@@ -139,7 +139,7 @@ define(function (require) {
         /**
          * 绘制控件
          *
-         * @return {Menu} 当前实例
+         * @return {module:CalendarExtension~Menu} 当前实例
          * @override
          * @public
          */
@@ -275,7 +275,7 @@ define(function (require) {
      * 月选择菜单工厂方法
      *
      * @param {Object} options 选择菜单参数
-     * @see Menu#options
+     * @see module:CalendarExtension~Menu#options
      * @return {Menu} 月选择菜单实例
      */
     Menu.month = function (options) {
@@ -287,8 +287,8 @@ define(function (require) {
      * 年选择菜单工厂方法
      *
      * @param {Object} options 选择菜单参数
-     * @see Menu#options
-     * @return {Menu} 年选择菜单实例
+     * @see module:CalendarExtension~MenuMenu#options
+     * @return {module:CalendarExtension~MenuMenu} 年选择菜单实例
      */
     Menu.year = function (options) {
         var menu = new Menu(options);
@@ -471,7 +471,7 @@ define(function (require) {
          * 初始化
          *
          * @param {Object} options 透传给 module:Calendar 的配置参数
-         * @see module:Calendar#options
+         * @see module:CalendarExtension#options
          * @private
          */
         initialize: function (options) {
