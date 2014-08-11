@@ -59,7 +59,23 @@ gulp.task('csslint', function () {
 
 gulp.task('jsdoc', function () {
     gulp.src(config.js)
-        .pipe(jsdoc('doc/api'));
+        .pipe(jsdoc.parser())
+        .pipe(
+            jsdoc.generator(
+                'doc/api',
+                {
+                    path            : 'ink-docstrap',
+                    systemName      : 'Moye UI',
+                    footer          : '',
+                    copyright       : 'Copyright@ecomfe.baidu.com',
+                    navType         : 'vertical',
+                    theme           : 'Cerulean',
+                    linenums        : true,
+                    collapseSymbols : false,
+                    inverseNav      : true
+                }
+            )
+        );
 });
 
 
