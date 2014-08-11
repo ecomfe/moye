@@ -152,7 +152,7 @@ define(function (require) {
         });
 
         it('prev click', function (done) {
-            var prevBtn = lib.q('ecl-ui-slider-prev', slider.main)[0];
+            var prevBtn = $('.ecl-ui-slider-prev', slider.main)[0];
             slider.go(1);
             $(prevBtn).trigger('click');
             setTimeout(function () {
@@ -162,7 +162,7 @@ define(function (require) {
         });
         it('next click', function (done) {
 
-            var nextBtn = lib.q('ecl-ui-slider-next', slider.main)[0];
+            var nextBtn = $('.ecl-ui-slider-next', slider.main)[0];
             slider.go(0);
             $(nextBtn).trigger('click');
             setTimeout(function () {
@@ -172,7 +172,7 @@ define(function (require) {
         });
 
         it('index click', function (done) {
-            var indexBtns = lib.q('ecl-ui-slider-index', slider.main)[0].children;
+            var indexBtns = $('.ecl-ui-slider-index', slider.main)[0].children;
             $(indexBtns[0]).trigger('click');
             setTimeout(function () {
                 expect(slider.index).toBe(0);
