@@ -6,7 +6,7 @@
 
 define(function (require) {
     var $ = require('jquery');
-    var lib = require('ui/lib');        
+    var lib = require('ui/lib');
     var Tabs = require('ui/Tabs');
 
     var tabs;
@@ -40,9 +40,9 @@ define(function (require) {
         tabs.dispose();
         tabs = null;
     });
-    
+
     describe('create a instance', function () {
-        
+
         it('auto compute selectedIndex', function () {
             var selected = $('.ecl-ui-tabs-selected', tabs.main)[0];
             var selectedIndex = selected.getAttribute('data-index') | 0;
@@ -83,7 +83,7 @@ define(function (require) {
 
             index = 4;
             var iTag = tabs.labels[index].getElementsByTagName('i')[0];
-            var selected = lib.q('ecl-ui-tabs-selected', main)[0];
+            var selected = $('.ecl-ui-tabs-selected', main)[0];
             tabs.on('change', function (e) {
                 expect(e.newIndex).toBe(index);
                 expect(e.selected).toBe(selected);
@@ -118,7 +118,7 @@ define(function (require) {
 
             tabs.on('change', onChange);
             $(tabs.labels[rndIndex]).trigger('click');
-            
+
             // jasmine.Clock.tick(100);
             expect(onChange).not.toHaveBeenCalled();
         });
