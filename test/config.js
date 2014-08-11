@@ -20,7 +20,7 @@ module.exports = function(config) {
     files: [
       'src/css/*.less',
       'test/spec/*Spec.js',
-      '!test/spec/LazyImgSpec.js',
+      '!test/spec/LazyImgSpec.js'
     ],
 
 
