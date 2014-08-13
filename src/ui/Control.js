@@ -44,7 +44,7 @@ define(function (require) {
 
         /**
          * 缓存被代理后的事件处理函数
-         * 
+         *
          * @param {Object.<string, Function>} provider 提供事件方法的对象
          * @protected
          */
@@ -63,11 +63,11 @@ define(function (require) {
 
         /**
          * 将DOM元素element的eventName事件处理函数handler的作用域绑定到当前Control实例
-         * 
+         *
          * 每个handler的代理函数都会被缓存，并重复利用。
          * 但element/eventName并不会被区别对待。
          * 也就是说，如果handler是同一函数，那么会使用之前生成的代理函数。
-         * 
+         *
          * @protected
          * @param {HTMLElement} element 事件来源HTMLElement
          * @param {string} eventName 事件类型
@@ -123,7 +123,7 @@ define(function (require) {
 
         /**
          * 取消一个代理
-         * 
+         *
          * @protected
          * @param {HTMLElement} element 事件来源HTMLElement
          * @param {string} eventName 事件类型
@@ -139,7 +139,7 @@ define(function (require) {
             // 如果缓存池中没有代理函数，直接返回
             if (
                 // 整个缓存池为空
-                !cached 
+                !cached
                 // 我们的代理过的handler一定会有guid，没有guid就无法位置缓存
                 // 如果handler.guid为空，就直接返回
                 || !guid
@@ -206,6 +206,17 @@ define(function (require) {
             delete options.skin;
             delete options.states;
 
+            // 常用的两个与状态相关的属性，直接在这里给转化成状态
+            if (options.disabled) {
+                this.states.push('disabled');
+                delete options.disabled;
+            }
+
+            if (options.readOnly) {
+                this.states.push('readOnly');
+                delete options.readOnly;
+            }
+
             if (this.init) {
                 this.init(options);
                 this.init = null;
@@ -241,13 +252,13 @@ define(function (require) {
 
                 this.helper.addPartClasses();
 
-                if (this.states) {
+                if (this.states && this.states.length) {
                     for (var i = this.states.length - 1; i >= 0; i--) {
                         this.addState(this.states[i]);
                     }
                 }
 
-                if (this.plugins) {
+                if (this.plugins && this.plugins.length) {
                     for (var i = 0, len = this.plugins.length; i < len; i++) {
                         this.plugins[i].execute(this);
                     }
@@ -266,10 +277,10 @@ define(function (require) {
             return this;
 
         },
-                
+
         /**
          * 初始化DOM结构
-         * 
+         *
          * @abstract
          * @return {Control} self
          */
@@ -279,7 +290,7 @@ define(function (require) {
 
         /**
          * 初始化事件绑定
-         * 
+         *
          * @return {Control} self
          */
         initEvents: function () {
@@ -288,7 +299,7 @@ define(function (require) {
 
         /**
          * 重绘视图
-         * 
+         *
          * @abstract
          * @return {Control} self
          */
@@ -298,9 +309,9 @@ define(function (require) {
 
         /**
          * 设置属性值
-         * 
+         *
          * 当设定的属性值与当前值不一致时，会触发repaint动作
-         * 
+         *
          * @param {string} name 属性名
          * @param {*} value 属性值
          * @return {Control} SELF
@@ -357,7 +368,7 @@ define(function (require) {
 
         /**
          * 返回属性值
-         * 
+         *
          * @param {string} name 属性名
          * @return {*} 属性值
          */
@@ -367,9 +378,9 @@ define(function (require) {
 
         /**
          * 判断一个属性是否发生了变化
-         * 
+         *
          * 默认算法就是判断是否完全相等
-         * 
+         *
          * @protected
          * @param {string} name 属性名
          * @param {*} newValue 原属性值
@@ -407,10 +418,10 @@ define(function (require) {
 
         /**
          * 创建主素
-         * 
+         *
          * 如果在options中不指定主元素，那么会自动生成一个div元素作为其主元素。
          * 子类可以覆盖此方法来重写
-         * 
+         *
          * @protected
          * @return {HTMLElement} 创建后的元素
          */
@@ -420,7 +431,7 @@ define(function (require) {
 
         /**
          * 增加状态
-         * 
+         *
          * @param {string} state 状态
          * @fires module:Control#statechange
          * @return {Control} self
@@ -432,7 +443,7 @@ define(function (require) {
             }
 
             this.currentStates[state] = true;
-            lib.addStateClasses(this, state);
+            this.helper.addStateClasses(state);
 
             this.fire('statechange', {
                 state: state,
@@ -444,7 +455,7 @@ define(function (require) {
 
         /**
          * 移除状态
-         * 
+         *
          * @param {string} state 状态
          * @fires module:Control#statechange
          * @return {Control} self
@@ -458,7 +469,7 @@ define(function (require) {
 
             me.currentStates[state] = false;
             lib.removeStateClasses(me, state);
-            
+
             me.fire('statechange', {
                 state: state,
                 action: 'remove'
@@ -606,7 +617,7 @@ define(function (require) {
 
         /**
          * 使用插件
-         * 
+         *
          * @public
          * @param {Plugin} plugin 插件
          */
