@@ -1,8 +1,10 @@
-@tip-prefix: ecl-ui-tip;
-@tip-border-color: #c1d5ea;
-@tip-border-width: 8px;
-@tip-background-color: #e2eefa;
-@tip-arrow-border-width: 2px;
+/**
+ * @file MOYE 浮动提示
+ * @author leon(leonlu@outlook.com)
+ */
+
+@import './variable.less';
+@import './dep.less';
 
 .@{tip-prefix} {
     width: 268px;
@@ -15,7 +17,7 @@
 
     .@{tip-prefix}-arrow,
     .@{tip-prefix}-arrow em,
-    .@{tip-prefix}-arrow ins {       
+    .@{tip-prefix}-arrow ins {
         width: 0;
         height: 0;
         font-size: 0;
@@ -33,7 +35,7 @@
             _border: @tip-border-width solid @tip-background-color;
             _filter: chroma(color=@tip-background-color);
         }
-        
+
         ins {
             border: @tip-border-width solid transparent;
             // 修复ie6 无法边框透明的bug

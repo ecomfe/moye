@@ -1,9 +1,16 @@
+/**
+ * @file MOYE 幻灯片样式
+ * @author leon(leonlu@outlook.com)
+ */
+
+@import './dep.less';
+@import './variable.less';
 
 .@{slider-prefix} {
     position: relative;
     width: @slider-width;
     height: @slider-height;
-    
+
     //舞台
     &-stage {
         position: relative;
@@ -19,7 +26,7 @@
     }
 
     //向前和向后按钮
-    &-prev, 
+    &-prev,
     &-next {
         position: absolute;
         width: @switch-btn-width;
@@ -45,12 +52,12 @@
         right: 2px;
     }
 
-    &-prev:hover, 
+    &-prev:hover,
     &-next:hover {
         background: #DDD;
     }
 
-    &-prev-disable, 
+    &-prev-disable,
     &-next-disable {
         display:none;
     }
