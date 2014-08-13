@@ -1,0 +1,44 @@
+/**
+ * @file MOYE - 按钮 - 样式
+ * @author leon(leonlu@outlook.com)
+ */
+
+@import './dep.less';
+@import './variable.less';
+
+.@{button-prefix} {
+    .inline-block();
+    .box-sizing(content-box);
+    margin: 0;
+    padding: 0 15px;
+    height: 26px;
+    line-height: 26px;
+    font-size: 13px;
+    color: @button-color;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    background-color: @button-background;
+    border: 1px solid @button-border-color;
+    outline: 0;
+
+    &:hover {
+        background-color: lighten(@button-background, 5%);
+    }
+
+    &:active {
+        background-color: darken(@button-background, 10%);
+    }
+
+    &:visited {
+        color: @button-color;
+    }
+
+    &-disabled {
+        background-color: @butotn-disabled-background-color;
+        &:hover, &:active {
+            background-color: @butotn-disabled-background-color;
+        }
+    }
+
+}
