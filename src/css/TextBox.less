@@ -1,28 +1,37 @@
 /**
  * MOYE
  * Copyright 2014 Baidu Inc. All rights reserved.
- * 
+ *
  * @file 文本框样式
  * @author leon <leonlu@outlook.com>
  */
 
 @import './variable.less';
+@import './dep.less';
 
 .@{textbox-prefix} {
-    
-    height: 30px;
-    display: inline-block;
-    *display: inline;
-    *zoom: 1;
+
+    @height: 28px;
+    @padding-top: 4px;
+    @border-color: #ccc;
+    @font-size: 13px;
+
+    .inline-block();
+    height: @height;
+
 
     input {
-        height: 20px;
-        width: 240px;
-        padding: 4px 0 4px 10px;
+        height: @height;
+        padding: @padding-top 10px;
         margin: 0;
-        line-height: 20px;
-        font-size: 13px;
-        border: 1px solid #ccc;
+        line-height: @height - @padding-top * 2;
+        font-size: @font-size;
+        border: 1px solid @border-color;
+        outline: none;
+
+        &:focus {
+            border-color: darken(@border-color, 10%);
+        }
 
         &[disabled], &[readonly] {
             background: #f3f3f3;

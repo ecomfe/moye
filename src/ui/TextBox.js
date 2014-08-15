@@ -6,7 +6,8 @@ define(function (require) {
 
     var $       = require('jquery');
     var Control = require('./Control');
-    
+    var painter = require('./painter');
+
     var TextBox = Control.extend({
 
         type: 'textbox',
@@ -18,7 +19,7 @@ define(function (require) {
 
         /**
          * 初始化参数
-         * 
+         *
          * @param {object} options 参数
          * @protected
          */
@@ -33,25 +34,37 @@ define(function (require) {
 
         /**
          * 初始化事件绑定
-         * 
+         *
          * @protected
          */
         initEvents: function () {
-            var me = this;
-            var input = $(me.input);
-
+            var input = this.input;
             // 将HTMLElement事件代理到`Control`事件
-            input   
-                .delegate('input', input, me._on)
-                .delegate('blur',  input, me._on)
-                .delegate('focus', input, me._on);
+            this.delegate(input, 'input', this._on)
+                .delegate(input, 'blur',  this._on)
+                .delegate(input, 'focus', this._on);
 
-            return me;
+            return this;
         },
+
+        repaint: painter.createRepaint([{
+            name: ['width', 'height'],
+            paint: function (conf, width, height) {
+                $(this.main).css({
+                    width: width,
+                    height: height
+                });
+            }
+        }, {
+            name: ['value'],
+            paint: function (conf, value) {
+                this.setValue(value || '');
+            }
+        }]),
 
         /**
          * HTMLElement事件处理函数
-         * 
+         *
          * @private
          * @param {Event} e HTMLElement事件
          */
@@ -61,12 +74,23 @@ define(function (require) {
 
         /**
          * 返回控件值
-         * 
+         *
          * @public
          * @return {string}
          */
         getValue: function () {
-            return this.input.val();
+            return this.input.value;
+        },
+
+        /**
+         * 设置值
+         *
+         * @param {string} value 控件值
+         * @return {Control}
+         */
+        setValue: function (value) {
+            this.input.value = value;
+            return this;
         }
 
     });

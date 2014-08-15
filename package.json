@@ -2,6 +2,9 @@
   "name": "Moye",
   "version": "0.7.4",
   "description": "知心UI组件库",
+  "dependencies": {
+    "est": "https://github.com/ecomfe/est.git"
+  },
   "devDependencies": {
     "etpl": "^2.1.0-rc",
     "grunt": "~0.4.0",
@@ -89,6 +92,9 @@
       "name": "Tabs"
     },
     {
+      "name": "TextBox"
+    },
+    {
       "name": "Tip"
     }
   ],
@@ -143,6 +149,8 @@
     "srcDir": "src",
     "loaderAutoConfig": "js,htm,html,tpl,vm,phtml",
     "loaderUrl": "http://s1.bdstatic.com/r/www/cache/ecom/esl/1-8-2/esl.js",
-    "dependencies": {}
+    "dependencies": {
+      "est": "1.2.2"
+    }
   }
 }
