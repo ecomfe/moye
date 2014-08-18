@@ -15,16 +15,13 @@
     @padding-top: 4px;
     @border-color: #ccc;
     @font-size: 13px;
+    @focus-border-color: #3994ef;
     @read-only-border-color: multiply(rgba(0, 0, 0, .15), #fff);
     @read-only-color: multiply(rgba(0, 0, 0, 1), #fff);
     @disabled-border-color: @read-only-border-color;
 
     .inline-block();
     height: @height;
-
-    &.@{textbox-prefix}-disabled {
-        .opacity(70);
-    }
 
     input {
         height: @height;
@@ -37,17 +34,30 @@
         .transition(border-color .3s ease-in);
 
         &:focus {
-            border-color: darken(@border-color, 20%);
+            border-color: @focus-border-color;
         }
 
     }
 
-    &-success input {
-        border-color: #2ecc71;
+    @valid-color: #2ecc71;
+    @invalid-color: #ff2900;
+
+    &-disabled input {
+        background-color: #f8f8f8;
     }
 
-    &-error input {
-        border-color: #ff2900;
+    &-valid input {
+        border-color: @valid-color;
+        &:focus {
+            border-color: @valid-color;
+        }
+    }
+
+    &-invalid input {
+        border-color: @invalid-color;
+        &:focus {
+            border-color: @invalid-color;
+        }
     }
 
 }

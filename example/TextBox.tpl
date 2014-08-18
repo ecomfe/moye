@@ -63,13 +63,17 @@ require(['ui/TextBox'], function (TextBox) {
 {%/filter%}
 
 <div class="content">
-    <label>禁用</label>
     <div id="textbox2" class="ui-textbox ui-textbox-disabled">
         <input type="text" value="禁用">
     </div>
-    <label>只读</label>
     <div id="textbox3" class="ui-textbox ui-textbox-readOnly">
         <input type="text" value="只读">
+    </div>
+    <div id="textbox4" class="ui-textbox ui-textbox-valid">
+        <input type="text" value="通过校验">
+    </div>
+    <div id="textbox4" class="ui-textbox ui-textbox-invalid">
+        <input type="text" value="未通过校验">
     </div>
 </div>
 <script>
