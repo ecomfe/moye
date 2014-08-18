@@ -1,4 +1,4 @@
-// Test configuration for Karma 
+// Test configuration for Karma
 // Generated on Fri Dec 27 2013 15:11:09 GMT+0800 (CST)
 
 module.exports = function(config) {
@@ -9,13 +9,13 @@ module.exports = function(config) {
 
     requireConfig: {
       baseUrl: '../'
-    }
+    },
 
 
     // frameworks to use
     frameworks: [
-      'jasmine', 
-      'requirejs', 
+      'jasmine',
+      'requirejs',
       'http://s1.bdstatic.com/r/www/cache/static/jquery/jquery-1.10.2.min_f2fb5194.js'
     ],
 
@@ -26,59 +26,59 @@ module.exports = function(config) {
       {
         pattern: 'test/spec/FilterSpec.js',
         included: false
-      }, 
+      },
       {
         pattern: 'test/spec/LunarSpec.js',
         included: false
-      }, 
+      },
       {
         pattern: 'test/spec/CalendarSpec.js',
         included: false
-      }, 
+      },
       {
         pattern: 'test/spec/CalendarExtensionSpec.js',
         included: false
-      }, 
+      },
       {
         pattern: 'test/spec/CitySpec.js',
         included: false
-      }, 
+      },
       {
         pattern: 'test/spec/logSpec.js',
         included: false
-      }, 
+      },
       {
         pattern: 'test/spec/CookieSpec.js',
         included: false
-      }, 
+      },
       {
         pattern: 'test/spec/TabsSpec.js',
         included: false
-      }, 
+      },
       {
         pattern: 'test/spec/DialogSpec.js',
         included: false
-      }, 
+      },
       {
         pattern: 'test/spec/DialogFactorySpec.js',
         included: false
-      }, 
+      },
       {
         pattern: 'test/spec/FloatTipSpec.js',
         included: false
-      }, 
+      },
       {
         pattern: 'test/spec/PagerSpec.js',
         included: false
-      }, 
+      },
       {
         pattern: 'test/spec/RatingSpec.js',
         included: false
-      }, 
+      },
       {
         pattern: 'test/spec/PicUploaderSpec.js',
         included: false
-      }, 
+      },
       {
         pattern: 'test/spec/SelectSpec.js',
         included: false
@@ -100,7 +100,7 @@ module.exports = function(config) {
 
     // list of files to exclude
     exclude: [
-      
+
     ],
 
 

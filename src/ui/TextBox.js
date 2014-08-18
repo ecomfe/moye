@@ -26,9 +26,18 @@ define(function (require) {
         init: function (options) {
             var me = this;
             var main = $(options.main);
+            var input = options.input ? $(options.input) : main.find('input');
 
-            me.input = options.input ? $(options.input) : main.find('input');
-            me.input = me.input.get(0);
+            $.extend(
+                this,
+                this.options,
+                options,
+                {
+                    input: input.get(0),
+                    value: options.value || input.val()
+                }
+            );
+
             me.main = main.get(0);
         },
 
@@ -91,6 +100,43 @@ define(function (require) {
         setValue: function (value) {
             this.input.value = value;
             return this;
+        },
+
+        /**
+         * 禁用
+         */
+        disable: function () {
+            this.addState('disabled');
+            this.input.disabled = true;
+        },
+
+        /**
+         * 激活
+         *
+         * @return {[type]} [return description]
+         */
+        enable: function () {
+            this.removeState('disabled');
+            this.input.disabled = false;
+        },
+
+        /**
+         * 设为只读
+         *
+         * @param {boolean} readOnly 是否只读
+         */
+        setReadOnly: function (readOnly) {
+            this[readOnly ? 'addState' : 'removeState']('readOnly');
+            $(this.input).attr('readonly', !!readOnly);
+        },
+
+        /**
+         * 是否为只读
+         *
+         * @return {boolean}
+         */
+        isReadOnly: function () {
+            return this.hasState('readOnly');
         }
 
     });
@@ -98,4 +144,3 @@ define(function (require) {
     return TextBox;
 
 });
-

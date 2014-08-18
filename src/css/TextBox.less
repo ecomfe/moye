@@ -7,7 +7,7 @@
  */
 
 @import './variable.less';
-@import './dep.less';
+@import './mixin.less';
 
 .@{textbox-prefix} {
 
@@ -15,10 +15,16 @@
     @padding-top: 4px;
     @border-color: #ccc;
     @font-size: 13px;
+    @read-only-border-color: multiply(rgba(0, 0, 0, .15), #fff);
+    @read-only-color: multiply(rgba(0, 0, 0, 1), #fff);
+    @disabled-border-color: @read-only-border-color;
 
     .inline-block();
     height: @height;
 
+    &.@{textbox-prefix}-disabled {
+        .opacity(70);
+    }
 
     input {
         height: @height;
@@ -28,18 +34,12 @@
         font-size: @font-size;
         border: 1px solid @border-color;
         outline: none;
+        .transition(border-color .3s ease-in);
 
         &:focus {
-            border-color: darken(@border-color, 10%);
+            border-color: darken(@border-color, 20%);
         }
 
-        &[disabled], &[readonly] {
-            background: #f3f3f3;
-        }
-
-        &.disabled, &.readonly {
-            background: #f3f3f3;
-        }
     }
 
     &-success input {

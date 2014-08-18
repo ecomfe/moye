@@ -61,3 +61,30 @@ require(['ui/TextBox'], function (TextBox) {
 });
 ```
 {%/filter%}
+
+<div class="content">
+    <label>禁用</label>
+    <div id="textbox2" class="ui-textbox ui-textbox-disabled">
+        <input type="text" value="禁用">
+    </div>
+    <label>只读</label>
+    <div id="textbox3" class="ui-textbox ui-textbox-readOnly">
+        <input type="text" value="只读">
+    </div>
+</div>
+<script>
+require(['ui/TextBox'], function (TextBox) {
+    new TextBox({
+        main: document.getElementById('textbox2')
+    })
+    .render()
+    .disable();
+
+    new TextBox({
+        main: document.getElementById('textbox3')
+    })
+    .render()
+    .setReadOnly(true);
+
+});
+</script>

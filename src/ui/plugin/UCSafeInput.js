@@ -3,7 +3,6 @@
  * @author leon <lupengyu@bfaidu.com>
  */
 
-
 /* global ucsl */
 define(function (require) {
 
@@ -16,6 +15,12 @@ define(function (require) {
         $.extend(this, options);
     }
 
+    /**
+     * 执行插件
+     *
+     * @protected
+     * @param {TextBox} input 输入控件
+     */
     SafeInput.prototype.execute = function (input) {
         var me = this;
 
@@ -25,9 +30,9 @@ define(function (require) {
 
         $.getScript(url).then(function () {
 
-            me.__support = ucsl.support();
+            me._support = ucsl.support();
 
-            if (!me.__support) {
+            if (!me._support) {
                 return;
             }
 
@@ -51,7 +56,7 @@ define(function (require) {
 
     /**
      * 渲染UC安全控件
-     * 
+     *
      * @return {moye/plugin/UCSafeInput} self
      */
     SafeInput.prototype.renderUCInput = function () {
@@ -62,7 +67,7 @@ define(function (require) {
         // 把安全控件的内容放进去
         ucsl.init({
             fid: this.fid,
-            ready: $.proxy(this.__ready, this),
+            ready: $.proxy(this._ready, this),
             style: {
                 width: this.width,
                 height: this.height
@@ -74,15 +79,15 @@ define(function (require) {
 
     /**
      * 安全控件库加载完成回调处理
-     * 
+     *
      * @private
      */
-    SafeInput.prototype.__ready = function () {
+    SafeInput.prototype._ready = function () {
 
         var me = this;
         var target = me.target;
 
-        me.__isReady = true;
+        me._isReady = true;
 
         target.fire('saferready', {
             type: 'saferready',
@@ -93,7 +98,7 @@ define(function (require) {
 
     /**
      * 获取值
-     * 
+     *
      * @return {object}
      */
     SafeInput.prototype.getValue = function () {
@@ -109,32 +114,32 @@ define(function (require) {
 
     /**
      * 是否支持当前的浏览器/系统环境
-     * 
+     *
      * @return {boolean}
      */
     SafeInput.prototype.isSupport = function () {
-        return this.__support;
+        return this._support;
     };
 
     /**
      * 安全控件当前是否可用
-     * 
+     *
      * @return {boolean}
      */
     SafeInput.prototype.isReady = function () {
-        return !!this.__isReady;
+        return !!this._isReady;
     };
 
     /**
      * 把安全控件隐藏起来
-     * 
+     *
      * @return {moye/plugin/UCSafeInput} self
      */
     SafeInput.prototype.flyaway = function () {
         var main = $(this.target.main);
 
-        if (!this.__flyStyleCache) {
-            this.__flyStyleCache = {
+        if (!this._flyStyleCache) {
+            this._flyStyleCache = {
                 position: main.css('position'),
                 left: main.css('left')
             };
@@ -150,18 +155,18 @@ define(function (require) {
 
     /**
      * 把安全控件放回去
-     * 
+     *
      * @return {moye/plugin/UCSafeInput} self
      */
     SafeInput.prototype.flyback = function () {
-        var cache = this.__flyStyleCache;
+        var cache = this._flyStyleCache;
 
         if (!cache) {
             return;
         }
 
-        $(this.target.main).css(this.__flyStyleCache);
-        this.__flyStyleCache = null;
+        $(this.target.main).css(this._flyStyleCache);
+        this._flyStyleCache = null;
 
         this.reset();
         return this;
@@ -169,7 +174,7 @@ define(function (require) {
 
     /**
      * 校验输入值
-     * 
+     *
      * @return {boolean}
      */
     SafeInput.prototype.validate = function () {
@@ -178,14 +183,14 @@ define(function (require) {
 
     /**
      * 重置安全控件
-     * 
+     *
      * @return {UCSafeInput} self
      */
     SafeInput.prototype.reset = function () {
-        this.__isReady = false;
+        this._isReady = false;
         return this.renderUCInput();
     };
-    
+
     /**
      * 析构函数
      */
