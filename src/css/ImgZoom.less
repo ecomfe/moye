@@ -1,0 +1,76 @@
+@import "./config.less";
+@imgZoom-prefix: e(%('%s-imgZoom', @ui-prefix));
+
+.@{imgZoom-prefix} {
+    display:none;
+}
+
+.@{imgZoom-prefix}-mask {
+    top:0;
+    left:0;
+    position: absolute;
+    opacity: 0.7;
+    filter:~"alpha(opacity=70)";
+    background-color: #000;
+    z-index: 60000; 
+
+    iframe {
+        position:absolute;
+        top:0;
+        left:0;
+        width:100%;
+        height:100%;
+        z-index:-1;
+        filter:~"progid:DXImageTransform.Microsoft.Alpha(opacity:0)";
+    }
+
+    div {
+        position:absolute;
+        top:0;
+        left:0;
+        width:100%;
+        height:100%;
+        z-index:-1;
+    }
+}
+
+.@{imgZoom-prefix}-container {
+    text-align:center;
+    position:absolute;
+    z-index:60001;
+
+    .c-loading {
+        position:absolute;
+    }
+}
+
+.@{imgZoom-prefix}-close {
+    display:none;
+    width:40px;
+    height:40px;
+    position:absolute;
+    right:-40px;
+    top:0;
+    text-decoration:none;
+
+    &:hover {
+    background:#000;
+    opacity: 0.5; 
+    filter:~"alpha(opacity=50)";
+    } 
+
+    span {
+    display:block;
+    width:20px;
+    height:20px;
+    margin:10px 0 0 10px;
+    background:url(http://www.baidu.com/cache/aladdin/ui/barrage/img/btn.png) no-repeat -9px -11px;
+    opacity: 0.6; 
+    filter:~"alpha(opacity=60)";
+    }
+}
+
+.@{imgZoom-prefix}-link {
+    display:block;
+    line-height:0;
+}
