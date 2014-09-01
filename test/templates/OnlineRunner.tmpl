@@ -5,6 +5,7 @@
   <title>Jasmine Spec Runner</title>
 <% css.forEach(function(style){ %>
   <link rel="stylesheet" type="text/css" href="<%= style %>">
+<% }) %>
   <script type="text/javascript" charset="utf-8">
 	  var A = {
 		addCssText: function(cssText){
@@ -40,7 +41,7 @@
 		}
 	  });
   </script>
-<% }) %>
+
 <% with (scripts) { %>
   <% [].concat(polyfills, jasmine, vendor, helpers, reporters, start).forEach(function(script){ %>
   <script src="<%= script %>"></script>

@@ -10,7 +10,7 @@ module.exports = function (grunt) {
                 main: 'src',
                 test: 'test/spec'
             },
-            cssPrefix: 'ecl-ui',
+            cssPrefix: 'seui',
             buildPrefix: 'ui',
             version: pkg.version
         },
@@ -156,7 +156,17 @@ module.exports = function (grunt) {
                         {name: '<%= meta.buildPrefix%>/Control'},
                     ]
                 }
-            }
+            },
+	    karma: {
+		options: {
+			configFile: 'test/config.js',
+			reporters: 'dots',
+			singleRun: true
+			},
+		dev: {
+			browsers: ['Chrome', 'Firefox']
+	        }
+	    }
         },
 
         connect: {
@@ -222,6 +232,7 @@ module.exports = function (grunt) {
                     }
                 }
             }
+
         },
 
         'gh-pages': {
@@ -309,7 +320,7 @@ module.exports = function (grunt) {
 
 
     grunt.registerTask('base', ['clean:before', 'copy:js', 'copy:css', 'tmpl', 'jshint', 'lesslint', 'less:compile', 'csslint']);
-    grunt.registerTask('base-online', ['clean:before','copy:js', 'copy:css', 'tmpl', 'jshint', 'lesslint', 'csslint']);
+    grunt.registerTask('base-online', ['clean:before','copy:js', 'copy:css', 'tmpl', 'jshint','lesslint', 'csslint']);
 
     grunt.registerTask('build', ['base', 'requirejs:build', 'clean:after']);
     grunt.registerTask('test', ['base', 'connect', 'jasmine:requirejs']);
