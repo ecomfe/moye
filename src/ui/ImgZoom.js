@@ -114,8 +114,12 @@ define(function (require,exports,module) {
                         var data = {
                             src: $img.attr('data-zoomImg'),
                             href: $a.attr('href'),
-                            top: imgPosition.top,
-                            left: imgPosition.left,
+                            top: lib.browser.ie && lib.browser.ie <=6 
+                                ? imgPosition.top + document.body.scrollTop -2 
+                                : imgPosition.top,
+                            left: lib.browser.ie && lib.browser.ie <=6 
+                                ? imgPosition.left -3 
+                                : imgPosition.left,
                             width: $img.width(),
                             height: $img.height(),
                             imgClass: imgClass,
@@ -163,7 +167,18 @@ define(function (require,exports,module) {
             var _this = this;
             var options = this.options;
             var $body = $(document.body);
-            var $mask = $('<div class="' + options.prefix + '-mask xpath-log" style="width: ' + $body.width() + 'px; height: ' + $body.height()+ 'px;" data-click="{' + data.click + ',\'fm\':\'beha\',\'rsv_imgZoom\':\'3\'}"><iframe frameborder="0" src="about:blank"></iframe><div class="OP_LOG_OTHERS">&nbsp;</div></div>').bind({click: function () {_this.closeImgZoom();}});
+            var $mask = $(''
+                + '<div class="' + options.prefix + '-mask xpath-log" '
+                + 'style="width: ' 
+                + (lib.browser.ie && lib.browser.ie <=6 
+                    ? $body.width() - 22 
+                    : $body.width()) 
+                + 'px; height: ' + $(document).height()+ 'px;" '
+                + 'data-click="{' 
+                + data.click + ',\'fm\':\'beha\',\'rsv_imgZoom\':\'3\'}">'
+                + '<iframe frameborder="0" src="about:blank"></iframe>'
+                + '<div class="OP_LOG_OTHERS">&nbsp;</div></div>'
+                ).bind({click: function () {_this.closeImgZoom();}});
             $body.append($mask);
         },
 
@@ -246,7 +261,9 @@ define(function (require,exports,module) {
          */
         rePositionImgZoom: function (data) {
             var options = this.options;
-            var MiddleSreen= $(window).height()/2;
+            var MiddleSreen = (lib.browser.ie && lib.browser.ie <= 6 
+                ? document.body.offsetHeight/2
+                : $(window).height()/2);            
 
             // 放大的图片
             var $imgZoom = $('.' + options.prefix);
