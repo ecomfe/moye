@@ -169,17 +169,18 @@ define(function (require,exports,module) {
             var $body = $(document.body);
             var $mask = $(''
                 + '<div class="' + options.prefix + '-mask xpath-log" '
-                + 'style="width: ' 
-                + (lib.browser.ie && lib.browser.ie <=6 
-                    ? $body.width() - 22 
-                    : $body.width()) 
-                + 'px; height: ' + $(document).height()+ 'px;" '
+                + 'style="width: ' + $body.width() + 'px;'
+                + 'height: ' + $(document).height()+ 'px;" '
                 + 'data-click="{' 
                 + data.click + ',\'fm\':\'beha\',\'rsv_imgZoom\':\'3\'}">'
                 + '<iframe frameborder="0" src="about:blank"></iframe>'
                 + '<div class="OP_LOG_OTHERS">&nbsp;</div></div>'
                 ).bind({click: function () {_this.closeImgZoom();}});
             $body.append($mask);
+
+            $(window).on("resize",function () {
+                $mask.css("width",$body.width());
+            });
         },
 
         /**
