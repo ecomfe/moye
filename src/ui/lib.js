@@ -1322,7 +1322,7 @@ define(function () {
             return (related !== this 
                 && related.prefix !== 'xul' 
                 && this.nodeType !== 9 
-                && !lib.contains(this, related)
+                && !lib.dom.contains(this, related)
             );
         };
 
