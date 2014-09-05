@@ -262,9 +262,13 @@ define(function (require,exports,module) {
          */
         rePositionImgZoom: function (data) {
             var options = this.options;
-            var MiddleSreen = (lib.browser.ie && lib.browser.ie <= 6 
-                ? document.body.offsetHeight/2
-                : $(window).height()/2);            
+            var SreenHeight = (lib.browser.ie && lib.browser.ie <= 6 
+                ? document.body.offsetHeight
+                : $(window).height());
+            var MiddleSreen = SreenHeight/2;
+
+            //放大方式，1向下，2向上，3居中
+            var zoomStyle = 1;
 
             // 放大的图片
             var $imgZoom = $('.' + options.prefix);
@@ -276,6 +280,9 @@ define(function (require,exports,module) {
 
             // 原图距屏幕上边距
             var imgTop = data.top - (window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop);
+
+            var topLeft = imgTop - 63;
+            var bottomLeft = SreenHeight - imgTop - data.height;
 
             // 根据最大宽度和最大高度，约束图片放大效果，等比缩放
             if(imgZoomWidth/imgZoomHeight > options.MaxWidth/options.MaxHeight) {
@@ -295,15 +302,67 @@ define(function (require,exports,module) {
                 $imgZoom.css("width",options.MinWidth);
             } 
 
-            // 当原图在屏幕中线以下
-            if(imgTop >= MiddleSreen) {
-                $imgZoomContainer.css("top",data.top + data.height - $imgZoom.height());
+            var zoomImgHeight = $imgZoom.height() - data.height;
+
+            // 当原图在屏幕中线以下,且顶部高度大于大图高度，从原图底部向上展开放大
+            if(imgTop >= MiddleSreen && topLeft >= zoomImgHeight) {
+                zoomStyle = 2;
+            }
+
+            // 当原图在屏幕中线以下,但顶部高度小于大图高度
+            else if(imgTop >= MiddleSreen && topLeft < zoomImgHeight) {
+
+                //如果底部高度大于大图高度，向下展开
+                if(bottomLeft >= zoomImgHeight) {
+                    zoomStyle = 1;
+                }
+
+                //如果底部高度小于大图高度，居中展开
+                else{
+                    zoomStyle = 3;
+                }
             }
 
             // 当原图在屏幕中线范围
             else if(imgTop < MiddleSreen && imgTop+data.height > MiddleSreen) {
-                $imgZoomContainer.css("top",data.top - ($imgZoom.height() - data.height)/2);
+                
+                //如果顶部高度大于大图高度1/2，居中展开
+                if(topLeft >= zoomImgHeight/2) {
+                    zoomStyle = 3;
+                }
+
+                //如果顶部高度小于大图高度1/2，向下展开
+                else{
+                    zoomStyle = 1;
+                }
+                
             }
+
+            // 当原图在屏幕中线以上
+            else{
+
+                //如果底部高度大于大图高度，向下展开
+                if(bottomLeft >= zoomImgHeight) {
+                    zoomStyle = 1;
+                }
+
+                //如果底部高度小于大图高度，居中展开
+                else{
+                    zoomStyle = 3;
+                }
+            }
+
+            switch(zoomStyle) {
+                case 1:$imgZoomContainer.css("top",data.top);
+                    break;
+                
+                case 2:$imgZoomContainer.css("top",data.top + data.height - $imgZoom.height());
+                    break;
+                
+                case 3:$imgZoomContainer.css("top",data.top - ($imgZoom.height() - data.height)/2);
+                    break;
+            }
+
         },
 
         /**
