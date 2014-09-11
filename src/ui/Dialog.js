@@ -103,14 +103,14 @@ define(function (require) {
             var height = doc.height();
 
             $(this.mask).css({
-                width: width + 'px',
-                height: height + 'px'
+                width: width,
+                height: height
             });
 
             if (Mask.ie6frame) {
                 $(Mask.ie6frame).css({
-                    width: width + 'px',
-                    height: height + 'px'
+                    width: width,
+                    height: height
                 });
             }
 
