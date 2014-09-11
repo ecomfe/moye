@@ -141,7 +141,7 @@ define(function (require) {
             this.slider = null;
             this.options = null;
         }
-    });
+    }).implement(lib.observable);
 
     /**
      * 动画算子
@@ -306,6 +306,8 @@ define(function (require) {
         /**
          * 计时器函数
          *
+         * @fires module:SliderAnim~Timeline#done
+         * @fires module:SliderAnim~Timeline#tick
          * @private
          */
         timeHandler: function () {
@@ -313,10 +315,28 @@ define(function (require) {
             if (timePast >= this.interval) {
                 this.tick(1);
                 this.timer = 0;
+
+                /**
+                 * 动画完成事件
+                 *
+                 * @event module:SliderAnim~Timeline#done
+                 * @type {object}
+                 */
+                this.fire('done');
             }
             else {
-                this.tick(timePast / this.interval);
+                var percent = timePast / this.interval;
+                this.tick(percent);
                 this.timer = requestAnimationFrame(this.timeHandler);
+
+                /**
+                 * 动画帧事件
+                 *
+                 * @event module:SliderAnim~Timeline#tick
+                 * @type {object} e
+                 * @param {number} e.percent 动画进度，小于 1 的小数
+                 */
+                this.fire('tick', { percent: percent });
             }
         },
 
