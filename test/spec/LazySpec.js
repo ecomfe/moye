@@ -57,6 +57,7 @@ define(function (require) {
 
         });
 
+        jasmine.clock().install();
     });
 
 
@@ -64,6 +65,7 @@ define(function (require) {
         Lazy.remove(main);
         main.parentNode.removeChild(main);
         main = null;
+        jasmine.clock().uninstall();
     });
 
     describe('基本接口', function () {
@@ -79,7 +81,21 @@ define(function (require) {
 
         });
 
-        it('滚动可见', function (done) {
+        it('滚动可见', function () {
+
+            var callback = jasmine.createSpy('onView');
+
+            Lazy.remove(main);
+            Lazy.add(main, callback);
+
+            main.scrollIntoView();
+            $(window).trigger('scroll');
+
+            jasmine.clock().tick(101);
+            expect(callback).toHaveBeenCalled();
+        });
+
+        it('同一容器只有一个监听', function () {
 
             var callback = jasmine.createSpy('onView');
 
@@ -88,10 +104,8 @@ define(function (require) {
             main.scrollIntoView();
             $(window).trigger('scroll');
 
-            setTimeout(function () {
-                expect(callback).toHaveBeenCalled();
-                done();
-            }, 1000);
+            jasmine.clock().tick(101);
+            expect(callback).not.toHaveBeenCalled();
         });
 
     });
