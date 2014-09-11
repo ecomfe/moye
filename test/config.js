@@ -1,28 +1,23 @@
-// Test configuration for Karma
-// Generated on Fri Dec 27 2013 15:11:09 GMT+0800 (CST)
+// Test configuration for edp-test
 
-module.exports = function(config) {
-  config.set({
+module.exports = {
 
     // base path, that will be used to resolve files and exclude
     basePath: '../',
 
+    qrcode: false,
 
     // frameworks to use
     frameworks: [
-      'jasmine',
-      'requirejs',
-      'http://s1.bdstatic.com/r/www/cache/static/jquery/jquery-1.10.2.min_f2fb5194.js'
+        'jasmine2',
+        'esl',
+        'http://s1.bdstatic.com/r/www/cache/static/jquery/jquery-1.10.2.min_f2fb5194.js'
     ],
-
 
     // list of files / patterns to load in the browser
     files: [
-      'src/css/*.less',
-      'test/spec/*Spec.js',
-      '!test/spec/LazyImgSpec.js'
+        'test/spec/*Spec.js'
     ],
-
 
     // list of files to exclude
     exclude: [
@@ -30,43 +25,23 @@ module.exports = function(config) {
     ],
 
 
-    // test results reporter to use
-    // possible values: 'dots', 'progress', 'junit', 'growl', 'coverage'
-    reporters: ['progress', 'coverage'],
-
-    preprocessors: {
-      // source files, that you wanna generate coverage for
-      // do not include tests or libraries
-      // (these files will be instrumented by Istanbul)
-      'src/**/*.js': ['coverage'],
-      'src/css/*.less': ['less']
-    },
-
-    lessPreprocessor: {
-      options: {
-        paths: ['src/css']
-      }
-    },
+    coverageFiles: [
+    ],
 
     // optionally, configure the reporter
     coverageReporter: {
-      // text-summary | text | html | json | teamcity | cobertura | lcov
-      // lcovonly | none | teamcity
-      type : 'html',
-      dir : 'test/coverage/'
+        // text-summary | text | html | json | teamcity | cobertura | lcov
+        // lcovonly | none | teamcity
+        type : 'html|text',
+        dir : 'test/coverage/'
     },
 
     // web server port
-    port: 9876,
+    port: 8120,
 
 
     // enable / disable colors in the output (reporters and logs)
     colors: true,
-
-
-    // level of logging
-    // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
-    logLevel: config.LOG_INFO,
 
 
     // enable / disable watching file and executing tests whenever any file changes
@@ -77,23 +52,19 @@ module.exports = function(config) {
     // - Chrome
     // - ChromeCanary
     // - Firefox
-    // - Opera (has to be installed with `npm install karma-opera-launcher`)
-    // - Safari (only Mac; has to be installed with `npm install karma-safari-launcher`)
+    // - Opera
+    // - Safari
     // - PhantomJS
-    // - IE (only Windows; has to be installed with `npm install karma-ie-launcher`)
-    browsers: ['Chrome', /*'Firefox'*/],
-
-
-    // If browser does not capture in given timeout [ms], kill it
-    captureTimeout: 60000,
+    // - IE (only Windows;)
+    browsers: [
+        // 'PhantomJS',
+        // 'Firefox',
+        // 'Safari',
+        'Chrome'
+    ],
 
 
     // Continuous Integration mode
     // if true, it capture browsers, run tests and exit
-    singleRun: false,
-
-    plugins: [
-        'karma-jasmine', 'karma-phantomjs-launcher', 'karma-chrome-launcher', 'karma-firefox-launcher', "karma-less-preprocessor", "karma-stylus-preprocessor", 'karma-requirejs', 'karma-coverage'
-    ]
-  });
+    singleRun: false
 };
