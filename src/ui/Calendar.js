@@ -127,7 +127,7 @@ define(function (require) {
             /**
              * @event module:Calendar#beforeShow
              * @type {Object}
-             * @property {DOMEvent} event 事件源对象
+             * @property {Event} event 事件源对象
              */
             this.fire('beforeShow', arg);
 
@@ -828,8 +828,6 @@ define(function (require) {
             return this;
         },
 
-
-
         /**
          * 动态更新 target
          *
@@ -847,6 +845,7 @@ define(function (require) {
                 this.popup.target = target;
             }
         },
+
         /**
          * 显示浮层
          *
