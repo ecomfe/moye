@@ -367,12 +367,12 @@ define(function (require) {
             expect(onEvent).toHaveBeenCalled();
 
             tom.fire('catchRat');
-            expect(onCatchRat.calls.length).toBe(2);
-            expect(onOnceCatchRat.calls.length).toBe(1);
+            expect(onCatchRat.calls.count()).toBe(2);
+            expect(onOnceCatchRat.calls.count()).toBe(1);
 
             tom.un('catchRat');
             tom.fire('catchRat');
-            expect(onCatchRat.calls.length).toBe(2);
+            expect(onCatchRat.calls.count()).toBe(2);
 
         });
 
