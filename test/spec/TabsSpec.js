@@ -32,11 +32,12 @@ define(function (require) {
             selectedIndex: 0
         }).render();
 
-        jasmine.Clock.useMock();
+        jasmine.clock().install();
     });
 
 
     afterEach(function () {
+        jasmine.clock().uninstall();
         tabs.dispose();
         tabs = null;
     });
@@ -104,7 +105,7 @@ define(function (require) {
             $(tabs.labels[rndIndex]).trigger('click');
             onChange();
 
-            // jasmine.Clock.tick(100);
+            // jasmine.clock().tick(100);
             expect(onChange).toHaveBeenCalled();
         });
 
@@ -119,7 +120,7 @@ define(function (require) {
             tabs.on('change', onChange);
             $(tabs.labels[rndIndex]).trigger('click');
 
-            // jasmine.Clock.tick(100);
+            // jasmine.clock().tick(100);
             expect(onChange).not.toHaveBeenCalled();
         });
     });
