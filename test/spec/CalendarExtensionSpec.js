@@ -1,9 +1,9 @@
 define(function (require) {
     var $ = require('jquery');
     var lib = require('ui/lib');
-    
+
     var CalendarExtension = require('ui/CalendarExtension');
-    
+
     var calendarExtension;
 
     beforeEach(function () {
@@ -24,6 +24,7 @@ define(function (require) {
             target: triggers[0]
         });
         calendarExtension.render();
+
     });
 
 
@@ -31,14 +32,13 @@ define(function (require) {
         document.body.removeChild(lib.g('calendarExtensionContainer'));
         calendarExtension.dispose();
     });
-  
+
     describe('基本操作', function () {
 
         it('选取日期', function (done) {
             var date = new Date(new Date() - 3600 * 24);
-            var onShow = function (arg) {
-                var target = arg.target;
-                expect(target).toBe(calendar.target);
+
+            var onShow = function (e) {
                 var checked = $('.ecl-ui-cal-checked', calendar.main);
                 expect(checked.attr('data-date')).toBe(
                     calendar.format(date, 'yyyy-MM-dd')
@@ -46,15 +46,16 @@ define(function (require) {
                 var el = checked.next();
                 el.trigger('click');
                 var pickDate = calendar.from(el.attr('data-date'), 'yyyy-MM-dd');
+                var target = calendar.target;
                 expect(target.value).toBe(calendar.format(pickDate));
                 done();
             };
+
             var calendar = calendarExtension.calendar;
-            calendar.on('show', onShow);
+            calendar.popup.once('show', onShow);
 
             calendar.target.value = calendar.format(date);
             $(calendar.target).trigger('click');
-            calendar.on('show', onShow);
         });
 
         it('显示年份菜单', function () {
@@ -102,7 +103,7 @@ define(function (require) {
 
             expect(monthMenuHandler.innerHTML).toBe(target.innerHTML);
         });
-        
+
     });
 
 });
