@@ -30,12 +30,13 @@ define(function (require) {
         });
         tip.render();
 
-        jasmine.Clock.useMock();
+        jasmine.clock().install();
 
     });
 
 
     afterEach(function () {
+        jasmine.clock().uninstall();
         tip.dispose();
         document.body.removeChild(lib.g('tipContainer'));
     });
@@ -162,13 +163,13 @@ define(function (require) {
             $(target).trigger('click');
 
             expect(tip.isVisible()).toBeFalsy();
-            jasmine.Clock.tick(delay);
+            jasmine.clock().tick(delay);
             expect(tip.isVisible()).toBeTruthy();
 
             $(target.parentNode).trigger('click');
 
             expect(tip.isVisible()).toBeTruthy();
-            jasmine.Clock.tick(delay);
+            jasmine.clock().tick(delay);
             expect(tip.isVisible()).toBeFalsy();
 
         });
