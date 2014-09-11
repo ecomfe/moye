@@ -39,6 +39,7 @@ define(function (require) {
 
         onPick = jasmine.createSpy('onPick');
 
+        jasmine.clock().install();
     });
 
 
@@ -46,6 +47,7 @@ define(function (require) {
         document.body.removeChild(lib.g('selectContainer'));
         select.dispose();
         onPick = null;
+        jasmine.clock().uninstall();
     });
 
     describe('基本接口', function () {
@@ -56,22 +58,22 @@ define(function (require) {
 
         });
 
-        it('显示/隐藏', function (done) {
+        it('显示/隐藏', function () {
             var onShow = jasmine.createSpy('onShow');
-            select.once('show', onShow);
+            select.popup.once('show', onShow);
             $(select.target).trigger('click');
 
 
             var onHide = jasmine.createSpy('onHide');
-            select.once('hide', onHide);
+            select.popup.once('hide', onHide);
 
-            setTimeout(function () {
-                expect(onShow).toHaveBeenCalled();
-                $(document).trigger('click');
-                $(window).trigger('resize');
-                expect(onHide).toHaveBeenCalled();
-                done();
-            }, 100);
+
+            jasmine.clock().tick(101);
+
+            expect(onShow).toHaveBeenCalled();
+            $(document).trigger('click');
+            $(window).trigger('resize');
+            expect(onHide).toHaveBeenCalled();
 
         });
 
@@ -140,13 +142,13 @@ define(function (require) {
 
             // lib.fire(target, 'click');
             $(target).trigger('click');
-            expect(onPick.calls.length).toBe(1);
+            expect(onPick.calls.count()).toBe(1);
             // lib.fire(target, 'click');
             $(target).trigger('click');
-            expect(onPick.calls.length).toBe(1);
+            expect(onPick.calls.count()).toBe(1);
             // lib.fire(target, 'click');
             $(target).trigger('click');
-            expect(onPick.calls.length).toBe(1);
+            expect(onPick.calls.count()).toBe(1);
             select.un('pick', onPick);
         });
 
@@ -159,16 +161,16 @@ define(function (require) {
             select.on('change', onChange);
             // lib.fire(options[2], 'click');
             $(options[2]).trigger('click');
-            expect(onPick.calls.length).toBe(1);
-            expect(onChange.calls.length).toBe(1);
+            expect(onPick.calls.count()).toBe(1);
+            expect(onChange.calls.count()).toBe(1);
             options[3].setAttribute(
                 'data-value',
                 options[2].getAttribute('data-value')
             );
             // lib.fire(options[3], 'click');
             $(options[3]).trigger('click');
-            expect(onPick.calls.length).toBe(2);
-            expect(onChange.calls.length).toBe(1);
+            expect(onPick.calls.count()).toBe(2);
+            expect(onChange.calls.count()).toBe(1);
             select.un('pick', onPick);
             select.un('change', onChange);
         });
