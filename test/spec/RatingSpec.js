@@ -21,10 +21,11 @@ define(function (require) {
             max: 3
         }).render();
 
-        jasmine.Clock.useMock();
+        jasmine.clock().install();
     });
 
     afterEach(function () {
+        jasmine.clock().uninstall();
         rating.dispose();
         rating = null;
     });
@@ -54,7 +55,7 @@ define(function (require) {
                 expect(result.length).toBe(rndIndex + 1);
             }, 0);
 
-            jasmine.Clock.tick(10);
+            jasmine.clock().tick(10);
 
         });
 
@@ -69,7 +70,7 @@ define(function (require) {
                 expect(result.length).toBe(rating.options.value);
             }, 0);
 
-            jasmine.Clock.tick(10);
+            jasmine.clock().tick(10);
         });
 
         // 单击星星
