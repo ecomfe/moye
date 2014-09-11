@@ -234,8 +234,8 @@ define(function (require) {
                 delete this.els[guid];
                 this.count--;
                 if (!this.count) {
-                    $(window).off('scroll', this.onScroll);
-                    $(window).off('resize', this.onScroll);
+                    $(window).off('scroll', this._bound.onScroll);
+                    $(window).off('resize', this._bound.onScroll);
                 }
             }
             return this;
