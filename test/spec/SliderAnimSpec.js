@@ -69,11 +69,13 @@ define(function (require) {
 
         it('滑动门动画测试:slide', function (done) {
             var anim = new Anim.anims.slide(slider, slider.options.animOptions);
-            anim.switchTo(1, 0);
-            setTimeout(function () {
+
+            anim.once('done', function () {
                 expect(slider.stage.scrollLeft).toBe(200);
                 done();
-            }, 230);
+            });
+
+            anim.switchTo(1, 0);
         });
 
         it('滑动门动画测试:slide vertical', function (done) {
@@ -82,39 +84,39 @@ define(function (require) {
                 direction: 'vertical'
             }));
 
-            anim.switchTo(1, 0);
-
-            setTimeout(function () {
+            anim.once('done', function () {
                 expect(slider.stage.scrollTop).toBe(200);
                 done();
-            }, 230);
+            });
+
+            anim.switchTo(1, 0);
         });
 
-        it('测试动画算子:easing:backIn', function (done) {
+        it('测试动画算子:easing:backIn', function () {
             var backIn = Anim.easing.backIn;
             expect(Math.round(backIn(0))).toBe(0);
             expect(Math.round(backIn(1))).toBe(1);
         });
 
-        it('测试动画算子:easing:backOut', function (done) {
+        it('测试动画算子:easing:backOut', function () {
             var backOut = Anim.easing.backOut;
             expect(Math.round(backOut(0))).toBe(0);
             expect(Math.round(backOut(1))).toBe(1);
         });
 
-        it('测试动画算子:easing:backBoth', function (done) {
+        it('测试动画算子:easing:backBoth', function () {
             var backBoth = Anim.easing.backBoth;
             expect(Math.round(backBoth(0))).toBe(0);
             expect(Math.round(backBoth(1))).toBe(1);
         });
 
-        it('测试动画算子:easing:lineer', function (done) {
+        it('测试动画算子:easing:lineer', function () {
             var lineer = Anim.easing.lineer;
             expect(Math.round(lineer(0))).toBe(0);
             expect(Math.round(lineer(1))).toBe(1);
         });
 
-        it('测试动画算子:easing:bounce', function (done) {
+        it('测试动画算子:easing:bounce', function () {
             var bounce = Anim.easing.bounce;
             expect(Math.round(bounce(0))).toBe(0);
             expect(Math.round(bounce(1))).toBe(1);
