@@ -59,12 +59,14 @@ define(function (require) {
         });
         slider.render();
 
+        jasmine.clock().install();
     });
 
 
     afterEach(function () {
         slider.dispose();
         document.body.removeChild(lib.g('slider-container'));
+        jasmine.clock().uninstall();
     });
 
     describe('基本接口', function () {
@@ -151,33 +153,33 @@ define(function (require) {
             });
         });
 
-        it('prev click', function (done) {
+        it('prev click', function () {
             var prevBtn = $('.ecl-ui-slider-prev', slider.main)[0];
             slider.go(1);
             $(prevBtn).trigger('click');
-            setTimeout(function () {
-                expect(slider.index).toBe(0);
-                done();
-            }, 60);
+
+            jasmine.clock().tick(60);
+
+            expect(slider.index).toBe(0);
         });
-        it('next click', function (done) {
+        it('next click', function () {
 
             var nextBtn = $('.ecl-ui-slider-next', slider.main)[0];
             slider.go(0);
             $(nextBtn).trigger('click');
-            setTimeout(function () {
-                expect(slider.index).toBe(0);
-                done();
-            }, 60);
+
+            jasmine.clock().tick(60);
+
+            expect(slider.index).toBe(1);
         });
 
-        it('index click', function (done) {
+        it('index click', function () {
             var indexBtns = $('.ecl-ui-slider-index', slider.main)[0].children;
             $(indexBtns[0]).trigger('click');
-            setTimeout(function () {
-                expect(slider.index).toBe(0);
-                done();
-            }, 60);
+
+            jasmine.clock().tick(60);
+
+            expect(slider.index).toBe(0);
         });
 
         it('测试default动画', function () {
