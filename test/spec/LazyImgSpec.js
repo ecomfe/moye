@@ -29,6 +29,8 @@ define(function (require) {
         document.body.insertAdjacentHTML('beforeEnd', html);
 
         main = lib.g('lazyImgContainer');
+
+        jasmine.clock().install();
     });
 
 
@@ -36,11 +38,12 @@ define(function (require) {
         Lazy.remove(main);
         main.parentNode.removeChild(main);
         main = null;
+        jasmine.clock().uninstall();
     });
 
     describe('基本接口', function () {
 
-        it('创建实例', function (done) {
+        it('创建实例', function () {
 
             lazyImg = new LazyImg({
                 main: main
@@ -53,15 +56,12 @@ define(function (require) {
             img.scrollIntoView();
             $(window).trigger('scroll');
 
-            setTimeout(function() {
-                expect(img.src.indexOf(dist) !== -1).toBe(true);
-                done();
-            }, 1000);
-
+            jasmine.clock().tick(101);
+            expect(img.src.indexOf(dist) !== -1).toBe(true);
         });
 
 
-        it('静态方法: load', function(done) {
+        it('静态方法: load', function() {
 
             lazyImg = LazyImg.load({
                 main: main
@@ -75,10 +75,8 @@ define(function (require) {
             $(window).trigger('scroll');
 
 
-            setTimeout(function() {
-                expect(img.src.indexOf(dist) !== -1).toBe(true);
-                done();
-            }, 1000);
+            jasmine.clock().tick(101);
+            expect(img.src.indexOf(dist) !== -1).toBe(true);
 
         });
 
