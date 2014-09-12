@@ -57,10 +57,10 @@ module.exports = {
     // - PhantomJS
     // - IE (only Windows;)
     browsers: [
-        // 'PhantomJS',
         // 'Firefox',
         // 'Safari',
-        'Chrome'
+        // 'Chrome',
+        'PhantomJS'
     ],
 
 
