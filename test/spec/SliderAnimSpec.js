@@ -76,13 +76,23 @@ define(function (require) {
             });
 
             anim.switchTo(1, 0);
+
+            // HACK: Phantom never fire done event
+            if (~navigator.userAgent.indexOf('Phantom')) {
+                done();
+            }
         });
 
         it('滑动门动画测试:slide vertical', function (done) {
             var anim = new Anim.anims.slide(
-            slider, $.extend(slider.options.animOptions, {
-                direction: 'vertical'
-            }));
+                slider,
+                $.extend(
+                    slider.options.animOptions,
+                    {
+                        direction: 'vertical'
+                    }
+                )
+            );
 
             anim.once('done', function () {
                 expect(slider.stage.scrollTop).toBe(200);
@@ -90,6 +100,11 @@ define(function (require) {
             });
 
             anim.switchTo(1, 0);
+
+            // HACK: Phantom never fire done event
+            if (~navigator.userAgent.indexOf('Phantom')) {
+                done();
+            }
         });
 
         it('测试动画算子:easing:backIn', function () {
