@@ -51,7 +51,6 @@
     "requireBlocksOnNewline": true,
     "disallowEmptyBlocks": true,
     "requireSpacesInsideObjectBrackets": "all",
-    "requireSpacesInsideArrayBrackets": "allButNested",
     "disallowSpacesInsideParentheses": true,
     "requireCommaBeforeLineBreak": true,
     "requireOperatorBeforeLineBreak": [],
