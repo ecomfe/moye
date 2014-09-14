@@ -4,4 +4,4 @@ node_js:
 before_script:
     - npm install -g edp
     - npm install -g edp-lint
-    - npm install -g edp-test@beta
+    - npm install -g edp-test@1.0.6-beta.3
