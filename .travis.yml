@@ -2,6 +2,7 @@ language: node_js
 node_js:
     - "0.10"
 before_script:
+    - npm install -g phantomjs
     - npm install -g edp
     - npm install -g edp-lint
     - npm install -g edp-test@1.0.6-beta.3
