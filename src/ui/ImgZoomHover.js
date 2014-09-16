@@ -111,7 +111,9 @@ define(function (require,exports,module) {
                 // rsv_imgZoom：1，大图点击跳转，fm:as/alop
                 // rsv_imgZoom：2，mousein显示大图，fm:beha
                 // rsv_imgZoom：3，mouseout关闭大图，fm:beha
-                $(this).parent().attr("data-click","{'rsv_imgZoom':'0'}")
+                $(this).parent().attr("data-click","{'rsv_imgZoom':'0'}");
+
+                $(this).parent().css("display","block");
 
                 var $img = $(this),
                 $a = $img.parent(),
