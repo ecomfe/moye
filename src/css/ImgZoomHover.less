@@ -1,0 +1,25 @@
+@import "./config.less";
+@imgZoomHover-prefix: e(%('%s-imgZoomHover', @ui-prefix));
+
+.@{imgZoomHover-prefix} {
+    display:none;
+}
+
+.@{imgZoomHover-prefix}-container {
+    text-align:center;
+    position:absolute;
+    background:rgb(255,255,255);
+    background:rgba(255,255,255,0.9);
+    filter: ~"progid:DXImageTransform.Microsoft.gradient(startColorstr=#E5FFFFFF,endColorstr=#E5FFFFFF)";
+    padding:10px;
+    z-index:299;
+
+    .c-loading {
+        position:absolute;
+    }
+}
+
+.@{imgZoomHover-prefix}-link {
+    display:block;
+    line-height:0;
+}
