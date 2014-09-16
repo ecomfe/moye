@@ -163,7 +163,7 @@ define(function (require,exports,module) {
                     mouseout: function(event){
                         if(CurrentImgClass != null) {
                             Timer = setTimeout(function(){
-                                _this.closeImgZoom(CurrentImgClass)},500);
+                                _this.closeImgZoom(CurrentImgClass)},250);
 
                             //发统计 rsv_imgZoom：3，mouseout关闭大图，fm:beha
                             if(window.c){
@@ -227,7 +227,7 @@ define(function (require,exports,module) {
                 },
                 mouseout:function(){
                     Timer = setTimeout(function(){
-                        _this.closeImgZoom(CurrentImgClass)},500);
+                        _this.closeImgZoom(CurrentImgClass)},250);
                 },
                 error:function () {
                     _this.closeImgZoom(data.imgClass);
