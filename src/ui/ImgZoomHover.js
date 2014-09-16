@@ -107,20 +107,20 @@ define(function (require,exports,module) {
                     return
                 }
 
-                // rsv_imgZoom：0，小图点击跳转，fm:as/alop
-                // rsv_imgZoom：1，大图点击跳转，fm:as/alop
-                // rsv_imgZoom：2，mousein显示大图，fm:beha
-                // rsv_imgZoom：3，mouseout关闭大图，fm:beha
-                $(this).parent().attr("data-click","{'rsv_imgZoom':'0'}");
-
-                $(this).parent().css("display","block");
-
                 var $img = $(this),
                 $a = $img.parent(),
                 $container = $img.parents(".result,.result-op"),
                 imgClass = [options.prefix,'img',i].join('-');             
 
                 if (!$container.length) {return};
+
+                // rsv_imgZoom：0，小图点击跳转，fm:as/alop
+                // rsv_imgZoom：1，大图点击跳转，fm:as/alop
+                // rsv_imgZoom：2，mousein显示大图，fm:beha
+                // rsv_imgZoom：3，mouseout关闭大图，fm:beha
+                $a.attr("data-click","{'rsv_imgZoom':'0'}");
+
+                $a.css("display","block");
                 
                 var data = {
                     src: $img.attr('data-zoomImg'),
@@ -144,7 +144,7 @@ define(function (require,exports,module) {
                         data.left = lib.browser.ie && lib.browser.ie <=6 
                                     ? imgPosition.left -3 
                                     : imgPosition.left;
-                        data.width = $img.width();
+                        data.width = $a.width();
                         data.height = $img.height();
 
                         //修正放大图最小高宽
