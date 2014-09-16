@@ -64,7 +64,8 @@ define(function (require,exports,module) {
             MaxWidth:538,
 
             // 放大图片的最大高度
-            MaxHeight:404,
+            MaxHeight:404
+
         },
 
         /**
@@ -75,10 +76,10 @@ define(function (require,exports,module) {
          * @private
          */
         init: function (options){
-            this.options.MinWidth = options.MinWidth;
-            this.options.MinHeight = options.MinHeight;
-            this.options.MaxWidth = options.MaxWidth;
-            this.options.MaxHeight = options.MaxHeight;
+            this.options.MinWidth = options.MinWidth || this.options.MinWidth;
+            this.options.MinHeight = options.MinHeight || this.options.MinHeight;
+            this.options.MaxWidth = options.MaxWidth || this.options.MaxWidth;
+            this.options.MaxHeight = options.MaxHeight || this.options.MaxHeight;
         },
 
 
@@ -153,7 +154,7 @@ define(function (require,exports,module) {
                     }
 
                 // 恢复原图鼠标样式为放大镜
-                }).css({cursor:'url(http://www.baidu.com/aladdin/img/ImgZoom/big.cur),auto'});
+                }).css({cursor:'url(http://www.baidu.com/aladdin/img/ImgZoom/cur_zin.cur),auto'});
             });
         },
 
