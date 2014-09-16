@@ -202,7 +202,7 @@ define(function (require,exports,module) {
          */
         closeImgZoom: function (img) {
             img = img || CurrentImgClass;
-            $('.' + img).css({cursor:'url(http://www.baidu.com/aladdin/img/ImgZoom/big.cur),auto'});
+            $('.' + img).css({cursor:'url(http://www.baidu.com/aladdin/img/ImgZoom/cur_zin.cur),auto'});
             this.close();
             CurrentImgClass = null;
         },
