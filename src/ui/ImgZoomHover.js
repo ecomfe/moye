@@ -142,7 +142,7 @@ define(function (require,exports,module) {
                         data.left = lib.browser.ie && lib.browser.ie <=6 
                                     ? imgPosition.left -3 
                                     : imgPosition.left;
-                        data.width = $a.width(); // 存在图片超宽，被隐藏的情况，取a的宽度更准确
+                        data.width = $img.width();
                         data.height = $img.height();
 
                         //修正放大图最小高宽
