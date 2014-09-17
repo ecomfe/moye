@@ -120,7 +120,9 @@ define(function (require,exports,module) {
                 // rsv_imgZoom：3，mouseout关闭大图，fm:beha
                 $a.attr("data-click","{'rsv_imgZoom':'0'}");
 
-                $a.css("display","block");
+                $a.css({"display":"block","position":"relative"});
+
+                $a.append('<i class="' + options.prefix + '-zoom"></i>');
                 
                 var data = {
                     src: $img.attr('data-zoomImg'),
@@ -217,7 +219,7 @@ define(function (require,exports,module) {
                 load:function () {
                     $loading.hide();
                     _this.rePositionImgZoom(data);
-                    $imgZoom.animate({opacity:'show'},500);
+                    $imgZoom.animate({opacity:'show'},250);
 
                     //发统计 rsv_imgZoom：2，mousein显示大图，fm:beha
                     if(window.c){
@@ -314,7 +316,7 @@ define(function (require,exports,module) {
                 case 1:$imgZoomContainer.css("top",data.top -10);
                     break;
                 
-                case 2:$imgZoomContainer.css("top",data.top - zoomImgHeight + bottomLeft - 10);
+                case 2:$imgZoomContainer.css("top",data.top - zoomImgHeight - 10);
                     break;
                 
                 case 3:$imgZoomContainer.css("top",data.top - zoomImgHeight/2 -10);
