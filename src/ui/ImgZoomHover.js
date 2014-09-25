@@ -160,11 +160,13 @@ define(function (require,exports,module) {
                             _this.closeImgZoom(CurrentImgClass);
                         }
                         CurrentImgClass = imgClass;
-
-                        _this.createImgZoomContainer(data);
+                        
+                        Timer = setTimeout(function(){
+                            _this.createImgZoomContainer(data);},250);
 
                     },
                     mouseout: function(event){
+                        clearTimeout(Timer);
                         if(CurrentImgClass != null) {
                             Timer = setTimeout(function(){
                                 _this.closeImgZoom(CurrentImgClass)},250);
