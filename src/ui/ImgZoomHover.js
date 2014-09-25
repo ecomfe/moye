@@ -162,7 +162,7 @@ define(function (require,exports,module) {
                         CurrentImgClass = imgClass;
                         
                         Timer = setTimeout(function(){
-                            _this.createImgZoomContainer(data);},250);
+                            _this.createImgZoomContainer(data);},200);
 
                     },
                     mouseout: function(event){
