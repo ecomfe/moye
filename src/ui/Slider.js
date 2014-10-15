@@ -126,7 +126,8 @@ define(function (require) {
         onIndexClick: function (e) {
             var me = this;
             var target = e.target;
-            var index = target.getAttribute('data-index');
+            // hack 在IE7下取出的属性值是number
+            var index = target.getAttribute('data-index') + '';
 
             if (index && !me._switchDelayTimer) {
                 me._switchDelayTimer = setTimeout(function () {
