@@ -642,5 +642,41 @@ define(function (require) {
 
     }).implement(lib.observable).implement(lib.configurable);
 
+    var extend = Control.extend;
+    var CLASS_POOL = {};
+
+    Control.extend = function (prototype) {
+        if (!prototype || !prototype.type) {
+            throw new Error({
+                id: 100,
+                message: 'SubClass of Control must have `type` in prototype'
+            });
+        }
+        var type = prototype.type;
+        if (CLASS_POOL[type]) {
+            throw new Error({
+                id: 101,
+                message: 'SubClass already exists'
+            });
+        }
+        var SubClass = CLASS_POOL[type] = extend(prototype);
+        return SubClass;
+    };
+
+    Control.getSubClass = function (className) {
+        return CLASS_POOL[className];
+    };
+
+    Control.newInstance = function (clazzName, options) {
+        var SubClass = CLASS_POOL[className];
+        if (!SubClass) {
+            throw new Error({
+                id: 102,
+                message: 'no sush SubClass defined'
+            });
+        }
+        return new SubClass(options);
+    };
+
     return Control;
 });
