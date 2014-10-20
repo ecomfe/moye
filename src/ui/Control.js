@@ -668,7 +668,7 @@ define(function (require) {
     };
 
     Control.newInstance = function (clazzName, options) {
-        var SubClass = CLASS_POOL[className];
+        var SubClass = CLASS_POOL[clazzName];
         if (!SubClass) {
             throw new Error({
                 id: 102,
