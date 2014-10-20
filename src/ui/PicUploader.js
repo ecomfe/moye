@@ -278,22 +278,23 @@ define(function (require) {
                 wrapperClass: privates.getClass.call(this, 'wrapper')
             };
 
-            // 渲染主框架内容
-            var picker = this.createElement('div', {
-                'className': privates.getClass.call(this, 'picker')
-                        + ' '
-                        + privates.getClass.call(this, 'cur')
-            });
+            var className = ''
+                + privates.getClass.call(this, 'picker')
+                + ' '
+                + privates.getClass.call(this, 'cur');
 
-            picker.innerHTML = this.options.tpl.replace(
+            var html = this.options.tpl.replace(
                 /#\{([\w-.]+)\}/g,
                 function ($0, $1) {
                     return cls[$1] || '';
                 }
             );
 
-            this.options.main.appendChild(picker);
-            privates.bindPicker.call(this, this.curPicker = picker);
+            // 渲染主框架内容
+            var picker = $('<div class="' + className + '"></div>');
+            picker.html(html).appendTo(this.options.main);
+            var curPicker = this.curPicker = picker.get(0);
+            privates.bindPicker.call(this, curPicker);
         }
 
     };
@@ -529,4 +530,3 @@ define(function (require) {
 
     return PicUploader;
 });
-
