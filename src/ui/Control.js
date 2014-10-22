@@ -199,7 +199,7 @@ define(function (require) {
              */
             this.main   = options.main ? lib.g(options.main) : this.createMain();
             this.id     = options.hasOwnProperty('id') ? options.id : lib.guid();
-            this.skin   = options.hasOwnProperty('skin') ? options.skin : [];
+            this.skin   = options.hasOwnProperty('skin') ? [].concat(options.skin) : [];
             this.states = options.hasOwnProperty('states') ? options.states : [];
 
             delete options.id;
