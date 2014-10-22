@@ -470,6 +470,7 @@ define(function (require) {
         },
 
         initEvents: function () {
+            var me = this;
             $(this.main).on('click', function (e) {
 
                 /**
