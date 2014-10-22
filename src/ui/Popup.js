@@ -458,41 +458,27 @@ define(function (require) {
 
         },
 
-        /**
-         * 绘制控件
-         *
-         * @fires module:Popup#click 点击事件
-         * @return {module:Popup} 当前实例
-         * @override
-         * @public
-         */
-        render: function () {
+        initStructure: function () {
             var main = $(this.main);
 
             if (this.content) {
                 main.html(this.content);
             }
 
-            if (!this.rendered) {
-                var me = this;
-                me.rendered = true;
-                main
-                    .appendTo(document.body)
-                    .on(
-                        'click',
-                        function (e) {
+            main.appendTo(document.body);
+            return this;
+        },
 
-                            /**
-                             * @event module:Popup#click
-                             * @type {Object}
-                             * @property {Event} event 事件源对象
-                             */
-                            me.fire('click', { event: e });
-                        }
-                    );
+        initEvents: function () {
+            $(this.main).on('click', function (e) {
 
-            }
-
+                /**
+                 * @event module:Popup#click
+                 * @type {Object}
+                 * @property {Event} event 事件源对象
+                 */
+                me.fire('click', { event: e });
+            });
             return this;
         },
 
