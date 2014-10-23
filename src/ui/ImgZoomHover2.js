@@ -27,7 +27,6 @@ define(function (require,exports,module) {
      */
     var ImgFlag = false;
 
-
     /**
      * 计时器
      * 
@@ -42,9 +41,9 @@ define(function (require,exports,module) {
      * @constructor
      * @extends module:Control
      * @requires Control
-     * @exports ImgZoomHover
+     * @exports ImgZoomHover2
      */
-    var ImgZoomHover = Control.extend(/** @lends module:Tabs.prototype */{
+    var ImgZoomHover2 = Control.extend(/** @lends module:Tabs.prototype */{
 
         /**
          * 控件类型标识
@@ -52,7 +51,7 @@ define(function (require,exports,module) {
          * @type {string}
          * @private
          */
-        type: 'ImgZoomHover',
+        type: 'ImgZoomHover2',
 
         /**
          * 控件配置项
@@ -68,7 +67,7 @@ define(function (require,exports,module) {
             main: '',
 
             // 控件class前缀，同时将作为main的class之一
-            prefix: config.prefix + '-ImgZoomHover',
+            prefix: config.prefix + '-ImgZoomHover2',
 
             // 放大图片的最小宽度
             MinWidth:121,
@@ -88,7 +87,7 @@ define(function (require,exports,module) {
          * 控件初始化
          * 
          * @param {Object} options 控件配置项
-         * @see module:ImgZoomHover#options
+         * @see module:ImgZoomHover2#options
          * @private
          */
         init: function (options){
@@ -278,7 +277,7 @@ define(function (require,exports,module) {
                 : $(window).height());
 
             //放大方式，1向下，2向上，3居中
-            var zoomStyle = 3;
+            var zoomStyle = 2;
 
             // 放大的图片
             var $imgZoom = $('.' + options.prefix);
@@ -316,22 +315,15 @@ define(function (require,exports,module) {
 
 
 
-            if(topLeft < zoomImgHeight/2){
+            if(topLeft < zoomImgHeight){
                 zoomStyle = 1;
             }
-            else if(bottomLeft < zoomImgHeight/2) {
-                zoomStyle = 2;
-            };
-
 
             switch(zoomStyle) {
-                case 1:$imgZoomContainer.css("top",data.top -10);
+                case 1:$imgZoomContainer.css("top",data.top - topLeft -10);
                     break;
                 
                 case 2:$imgZoomContainer.css("top",data.top - zoomImgHeight - 10);
-                    break;
-                
-                case 3:$imgZoomContainer.css("top",data.top - zoomImgHeight/2 -10);
                     break;
             }
 
@@ -359,6 +351,6 @@ define(function (require,exports,module) {
         }
     });
 
-    module.exports = ImgZoomHover;
+    module.exports = ImgZoomHover2;
 
 });

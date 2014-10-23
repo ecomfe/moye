@@ -27,13 +27,19 @@ define(function (require,exports,module) {
      */
     var ImgFlag = false;
 
-
     /**
      * 计时器
      * 
      * @type {string}
      */
     var Timer;
+
+    /**
+     * 全局坐标
+     * 
+     * @type {string}
+     */
+    var PageX;
  
  
     /**
@@ -42,9 +48,9 @@ define(function (require,exports,module) {
      * @constructor
      * @extends module:Control
      * @requires Control
-     * @exports ImgZoomHover
+     * @exports ImgZoomHover3
      */
-    var ImgZoomHover = Control.extend(/** @lends module:Tabs.prototype */{
+    var ImgZoomHover3 = Control.extend(/** @lends module:Tabs.prototype */{
 
         /**
          * 控件类型标识
@@ -52,7 +58,7 @@ define(function (require,exports,module) {
          * @type {string}
          * @private
          */
-        type: 'ImgZoomHover',
+        type: 'ImgZoomHover3',
 
         /**
          * 控件配置项
@@ -68,7 +74,7 @@ define(function (require,exports,module) {
             main: '',
 
             // 控件class前缀，同时将作为main的class之一
-            prefix: config.prefix + '-ImgZoomHover',
+            prefix: config.prefix + '-ImgZoomHover3',
 
             // 放大图片的最小宽度
             MinWidth:121,
@@ -88,7 +94,7 @@ define(function (require,exports,module) {
          * 控件初始化
          * 
          * @param {Object} options 控件配置项
-         * @see module:ImgZoomHover#options
+         * @see module:ImgZoomHover3#options
          * @private
          */
         init: function (options){
@@ -170,14 +176,23 @@ define(function (require,exports,module) {
                         CurrentImgClass = imgClass;
                         
                         Timer = setTimeout(function(){
-                            _this.createImgZoomContainer(data);},200);
+                            _this.createImgZoomContainer(data);},150);
 
+                    },
+                    mousemove:function(event){
+                        // 放大图片容器
+                        var $imgZoomContainer = $('.' + options.prefix + '-container');
+                        currentPageX = event.PageX||event.clientX;
+                        if(PageX && $imgZoomContainer.length){
+                            $imgZoomContainer.css("left",currentPageX + 17 +"px");
+                        }
+                        PageX = currentPageX ;
                     },
                     mouseout: function(event){
                         clearTimeout(Timer);
                         if(CurrentImgClass != null) {
                             Timer = setTimeout(function(){
-                                _this.closeImgZoom(CurrentImgClass)},250);
+                                _this.closeImgZoom(CurrentImgClass)},0);
 
                             //发统计 rsv_imgZoom：3，mouseout关闭大图，fm:beha
                             if(window.c && ImgFlag){
@@ -218,7 +233,7 @@ define(function (require,exports,module) {
             var imgClass = data.imgClass || CurrentImgClass;
 
             // 放大图片容器
-            var $container = $('<div class="'+options.prefix+'-container xpath-log" data-click=\'{'+data.click+',"fm":"'+ data.click_fm +'","rsv_imgZoom":"'+data.click_rsv_imgZoom+'"}\' style="left:' + (data.left + data.width +7) + 'px;"></div>'); 
+            var $container = $('<div class="'+options.prefix+'-container xpath-log" data-click=\'{'+data.click+',"fm":"'+ data.click_fm +'","rsv_imgZoom":"'+data.click_rsv_imgZoom+'"}\' style="left:' + (PageX + 17) + 'px;"></div>'); 
             
             // loading
             var $loading = $('<i class="c-loading" style="top:'+(data.height-50)/2+'px;left:'+(data.width-50)/2+'px;"></i>');
@@ -230,7 +245,7 @@ define(function (require,exports,module) {
                 load:function () {
                     $loading.hide();
                     _this.rePositionImgZoom(data);
-                    $imgZoom.animate({opacity:1},250);
+                    $imgZoom.animate({opacity:1},125);
                     ImgFlag = true;
 
                     //发统计 rsv_imgZoom：2，mousein显示大图，fm:beha
@@ -239,7 +254,7 @@ define(function (require,exports,module) {
                     }
                 },
                 mouseover:function(){
-                    clearTimeout(Timer);
+                    //clearTimeout(Timer);
                 },
                 mouseout:function(){
                     Timer = setTimeout(function(){
@@ -325,13 +340,13 @@ define(function (require,exports,module) {
 
 
             switch(zoomStyle) {
-                case 1:$imgZoomContainer.css("top",data.top -10);
+                case 1:$imgZoomContainer.css("top",data.top - topLeft - 8);
                     break;
                 
-                case 2:$imgZoomContainer.css("top",data.top - zoomImgHeight - 10);
+                case 2:$imgZoomContainer.css("top",data.top - zoomImgHeight + bottomLeft  -8);
                     break;
                 
-                case 3:$imgZoomContainer.css("top",data.top - zoomImgHeight/2 -10);
+                case 3:$imgZoomContainer.css("top",data.top - zoomImgHeight/2 -8);
                     break;
             }
 
@@ -359,6 +374,6 @@ define(function (require,exports,module) {
         }
     });
 
-    module.exports = ImgZoomHover;
+    module.exports = ImgZoomHover3;
 
 });
