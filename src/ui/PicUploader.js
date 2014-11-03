@@ -51,7 +51,9 @@ define(function (require) {
         var node = document.createElement('input');
         node.type = 'file';
         for (var i in options) {
-            node[i] = options[i];
+            if (options.hasOwnProperty(i)) {
+                node[i] = options[i];
+            }
         }
         return node;
     }
@@ -396,6 +398,7 @@ define(function (require) {
         /**
          * 绘制控件
          *
+         * @return {module:PicUploader} 本对象
          * @override
          * @public
          */
@@ -412,6 +415,7 @@ define(function (require) {
          * 根据文件路径移除图片框
          *
          * @param {string} filePath 文件路径
+         * @param {?Function=} checker 判断是否需要移除的函数
          * @return {module:PicUploader} 本对象
          * @publick
          */

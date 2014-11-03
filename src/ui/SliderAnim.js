@@ -8,6 +8,7 @@
 
 define(function (require) {
 
+    var $ = require('jquery');
     var lib = require('./lib');
 
     /**
@@ -76,7 +77,7 @@ define(function (require) {
      * @example
      * new SliderAnim(slider, animOptions)
      */
-    var SliderAnim = lib.newClass( /** @lends module:SliderAnim.prototype */ {
+    var SliderAnim = lib.newClass(/** @lends module:SliderAnim.prototype */ {
 
         type: 'SliderAnim',
 
@@ -96,20 +97,20 @@ define(function (require) {
          *
          * @param {number} index 指定的索引
          * @param {number} lastIndex 上一个索引
-         * @return {boolean} 是否能够切换成功
          * @protected
          */
-        switchTo: function ( /*index, lastIndex*/ ) {
-            // overwrite here
+        switchTo: function (index, lastIndex) {
         },
 
         /**
          * 是否动画正在进行
          *
-         * @return {boolean} 是否能够切换成功
+         * @return {boolean} 是否动画正在进行
          * @protected
          */
-        isBusy: function () {},
+        isBusy: function () {
+            return false;
+        },
 
         /**
          * 启用动画，用于多动画效果切换
@@ -157,7 +158,8 @@ define(function (require) {
          * @return {number} 算子百分比
          */
         easing: function (p) {
-            if ((p /= 0.5) < 1) {
+            p *= 2;
+            if (p < 1) {
                 return 1 / 2 * p * p;
             }
             return -1 / 2 * ((--p) * (p - 2) - 1);
@@ -193,7 +195,8 @@ define(function (require) {
          */
         backBoth: function (p) {
             var s = 1.70158;
-            if ((p /= 0.5) < 1) {
+            p *= 2;
+            if (p < 1) {
                 return 1 / 2 * (p * p * (((s *= (1.525)) + 1) * p - s));
             }
             return 1 / 2 * ((p -= 2) * p * (((s *= (1.525)) + 1) * p + s) + 2);
@@ -257,7 +260,7 @@ define(function (require) {
      * @requires SliderAnim
      * @name module:SliderAnim~TimeLine
      */
-    var TimeLine = SliderAnim.extend( /** @lends module:SliderAnim~TimeLine.prototype */ {
+    var TimeLine = SliderAnim.extend(/** @lends module:SliderAnim~TimeLine.prototype */{
 
         type: 'TimeLine',
 
@@ -336,12 +339,14 @@ define(function (require) {
                  * @type {object} e
                  * @param {number} e.percent 动画进度，小于 1 的小数
                  */
-                this.fire('tick', { percent: percent });
+                this.fire('tick', {percent: percent});
             }
         },
 
         /**
          * 是否动画正在进行
+         *
+         * @return {boolean} 动画是否进行中
          */
         isBusy: function () {
             return this.timer !== 0;
@@ -388,7 +393,7 @@ define(function (require) {
      *
      * @name module:SliderAnim.anims.no
      */
-    SliderAnim.add('no', SliderAnim.extend( /** @lends module:SliderAnim.anims.no.prototype */ {
+    SliderAnim.add('no', SliderAnim.extend(/** @lends module:SliderAnim.anims.no.prototype */{
 
         type: 'SliderAnimNo',
 
@@ -396,7 +401,6 @@ define(function (require) {
          * 切换到指定的索引
          *
          * @param {number} index 指定的索引
-         * @return {boolean} 是否能够切换成功
          */
         switchTo: function (index) {
             this.slider.stage.scrollLeft = this.slider.stageWidth * index;
@@ -409,7 +413,7 @@ define(function (require) {
      *
      * @name module:SliderAnim.anims.slider
      */
-    SliderAnim.add('slide', TimeLine.extend( /** @lends module:SliderAnim.anims.slide.prototype */ {
+    SliderAnim.add('slide', TimeLine.extend(/** @lends module:SliderAnim.anims.slide.prototype */{
 
         type: 'SliderAnimSlide',
 
@@ -419,6 +423,7 @@ define(function (require) {
          * 其他选项参考TimeLine的初始化函数
          *
          * @param {module:Slider} slider slider对象
+         * @param {Object} options 配置项
          * @param {string} options.direction 滑动方向，
          * `horizontal` or `vertical`
          * @see module:SliderAnim.TimeLine#initialize
@@ -512,7 +517,7 @@ define(function (require) {
      *
      * @name module:SliderAnim.anims.opacity
      */
-    SliderAnim.add('opacity', TimeLine.extend( /** @lends module:SliderAnim.anims.opacity.prototype */ {
+    SliderAnim.add('opacity', TimeLine.extend(/** @lends module:SliderAnim.anims.opacity.prototype */{
 
         type: 'SliderAnimOpacity',
 

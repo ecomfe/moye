@@ -38,7 +38,7 @@ define(function (require) {
              * @type {object}
              * @property {Event} event 事件源对象
              */
-            me.fire('click', { event: e });
+            me.fire('click', {event: e});
 
             var $target = $(e.target);
             var $input  = $target;                 // 这里先将$input默认设定为$target，后面会修正，可以减少一次DOM查找
@@ -143,7 +143,7 @@ define(function (require) {
             var name = $input.attr('name');
 
             var checkedData = isRadio
-                ? { key: name, value: [$input.attr('value')] }
+                ? {key: name, value: [$input.attr('value')]}
                 : me.getData(name);
 
             // 比较状态变化
@@ -276,7 +276,7 @@ define(function (require) {
         /**
          * 绘制控件
          *
-         * @param {(string= | HTMLElement=)} wrapper 作为组件根元素的DOM节点
+         * @param {(string|HTMLElement)=} wrapper 作为组件根元素的DOM节点
          * @throws 如果控件根元素不存在将抛出异常
          * @return {module:Filter} 当前实例
          * @override
@@ -320,7 +320,7 @@ define(function (require) {
         getData: function (key) {
             var me    = this;
             var group = me.groups[key];
-            var data  = { key : key };
+            var data  = {key: key};
             var value = data.value = [];
 
             // 如果没有指定key的filter群组，那么返回空值

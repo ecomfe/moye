@@ -65,7 +65,7 @@ define(function (require) {
              * @type {Object}
              * @property {HTMLElement} target 当前点击的元素
              */
-            this.fire('click', { target: target.get(0) });
+            this.fire('click', {target: target.get(0)});
 
             if (!this.check(target)) {
                 return;
@@ -82,7 +82,7 @@ define(function (require) {
              * @property {string} value 当前选中的值
              * @property {HTMLElement} target 当前点击的元素
              */
-            this.fire('pick', { value: value, target:  this.target });
+            this.fire('pick', {value: value, target: this.target});
 
         }
     };
@@ -190,7 +190,7 @@ define(function (require) {
                 html.push('<a href="#">' + i + '</a>');
             }
 
-            this.fire('build', { html: html });
+            this.fire('build', {html: html});
 
             this.main.innerHTML = html.join('');
         },
@@ -241,7 +241,7 @@ define(function (require) {
              * @type {Object}
              * @property {HTMLElement} target 选单显示时要参考的元素
              */
-            !noEvent && this.fire('beforeShow', { target:　target　});
+            !noEvent && this.fire('beforeShow', {target: target});
 
             var main = $(this.main);
             if (target !== this.target) {

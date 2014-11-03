@@ -35,6 +35,7 @@ define(function (require) {
          * 按给定星级，从左往右点亮星星
          *
          * @param {number} value 星级
+         * @return {Array.<HTMLElement>} 星星的 HTMLElement 数组
          * @private
          */
         fill: function (value) {
@@ -49,6 +50,7 @@ define(function (require) {
         /**
          * 重置星级，避开常用词reset，将方法命名为resetRating
          *
+         * @return {Array.<HTMLElement>} 星星的 HTMLElement 数组
          * @private
          */
         resetRating: function () {
@@ -64,6 +66,7 @@ define(function (require) {
          * click事件处理
          *
          * @param {?Event} e DOM事件对象
+         * @return {boolean} 返回 false 时阻止事件
          * @fires module:Rating#rated
          * @private
          */
@@ -105,6 +108,7 @@ define(function (require) {
          * mouseover事件处理
          *
          * @param {?Event} e DOM事件对象
+         * @return {boolean} 返回 false 时阻止事件
          * @private
          */
         onMouseOver: function (e) {
@@ -126,6 +130,7 @@ define(function (require) {
          * mouseout事件处理
          *
          * @param {?Event} e DOM事件处理
+         * @return {boolean} 返回 false 时阻止事件
          * @private
          */
         onMouseOut: function (e) {
@@ -200,6 +205,7 @@ define(function (require) {
         /**
          * 绘制控件
          *
+         * @return {module:Rating} 当前实例
          * @public
          */
         render: function () {

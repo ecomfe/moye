@@ -59,8 +59,8 @@ module.exports = {
     browsers: [
         // 'Firefox',
         // 'Safari',
-        // 'Chrome',
-        'PhantomJS'
+        'Chrome',
+        // 'PhantomJS'
     ],
 
 

@@ -5,6 +5,7 @@
  * @file 弹框组件库，产生常用的组件
  * @author mengke(mengke01@baidu.com)
  */
+
 define(function (require) {
 
     var $ = require('jquery');
@@ -47,10 +48,12 @@ define(function (require) {
 
         var footer = opts.footer || '';
 
+        var id;
+        var cls;
         // 设置取消按钮
         if (opts.cancel) {
-            var id = 'btn-' + lib.guid();
-            var cls = getClass(opts, 'cancel-btn');
+            id = 'btn-' + lib.guid();
+            cls = getClass(opts, 'cancel-btn');
             footer += '<a id="' + id + '" href="javascript:;"'
                 + ' class="' + cls + '">'
                 + (opts.cancelTitle || '取消')
@@ -61,8 +64,8 @@ define(function (require) {
 
         // 设置确定按钮
         if (opts.confirm) {
-            var id = 'btn-'  + lib.guid();
-            var cls = getClass(opts, 'confirm-btn');
+            id = 'btn-'  + lib.guid();
+            cls = getClass(opts, 'confirm-btn');
             footer = '<button id="' + id + '"' + ' class="' + cls + '">'
                 + (opts.confirmTitle || '确定')
                 + '</button>'
@@ -137,11 +140,8 @@ define(function (require) {
         /**
          * 创建一个基本对话框对象
          *
-         * @param {Object} opts 初始化选项
-         * @see module:Dialog#options
-         *
+         * @param {Object} opts 初始化选项 @see module:Dialog#options
          * @param {Function} options.onConfirm 在确认时的回调函数
-         *
          * @return {module:Dialog} 构建好的dialog对象
          * @public
          */
@@ -167,9 +167,7 @@ define(function (require) {
          *
          * @param {Object} opts 初始化选项
          * @param {Function} opts.onConfirm 在确认时的回调函数
-         * @param {Function} opts.onCancel 在取消时的回调函数
-         *
-         * @see module:Dialog#options
+         * @param {Function} opts.onCancel 在取消时的回调函数 @see module:Dialog#options
          * @return {module:Dialog} 构建好的dialog对象
          * @public
          */

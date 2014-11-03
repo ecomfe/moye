@@ -444,7 +444,7 @@ define(function (require) {
              * @type {object}
              * @property {?HTMLElement=} target 触发显示浮层的节点
              */
-            this.fire('show', { target: target });
+            this.fire('show', {target: target});
 
         },
 
@@ -488,7 +488,7 @@ define(function (require) {
 
                 if ($.type(item) !== 'object') {
                     var data = item.split(/\s*[:：]\s*/);
-                    item = { text: data[0] };
+                    item = {text: data[0]};
                     item.value = data.length > 1
                         ? data[1]
                         : (valueUseIndex ? i : data[0]);

@@ -93,6 +93,8 @@ define(function (require) {
                 setSpecial(page - 2, 'prev', page < 2);
             }
 
+            var i;
+
             // padding-left
             for (i = 0; i < padding; i++) {
                 if (i + 1 < start) {
@@ -111,7 +113,7 @@ define(function (require) {
 
             // current page & wing
             var current = page;
-            for (var i = start; i <= end; i++) {
+            for (i = start; i <= end; i++) {
                 i === current ? setSpecial(i - 1, 'current') : setNum(i);
             }
 
@@ -192,7 +194,7 @@ define(function (require) {
                  * @type {Object}
                  * @property {number} page 新的页码
                  */
-                this.fire('change', { page: current + first });
+                this.fire('change', {page: current + first});
             }
         }
     };

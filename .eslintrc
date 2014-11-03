@@ -1,0 +1,6 @@
+{
+    "rules": {
+        "max-statements": [2, 80],
+        "block-scoped-var": 0
+    }
+}

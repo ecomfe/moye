@@ -5,6 +5,7 @@
  * @file Cookie 读写模块
  * @author chris(wfsr@foxmail.com)
  */
+
 define(function (require) {
 
     var $ = require('jquery');
@@ -177,6 +178,7 @@ define(function (require) {
          * @see module:Cookie#remove
          *
          * @param {string} key 要移除的 Cookie 键名
+         * @param {Object} options Cookie 配置项
          * @return {module:Cookie} 当前 Cookie 实例
          * @public
          */

@@ -6,11 +6,13 @@
  * @author  chris(wfsr@foxmail.com)
  */
 
+/* eslint-disable no-use-before-define */
 define(function (require) {
 
     var $ = require('jquery');
     var lib = require('./lib');
 
+    /* jshint evil: true */
     /**
      * 将字符串解析成 JSON 对象
      *
@@ -27,6 +29,7 @@ define(function (require) {
             return {};
         }
     };
+    /* jshint evil: false */
 
     /**
      * 发送日志请求
@@ -62,130 +65,9 @@ define(function (require) {
              * @type {Object}
              * @property {string} url 当前统计请求的完整地址
              */
-            exports.fire('send', { url : url });
+            exports.fire('send', {url: url});
         };
     })();
-
-    /**
-     * 填充数据
-     * 根据当前点击对象，解释对象所处 XPath 及 url
-     *
-     * @memberof module:log
-     * @param {Object} data 待发送的数据对象
-     * @param {HTMLElement} from 当前点击对象
-     * @param {HTMLElement} to 统计日志最上层容器
-     * @return {Object} 合并所有HTML自定义属性和相关配置项后的数据对象
-     * @inner
-     */
-    var fill = function (data, from, to) {
-        var type;
-        var url;
-        var nolog = 0;
-        var el = from;
-        var path = [];
-
-        var rsvData = el.getAttribute('data-rsv');
-        if (rsvData) {
-            data.rsv = $.extend(data, { rsv: parseJSON(rsvData) });
-        }
-
-        var i = 0;
-        var clickData;
-        var typeReg = /\bOP_LOG_(TITLE|LINK|IMG|BTN|INPUT|OTHERS)\b/i;
-        while (el !== to) {
-            if (el.getAttribute('data-nolog') === '1') {
-                nolog = 1;
-                break;
-            }
-
-            clickData = el.getAttribute('data-click');
-            if (clickData) {
-                data = $.extend(parseJSON(clickData), data);
-            }
-
-            rsvData = el.getAttribute('data-rsv');
-            if (rsvData) {
-                data.rsv = $.extend(parseJSON(rsvData), data.rsv);
-            }
-
-            if (el.href) {
-                url = el.href;
-                type = 'link';
-            }
-
-            if (type === 'link' && el.tagName === 'H3') {
-                type = 'title';
-            }
-
-            if (typeReg.test(el.className)) {
-                type = RegExp.$1.toLowerCase();
-            }
-
-            var count = 1;
-            if (el.previousSibling) {
-                var sibling = el.previousSibling;
-
-                do {
-                    if (sibling.nodeType === 1
-                        && sibling.tagName === el.tagName
-                    ) {
-                        count++;
-                    }
-                    sibling = sibling.previousSibling;
-                } while (sibling);
-            }
-
-            path[i++] = el.tagName + (count > 1 ? count : '');
-
-            el = el.parentNode;
-
-        }
-
-        if (from !== to) {
-            clickData = to.getAttribute('data-click');
-            if (clickData) {
-                data = $.extend(parseJSON(clickData), data);
-            }
-        }
-
-        if (nolog) {
-            return !nolog;
-        }
-
-        // 反转 XPath 顺序
-        path.reverse();
-        var tag = from.tagName.toLowerCase();
-
-        if (!type
-                && /^(a|img|input|button|select|datalist|textarea)$/.test(tag)
-            ) {
-            type = { a: 'link' }[tag] || 'input';
-
-            url = from.href || from.src || url;
-        }
-
-        // 自定义属性指定的 type 优化级最高
-        type = from.getAttribute('data-type') || type;
-
-        if (!type) {
-            return false;
-        }
-
-        if (url) {
-            data.url = url;
-        }
-
-        setField(data, from, 'p1');
-        setField(data, from, 'act');
-        setField(data, from, 'item');
-        setField(data, from, 'mod', to.id);
-
-        setTitle(data, from, type, tag, path, i);
-
-        data.xpath = path.join('-').toLowerCase() + '(' + type + ')';
-
-        return data;
-    };
 
     /**
      * 设置点击标题文字
@@ -278,6 +160,127 @@ define(function (require) {
             || data[key]
             || defaults
             || '-';
+    };
+
+    /**
+     * 填充数据
+     * 根据当前点击对象，解释对象所处 XPath 及 url
+     *
+     * @memberof module:log
+     * @param {Object} data 待发送的数据对象
+     * @param {HTMLElement} from 当前点击对象
+     * @param {HTMLElement} to 统计日志最上层容器
+     * @return {Object} 合并所有HTML自定义属性和相关配置项后的数据对象
+     * @inner
+     */
+    var fill = function (data, from, to) {
+        var type;
+        var url;
+        var nolog = 0;
+        var el = from;
+        var path = [];
+
+        var rsvData = el.getAttribute('data-rsv');
+        if (rsvData) {
+            data.rsv = $.extend(data, {rsv: parseJSON(rsvData)});
+        }
+
+        var i = 0;
+        var clickData;
+        var typeReg = /\bOP_LOG_(TITLE|LINK|IMG|BTN|INPUT|OTHERS)\b/i;
+        while (el !== to) {
+            if (el.getAttribute('data-nolog') === '1') {
+                nolog = 1;
+                break;
+            }
+
+            clickData = el.getAttribute('data-click');
+            if (clickData) {
+                data = $.extend(parseJSON(clickData), data);
+            }
+
+            rsvData = el.getAttribute('data-rsv');
+            if (rsvData) {
+                data.rsv = $.extend(parseJSON(rsvData), data.rsv);
+            }
+
+            if (el.href) {
+                url = el.href;
+                type = 'link';
+            }
+
+            if (type === 'link' && el.tagName === 'H3') {
+                type = 'title';
+            }
+
+            if (typeReg.test(el.className)) {
+                type = RegExp.$1.toLowerCase();
+            }
+
+            var count = 1;
+            if (el.previousSibling) {
+                var sibling = el.previousSibling;
+
+                do {
+                    if (sibling.nodeType === 1
+                        && sibling.tagName === el.tagName
+                    ) {
+                        count++;
+                    }
+                    sibling = sibling.previousSibling;
+                } while (sibling);
+            }
+
+            path[i++] = el.tagName + (count > 1 ? count : '');
+
+            el = el.parentNode;
+
+        }
+
+        if (from !== to) {
+            clickData = to.getAttribute('data-click');
+            if (clickData) {
+                data = $.extend(parseJSON(clickData), data);
+            }
+        }
+
+        if (nolog) {
+            return !nolog;
+        }
+
+        // 反转 XPath 顺序
+        path.reverse();
+        var tag = from.tagName.toLowerCase();
+
+        if (!type
+                && /^(a|img|input|button|select|datalist|textarea)$/.test(tag)
+            ) {
+            type = {a: 'link'}[tag] || 'input';
+
+            url = from.href || from.src || url;
+        }
+
+        // 自定义属性指定的 type 优化级最高
+        type = from.getAttribute('data-type') || type;
+
+        if (!type) {
+            return false;
+        }
+
+        if (url) {
+            data.url = url;
+        }
+
+        setField(data, from, 'p1');
+        setField(data, from, 'act');
+        setField(data, from, 'item');
+        setField(data, from, 'mod', to.id);
+
+        setTitle(data, from, type, tag, path, i);
+
+        data.xpath = path.join('-').toLowerCase() + '(' + type + ')';
+
+        return data;
     };
 
     /**
@@ -386,7 +389,7 @@ define(function (require) {
         data: {
 
             // 不允许为默认值 -
-            url: (window.location || document.location || { href: '-' }).href,
+            url: (window.location || document.location || {href: '-'}).href,
 
             // 对应 nsclick 的 pid 概念。Nsclick 用 pid 将不同产品线的日志进行分割。
             // 不允许为默认值 -
@@ -530,7 +533,7 @@ define(function (require) {
          * @property {string} target 点击事件源对象
          * @property {string} main 当前统计区域（卡片）主容器
          */
-        exports.fire('click', { data: data, target: target[0], main: main[0] });
+        exports.fire('click', {data: data, target: target[0], main: main[0]});
 
         send(data);
     };

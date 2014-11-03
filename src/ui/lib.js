@@ -34,20 +34,6 @@ define(function (require) {
     }
 
     /**
-     * 功能降级处理
-     *
-     * @inner
-     * @param {boolean} condition feature 可用的测试条件
-     * @param {Function} implement feature 不可用时的降级实现
-     * @param {Function} feature 可用的特性方法
-     *
-     * @return {Function} 静态化后的 feature 或 对应的降级实现函数
-     */
-    function fallback(condition, implement, feature) {
-        return condition ? generic(feature || condition) : implement;
-    }
-
-    /**
      * 类型判断
      *
      * @param {*} obj 待判断类型的输入
@@ -170,7 +156,7 @@ define(function (require) {
                 '\n': '\\n',
                 '\f': '\\f',
                 '\r': '\\r',
-                '"' : '\\"',
+                '"': '\\"',
                 '\\': '\\\\'
             };
             var escape = function (chr) {
@@ -181,13 +167,15 @@ define(function (require) {
                 if (obj && obj.toJSON) {
                     obj = obj.toJSON();
                 }
+
+                var string;
                 switch (typeOf(obj)) {
                     case 'string':
                         return '"' + obj.replace(/[\x00-\x1f\\"]/g, escape) + '"';
                     case 'array':
                         return '[' + $.map(obj, stringify) + ']';
                     case 'object':
-                        var string = [];
+                        string = [];
                         $.each(obj, function (key, value) {
                             var json = stringify(value);
                             if (json) {
@@ -231,6 +219,7 @@ define(function (require) {
      *
      * @method module:lib.toQueryString
      * @param {Object} object 需要解析的 JSON 对象
+     * @param {string} base 作 querystring 中 key 前缀的字符
      *
      * @return {string} 解析结果字符串，其中值将被URI编码
      */
@@ -239,6 +228,7 @@ define(function (require) {
      *
      * @method module:lib.object.toQueryString
      * @param {Object} object 需要解析的 JSON 对象
+     * @param {string} base 作 querystring 中 key 前缀的字符
      *
      * @return {string} 解析结果字符串，其中值将被URI编码
      */
@@ -284,7 +274,7 @@ define(function (require) {
      * @method module:lib.capitalize
      * @param {string} source 源字符串
      *
-     * @return {string}
+     * @return {string} 首字母转换大写后的字符串
      */
     /**
      * 将字符串转换成单词首字母大写
@@ -292,7 +282,7 @@ define(function (require) {
      * @method module:lib.string.capitalize
      * @param {string} source 源字符串
      *
-     * @return {string}
+     * @return {string} 首字母转换大写后的字符串
      */
     lib.capitalize = lib.string.capitalize = function (source) {
         return String(source).replace(
@@ -373,14 +363,14 @@ define(function (require) {
      *
      * @method module:lib.binds
      * @param {Object} me 要绑定的 this
-     * @param {(Array.<string> | ...string)} methods 要绑定的方法名列表
+     * @param {...string} methods 要绑定的方法名列表
      */
     /**
      * 为对象绑定方法和作用域
      *
      * @method module:lib.fn.binds
      * @param {Object} me 要绑定的 this
-     * @param {(Array.<string> | ...string)} methods 要绑定的方法名列表
+     * @param {...string} methods 要绑定的方法名列表
      */
     lib.binds = lib.fn.binds = function (me, methods) {
         if (typeof methods === 'string') {
@@ -407,7 +397,7 @@ define(function (require) {
      * @see http://en.wikipedia.org/wiki/Currying
      * @method module:lib.curry
      * @param {Function} fn 要绑定的函数
-     * @param {...args=} args 函数执行时附加到执行时函数前面的参数
+     * @param {...*} args 函数执行时附加到执行时函数前面的参数
      *
      * @return {function} 封装后的函数
      */
@@ -417,7 +407,7 @@ define(function (require) {
      * @see http://en.wikipedia.org/wiki/Currying
      * @method module:lib.fn.curry
      * @param {Function} fn 要绑定的函数
-     * @param {...args=} args 函数执行时附加到执行时函数前面的参数
+     * @param {...*} args 函数执行时附加到执行时函数前面的参数
      *
      * @return {Function} 封装后的函数
      */
@@ -541,8 +531,9 @@ define(function (require) {
             if (!(hasParentCall || isPrivate || hasPrivateCall)) {
                 return method;
             }
+
+            var parentMethod;
             if (hasParentCall) {
-                var parentMethod;
                 var parentClass = newClass.parent;
                 while (parentClass) {
                     parentMethod = parentClass.prototype[name];
@@ -554,6 +545,7 @@ define(function (require) {
                     }
                 }
             }
+
             var wrapper = function () {
                 if (hasParentCall && !parentMethod) {
                     throw new Error('parent Class has no method named ' + name);
@@ -588,6 +580,7 @@ define(function (require) {
          * @public
          * @param {string=} type 事件类型
          * @param {Function} listener 要添加绑定的监听器
+         * @return {Class} 当前类实例
          */
         on: function (type, listener) {
             if ($.isFunction(type)) {
@@ -610,6 +603,7 @@ define(function (require) {
          * @public
          * @param {string=} type 事件类型
          * @param {Function=} listener 要解除绑定的监听器
+         * @return {Class} 当前类实例
          */
         un: function (type, listener) {
             if ($.isFunction(type)) {
@@ -639,6 +633,7 @@ define(function (require) {
          * @public
          * @param {string=} type 事件类型
          * @param {Function} listener 要添加绑定的监听器
+         * @return {Class} 当前类实例
          */
         once: function (type, listener) {
             if ($.isFunction(type)) {
@@ -650,7 +645,7 @@ define(function (require) {
                 listener.apply(me, arguments);
                 me.un(type, realListener);
             };
-            this.on.call(me, type, realListener);
+            return this.on.call(me, type, realListener);
         },
 
         /**
@@ -659,6 +654,7 @@ define(function (require) {
          * @public
          * @param {string} type 事件类型
          * @param {Object} args 透传的事件数据对象
+         * @return {Class} 当前类实例
          */
         fire: function (type, args) {
             var me = this;
@@ -688,6 +684,7 @@ define(function (require) {
      */
     lib.configurable = {
 
+        /* jshint forin: false */
         /**
          * 设置可配置项
          *
@@ -726,6 +723,7 @@ define(function (require) {
             return thisOptions;
         }
     };
+    /* jshint forin: true */
 
     /* ========================== PAGE ========================== */
     /**

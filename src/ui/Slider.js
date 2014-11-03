@@ -5,6 +5,7 @@
  * @file 轮播组件
  * @author  mengke01(mengke01@baidu.com)
  */
+
 define(function (require) {
 
     var $       = require('jquery');
@@ -25,8 +26,9 @@ define(function (require) {
             return element.children;
         }
 
-        for (
-            var children = [], curElement = element.firstChild;
+        var children;
+        var curElement;
+        for (children = [], curElement = element.firstChild;
             curElement;
             curElement = curElement.nextSibling
         ) {
@@ -34,6 +36,7 @@ define(function (require) {
                 children.push(curElement);
             }
         }
+
         return children;
     }
 
@@ -383,8 +386,8 @@ define(function (require) {
         /**
          * 获得轮播的索引
          *
-         * @param {Number} index 设置的索引
-         * @return {Number} 计算后的索引
+         * @param {number} index 设置的索引
+         * @return {number} 计算后的索引
          * @public
          */
         getIndex: function (index) {
@@ -433,7 +436,6 @@ define(function (require) {
         /**
          * 刷新当前播放舞台
          *
-         * @return {module:Slider} 当前对象
          * @public
          */
         refresh: function () {
@@ -502,7 +504,6 @@ define(function (require) {
          * 切换到的索引
          *
          * @param {Number|string} index 切换到的索引，可以设置数字或者'start'|'end'
-         * @return {module:Slider} 当前对象
          * @fires module:Slider#change
          * @public
          */

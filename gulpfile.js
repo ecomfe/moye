@@ -78,11 +78,14 @@ gulp.task('jsdoc', function () {
         );
 });
 
+gulp.task('test', ['lint'], function () {
+    //
+});
 
 gulp.task('uglify', function () {
     return gulp.src(config.js)
         .pipe(uglify())
-        .pipe(gulp.dest(config.asset.js))
+        .pipe(gulp.dest(config.asset.js));
 });
 
 gulp.task('cssmin', function () {

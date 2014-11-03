@@ -26,6 +26,7 @@ define(function (require) {
         /**
          * 构建选单HTML
          *
+         * @return {string} 构建好的选单HTML
          * @private
          */
         build: function () {
@@ -187,7 +188,7 @@ define(function (require) {
              * @type {Object}
              * @property {string} value 选中的城市
              */
-            this.fire('pick', { value: value });
+            this.fire('pick', {value: value});
             this.hide();
         }
     };
@@ -439,7 +440,7 @@ define(function (require) {
              * @type {Object}
              * @property {?HTMLElement=} target 触发显示浮层的节点
              */
-            this.fire('show', { target: target });
+            this.fire('show', {target: target});
 
         },
 
@@ -463,4 +464,3 @@ define(function (require) {
 
     return City;
 });
-

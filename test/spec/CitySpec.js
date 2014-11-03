@@ -41,7 +41,7 @@ define(function (require) {
         city.dispose();
         $('#cityContainer').remove();
     });
-  
+
     describe('基本接口', function () {
 
         it('控件类型', function () {
@@ -170,7 +170,7 @@ define(function (require) {
 
 
         });
-       
+
         it('setTarget', function () {
             expect(function () {
                 city.setTarget($('.city-trigger')[0]);

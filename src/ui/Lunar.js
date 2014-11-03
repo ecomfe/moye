@@ -5,6 +5,7 @@
  * @file 支持农历的控件
  * @author chris(wfsr@foxmail.com)
  */
+
 define(function (require) {
     var $ = require('jquery');
     var lib = require('./lib');
@@ -102,7 +103,7 @@ define(function (require) {
         '立冬', '小雪', '大雪', '冬至'
     ];
 
-    /* jshint -W015 */
+    /* eslint-disable fecs-indent */
     // 节气数据表
     var termInfo = [
         0,      21208,
@@ -112,13 +113,16 @@ define(function (require) {
         440795, 462224, 483532, 504758
     ];
 
+    /* eslint-disable key-spacing */
     // 节气例外调整
     var solarTermAdjust = {
-        19762 :  1, 19802 :  1, 20092 :  1, 20129 :  -1, 201222: 1,
-        20132 :  1, 201313: -1, 201323:  1, 20144 :   1, 20150 : 1,
-        201622:  1, 201713: -1, 201723: -1, 20183 :   1, 20185 : 1,
-        20192 : -1, 201911: -1, 202012: -1, 202015:  -1, 202022: 1
+         19762:  1,  19802:  1,  20092:  1,  20129:  -1, 201222: 1,
+         20132:  1, 201313: -1, 201323:  1,  20144:   1,  20150: 1,
+        201622:  1, 201713: -1, 201723: -1,  20183:   1,  20185: 1,
+         20192: -1, 201911: -1, 202012: -1, 202015:  -1, 202022: 1
     };
+    /* eslint-enable key-spacing */
+    /* eslint-enable fecs-indent */
 
     /**
      * 某年的第 n 个节气为几日（从 0 小寒起算）
@@ -153,7 +157,7 @@ define(function (require) {
             : (d === sTerm(y, m * 2 + 1)
                 ? solarTerm[m * 2 + 1]
                 : '');
-        return text ? { type: 'solar-term', text: text } : null;
+        return text ? {type: 'solar-term', text: text} : null;
     }
 
     // 农历节日
@@ -191,7 +195,7 @@ define(function (require) {
         var text = lunar.leap
             ? ''
             : lFtv[pad(lunar.month + 1) + pad(lunar.day)] || '';
-        return text ? { type: 'lunar-festival', text: text } : null;
+        return text ? {type: 'lunar-festival', text: text} : null;
     }
 
     // 阳历节日
@@ -230,7 +234,7 @@ define(function (require) {
      */
     function getSolarFestival(date) {
         var text = sFtv[pad(date.getMonth() + 1) + pad(date.getDate())];
-        return text ? { type: 'solar-festival', text: text } : null;
+        return text ? {type: 'solar-festival', text: text} : null;
     }
 
     // 某月的第几个星期几。 5,6,7,8 表示到数第 1,2,3,4 个星期几
@@ -262,7 +266,7 @@ define(function (require) {
         var qes = 4 + Math.floor((day + days - today) / 7)
             + (lastDay < day ? 0 : 1);
         var text = wFtv[keys.join(seq)] || wFtv[keys.join(qes)];
-        return text ? { type: 'solar-weak-festival', text: text } : null;
+        return text ? {type: 'solar-weak-festival', text: text} : null;
     }
 
     /**
@@ -381,7 +385,7 @@ define(function (require) {
             else {
                 text = (day > 10 ? units[day / 10] : decimals[0]) + units[10];
             }
-            result = { type: 'lunar', text: text };
+            result = {type: 'lunar', text: text};
         }
         return ''
             + '<span class="' + classPrefix + '-' + result.type + '">'
@@ -441,6 +445,7 @@ define(function (require) {
         /**
          * 构建HTML
          *
+         * @param {number} date 日期的毫秒数
          * @fires module:Lunar#navigate
          * @private
          */
@@ -455,7 +460,7 @@ define(function (require) {
              * @property {Date} date 选中的日期对象
              * @property {string} yyyyMM 选中日期的格式化星期
              */
-            this.fire('navigate', { date: date, yyyyMM: privates.getYYYYMM.call(this, date) });
+            this.fire('navigate', {date: date, yyyyMM: privates.getYYYYMM.call(this, date)});
         },
 
         /**
@@ -484,6 +489,8 @@ define(function (require) {
         /**
         * 构建指定日期所在月的HTML
         *
+        * @param {Date} date 指定的日期对象
+        * @return {string} 构建后的HTML
         * @private
         */
         buildMonth: function (date) {
@@ -613,7 +620,7 @@ define(function (require) {
 
             var el     = event.target;
             var tag    = el.tagName;
-            while (tag !== 'A' &&　el !== this.main) {
+            while (tag !== 'A' && el !== this.main) {
                 el = el.parentNode;
                 tag = el.tagName;
             }
@@ -1055,7 +1062,7 @@ define(function (require) {
                 range.end = this.from(end);
             }
             this.range = range;
-            this.rendered &&　privates.updatePrevNextStatus.call(this);
+            this.rendered && privates.updatePrevNextStatus.call(this);
         },
 
         /**

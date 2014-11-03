@@ -89,7 +89,7 @@ define(function (require) {
              * @type {Object}
              * @property {Event} event 事件源对象
              */
-            this.fire('beforeShow', { event: e });
+            this.fire('beforeShow', {event: e});
 
             this.show();
 
@@ -112,6 +112,7 @@ define(function (require) {
         /**
          * 隐藏浮层前处理
          *
+         * @param {Event} e 事件源对象
          * @private
          */
         onHide: function (e) {
@@ -228,7 +229,7 @@ define(function (require) {
             var offset = options.offset;
 
             // 提示层在目标上部或下部显示时的定位处理
-            if ({ t: 1, b: 1 }[first]) {
+            if ({t: 1, b: 1}[first]) {
                 left = {
                     l: left,
                     c: center - (mainWidth / 2),
@@ -243,7 +244,7 @@ define(function (require) {
             }
 
             // 提示层在目标左边或右边显示时的定位处理
-            else if ({ l: 1, r: 1 }[first]) {
+            else if ({l: 1, r: 1}[first]) {
                 top = {
                     t: top,
                     c: middle - (mainHeight / 2),
@@ -487,7 +488,7 @@ define(function (require) {
                              * @type {Object}
                              * @property {Event} event 事件源对象
                              */
-                            me.fire('click', { event: e });
+                            me.fire('click', {event: e});
                         }
                     );
 

@@ -164,6 +164,7 @@ define(function (require) {
         /**
          * 绘制控件
          *
+         * @return {module:FloatTip} 当前实例
          * @override
          * @public
          */
@@ -241,6 +242,7 @@ define(function (require) {
         /**
          * 显示组件
          *
+         * @return {module:FloatTip} 当前实例
          * @public
          */
         show: function () {
@@ -252,6 +254,7 @@ define(function (require) {
         /**
          * 隐藏组件
          *
+         * @return {module:FloatTip} 当前实例
          * @public
          */
         hide: function () {

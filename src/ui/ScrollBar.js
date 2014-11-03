@@ -136,7 +136,7 @@ define(function (require) {
                 percent = 2 * this.scrollRatio;
             }
 
-            var percent = this.curPos - percent;
+            percent = this.curPos - percent;
             privates.setScrollPercent.call(this, percent);
             // 在滚动范围内取消默认行为
             if (this.options.preventWheelScroll
@@ -168,7 +168,7 @@ define(function (require) {
         /**
          * 设置滚动的位置
          *
-         * @param {Number} pos 设置滚动的位置比例
+         * @param {number} pos 设置滚动的位置比例
          * @private
          * @fires module:ScrollBar#event
          */
@@ -375,7 +375,6 @@ define(function (require) {
          * 滚动到指定位置
          * @param { ( Number | string ) } pos 滚动的距离，
          * 可以设置·begin· or ·end· 或者百分比
-         * @return {module:ScrollBar} 本对象
          * @public
          */
         scrollTo: function (pos) {
@@ -442,6 +441,7 @@ define(function (require) {
         /**
          * 绘制控件
          *
+         * @return {module:ScrollBar} 当前实例
          * @override
          * @public
          */

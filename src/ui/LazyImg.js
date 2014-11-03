@@ -125,6 +125,7 @@ define(function (require) {
          * 控件初始化
          *
          * @param {Object} options 控件配置项
+         * @param {string} main 控件窗口 id 或 className
          * @see module:LazyImg#options
          * @private
          */
@@ -172,4 +173,3 @@ define(function (require) {
 
     return LazyImg;
 });
-

@@ -5,6 +5,7 @@
  * @file 弹框组件
  * @author mengke(mengke01@baidu.com)
  */
+
 define(function (require) {
 
     var $ = require('jquery');
@@ -18,7 +19,7 @@ define(function (require) {
      * /api.html#baidu.string.format|tangram
      *
      * @param {string} source 目标字符串
-     * @param {(...Object|...string)} opts 提供相应数据的对象或多个字符串
+     * @param {...(Object|string)} opts 提供相应数据的对象或多个字符串
      * @return {string} 格式化后的字符串
      * @inner
      */
@@ -56,7 +57,7 @@ define(function (require) {
      * @requires Dialog
      * @module Mask
      */
-    var Mask = lib.newClass( /** @lends module:Mask.prototype */ {
+    var Mask = lib.newClass(/** @lends module:Mask.prototype */{
 
         /**
          * 初始化函数
@@ -195,7 +196,7 @@ define(function (require) {
          * @return {HTMLElement} 模块的DOM元素
          * @private
          */
-        getDom:  function (name) {
+        getDom: function (name) {
             return $('.' + this.options.prefix + '-' + name, this.main)[0];
         },
 
@@ -299,6 +300,7 @@ define(function (require) {
         /**
          * 处理关闭窗口
          *
+         * @param {Event} e 事件对象
          * @private
          */
         onClose: function (e) {
@@ -321,6 +323,7 @@ define(function (require) {
         /**
          * 当触发展示的时候
          *
+         * @param {Event} e 事件对象
          * @fires module:Dialog#beforeshow
          * @private
          */
@@ -341,6 +344,7 @@ define(function (require) {
         /**
          * 当触发隐藏的时候
          *
+         * @param {Event} e 事件对象
          * @fires module:Dialog#beforehide
          * @private
          */
@@ -381,7 +385,7 @@ define(function (require) {
      *
      *  }).render();
      */
-    var Dialog = Control.extend( /** @lends module:Dialog.prototype */ {
+    var Dialog = Control.extend(/** @lends module:Dialog.prototype */{
 
         /**
          * 控件类型标识
@@ -560,8 +564,10 @@ define(function (require) {
 
         /**
          * 显示组件
-         * @public
+         *
+         * @return {module:Dialog} 当前实例对象
          * @fires module:Dialog#show
+         * @public
          */
         show: function () {
 
@@ -591,9 +597,10 @@ define(function (require) {
 
         /**
          * 隐藏组件
-         * @public
          *
+         * @return {module:Dialog} 当前实例对象
          * @fires module:Dialog#hide
+         * @public
          */
         hide: function () {
             // 隐藏遮罩
@@ -619,6 +626,7 @@ define(function (require) {
         /**
          * 绘制控件
          *
+         * @return {module:Dialog} 当前实例对象
          * @override
          * @public
          */
@@ -648,7 +656,8 @@ define(function (require) {
         /**
          * 调整Dialog大小
          *
-         * @param {Number} width 宽度
+         * @return {module:Dialog} 当前实例对象
+         * @param {number} width 宽度
          */
         setWidth: function (width) {
 

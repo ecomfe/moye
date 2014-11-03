@@ -70,21 +70,20 @@ define(function (require) {
             var $el    = $(el);
 
 
-            while (tag !== 'A' &&　el !== this.main) {
+            while (tag !== 'A' && el !== this.main) {
                 el = el.parentNode;
                 tag = el.tagName;
             }
 
+            var prefix    = this.options.prefix;
+            var preClass  = prefix + '-pre';
+            var nextClass = prefix + '-next';
+            var disClass  = prefix + '-disabled';
 
             switch (tag) {
 
                 case 'A':
                     e.preventDefault();
-
-                    var prefix    = this.options.prefix;
-                    var preClass  = prefix + '-pre';
-                    var nextClass = prefix + '-next';
-                    var disClass  = prefix + '-disabled';
 
 
                     // 上月操作
@@ -327,6 +326,7 @@ define(function (require) {
         /**
          * 构建HTML
          *
+         * @param {Date=} date 生成日历的日期
          * @private
          */
         build: function (date) {
@@ -359,6 +359,8 @@ define(function (require) {
         /**
         * 构建指定日期所在月的HTML
         *
+        * @param {Date=} date 指定的日期
+        * @return {string} 指定日期所在月的HTML
         * @private
         */
         buildMonth: function (date) {
@@ -381,7 +383,7 @@ define(function (require) {
             var prefix  = options.prefix;
             var html    = ['<div class="' + prefix + '-month">'];
 
-            var json = { year: year, month: month, prefix: prefix };
+            var json = {year: year, month: month, prefix: prefix};
             var title = options.lang.title.replace(
                 /\{([^\}]+)\}/g,
                 function ($, key) {
@@ -513,11 +515,10 @@ define(function (require) {
 
             date = date || this.date || this.from(this.value);
 
-            prev[!range
+            var showPrev = !range
                 || !range.begin
-                || privates.getYYYYMM.call(this, range.begin) < privates.getYYYYMM.call(this, date)
-                    ? 'show' : 'hide'
-            ]();
+                || privates.getYYYYMM.call(this, range.begin) < privates.getYYYYMM.call(this, date);
+            prev[showPrev ? 'show' : 'hide']();
 
             var last = new Date(
                 date.getFullYear(),
@@ -525,11 +526,10 @@ define(function (require) {
                 1
             );
 
-            next[!range
+            var showNext = !range
                 || !range.end
-                || privates.getYYYYMM.call(this, range.end) > privates.getYYYYMM.call(this, last)
-                    ? 'show' : 'hide'
-            ]();
+                || privates.getYYYYMM.call(this, range.end) > privates.getYYYYMM.call(this, last);
+            next[showNext ? 'show' : 'hide']();
         },
 
         /**
@@ -862,7 +862,7 @@ define(function (require) {
              * @type {object}
              * @property {?HTMLElement=} target 触发显示浮层的节点
              */
-            this.fire('show', { target: target });
+            this.fire('show', {target: target});
 
         },
         /**

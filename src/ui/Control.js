@@ -205,7 +205,6 @@ define(function (require) {
         /**
          * 渲染控件
          *
-         * @return {module:Control} 当前实例
          * @abstract
          * @protected
          */
@@ -247,7 +246,9 @@ define(function (require) {
         createElement: function (tagName, properties) {
             var element = document.createElement(tagName || 'div');
             for (var prop in properties) {
-                element[prop] = properties[prop];
+                if (properties.hasOwnProperty(prop)) {
+                    element[prop] = properties[prop];
+                }
             }
             return element;
         },
@@ -364,7 +365,9 @@ define(function (require) {
             }
 
             for (var type in this._listners) {
-                this.un(type);
+                if (this._listners.hasOwnProperty(type)) {
+                    this.un(type);
+                }
             }
 
             var main = this.main;

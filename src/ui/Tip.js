@@ -38,7 +38,7 @@ define(function (require) {
              * @type {Object}
              * @property {Event} event 事件源对象
              */
-            this.fire('click', { event: e });
+            this.fire('click', {event: e});
         },
 
         /**
@@ -122,7 +122,7 @@ define(function (require) {
              * @property {HTMLElement} target 事件源 DOM 对象
              * @property {Event} e 事件源对象
              */
-            this.fire('beforeShow', { target: target.get(0), event: e });
+            this.fire('beforeShow', {target: target.get(0), event: e});
 
             var delay = this.options.showDelay;
             if (delay) {
@@ -148,7 +148,6 @@ define(function (require) {
             var options = this.options;
             privates.clear.call(me);
             if (options.hideDelay) {
-                var me = this;
                 this._hideTimer = setTimeout(function () {
                     me.hide();
                 }, options.hideDelay);
@@ -282,7 +281,7 @@ define(function (require) {
                 second = dir.charAt(1);
             }
 
-            var lrtb   = { l: 'left', r: 'right', t: 'top', b: 'bottom' };
+            var lrtb   = {l: 'left', r: 'right', t: 'top', b: 'bottom'};
             var offset = options.offset;
 
             arrow.className = prefix + ' ' + prefix + '-' + lrtb[first];
@@ -294,7 +293,7 @@ define(function (require) {
             arrowHeight = arrow.firstChild.offsetHeight;
 
             // 提示层在目标上部或下部显示时的定位处理
-            if ({ t: 1, b: 1 }[first]) {
+            if ({t: 1, b: 1}[first]) {
                 left = {
                     l: left + offset.x,
                     c: center - (mainWidth / 2),
@@ -319,7 +318,7 @@ define(function (require) {
             }
 
             // 提示层在目标左边或右边显示时的定位处理
-            else if ({ l: 1, r: 1 }[first]) {
+            else if ({l: 1, r: 1}[first]) {
                 top = {
                     t: top + offset.y,
                     c: middle - (mainHeight / 2),
@@ -505,8 +504,8 @@ define(function (require) {
         /**
          * 绘制控件
          *
-         * @fires module:Tip#click
-         * @return {module:Tip} 当前实例
+         * @fires Tip#click
+         * @return {Tip} 当前实例
          * @override
          * @public
          */
@@ -666,7 +665,7 @@ define(function (require) {
              * @type {Object}
              * @property {HTMLElement} target 事件源 DOM 对象
              */
-            this.fire('show', { target: target });
+            this.fire('show', {target: target});
 
         },
 
@@ -724,7 +723,7 @@ define(function (require) {
          *
          * 如果参数为空，则隐藏提示层的标题部分
          *
-         * @param {string} html
+         * @param {string} html 作为提示层标题的代码
          * @public
          */
         setTitle: function (html) {

@@ -139,6 +139,7 @@ define(function (require) {
         /**
          * 绘制控件
          *
+         * @return {module:Tabs} 当前实例对象
          * @public
          */
         render: function () {

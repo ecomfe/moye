@@ -51,6 +51,8 @@ define(function (require) {
      * @name module:Lazy~privates
      */
     var privates = /** @lends module:Lazy~privates */ {
+
+        /* jshint forin: false */
         /**
          * 计算在可视区域内的延迟加载元素
          *
@@ -129,6 +131,7 @@ define(function (require) {
                 }
             }
         },
+        /* jshint forin: true */
 
         /**
          * 窗口滚动时执行的事件
@@ -259,6 +262,7 @@ define(function (require) {
         /**
          * 添加延迟操作的元素
          *
+         * @return {module:Lazy} 共享的 module#Lazy 实例
          * @see module:Lazy#add
          * @static
          */
@@ -269,6 +273,7 @@ define(function (require) {
         /**
          * 移除延迟操作的元素
          *
+         * @return {module:Lazy} 共享的 module#Lazy 实例
          * @see module:Lazy#remove
          * @static
          */
@@ -280,4 +285,3 @@ define(function (require) {
 
     return Lazy;
 });
-
