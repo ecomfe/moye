@@ -12,7 +12,7 @@
     margin: 0;
     outline: none;
   }
-  
+
   .line button {
     margin: 0 10px;
   }
@@ -73,7 +73,7 @@ require(['ui/City'], function (City) {
       prefix: 'ecl-ui-city',
       triggers: $('.city-trigger').toArray(),
       //target: 'city',
-      
+
       onBeforeShow: function (arg) {
             var e = arg.event;
             var target = e.target;
@@ -188,7 +188,7 @@ require(['ui/City'], function (City) {
       prefix: 'ecl-ui-city',
       triggers: $('.city-trigger').toArray(),
       //target: 'city',
-      
+
       onBeforeShow: function (arg) {
             var e = arg.event;
             var target = e.target;

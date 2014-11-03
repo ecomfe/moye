@@ -64,41 +64,32 @@ define(function (require) {
                 return;
             }
 
-            var el     = e.target;
-            var tag    = el.tagName;
             var target = this.target;
-            var $el    = $(el);
-
-
-            while (tag !== 'A' &&　el !== this.main) {
-                el = el.parentNode;
-                tag = el.tagName;
-            }
-
+            var helper = this.helper;
+            var el = $(e.target).closest('A', this.main);
+            var tag = el.prop('tagName');
 
             switch (tag) {
 
                 case 'A':
                     e.preventDefault();
 
-                    var prefix    = this.options.prefix;
-                    var preClass  = prefix + '-pre';
-                    var nextClass = prefix + '-next';
-                    var disClass  = prefix + '-disabled';
-
+                    var preClass  = helper.getPartClassName('pre');
+                    var nextClass = helper.getPartClassName('next');
+                    var disabledClass  = helper.getPartClassName('disabled');
 
                     // 上月操作
-                    if ($el.hasClass(preClass)) {
+                    if (el.hasClass(preClass)) {
                         privates.showPreMonth.call(this);
                         e.stopPropagation();
                     }
                     // 下月操作
-                    else if ($el.hasClass(nextClass)) {
+                    else if (el.hasClass(nextClass)) {
                         privates.showNextMonth.call(this);
                         e.stopPropagation();
                     }
-                    else if (!$el.hasClass(disClass)) {
-                        el.getAttribute('data-date') && privates.pick.call(this, el);
+                    else if (!el.hasClass(disabledClass)) {
+                        el.attr('data-date') && privates.pick.call(this, el[0]);
                     }
 
                     break;
@@ -108,6 +99,7 @@ define(function (require) {
                     if (target) {
                         target.select();
                     }
+
                     break;
 
             }
@@ -219,11 +211,11 @@ define(function (require) {
          */
         updateStatus: function () {
             var options = this.options;
-            var prefix  = options.prefix;
             var process = options.process;
             var first   = options.first;
             var now     = new Date();
             var current = this.format(this.value);
+            var helper  = this.helper;
 
             var checkedValue = this.target.value
                 && this.format(this.from(this.value), DATE_FORMAT);
@@ -243,13 +235,13 @@ define(function (require) {
                     || max;
             }
 
-            var preClass     = prefix + '-pre-month';
-            var nextClass    = prefix + '-next-month';
-            var disClass     = prefix + '-disabled';
-            var todayClass   = prefix + '-today';
-            var checkedClass = prefix + '-checked';
-            var weekendClass = prefix + '-weekend';
-            var currentClass = prefix + '-current';
+            var preClass     = helper.getPartClassName('pre-month');
+            var nextClass    = helper.getPartClassName('next-month');
+            var disClass     = helper.getPartClassName('disabled');
+            var todayClass   = helper.getPartClassName('today');
+            var checkedClass = helper.getPartClassName('checked');
+            var weekendClass = helper.getPartClassName('weekend');
+            var currentClass = helper.getPartClassName('current');
 
             var monthes = this.main.getElementsByTagName('p');
             var i;
@@ -336,6 +328,7 @@ define(function (require) {
          * @private
          */
         build: function (date) {
+            var helper  = this.helper;
             var options = this.options;
             var html    = [];
 
@@ -350,9 +343,9 @@ define(function (require) {
                 html.push(privates.buildMonth.call(this, current));
             }
 
-            var prefix = options.prefix;
-            html.push('<a href="#" class="' + prefix + '-pre"></a>');
-            html.push('<a href="#" class="' + prefix + '-next"></a>');
+
+            html.push('<a href="#" class="' + helper.getPartClassName('pre') + '"></a>');
+            html.push('<a href="#" class="' + helper.getPartClassName('next') + '"></a>');
 
             var popup = this.popup;
             popup.content = html.join('');
@@ -368,6 +361,7 @@ define(function (require) {
         * @private
         */
         buildMonth: function (date) {
+            var helper   = this.helper;
             var year     = date.getFullYear();
             var month    = date.getMonth() + 1;
             var today    = date.getDate();
@@ -384,13 +378,11 @@ define(function (require) {
             var separator = '-';
 
             var options = this.options;
-            var prefix  = options.prefix;
-            var html    = [ '<div class="' + prefix + '-month">' ];
+            var html    = [ '<div class="' + helper.getPartClassName('month') + '">' ];
 
             var json = {
                 year: year, 
-                month: month, 
-                prefix: prefix
+                month: month
             };
 
             var title = options.lang.title.replace(
@@ -413,7 +405,7 @@ define(function (require) {
                 klass = i === weeks - 1
                     || firstDay && i === weeks - 2
                     || !firstDay && i === firstDay
-                    ? ' class="' + prefix + '-weekend"'
+                    ? ' class="' + helper.getPartClassName('weekend') + '"'
                     : '';
 
                 html.push('<li' + klass + '>' + days[i] + '</li>');
@@ -440,7 +432,7 @@ define(function (require) {
                 M = date.getMonth() + 1;
                 d = date.getDate();
                 yM = [ y, pad(M), '' ].join(separator);
-                klass = prefix + '-pre-month';
+                klass = helper.getPartClassName('pre-month');
 
                 for (i = d - len + 1; i <= d; i++) {
                     week = week % weeks;
@@ -485,7 +477,7 @@ define(function (require) {
             y = date.getFullYear();
             M = date.getMonth() + 1;
             yM = [ y, pad(M), '' ].join(separator);
-            klass = prefix + '-next-month';
+            klass = helper.getPartClassName('next-month');
 
             len = weeks * rows - (len + Math.max(0, first - firstDay));
 
@@ -517,19 +509,20 @@ define(function (require) {
          * @private
          */
         updatePrevNextStatus: function (date) {
+            var helper = this.helper;
             var options = this.options;
-            var prefix = options.prefix;
             var range  = this.range;
-            var prev = $('.' + prefix + '-pre', this.main);
-            var next = $('.' + prefix + '-next', this.main);
+            var prev = helper.getPart('pre');
+            var next = helper.getPart('next');
+            var getMonth = privates.getYYYYMM;
+            var act;
 
             date = date || this.date || this.from(this.value);
+            act = !range || !range.begin
+                || getMonth.call(this, range.begin) < getMonth.call(this, date)
+                ? 'show' : 'hide';
 
-            prev[!range
-                || !range.begin
-                || privates.getYYYYMM.call(this, range.begin) < privates.getYYYYMM.call(this, date)
-                    ? 'show' : 'hide'
-            ]();
+            $(prev)[act]();
 
             var last = new Date(
                 date.getFullYear(),
@@ -537,11 +530,11 @@ define(function (require) {
                 1
             );
 
-            next[!range
-                || !range.end
-                || privates.getYYYYMM.call(this, range.end) > privates.getYYYYMM.call(this, last)
+            act = !range || !range.end
+                || getMonth.call(this, range.end) > getMonth.call(this, last)
                     ? 'show' : 'hide'
-            ]();
+
+            $(next)[act]();
         },
 
         /**
@@ -622,7 +615,6 @@ define(function (require) {
          * @type {Object}
          * @property {boolean} disabled 控件的不可用状态
          * @property {(string | HTMLElement)} main 控件渲染容器
-         * @property {string} prefix 控件class前缀，同时将作为main的class之一
          * @property {(string | HTMLElement)} target 计算日历显示时相对位置的目标对象
          * @property {string} triggers 点击显示日历的节点
          * @property {string} dateFormat 日期显示的格式化方式
@@ -648,9 +640,6 @@ define(function (require) {
 
             // 控件渲染主容器
             main: '',
-
-            // 控件class前缀，同时将作为main的class之一
-            prefix: 'ecl-ui-cal',
 
             // 计算日历显示时相对位置的目标对象
             target: '',
@@ -701,12 +690,8 @@ define(function (require) {
         init: function (options) {
             this.bindEvents(privates);
 
-            this._disabled   = options.disabled;
-            this.dateFormat =
-                options.dateFormat
-                || Calendar.DATE_FORMAT
-                || DATE_FORMAT;
-
+            this._disabled = options.disabled;
+            this.dateFormat = options.dateFormat || Calendar.DATE_FORMAT || DATE_FORMAT;
             this.days  = options.lang.days.split(',');
             this.value = this.format(this.from(options.value));
             var key = this.cacheKey = options.first + '-' + options.lang.title;
@@ -809,40 +794,29 @@ define(function (require) {
         },
 
         /**
-         * 绘制控件
-         *
-         * @return {module:Calendar} 当前实例
-         * @override
-         * @public
+         * 初始化DOM结构
          */
-        render: function () {
+        initStructure: function () {
             var options = this.options;
-
-            if (!this.rendered) {
-                this.rendered = true;
-
-                var popup = this.popup = new Popup($.extend(
-                    {},
-                    this.srcOptions,
-                    {
-                        prefix: options.prefix
-                    }
-                ));
-
-                this.addChild(popup);
-
-                var bound = this._bound;
-                popup.on('click', bound.onClick);
-                popup.on('hide', bound.onHide);
-                popup.on('beforeShow', bound.onBeforeShow);
-
-                this.main = popup.main;
-
-                if (options.target) {
-                    this.setTarget(lib.g(options.target));
-                }
+            var popup = this.popup = new Popup(this.srcOptions);
+            this.main = popup.main;
+            this.addChild(popup);
+            popup.render();
+            if (options.target) {
+                this.setTarget(lib.g(options.target));
             }
+            return this;
+        },
 
+        /**
+         * 初始化事件绑定
+         */
+        initEvents: function () {
+            var bound = this._bound;
+            var popup = this.popup;
+            popup.on('click', bound.onClick);
+            popup.on('hide', bound.onHide);
+            popup.on('beforeShow', bound.onBeforeShow);
             return this;
         },
 

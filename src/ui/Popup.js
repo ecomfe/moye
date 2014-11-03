@@ -12,6 +12,7 @@ define(function (require) {
     var $ = require('jquery');
     var lib = require('./lib');
     var Control = require('./Control');
+    var painter = require('./painter');
 
     /**
      * 私有函数或方法
@@ -368,14 +369,6 @@ define(function (require) {
             dir: 'bl',
 
             /**
-             * 控件class前缀，同时将作为main的class之一
-             *
-             * @type {string}
-             * @defaultvalue
-             */
-            prefix: 'ecl-ui-popup',
-
-            /**
              * 浮层显示的偏移量
              *
              * @type {string}
@@ -409,68 +402,54 @@ define(function (require) {
          * @private
          */
         init: function (options) {
-            this.guid = lib.guid();
-            this._disabled  = options.disabled;
-            this.content   = options.content;
-
+            this._disabled = options.disabled;
+            this.content = options.content;
             this.bindEvents(privates);
-
             if (options.target) {
                 this.target = lib.g(options.target);
             }
+        },
 
-            var prefix = options.prefix;
-            var main   = $(options.main || '<div>');
-
-            main.addClass(prefix);
-
+        /**
+         * 初始化DOM结构
+         */
+        initStructure: function () {
+            var options = this.srcOptions;
+            // 如果是我们自己生成的main，那么把它放到dom树上，加上左漂样式
             if (!options.main) {
-                main.css('left', '-2000px');
+                $(this.main).css('left', '-2000px').appendTo(document.body);
             }
+            return this;
+        },
 
+        /**
+         * 初始化事件绑定
+         */
+        initEvents: function () {
+
+            var me           = this;
+            var options      = me.options;
             var triggers     = options.triggers;
             var liveTriggers = options.liveTriggers;
             var bound        = this._bound;
 
             if (liveTriggers) {
-
                 liveTriggers = lib.isString(liveTriggers)
-                    ? $('.' + liveTriggers)
-                    : $(liveTriggers);
-
-                this.liveTriggers = liveTriggers
+                    ? '.' + liveTriggers
+                    : liveTriggers;
+                this.liveTriggers = $(liveTriggers)
                     .on('click', bound.onShow)
                     .toArray();
-
             }
             else {
-
                 triggers = lib.isString(triggers)
-                    ? $('.' + options.triggers)
-                    : $(options.triggers);
-
-                this.triggers = triggers
+                    ? '.' + triggers
+                    : triggers;
+                this.triggers = $(triggers)
                     .on('click', bound.onShow)
                     .toArray();
             }
 
-            this.main = main.get(0);
-
-        },
-
-        initStructure: function () {
-            var main = $(this.main);
-
-            if (this.content) {
-                main.html(this.content);
-            }
-
-            main.appendTo(document.body);
-            return this;
-        },
-
-        initEvents: function () {
-            var me = this;
             $(this.main).on('click', function (e) {
 
                 /**
@@ -480,7 +459,19 @@ define(function (require) {
                  */
                 me.fire('click', { event: e });
             });
+
             return this;
+        },
+
+        repaint: painter.createRepaint([{
+            name: ['content'],
+            paint: function (conf, content) {
+                this.setContent(content);
+            }
+        }]),
+
+        setContent: function (content) {
+            $(this.main).html(content || '');
         },
 
         /**

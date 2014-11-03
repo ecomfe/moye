@@ -461,21 +461,19 @@ define(function (require) {
          * @return {Control} self
          */
         removeState: function (state) {
-            var me = this;
-
-            if (!me.hasState(state)) {
-                return me;
+            if (!this.hasState(state)) {
+                return this;
             }
 
-            me.currentStates[state] = false;
-            lib.removeStateClasses(me, state);
+            this.currentStates[state] = false;
+            this.helper.removeStateClasses(this, state);
 
-            me.fire('statechange', {
+            this.fire('statechange', {
                 state: state,
                 action: 'remove'
             });
 
-            return me;
+            return this;
         },
 
         /**
@@ -497,6 +495,8 @@ define(function (require) {
         disable: function () {
             this._disabled = true;
 
+            this.addState('disabled');
+
             /**
              * @event module:Control#disable
              */
@@ -512,6 +512,8 @@ define(function (require) {
         enable: function () {
             this._disabled = false;
 
+            this.removeState('disabled');
+
             /**
              * @event module:Control#enable
              */
@@ -525,7 +527,7 @@ define(function (require) {
          * @public
          */
         isDisabled: function () {
-            return this._disabled;
+            return this.hasState('disabled');
         },
 
 
@@ -557,10 +559,8 @@ define(function (require) {
         removeChild: function (control) {
             var children = this.children;
             for (var name in children) {
-                if (children.hasOwnProperty(name)) {
-                    if (children[name] === control) {
-                        delete this[name];
-                    }
+                if (children.hasOwnProperty(name) && children[name] === control) {
+                    delete this[name];
                 }
             }
         },
@@ -641,42 +641,6 @@ define(function (require) {
         }
 
     }).implement(lib.observable).implement(lib.configurable);
-
-    var extend = Control.extend;
-    var CLASS_POOL = {};
-
-    Control.extend = function (prototype) {
-        if (!prototype || !prototype.type) {
-            throw new Error({
-                id: 100,
-                message: 'SubClass of Control must have `type` in prototype'
-            });
-        }
-        var type = prototype.type;
-        if (CLASS_POOL[type]) {
-            throw new Error({
-                id: 101,
-                message: 'SubClass already exists'
-            });
-        }
-        var SubClass = CLASS_POOL[type] = extend(prototype);
-        return SubClass;
-    };
-
-    Control.getSubClass = function (className) {
-        return CLASS_POOL[className];
-    };
-
-    Control.newInstance = function (clazzName, options) {
-        var SubClass = CLASS_POOL[clazzName];
-        if (!SubClass) {
-            throw new Error({
-                id: 102,
-                message: 'no sush SubClass defined'
-            });
-        }
-        return new SubClass(options);
-    };
 
     return Control;
 });

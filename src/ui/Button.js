@@ -31,9 +31,6 @@ define(function (require) {
             // 控件渲染主容器
             main: '',
 
-            // 控件class前缀，同时将作为main的class之一
-            prefix: 'ui-button',
-
             text: null,
 
             width: '',

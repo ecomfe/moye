@@ -5,10 +5,10 @@ module.exports = function(config) {
   config.set({
 
     // base path, that will be used to resolve files and exclude
-    basePath: '../',
+    basePath: '../src',
 
     requireConfig: {
-      baseUrl: '../'
+      baseUrl: '../src'
     },
 
 
@@ -23,74 +23,78 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [
       'src/css/*.less',
+      // {
+      //   pattern: 'test/spec/FilterSpec.js',
+      //   included: false
+      // },
+      // {
+      //   pattern: 'test/spec/LunarSpec.js',
+      //   included: false
+      // },
       {
-        pattern: 'test/spec/FilterSpec.js',
-        included: false
-      },
-      {
-        pattern: 'test/spec/LunarSpec.js',
+        pattern: 'test/spec/ButtonSpec.js',
         included: false
       },
       {
         pattern: 'test/spec/CalendarSpec.js',
         included: false
       },
-      {
-        pattern: 'test/spec/CalendarExtensionSpec.js',
-        included: false
-      },
-      {
-        pattern: 'test/spec/CitySpec.js',
-        included: false
-      },
-      {
-        pattern: 'test/spec/logSpec.js',
-        included: false
-      },
-      {
-        pattern: 'test/spec/CookieSpec.js',
-        included: false
-      },
-      {
-        pattern: 'test/spec/TabsSpec.js',
-        included: false
-      },
-      {
-        pattern: 'test/spec/DialogSpec.js',
-        included: false
-      },
-      {
-        pattern: 'test/spec/DialogFactorySpec.js',
-        included: false
-      },
-      {
-        pattern: 'test/spec/FloatTipSpec.js',
-        included: false
-      },
-      {
-        pattern: 'test/spec/PagerSpec.js',
-        included: false
-      },
-      {
-        pattern: 'test/spec/RatingSpec.js',
-        included: false
-      },
-      {
-        pattern: 'test/spec/PicUploaderSpec.js',
-        included: false
-      },
-      {
-        pattern: 'test/spec/SelectSpec.js',
-        included: false
-      },
-      {
-        pattern: 'test/spec/ScrollBarSpec.js',
-        included: false
-      },
-      {
-        pattern: 'test/spec/TipSpec.js',
-        included: false
-      }
+      // {
+      //   pattern: 'test/spec/CalendarExtensionSpec.js',
+      //   included: false
+      // },
+      // {
+      //   pattern: 'test/spec/CitySpec.js',
+      //   included: false
+      // },
+      // {
+      //   pattern: 'test/spec/logSpec.js',
+      //   included: false
+      // },
+      // {
+      //   pattern: 'test/spec/CookieSpec.js',
+      //   included: false
+      // },
+      // {
+      //   pattern: 'test/spec/TabsSpec.js',
+      //   included: false
+      // },
+      // {
+      //   pattern: 'test/spec/DialogSpec.js',
+      //   included: false
+      // },
+      // {
+      //   pattern: 'test/spec/DialogFactorySpec.js',
+      //   included: false
+      // },
+      // {
+      //   pattern: 'test/spec/FloatTipSpec.js',
+      //   included: false
+      // },
+      // {
+      //   pattern: 'test/spec/PagerSpec.js',
+      //   included: false
+      // },
+      // {
+      //   pattern: 'test/spec/RatingSpec.js',
+      //   included: false
+      // },
+      // {
+      //   pattern: 'test/spec/PicUploaderSpec.js',
+      //   included: false
+      // },
+      // {
+      //   pattern: 'test/spec/SelectSpec.js',
+      //   included: false
+      // },
+      // {
+      //   pattern: 'test/spec/ScrollBarSpec.js',
+      //   included: false
+      // },
+      // {
+      //   pattern: 'test/spec/TipSpec.js',
+      //   included: false
+      // }
     // , {
     //   pattern: 'test/spec/SliderAnimSpec.js',
     //   included: false

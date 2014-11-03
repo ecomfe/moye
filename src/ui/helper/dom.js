@@ -6,6 +6,7 @@
 define(function (require) {
 
     var lib = require('../lib');
+    var main = require('../main')
 
     /**
      * 将参数用`-`连接成字符串
@@ -17,21 +18,6 @@ define(function (require) {
     function joinByStrike() {
         return [].slice.call(arguments, 0).join('-');
     }
-
-    /**
-     * 控件库配置数据
-     *
-     * @type {Object}
-     * @ignore
-     */
-    var config = {
-        uiPrefix: 'data-ui',
-        instanceAttr: 'data-ctrl-id',
-        uiClassPrefix: 'ui',
-        skinClassPrefix: 'skin',
-        stateClassPrefix: 'state',
-        domIDPrefix: ''
-    };
 
     return {
         /**
@@ -55,10 +41,11 @@ define(function (require) {
         getPartClasses: function (part) {
 
             var control    = this.control;
+
             var type       = control.type.toLowerCase();
             var skin       = control.skin;
-            var prefix     = config.uiClassPrefix;
-            var skinPrefix = config.skinClassPrefix;
+            var prefix     = control.options.prefix || main.getConfig('uiClassPrefix');
+            var skinPrefix = main.getConfig('skinClassPrefix');
             var classes    = [];
 
             if (part) {
@@ -102,7 +89,7 @@ define(function (require) {
          */
         addPartClasses: function (part, element) {
 
-            if (typeof element === 'string') {
+            if (lib.isString(element)) {
                 element = this.getPart(element);
             }
 
@@ -112,9 +99,7 @@ define(function (require) {
                 return;
             }
 
-            var classes = this.getPartClassName(part);
-
-            $(element).addClass(classes);
+            $(element).addClass(this.getPartClassName(part));
 
         },
 
@@ -126,7 +111,7 @@ define(function (require) {
          */
         removePartClasses: function (part, element) {
 
-            if (typeof element === 'string') {
+            if (lib.isString(element)) {
                 element = this.getPart(element);
             }
 
@@ -136,9 +121,7 @@ define(function (require) {
                 return;
             }
 
-            var classes = this.getPartClassName(part);
-
-            $(element).removeClass(classes);
+            $(element).removeClass(this.getPartClassName(part));
 
         },
 
@@ -159,21 +142,21 @@ define(function (require) {
         getStateClasses: function (state) {
             var type = this.control.type.toLowerCase();
             var classes = [
-                joinByStrike(config.uiClassPrefix, type, state),
-                joinByStrike(config.stateClassPrefix, state)
+                joinByStrike(main.getConfig('uiClassPrefix'), type, state),
+                joinByStrike(main.getConfig('stateClassPrefix'), state)
             ];
 
             var skin = this.control.skin;
             if (skin) {
-                var skinPrefix = config.skinClassPrefix;
+                var skinPrefix = main.getConfig('skinClassPrefix');
                 for (var i = 0, len = skin.length; i < len; i++) {
                     classes.push(
                         joinByStrike(skinPrefix, skin[i], state),
                         joinByStrike(skinPrefix, skin[i], type, state)
                     );
                 }
-                
             }
+            console.dir(classes);
             return classes;
         },
 
@@ -223,7 +206,7 @@ define(function (require) {
          * @return {HTMLElement}
          */
         getPart: function (part) {
-            return lib.g(this.getId(part));
+            return lib.g(this.getPartId(part));
         },
 
         /**
