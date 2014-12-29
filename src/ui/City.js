@@ -24,60 +24,6 @@ define(function (require) {
 
 
         /**
-         * 构建选单HTML
-         *
-         * @private
-         */
-        build: function () {
-            var options = this.options;
-            var prefix  = options.prefix;
-            var index   = this.index;
-            var active  = ' class="' + prefix + '-active"';
-            var labels  = [];
-            var panels  = [];
-
-            labels.push('<ul class="' + prefix + '-labels c-clearfix">');
-            panels.push('<ul class="' + prefix + '-panels">');
-
-            var comma = ',';
-            var hideCities = options.hideCities;
-            if (hideCities) {
-                hideCities = comma + hideCities.replace(/\s+/g, '') + comma;
-            }
-
-            var makeLinks = function (cities) {
-                var links = [];
-
-                $.each(cities.split(comma), function (i, city) {
-                    if (
-                        !hideCities
-                        || !~hideCities.indexOf(comma + city + comma)
-                    ) {
-                        links.push(''
-                            + '<a href="#" title="' + city + '">'
-                            + city
-                            + '</a>'
-                        );
-                    }
-                });
-
-                return links.join('');
-            };
-
-            $.each(this.tabs, function (i, tab) {
-                var start = '<li data-idx="' + i + '"' + (i === index ? active : '');
-                tab = tab.split('|');
-                labels.push(start + '>' + tab[0] + '</li>');
-                panels.push(start + '>' + makeLinks(tab[1]) + '</li>');
-            });
-
-            labels.push('</ul>');
-            panels.push('</ul>');
-
-            return labels.join('') + panels.join('');
-        },
-
-        /**
          * 处理选单点击事件
          *
          * @param {Object} args 从 Popup 传来的事件对象
@@ -90,40 +36,24 @@ define(function (require) {
             if (!e) {
                 return;
             }
-            var el     = e.target;
-            var tag    = el.tagName;
-            var target = this.target;
-            var index  = el.getAttribute('data-idx');
+            var target = $(e.target);
+            var tag    = target.prop('tagName');
+            var index  = target.data('idx');
+
+            var activeClassName = this.helper.getPartClassName(this.activeClass);
 
             switch (tag) {
-
                 case 'A':
                     e.preventDefault();
-
-                    if (el.className) {
-                        this.hide();
-                    }
-                    else {
-                        privates.pick.call(this, el);
-                    }
-
+                    target.hasClass(activeClassName)
+                        ? this.hide()
+                        : this.pick(e.target);
                     break;
-
                 case 'LI':
-
-                    if (index) {
-                        this.change(index);
-                    }
-
-                    break;
-
-                default:
-
-                    if (target) {
-                        target.select();
+                    if (index !== this.index) {
+                        this._changeTab(index);
                     }
                     break;
-
             }
 
             /**
@@ -143,6 +73,10 @@ define(function (require) {
          */
         onBeforeShow: function (arg) {
 
+            if (this.isDisabled()) {
+                return;
+            }
+
             /**
              * @event module:City#beforeShow
              * @type {Object}
@@ -152,45 +86,44 @@ define(function (require) {
 
             if (!this.labels) {
                 var popup = this.popup;
-                popup.content = privates.build.call(this);
-                popup.render();
-
-                var main    = this.main;
-                var list    = main.getElementsByTagName('ul');
+                popup.set('content', this._build(this.tabs));
+                var list    = popup.main.getElementsByTagName('ul');
                 this.labels = list[0].getElementsByTagName('li');
                 this.panels = list[1].getElementsByTagName('li');
             }
-        },
-        /**
-         * 选择城市
-         *
-         * @param {HTMLElement} el 点击的当前事件源对象
-         * @fires module:City#pick
-         * @private
-         */
-        pick: function (el) {
-            var value = el.innerHTML;
-            var target = this.target;
-
-            if (target) {
-                if (target.type) {
-                    target.value = value;
-                    target.focus();
-                }
-                else {
-                    target.innerHTML = value;
-                }
-            }
-
-            /**
-             * @event module:City#pick
-             * @type {Object}
-             * @property {string} value 选中的城市
-             */
-            this.fire('pick', { value: value });
-            this.hide();
         }
+
     };
+
+    var CITIES = [
+        '热门|'
+        + '上海,北京,广州,昆明,西安,成都,深圳,厦门,乌鲁木齐,南京,'
+        + '重庆,杭州,大连,长沙,海口,哈尔滨,青岛,沈阳,三亚,济南,'
+        + '武汉,郑州,贵阳,南宁,福州,天津,长春,石家庄,太原,兰州',
+        'A-G|'
+        + '安庆,阿勒泰,安康,鞍山,安顺,安阳,阿克苏,包头,蚌埠,北海,'
+        + '北京,百色,保山,博乐,长治,长春,长海,常州,昌都,朝阳,潮州,'
+        + '常德,长白山,成都,重庆,长沙,赤峰,大同,大连,达县,大足,东营,'
+        + '大庆,丹东,大理,敦煌,鄂尔多斯,恩施,二连浩特,佛山,福州,'
+        + '阜阳,富蕴,贵阳,桂林,广州,广元,赣州,格尔木,广汉,固原',
+        'H-L|'
+        + '呼和浩特,哈密,黑河,海拉尔,哈尔滨,海口,衡阳,黄山,杭州,'
+        + '邯郸,合肥,黄龙,汉中,和田,惠州,吉安,吉林,酒泉,鸡西,晋江,'
+        + '锦州,景德镇,嘉峪关,井冈山,济宁,九江,佳木斯,济南,喀什,'
+        + '昆明,康定,克拉玛依,库尔勒,喀纳斯,库车,兰州,洛阳,丽江,梁平,'
+        + '荔波,庐山,林芝,柳州,泸州,连云港,黎平,连城,拉萨,临沧,临沂',
+        'M-T|'
+        + '牡丹江,芒市,满洲里,绵阳,梅县,漠河,南京,南充,南宁,南阳,南通,'
+        + '那拉提,南昌,宁波,攀枝花,衢州,秦皇岛,庆阳,且末,齐齐哈尔,青岛,'
+        + '汕头,深圳,石家庄,三亚,沈阳,上海,思茅,鄯善,韶关,沙市,苏州,'
+        + '唐山,铜仁,通化,塔城,腾冲,台州,天水,天津,通辽,太原,吐鲁番',
+        'W-Z|'
+        + '威海,武汉,梧州,文山,无锡,潍坊,武夷山,乌兰浩特,温州,乌鲁木齐,'
+        + '芜湖,万州,乌海,兴义,西昌,厦门,香格里拉,西安,襄阳,西宁,'
+        + '锡林浩特,西双版纳,徐州,兴城,兴宁,邢台,义乌,永州,榆林,'
+        + '延安,运城,烟台,银川,宜昌,宜宾,盐城,延吉,玉树,伊宁,伊春,'
+        + '珠海,昭通,张家界,舟山,郑州,中卫,芷江,湛江,中甸,遵义'
+    ];
 
     /**
      * 国内城市选择控件
@@ -236,19 +169,8 @@ define(function (require) {
          * @private
          */
         options: {
-
-            // 提示框的不可用状态，默认为false。处于不可用状态的提示框不会出现。
-            disabled: false,
-
-            // 控件渲染主容器
-            main: '',
-
-
             // 计算弹出层相对位置的目标对象
             target: '',
-
-            // 控件class前缀，同时将作为main的class之一
-            prefix: 'ecl-hotel-ui-city',
 
             // 默认激活的标签索引
             index: 0,
@@ -264,14 +186,6 @@ define(function (require) {
         },
 
         /**
-         * 需要绑定 this 的方法名，多个方法以半角逗号分开
-         *
-         * @type {string}
-         * @private
-         */
-        binds: 'onClick,onBeforeShow',
-
-        /**
          * 控件初始化
          *
          * @param {Object} options 控件配置项
@@ -279,48 +193,73 @@ define(function (require) {
          * @private
          */
         init: function (options) {
-            this.disabled = options.disabled;
-            this.index    = options.index;
 
-            var tabs = this.tabs = [];
+            this.$parent(options);
 
-            if (options.autoFill) {
-                tabs.push('热门|'
-                        + '上海,北京,广州,昆明,西安,成都,深圳,厦门,乌鲁木齐,南京,'
-                        + '重庆,杭州,大连,长沙,海口,哈尔滨,青岛,沈阳,三亚,济南,'
-                        + '武汉,郑州,贵阳,南宁,福州,天津,长春,石家庄,太原,兰州');
+            var main = this.main;
 
-                tabs.push('A-G|'
-                        + '安庆,阿勒泰,安康,鞍山,安顺,安阳,阿克苏,包头,蚌埠,北海,'
-                        + '北京,百色,保山,博乐,长治,长春,长海,常州,昌都,朝阳,潮州,'
-                        + '常德,长白山,成都,重庆,长沙,赤峰,大同,大连,达县,大足,东营,'
-                        + '大庆,丹东,大理,敦煌,鄂尔多斯,恩施,二连浩特,佛山,福州,'
-                        + '阜阳,富蕴,贵阳,桂林,广州,广元,赣州,格尔木,广汉,固原');
-
-                tabs.push('H-L|'
-                        + '呼和浩特,哈密,黑河,海拉尔,哈尔滨,海口,衡阳,黄山,杭州,'
-                        + '邯郸,合肥,黄龙,汉中,和田,惠州,吉安,吉林,酒泉,鸡西,晋江,'
-                        + '锦州,景德镇,嘉峪关,井冈山,济宁,九江,佳木斯,济南,喀什,'
-                        + '昆明,康定,克拉玛依,库尔勒,喀纳斯,库车,兰州,洛阳,丽江,梁平,'
-                        + '荔波,庐山,林芝,柳州,泸州,连云港,黎平,连城,拉萨,临沧,临沂');
-
-                tabs.push('M-T|'
-                        + '牡丹江,芒市,满洲里,绵阳,梅县,漠河,南京,南充,南宁,南阳,南通,'
-                        + '那拉提,南昌,宁波,攀枝花,衢州,秦皇岛,庆阳,且末,齐齐哈尔,青岛,'
-                        + '汕头,深圳,石家庄,三亚,沈阳,上海,思茅,鄯善,韶关,沙市,苏州,'
-                        + '唐山,铜仁,通化,塔城,腾冲,台州,天水,天津,通辽,太原,吐鲁番');
-
-                tabs.push('W-Z|'
-                        + '威海,武汉,梧州,文山,无锡,潍坊,武夷山,乌兰浩特,温州,乌鲁木齐,'
-                        + '芜湖,万州,乌海,兴义,西昌,厦门,香格里拉,西安,襄阳,西宁,'
-                        + '锡林浩特,西双版纳,徐州,兴城,兴宁,邢台,义乌,永州,榆林,'
-                        + '延安,运城,烟台,银川,宜昌,宜宾,盐城,延吉,玉树,伊宁,伊春,'
-                        + '珠海,昭通,张家界,舟山,郑州,中卫,芷江,湛江,中甸,遵义');
+            // 如果主元素是一个input, 那么我们在它的外层做一次包裹
+            if (main && main.tagName === 'INPUT') {
+                var wrap = document.createElement('div');
+                var parent = main.parentNode;
+                if (parent) {
+                    parent.insertBefore(wrap, main);
+                }
+                wrap.appendChild(main);
+                this.input = main;
+                this.main = wrap;
             }
 
-            this.bindEvents(privates);
+            this.tabs = this.autoFill
+                ? CITIES.slice()
+                : [];
 
         },
+
+        initStructure: function () {
+
+            var main = $(this.main);
+            var input = this.input;
+
+            if (!input) {
+                input = this.input = $('<input type="text">')
+                    .appendTo(main)
+                    .get(0);
+            }
+
+            input.setAttribute('autocomplete', 'off');
+
+            if (this.name) {
+                input.name = this.name;
+            }
+
+            var popup = this.popup = new Popup({
+                target: input,
+                triggers: [input]
+            });
+
+            popup
+                .on('click', $.proxy(privates.onClick, this))
+                .on('beforeShow', $.proxy(privates.onBeforeShow, this))
+                .render();
+
+            this.helper.addPartClasses('popup', popup.main);
+        },
+
+        setReadOnly: function (isReadOnly) {
+            this.$parent(isReadOnly);
+            this.input.readOnly = !!isReadOnly;
+        },
+
+        repaint: require('./painter').createRepaint(
+            Control.prototype.repaint,
+            {
+                name: 'value',
+                paint: function (conf, value) {
+                    this.setValue(value);
+                }
+            }
+        ),
 
         /**
          * 填充城市标签数据
@@ -343,56 +282,37 @@ define(function (require) {
             return this;
         },
 
-
         /**
-         * 绘制控件
+         * 选择城市
          *
-         * @return {module:City} 当前实例
-         * @override
-         * @public
+         * @param {HTMLElement} el 点击的当前事件源对象
+         * @fires module:City#pick
+         * @private
          */
-        render: function () {
+        pick: function (el) {
+            var value = el.innerHTML;
 
-            var options = this.options;
+            var event = new $.Event({
+                type: 'pick',
+                target: this,
+                value: value
+            });
 
-            if (!this.rendered) {
-                this.rendered = true;
+            /**
+             * @event module:City#pick
+             * @type {Object}
+             * @property {string} value 选中的城市
+             */
+            this.fire(event);
 
-                var popup = this.popup = new Popup(this.srcOptions);
-                var bound = this._bound;
-
-                popup.on('click', $.proxy(bound.onClick, this));
-                popup.on('beforeShow', $.proxy(bound.onBeforeShow, this));
-
-                this.main = popup.main;
-
-                if (options.target) {
-                    this.setTarget(lib.g(options.target));
-                }
+            if (event.isDefaultPrevented()) {
+                return;
             }
 
-            return this;
-
-        },
-
-
-        /**
-         * 动态更新 target
-         *
-         * @param {HTMLElement} target 新的 target 节点
-         * @throws 如果 target 为非 Element 节点将抛出异常
-         * @public
-         */
-        setTarget: function (target) {
-            if (!target || target.nodeType !== 1) {
-                throw new Error('target 为 null 或非 Element 节点');
-            }
-
-            this.target = target;
-
-            if (this.popup) {
-                this.popup.target = target;
-            }
+            var input = this.input;
+            input.value = value;
+            input.focus();
+            this.hide();
         },
 
         /**
@@ -401,14 +321,11 @@ define(function (require) {
          * @param {number} i 要切换到的目标标签索引
          * @public
          */
-        change: function (i) {
-            var options     = this.options;
+        _changeTab: function (i) {
             var labels      = this.labels;
             var panels      = this.panels;
             var index       = this.index;
-            var activeClass = options.prefix + '-' + options.activeClass;
-
-            i |= 0;
+            var activeClass = this.helper.getPartClassName(this.activeClass);
 
             if (i !== index) {
 
@@ -450,17 +367,78 @@ define(function (require) {
          * @public
          */
         hide: function () {
-
             this.popup.hide();
 
             /**
              * @event module:City#hide
              */
             this.fire('hide');
+        },
+
+        /**
+         * 设定值
+         * @param {string} value 值
+         * @return {City}
+         */
+        setValue: function (value) {
+            this.input.value = value || '';
+            return this;
+        },
+
+        /**
+         * 获取值
+         * @return {string}
+         */
+        getValue: function () {
+            return this.input.value;
+        },
+
+        /**
+         * 构建选单HTML
+         *
+         * @private
+         */
+        _build: function (tabs) {
+            var helper  = this.helper;
+            var index   = this.index;
+            var labels  = [];
+            var panels  = [];
+
+            labels.push('<ul class="' + helper.getPartClassName('labels') + '">');
+            panels.push('<ul class="' + helper.getPartClassName('panels') + '">');
+
+            var comma = ',';
+            var hideCities = this.hideCities;
+            if (hideCities) {
+                hideCities = comma + hideCities.replace(/\s+/g, '') + comma;
+            }
+
+            var makeLinks = function (cities) {
+                return lib
+                    .map(cities.split(comma), function (city) {
+                        return !hideCities || !~hideCities.indexOf(comma + city + comma)
+                            ? '<a href="#" title="' + city + '">' + city + '</a>'
+                            : '';
+                    })
+                    .join('');
+            };
+
+            var activeClassName = helper.getPartClassName(this.activeClass);
+
+            lib.each(this.tabs, function (tab, i) {
+                var start = '<li data-idx="' + i + '" class="' + (i === index ? activeClassName : '') + '"';
+                tab = tab.split('|');
+                labels.push(start + '>' + tab[0] + '</li>');
+                panels.push(start + '>' + makeLinks(tab[1]) + '</li>');
+            });
+
+            labels.push('</ul>');
+            panels.push('</ul>');
+
+            return labels.join('') + panels.join('');
         }
 
     });
 
     return City;
 });
-
