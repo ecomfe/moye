@@ -6,7 +6,7 @@
 define(function (require) {
 
     var lib = require('../lib');
-    var main = require('../main')
+    var main = require('../main');
 
     /**
      * 将参数用`-`连接成字符串
@@ -19,10 +19,18 @@ define(function (require) {
         return [].slice.call(arguments, 0).join('-');
     }
 
+    // 自闭合的标签列表
+    var SELF_CLOSING_TAGS = {
+        area: true, base: true, br: true, col: true,
+        embed: true, hr: true, img: true, input: true,
+        keygen: true, link: true, meta: true, param: true,
+        source: true, track: true, wbr: true
+    };
+
     return {
         /**
          * 获取控件部件相关的class数组
-         * 
+         *
          * esui简化版本
          *
          * 如果不传递`part`参数，则生成如下：
@@ -41,10 +49,9 @@ define(function (require) {
         getPartClasses: function (part) {
 
             var control    = this.control;
-
             var type       = control.type.toLowerCase();
             var skin       = control.skin;
-            var prefix     = control.options.prefix || main.getConfig('uiClassPrefix');
+            var prefix     = main.getConfig('uiClassPrefix');
             var skinPrefix = main.getConfig('skinClassPrefix');
             var classes    = [];
 
@@ -52,7 +59,9 @@ define(function (require) {
                 classes.push(joinByStrike(prefix, type, part));
                 if (skin) {
                     for (var i = 0, len = skin.length; i < len; i++) {
-                        classes.push(joinByStrike(skinPrefix, skin[i], type, part));
+                        skin[i] && classes.push(
+                            joinByStrike(skinPrefix, skin[i], type, part)
+                        );
                     }
                 }
             }
@@ -60,7 +69,7 @@ define(function (require) {
                 classes.push(joinByStrike(prefix, type));
                 if (skin) {
                     for (var i = 0, len = skin.length; i < len; i++) {
-                        classes.push(
+                        skin[i] && classes.push(
                             joinByStrike(skinPrefix, skin[i]),
                             joinByStrike(skinPrefix, skin[i], type)
                         );
@@ -82,6 +91,27 @@ define(function (require) {
         },
 
         /**
+         * 获取控件部件相关的主class字符串
+         *
+         * 如果不传递`part`参数，则生成如下：
+         *
+         * - `ui-{styleType}`
+         *
+         * 如果有`part`参数，则生成如下：
+         *
+         * - `ui-{styleType}-{part}`
+         *
+         * @param {string} [part] 部件名称
+         * @return {string}
+         */
+        getPrimaryClassName: function (part) {
+            var type = this.control.type.toLowerCase();
+            return part
+                ? joinByStrike(main.getConfig('uiClassPrefix'), type, part)
+                : joinByStrike(main.getConfig('uiClassPrefix'), type);
+        },
+
+        /**
          * 添加控件部件相关的class，具体可参考{@link lib#getPartClasses}方法
          *
          * @param {string} [part] 部件名称
@@ -89,7 +119,7 @@ define(function (require) {
          */
         addPartClasses: function (part, element) {
 
-            if (lib.isString(element)) {
+            if (typeof element === 'string') {
                 element = this.getPart(element);
             }
 
@@ -99,7 +129,9 @@ define(function (require) {
                 return;
             }
 
-            $(element).addClass(this.getPartClassName(part));
+            var classes = this.getPartClassName(part);
+
+            $(element).addClass(classes);
 
         },
 
@@ -111,7 +143,7 @@ define(function (require) {
          */
         removePartClasses: function (part, element) {
 
-            if (lib.isString(element)) {
+            if (typeof element === 'string') {
                 element = this.getPart(element);
             }
 
@@ -121,7 +153,9 @@ define(function (require) {
                 return;
             }
 
-            $(element).removeClass(this.getPartClassName(part));
+            var classes = this.getPartClassName(part);
+
+            $(element).removeClass(classes);
 
         },
 
@@ -150,13 +184,13 @@ define(function (require) {
             if (skin) {
                 var skinPrefix = main.getConfig('skinClassPrefix');
                 for (var i = 0, len = skin.length; i < len; i++) {
-                    classes.push(
+                    skin[i] && classes.push(
                         joinByStrike(skinPrefix, skin[i], state),
                         joinByStrike(skinPrefix, skin[i], type, state)
                     );
                 }
+
             }
-            console.dir(classes);
             return classes;
         },
 
@@ -166,8 +200,8 @@ define(function (require) {
          * @param {string} [part] 部件名称
          * @return {string}
          */
-        getStateClassName: function (part) {
-            return this.getStateClasses(part).join(' ');
+        getStateClassName: function (state) {
+            return this.getStateClasses(state).join(' ');
         },
 
         /**
@@ -211,7 +245,7 @@ define(function (require) {
 
         /**
          * 获取用于控件DOM元素的id
-         * 
+         *
          * 控件ID: ctrl-{type}-{id}
          * 控件部件ID: ctrl-{type}-{id}-{part}
          * @param {string} [part] 部件名称，如不提供则生成控件主元素的id
@@ -220,10 +254,53 @@ define(function (require) {
         getPartId: function (part) {
             var control = this.control;
 
-            return '' 
-                + 'ctrl-' + control.type.toLowerCase() 
-                + '-' + control.id 
+            return ''
+                + 'ctrl-' + control.type.toLowerCase()
+                + '-' + control.id
                 + (part ? '-' + part : '');
+        },
+
+        /**
+         * 获取部件的起始标签
+         *
+         * @param {string} part 部件名称
+         * @param {string} nodeName 部件使用的元素类型
+         * @return {string}
+         */
+        getPartBeginTag: function (part, nodeName) {
+            var html = ''
+                + '<' + nodeName + ' '
+                +     'id="' + this.getPartId(part) + '" '
+                +     'class="' + this.getPartClassName(part) + '">';
+            return html;
+        },
+
+        /**
+         * 获取部件的结束标签
+         *
+         * @param {string} part 部件名称
+         * @param {string} nodeName 部件使用的元素类型
+         * @return {string}
+         */
+        getPartEndTag: function (part, nodeName) {
+            var html = SELF_CLOSING_TAGS.hasOwnProperty(nodeName)
+                ? ' />'
+                : '</' + nodeName + '>';
+            return html;
+        },
+
+        /**
+         * 获取部件的HTML模板
+         *
+         * @param {string} part 部件名称
+         * @param {string} nodeName 部件使用的元素类型
+         * @return {string}
+         */
+        getPartHTML: function (part, nodeName, content) {
+            nodeName = nodeName || 'div';
+            return this.getPartBeginTag(part, nodeName)
+                + (content || '')
+                + this.getPartEndTag(part, nodeName);
         },
 
         /**
@@ -232,12 +309,14 @@ define(function (require) {
          * @param {string} part 部件名称
          * @param {string} [nodeName="div"] 使用的元素类型
          */
-        createPart: function (part, nodeName) {
+        createPart: function (part, nodeName, content) {
             var element = document.createElement(nodeName || 'div');
             element.id = this.getPartId(part);
             this.addPartClasses(part, element);
+            element.innerHTML = content;
             return element;
         }
+
     };
 });
 
