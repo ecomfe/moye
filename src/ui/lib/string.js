@@ -56,6 +56,35 @@ define(function (require) {
             source = seperator + source + seperator;
             target = seperator + $.trim(target) + seperator;
             return source.indexOf(target) > -1;
+        },
+
+        /**
+         * 对目标数字进行 0 补齐处理
+         *
+         * @param {number|string} source 需要补齐的数字或字符串
+         * @param {number} width 补齐后的固定宽度（必须小于32）
+         * @return {string} 补齐后的字符串
+         */
+        pad: function (source, width) {
+
+            // 把正负号取出来
+            var sign = source < 0 ? '-' : '';
+
+            // 我们只针对数字部分做处理
+            var str = Math.abs(parseInt(source, 10)) + '';
+
+            // 缓存长度
+            var len = str.length;
+
+            width = +width || 2;
+
+            // 如果当前长度不足做一下补全
+            // 生成一个10000这样的数字, 0的个数是补全的位数. 然后把1去掉, 接上原有的数字即可.
+            if (len < width) {
+                str = (1 << (width - len)).toString(2).slice(1) + str;
+            }
+
+            return sign + str;
         }
 
     };
