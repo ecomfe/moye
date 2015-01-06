@@ -67,6 +67,29 @@ define(function (require) {
 
         },
 
+        map: function (obj, iterator, context) {
+
+            var i;
+            var length = obj.length;
+            var result = [];
+
+            if (length === +length) {
+                for (i = 0; i < length; i++) {
+                    result[i] = iterator.call(context, obj[i], i, obj);
+                }
+            }
+            else {
+                var keys = exports.keys(obj);
+                for (i = 0, length = keys.length; i < length; i++ ) {
+                    var key = keys[i];
+                    result.push(iterator.call(context, obj[key], key, obj));
+                }
+            }
+
+            return result;
+
+        },
+
         keys: Object.keys
             ? Object.keys
             : function (obj) {
