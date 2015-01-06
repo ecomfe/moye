@@ -8,7 +8,6 @@ define(function (require) {
     var $ = require('jquery');
     var object = require('./object');
     var TYPE = require('./type');
-    var Event = require('./Event').Event;
 
     return {
 
@@ -157,7 +156,7 @@ define(function (require) {
                 var event;
 
                 // 重载: fire(Event)
-                if (type instanceof Event || type instanceof $.Event) {
+                if (type instanceof $.Event) {
                     event = type;
                     type = event.type;
                 }
@@ -165,7 +164,7 @@ define(function (require) {
                 else {
                     args = args || {};
                     args.type = type;
-                    event = new Event(args);
+                    event = new $.Event(args);
                 }
 
                 // 如果没指定target, 那么谁fire, 谁是target~
