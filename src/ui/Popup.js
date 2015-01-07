@@ -12,7 +12,6 @@ define(function (require) {
     var $ = require('jquery');
     var lib = require('./lib');
     var Control = require('./Control');
-    var painter = require('./painter');
 
     /**
      * 私有函数或方法
@@ -28,27 +27,21 @@ define(function (require) {
          *
          * @private
          */
-        onResize: function () {
+        onWindowResize: function () {
             clearTimeout(this._resizeTimer);
-
-            var me = this;
-
-            this._resizeTimer = setTimeout(function () {
-                me.show();
-            }, 100);
+            this._resizeTimer = setTimeout($.proxy(this.show, this), 100);
         },
 
         /**
-         * 显示浮层前处理
+         * 当挂接目标被点击时处理函数
          *
          * @param {Event} e DOM 事件对象
          * @fires module:Popup#beforeShow 显示前事件
          * @private
          */
-        onShow: function (e) {
+        onTargetClick: function (e) {
 
-
-            if (this._disabled) {
+            if (this.isDisabled()) {
                 return;
             }
 
@@ -73,7 +66,7 @@ define(function (require) {
             var liveTriggers = this.liveTriggers;
 
             if (liveTriggers) {
-                var cls = this.options.triggers;
+                var cls = this.triggers;
                 while (!$trigger.hasClass(cls)) {
                     if ($.inArray(trigger, this.liveTriggers) !== -1) {
                         break;
@@ -86,36 +79,31 @@ define(function (require) {
             }
 
             /**
-             * @event module:Popup#beforeShow
+             * @event module:Popup#show
              * @type {Object}
-             * @property {Event} event 事件源对象
              */
-            this.fire('beforeShow', { event: e });
+            var event = new $.Event({
+                type: 'show'
+            });
+
+            this.fire(event);
+
+            // 如果没有被阻止, 那么显示~
+            if (event.isDefaultPrevented()) {
+                return;
+            }
 
             this.show();
-
             this.trigger = trigger;
-
-            var guid = this.guid;
-            var bound = this._bound;
-
-            this._timer = setTimeout(function () {
-
-                // 这里使用了guid作为事件类型的namespace
-                // 因为这里貌似有个问题，off的时候会把document上的所有click都给干掉
-                // 只能用namespace来加以区分，来能避免多个popup之间钩子的干扰
-                $(document).on('click.' + guid, bound.onHide);
-                $(window).on('resize.' + guid, bound.onResize);
-
-            }, 0);
         },
 
         /**
          * 隐藏浮层前处理
          *
          * @private
+         * @param {Event} e 隐藏浮层事件
          */
-        onHide: function (e) {
+        onDocumentClicked: function (e) {
             var target = e.target;
             var main   = this.main;
 
@@ -123,26 +111,289 @@ define(function (require) {
                 return;
             }
 
-            this.hide();
+            var event = new $.Event({
+                type: 'hide'
+            });
 
+            this.fire(event);
+
+            if (event.isDefaultPrevented()) {
+                return;
+            }
+
+            this.hide();
+            clearTimeout(this._resizeTimer);
+        },
+
+        /**
+         * 浮层哟, 被点击了呢~
+         * @param  {Event} e 点击事件
+         */
+        onClick: function (e) {
+            /**
+             * @event module:Popup#click
+             * @type {Object}
+             * @property {Event} event 事件源对象
+             */
+            this.fire(e);
+        }
+
+    };
+
+    /**
+     * 弹出层控件
+     *
+     * @extends module:Control
+     * @requires lib
+     * @requires Control
+     * @exports Popup
+     * @see module:City
+     * @see module:Calendar
+     */
+    var Popup = Control.extend(/** @lends module:Popup.prototype */{
+
+        /**
+         * 控件类型标识
+         *
+         * @type {string}
+         * @private
+         */
+        type: 'Popup',
+
+        /**
+         * 控件配置项
+         *
+         * @name module:Popup#options
+         * @type {Object}
+         * @property {boolean} disabled 控件的不可用状态
+         * @property {(string | HTMLElement)} main 控件渲染容器
+         * @property {(string | HTMLElement)} target 计算弹出层相对位置的目标对象
+         * @property {string | Array.<HTMLElement>} triggers 触发显示弹出层的节点
+         * 当指定了 liveTriggers 时只能用 string 类型指定 class
+         * @property {string | HTMLElement} liveTriggers 动态 triggers 的父元素节点
+         * @property {string} content 提示的内容信息
+         * @property {string} dir 弹出层相对 target 的位置，支持8个方向
+         * 可选值（默认为 bl）：
+         * tr | rt | rb | br | bl | lb | lt | tl | tc | rc | bc | lc
+         * 也可通过在 triggers 上设置 data-popup来指定
+         * @property {string} prefix 控件class前缀，同时将作为main的class之一
+         * @property {Object.<string, number>} offset 弹出层显示的偏移量
+         * @property {number} offset.x x 轴方向偏移量
+         * @property {number} offset.y y轴方向偏移量
+         * @private
+         */
+        options: {
+
+            /**
+             * 提示框的不可用状态，默认为false。处于不可用状态的提示框不会出现。
+             *
+             * @type {boolean}
+             * @default
+             */
+            disabled: false,
+
+            /**
+             * 计算弹出层相对位置的目标对象
+             *
+             * @type {(string | HTMLElement)}
+             */
+            target: '',
+
+            /**
+             * 触发显示弹出层的节点class
+             *
+             * 当指定了 liveTriggers 时只能用 string 类型指定 class
+             *
+             * @type {string | Array.<HTMLElement>}
+             */
+            triggers: '',
+
+            /**
+             * 动态 triggers 的父元素节点
+             *
+             * @type {string | HTMLElement}
+             */
+            liveTriggers: '',
+
+            /**
+             * 显示的内容
+             *
+             * @type {string}
+             */
+            content: '',
+
+            /**
+             * 弹出层显示在 trigger 的相对位置
+             *
+             * 可选值：tr | rt | rb | br | bl | lb | lt | tl | tc | rc | bc | lc
+             * 也可通过在 triggers 上设置 data-popup来指定
+             *
+             * @type {string}
+             * @defaultvalue
+             */
+            dir: 'bl',
+
+            /**
+             * 弹出模式
+             * 可选值: click | over
+             * @type {String}
+             */
+            mode: 'click',
+
+            /**
+             * 浮层显示的偏移量
+             *
+             * @type {string}
+             */
+            offset: {
+
+                /**
+                 * x 轴方向偏移量
+                 *
+                 * @type {number}
+                 * @defaultvalue
+                 */
+                x: 0,
+
+                /**
+                 * y 轴方向偏移量
+                 *
+                 * @type {string}
+                 * @defaultvalue
+                 */
+                y: 0
+            }
+        },
+
+
+        /**
+         * 控件初始化
+         *
+         * @param {Object} options 配置项
+         * @see module:Popup#options
+         * @private
+         */
+        init: function (options) {
+            if (options.target) {
+                this.target = lib.g(options.target);
+            }
+            if (!options.content) {
+                this.content = this.main.innerHTML;
+            }
+            this.$parent(options);
+        },
+
+        initStructure: function () {
+            $(this.main)
+                .appendTo(document.body)
+                .css('left', '-2000px')
+                .html(this.content || this.main.innerHTML);
+        },
+
+        initEvents: function () {
+            var triggers = this._resolveTriggers(this.liveTriggers || this.triggers);
+            this.delegate(triggers, 'click', privates.onTargetClick);
+            this.triggers = triggers.toArray();
+            this.delegate(this.main, 'click', privates.onClick);
+        },
+
+        repaint: require('./painter').createRepaint(
+            Control.prototype.repaint,
+            {
+                name: 'content',
+                paint: function (conf, content) {
+                    this.main.innerHTML = content || '';
+                }
+            },
+            {
+                name: ['triggers', 'liveTriggers'],
+                paint: function (conf, triggers, liveTriggers) {
+                    if (this.triggers) {
+                        this.undelegate(this.triggers, 'click', privates.onTargetClick);
+                    }
+                    triggers = this._resolveTriggers(liveTriggers || triggers);
+                    this.delegate(triggers, 'click', privates.onTargetClick);
+                    this.triggers = triggers.toArray();
+                }
+            }
+        ),
+
+        /**
+         * 设定挂靠的Element
+         * @param {Element} target 挂靠元素
+         * @return {Popup}
+         */
+        setTarget: function (target) {
+            this.target = target;
+            return this;
+        },
+
+        /**
+         * 解析触发器配置为jquery对象
+         * @param  {string|Array.Element} triggers 触发器配置
+         * @return {jQuery}
+         */
+        _resolveTriggers: function (triggers) {
+            // 这里做一个优先级取舍, liveTriggers优先于triggers
+            // 如果有liveTriggers, 那么就舍弃triggers
+            return triggers = lib.isString(triggers)
+                ? $('.' + triggers)
+                : $(triggers);
+        },
+
+        /**
+         * 显示浮层
+         *
+         * @fires module:Popup#show 显示事件
+         * @public
+         */
+        show: function () {
+            var me = this;
+            // 算好自己的位置
+            me._computePosition.call(me);
+
+            // 做一个延迟绑定, 如果直接给绑定上, 这次点击还会继续冒泡上来
+            // 正好丢到了这个新绑定上, 就会有额外的问题, 比如给隐藏了
+            me._timer = setTimeout(function () {
+                me.delegate(document, 'click', privates.onDocumentClicked);
+                me.delegate(window, 'resize', privates.onWindowResize);
+            }, 0);
+        },
+
+        /**
+         * 隐藏浮层
+         *
+         * @fires module:Popup#hide 隐藏事件
+         * @public
+         */
+        hide: function () {
+            // 把自己飞走
+            $(this.main).css('left', '-2000px');
+
+            // 取消全局事件的绑定
+            this.undelegate(document, 'click', privates.onDocumentClicked);
+            this.undelegate(window, 'resize', privates.onWindowResize);
+
+            // 清理各种闹钟
+            clearTimeout(this._timer);
             clearTimeout(this._resizeTimer);
         },
 
         /**
          * 计算浮层及箭头显示位置
          *
-         * @private
+         * @protected
          */
-        computePosition: function () {
-            var options      = this.options;
+        _computePosition: function () {
+
             var target       = $(this.target || this.triggers[0]);
             var main         = $(this.main);
-            var dir          = options.dir;
+            var dir          = this.dir;
             var position     = target.offset();
 
             // 目标的8个关键坐标点
-            var top = position.top;
-            var left = position.left;
+            var top          = position.top;
+            var left         = position.left;
             var width        = target.outerWidth();  // target[0].offsetWidth;
             var height       = target.outerHeight(); // target[0].offsetHeight;
             var right        = left + width;
@@ -226,10 +477,10 @@ define(function (require) {
                 second = dir.charAt(1);
             }
 
-            var offset = options.offset;
+            var offset = this.offset;
 
             // 提示层在目标上部或下部显示时的定位处理
-            if ({ t: 1, b: 1 }[first]) {
+            if ({t: 1, b: 1}[first]) {
                 left = {
                     l: left,
                     c: center - (mainWidth / 2),
@@ -244,7 +495,7 @@ define(function (require) {
             }
 
             // 提示层在目标左边或右边显示时的定位处理
-            else if ({ l: 1, r: 1 }[first]) {
+            else if ({l: 1, r: 1}[first]) {
                 top = {
                     t: top,
                     c: middle - (mainHeight / 2),
@@ -265,254 +516,6 @@ define(function (require) {
                 }
             );
 
-        }
-    };
-
-    /**
-     * 弹出层控件
-     *
-     * @extends module:Control
-     * @requires lib
-     * @requires Control
-     * @exports Popup
-     * @see module:City
-     * @see module:Calendar
-     */
-    var Popup = Control.extend(/** @lends module:Popup.prototype */{
-
-        /**
-         * 控件类型标识
-         *
-         * @type {string}
-         * @private
-         */
-        type: 'Popup',
-
-        /**
-         * 控件配置项
-         *
-         * @name module:Popup#options
-         * @type {Object}
-         * @property {boolean} disabled 控件的不可用状态
-         * @property {(string | HTMLElement)} main 控件渲染容器
-         * @property {(string | HTMLElement)} target 计算弹出层相对位置的目标对象
-         * @property {string | Array.<HTMLElement>} triggers 触发显示弹出层的节点
-         * 当指定了 liveTriggers 时只能用 string 类型指定 class
-         * @property {string | HTMLElement} liveTriggers 动态 triggers 的父元素节点
-         * @property {string} content 提示的内容信息
-         * @property {string} dir 弹出层相对 target 的位置，支持8个方向
-         * 可选值（默认为 bl）：
-         * tr | rt | rb | br | bl | lb | lt | tl | tc | rc | bc | lc
-         * 也可通过在 triggers 上设置 data-popup来指定
-         * @property {string} prefix 控件class前缀，同时将作为main的class之一
-         * @property {Object.<string, number>} offset 弹出层显示的偏移量
-         * @property {number} offset.x x 轴方向偏移量
-         * @property {number} offset.y y轴方向偏移量
-         * @private
-         */
-        options: {
-
-            /**
-             * 提示框的不可用状态，默认为false。处于不可用状态的提示框不会出现。
-             *
-             * @type {boolean}
-             * @default
-             */
-            disabled: false,
-
-            /**
-             * 控件渲染主容器
-             *
-             * @type {(string | HTMLElement)}
-             */
-            main: '',
-
-            /**
-             * 计算弹出层相对位置的目标对象
-             *
-             * @type {(string | HTMLElement)}
-             */
-            target: '',
-
-            /**
-             * 触发显示弹出层的节点class
-             *
-             * 当指定了 liveTriggers 时只能用 string 类型指定 class
-             *
-             * @type {string | Array.<HTMLElement>}
-             */
-            triggers: '',
-
-            /**
-             * 动态 triggers 的父元素节点
-             *
-             * @type {string | HTMLElement}
-             */
-            liveTriggers: '',
-
-            /**
-             * 显示的内容
-             *
-             * @type {string}
-             */
-            content: '',
-
-            /**
-             * 弹出层显示在 trigger 的相对位置
-             *
-             * 可选值：tr | rt | rb | br | bl | lb | lt | tl | tc | rc | bc | lc
-             * 也可通过在 triggers 上设置 data-popup来指定
-             *
-             * @type {string}
-             * @defaultvalue
-             */
-            dir: 'bl',
-
-            /**
-             * 浮层显示的偏移量
-             *
-             * @type {string}
-             */
-            offset: {
-
-                /**
-                 * x 轴方向偏移量
-                 *
-                 * @type {number}
-                 * @defaultvalue
-                 */
-                x: 0,
-
-                /**
-                 * y 轴方向偏移量
-                 *
-                 * @type {string}
-                 * @defaultvalue
-                 */
-                y: 0
-            }
-        },
-
-
-        /**
-         * 控件初始化
-         *
-         * @param {Object} options 配置项
-         * @see module:Popup#options
-         * @private
-         */
-        init: function (options) {
-            this._disabled = options.disabled;
-            this.content = options.content;
-            this.bindEvents(privates);
-            if (options.target) {
-                this.target = lib.g(options.target);
-            }
-        },
-
-        /**
-         * 初始化DOM结构
-         */
-        initStructure: function () {
-            var options = this.srcOptions;
-            // 如果是我们自己生成的main，那么把它放到dom树上，加上左漂样式
-            if (!options.main) {
-                $(this.main).css('left', '-2000px').appendTo(document.body);
-            }
-            return this;
-        },
-
-        /**
-         * 初始化事件绑定
-         */
-        initEvents: function () {
-
-            var me           = this;
-            var options      = me.options;
-            var triggers     = options.triggers;
-            var liveTriggers = options.liveTriggers;
-            var bound        = this._bound;
-
-            if (liveTriggers) {
-                liveTriggers = lib.isString(liveTriggers)
-                    ? '.' + liveTriggers
-                    : liveTriggers;
-                this.liveTriggers = $(liveTriggers)
-                    .on('click', bound.onShow)
-                    .toArray();
-            }
-            else {
-                triggers = lib.isString(triggers)
-                    ? '.' + triggers
-                    : triggers;
-                this.triggers = $(triggers)
-                    .on('click', bound.onShow)
-                    .toArray();
-            }
-
-            $(this.main).on('click', function (e) {
-
-                /**
-                 * @event module:Popup#click
-                 * @type {Object}
-                 * @property {Event} event 事件源对象
-                 */
-                me.fire('click', { event: e });
-            });
-
-            return this;
-        },
-
-        repaint: painter.createRepaint([{
-            name: ['content'],
-            paint: function (conf, content) {
-                this.setContent(content);
-            }
-        }]),
-
-        setContent: function (content) {
-            $(this.main).html(content || '');
-        },
-
-        /**
-         * 显示浮层
-         *
-         * @fires module:Popup#show 显示事件
-         * @public
-         */
-        show: function () {
-            privates.computePosition.call(this);
-
-            /**
-             * @event module:Popup#show
-             */
-            this.fire('show');
-        },
-
-        /**
-         * 隐藏浮层
-         *
-         * @fires module:Popup#hide 隐藏事件
-         * @public
-         */
-        hide: function () {
-            this.main.style.left = '-2000px';
-
-            /**
-             * @event module:Popup#hide
-             */
-            this.fire('hide');
-
-            var bound = this._bound;
-
-            // 这里使用了guid作为事件类型的namespace
-            // 因为这里貌似有个问题，off的时候会把document上的所有click都给干掉
-            // 只能用namespace来加以区分，来能避免多个popup之间钩子的干扰
-            $(document).off('click.' + this.guid, bound.onHide);
-            $(window).off('resize.' + this.guid, bound.onResize);
-
-            clearTimeout(this._timer);
-            clearTimeout(this._resizeTimer);
         }
 
     });

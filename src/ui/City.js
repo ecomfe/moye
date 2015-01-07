@@ -13,88 +13,6 @@ define(function (require) {
     var Control = require('./Control');
     var Popup = require('./Popup');
 
-    /**
-     * 私有函数或方法
-     *
-     * @type {Object}
-     * @namespace
-     * @name module:City~privates
-     */
-    var privates = /** @lends module:City~privates */ {
-
-
-        /**
-         * 处理选单点击事件
-         *
-         * @param {Object} args 从 Popup 传来的事件对象
-         * @fires module:City#click 点击事件
-         * @private
-         */
-        onClick: function (args) {
-            var e = args.event;
-
-            if (!e) {
-                return;
-            }
-            var target = $(e.target);
-            var tag    = target.prop('tagName');
-            var index  = target.data('idx');
-
-            var activeClassName = this.helper.getPartClassName(this.activeClass);
-
-            switch (tag) {
-                case 'A':
-                    e.preventDefault();
-                    target.hasClass(activeClassName)
-                        ? this.hide()
-                        : this.pick(e.target);
-                    break;
-                case 'LI':
-                    if (index !== this.index) {
-                        this._changeTab(index);
-                    }
-                    break;
-            }
-
-            /**
-             * @event module:City#click
-             * @type {Object}
-             * @property {DOMEvent} event 事件源对象
-             */
-            this.fire('click', args);
-        },
-
-        /**
-         * 转发Popup的onBeforeShow事件
-         *
-         * @param {Object} arg 事件参数
-         * @fires module:City#beforeShow 显示前事件
-         * @private
-         */
-        onBeforeShow: function (arg) {
-
-            if (this.isDisabled()) {
-                return;
-            }
-
-            /**
-             * @event module:City#beforeShow
-             * @type {Object}
-             * @property {Event} event 事件源对象
-             */
-            this.fire('beforeShow', arg);
-
-            if (!this.labels) {
-                var popup = this.popup;
-                popup.set('content', this._build(this.tabs));
-                var list    = popup.main.getElementsByTagName('ul');
-                this.labels = list[0].getElementsByTagName('li');
-                this.panels = list[1].getElementsByTagName('li');
-            }
-        }
-
-    };
-
     var CITIES = [
         '热门|'
         + '上海,北京,广州,昆明,西安,成都,深圳,厦门,乌鲁木齐,南京,'
@@ -148,7 +66,7 @@ define(function (require) {
          * 控件类型标识
          *
          * @type {string}
-         * @private
+         * @protected
          */
         type: 'City',
 
@@ -166,11 +84,9 @@ define(function (require) {
          * @property {string} activeClass 激活标签、内容的class
          * @property {boolean} autoFill 是否自动填充默认城市数据(机票可用城市数据)
          * @property {?string} hideCities 需要隐藏的城市
-         * @private
+         * @protected
          */
         options: {
-            // 计算弹出层相对位置的目标对象
-            target: '',
 
             // 默认激活的标签索引
             index: 0,
@@ -190,7 +106,7 @@ define(function (require) {
          *
          * @param {Object} options 控件配置项
          * @see module:City#options
-         * @private
+         * @protected
          */
         init: function (options) {
 
@@ -236,14 +152,15 @@ define(function (require) {
             var popup = this.popup = new Popup({
                 target: input,
                 triggers: [input]
-            });
-
-            popup
-                .on('click', $.proxy(privates.onClick, this))
-                .on('beforeShow', $.proxy(privates.onBeforeShow, this))
-                .render();
+            }).render();
 
             this.helper.addPartClasses('popup', popup.main);
+        },
+
+        initEvents: function () {
+            this.popup
+                .on('click', $.proxy(this._onPopupClick, this))
+                .on('show', $.proxy(this._onPopupShow, this));
         },
 
         setReadOnly: function (isReadOnly) {
@@ -287,9 +204,9 @@ define(function (require) {
          *
          * @param {HTMLElement} el 点击的当前事件源对象
          * @fires module:City#pick
-         * @private
+         * @protected
          */
-        pick: function (el) {
+        _pick: function (el) {
             var value = el.innerHTML;
 
             var event = new $.Event({
@@ -313,6 +230,9 @@ define(function (require) {
             input.value = value;
             input.focus();
             this.hide();
+
+            // 释放一个`change`事件
+            this.fire('change');
         },
 
         /**
@@ -348,16 +268,7 @@ define(function (require) {
          * @public
          */
         show: function (target) {
-
             this.popup.show();
-
-            /**
-             * @event module:City#show
-             * @type {Object}
-             * @property {?HTMLElement=} target 触发显示浮层的节点
-             */
-            this.fire('show', { target: target });
-
         },
 
         /**
@@ -368,11 +279,6 @@ define(function (require) {
          */
         hide: function () {
             this.popup.hide();
-
-            /**
-             * @event module:City#hide
-             */
-            this.fire('hide');
         },
 
         /**
@@ -394,9 +300,80 @@ define(function (require) {
         },
 
         /**
+         * 处理选单点击事件
+         *
+         * @param {Object} e Popup的`click`事件对象
+         * @fires module:City#click 点击事件
+         * @protected
+         */
+        _onPopupClick: function (e) {
+
+            var target = $(e.target);
+            var tag    = target.prop('tagName');
+            var index  = target.data('idx');
+
+            var activeClassName = this.helper.getPartClassName(this.activeClass);
+
+            switch (tag) {
+                case 'A':
+                    e.preventDefault();
+                    target.hasClass(activeClassName)
+                        ? this.hide()
+                        : this._pick(e.target);
+                    break;
+                case 'LI':
+                    if (index !== this.index) {
+                        this._changeTab(index);
+                    }
+                    break;
+            }
+
+        },
+
+        /**
+         * 转发Popup的onPopupShow事件
+         *
+         * @param {Object} e `Popup`的`show`事件
+         * @fires module:City#show
+         * @protected
+         */
+        _onPopupShow: function (e) {
+
+            if (this.isDisabled()) {
+                return;
+            }
+
+            var event = new $.Event({
+                type: 'show'
+            });
+
+            /**
+             * @event module:City#beforeShow
+             * @type {Object}
+             * @property {Event} event 事件源对象
+             */
+            this.fire(event);
+
+            if (event.isDefaultPrevented()) {
+                e.preventDefault();
+                return;
+            }
+
+            if (!this.labels) {
+                var popup = this.popup;
+                popup.set('content', this._build(this.tabs));
+                var list = popup.main.getElementsByTagName('ul');
+                this.labels = list[0].getElementsByTagName('li');
+                this.panels = list[1].getElementsByTagName('li');
+            }
+        },
+
+        /**
          * 构建选单HTML
          *
-         * @private
+         * @protected
+         * @param {Array.Object} tabs 标签配置
+         * @return {string}
          */
         _build: function (tabs) {
             var helper  = this.helper;

@@ -8,10 +8,11 @@
 
 define(function (require) {
 
-    var $ = require('jquery');
-    var lib = require('./lib');
+    var $       = require('jquery');
+    var lib     = require('./lib');
     var Control = require('./Control');
-    var Popup = require('./Popup');
+    var Popup   = require('./Popup');
+    var pad     = lib.pad;
 
     /**
      * 标准日期格式
@@ -20,569 +21,10 @@ define(function (require) {
      * @type {string}
      */
     var DATE_FORMAT = 'yyyy-MM-dd';
-
-
-    /**
-     * 补齐数字位数
-     *
-     * @param {(number | string)} n 需要补齐的数字
-     * @return {string} 补齐两位后的字符
-     * @inner
-     */
-    function pad(n) {
-        return (n > 9 ? '' : '0') + n;
-    }
-
+    var RANGE = null;
 
     /**
-     * 每个月的HTML缓存
-     *
-     * @type {Object}
-     */
-    var cache = {};
-
-
-    /**
-     * 私有函数或方法
-     *
-     * @type {Object}
-     * @namespace
-     * @name module:Calendar~privates
-     */
-    var privates = /** @lends module:Calendar~privates */ {
-
-        /**
-         * 处理选单点击事件
-         *
-         * @param {Object} args 从 Popup 传来的事件对象
-         * @private
-         */
-        onClick: function (args) {
-            var e = args.event;
-
-            if (!e) {
-                return;
-            }
-
-            var target = this.target;
-            var helper = this.helper;
-            var el = $(e.target).closest('A', this.main);
-            var tag = el.prop('tagName');
-
-            switch (tag) {
-
-                case 'A':
-                    e.preventDefault();
-
-                    var preClass  = helper.getPartClassName('pre');
-                    var nextClass = helper.getPartClassName('next');
-                    var disabledClass  = helper.getPartClassName('disabled');
-
-                    // 上月操作
-                    if (el.hasClass(preClass)) {
-                        privates.showPreMonth.call(this);
-                        e.stopPropagation();
-                    }
-                    // 下月操作
-                    else if (el.hasClass(nextClass)) {
-                        privates.showNextMonth.call(this);
-                        e.stopPropagation();
-                    }
-                    else if (!el.hasClass(disabledClass)) {
-                        el.attr('data-date') && privates.pick.call(this, el[0]);
-                    }
-
-                    break;
-
-                default:
-
-                    if (target) {
-                        target.select();
-                    }
-
-                    break;
-
-            }
-
-            this.fire('click', args);
-        },
-
-        /**
-         * 转发Popup的onBeforeShow事件
-         *
-         * @param {Object} arg 事件参数
-         * @fires module:Calendar#beforeShow
-         * @private
-         */
-        onBeforeShow: function (arg) {
-
-            /**
-             * @event module:Calendar#beforeShow
-             * @type {Object}
-             * @property {DOMEvent} event 事件源对象
-             */
-            this.fire('beforeShow', arg);
-
-            var popup  = this.popup;
-            var target = this.target;
-            var value  = target.value;
-
-            if (value) {
-                value = this.from(value);
-                this.value = this.format(value);
-            }
-
-            if (!popup.content) {
-                this.date = this.from(value || this.value);
-                privates.build.call(this);
-            }
-
-            var lastDate   = this.lastDate || '';
-            var lastTarget = this.lastTarget;
-            var current    = privates.getYYYYMM.call(this, this.date);
-            var yM         = privates.getYYYYMM.call(this, value);
-
-            if (
-                lastDate
-                && lastDate !== this.format(value)
-                || current !== yM
-            ) {
-                this.date = this.from(value || this.value);
-
-                lastDate = lastDate && privates.getYYYYMM.call(this, lastDate);
-                if (lastDate !== yM || current !== yM) {
-                    privates.build.call(this);
-                }
-                else {
-                    privates.updateStatus.call(this);
-                }
-            }
-            else if (value !== lastDate || target !== lastTarget) {
-                privates.updateStatus.call(this);
-            }
-        },
-
-
-        /**
-         * 监听 module:Popup 的隐藏事件
-         *
-         * @fires module:Calendar#hide 隐藏事件
-         * @private
-         */
-        onHide: function () {
-
-            /**
-             * @event module:Calendar#hide
-             */
-            this.fire('hide');
-        },
-
-
-        /**
-         * 切换到上个月
-         *
-         * @private
-         */
-        showPreMonth: function () {
-            var date = this.date;
-            date.setDate(0);
-            privates.build.call(this, date);
-        },
-
-        /**
-         * 切换到下个月
-         *
-         * @private
-         */
-        showNextMonth: function () {
-            var date = this.date;
-
-            date.setDate(1);
-            date.setMonth(date.getMonth() + 1);
-
-            privates.build.call(this, date);
-        },
-
-        /* jshint boss: true */
-        /**
-         * 根据选择的日期和当前日期更新每个日期的状态
-         *
-         * @private
-         */
-        updateStatus: function () {
-            var options = this.options;
-            var process = options.process;
-            var first   = options.first;
-            var now     = new Date();
-            var current = this.format(this.value);
-            var helper  = this.helper;
-
-            var checkedValue = this.target.value
-                && this.format(this.from(this.value), DATE_FORMAT);
-
-            var nowValue     = this.format(now, DATE_FORMAT);
-            var currentValue = this.format(current, DATE_FORMAT);
-            var range        = this.range;
-            var min          = '';
-            var max          = '9999-12-31';
-
-            if (range) {
-                min = range.begin
-                    && this.format(range.begin, DATE_FORMAT)
-                    || min;
-                max = range.end
-                    && this.format(range.end, DATE_FORMAT)
-                    || max;
-            }
-
-            var preClass     = helper.getPartClassName('pre-month');
-            var nextClass    = helper.getPartClassName('next-month');
-            var disClass     = helper.getPartClassName('disabled');
-            var todayClass   = helper.getPartClassName('today');
-            var checkedClass = helper.getPartClassName('checked');
-            var weekendClass = helper.getPartClassName('weekend');
-            var currentClass = helper.getPartClassName('current');
-
-            var monthes = this.main.getElementsByTagName('p');
-            var i;
-            var len;
-            var j;
-            var day;
-            var days;
-            var klass;
-            var value;
-            var className;
-            var inRange;
-
-            for (i = 0, len = monthes.length; i < len; i++) {
-                days  = monthes[i].getElementsByTagName('a');
-
-                for (j = 0; day = days[j]; j++) {
-                    klass     = [];
-                    value     = day.getAttribute('data-date');
-                    className = day.className;
-                    inRange   = true;
-
-                    if (range && (value < min || value > max)) {
-                        klass.push(disClass);
-                        inRange = false;
-                    }
-
-                    var mod = j % 7;
-                    if (
-                        mod === 6
-                        ||  first && mod === 5
-                        || !first && mod === 0
-                    ) {
-                        klass.push(weekendClass);
-                    }
-
-                    if (~className.indexOf(preClass)) {
-                        klass.push(preClass);
-                    }
-                    else if (~className.indexOf(nextClass)) {
-                        klass.push(nextClass);
-                    }
-                    else if (currentValue === value) {
-                        klass.push(currentClass);
-                    }
-                    else {
-
-                        if (value === nowValue) {
-                            klass.push(todayClass);
-                        }
-
-                        if (inRange && value === checkedValue) {
-                            klass.push(checkedClass);
-                        }
-
-                    }
-
-                    if (process) {
-                        process.call(this, day, klass, value, inRange);
-                    }
-
-                    day.className = klass.join(' ');
-                }
-            }
-        },
-
-        /**
-         * 取得指定日期的 yyyyMM 格式化后字符串值
-         *
-         * @param {?Date=} date 待格式化的日期
-         * @return {string} 按 yyyyMM格式化后的日期字符串
-         * @private
-         */
-        getYYYYMM: function (date) {
-            return (
-                typeof date === 'string'
-                ? date
-                : this.format(this.from(date), 'yyyyMM')
-            );
-        },
-
-        /**
-         * 构建HTML
-         *
-         * @private
-         */
-        build: function (date) {
-            var helper  = this.helper;
-            var options = this.options;
-            var html    = [];
-
-            date = date || this.date;
-
-            var year  = date.getFullYear();
-            var month = date.getMonth();
-            var current;
-
-            for (var i = 0, len = options.monthes; i < len; i++) {
-                current = new Date(year, month + i, 1);
-                html.push(privates.buildMonth.call(this, current));
-            }
-
-
-            html.push('<a href="#" class="' + helper.getPartClassName('pre') + '"></a>');
-            html.push('<a href="#" class="' + helper.getPartClassName('next') + '"></a>');
-
-            var popup = this.popup;
-            popup.content = html.join('');
-            popup.render();
-
-            privates.updateStatus.call(this);
-            privates.updatePrevNextStatus.call(this, date);
-        },
-
-        /**
-        * 构建指定日期所在月的HTML
-        *
-        * @private
-        */
-        buildMonth: function (date) {
-            var helper   = this.helper;
-            var year     = date.getFullYear();
-            var month    = date.getMonth() + 1;
-            var today    = date.getDate();
-            var day      = date.getDay();
-            var cached   = cache[this.cacheKey];
-            var cacheKey = year + pad(month);
-
-            if (cached[cacheKey]) {
-                return cached[cacheKey];
-            }
-
-            var weeks     = 7;
-            var rows      = 6;
-            var separator = '-';
-
-            var options = this.options;
-            var html    = [ '<div class="' + helper.getPartClassName('month') + '">' ];
-
-            var json = {
-                year: year, 
-                month: month
-            };
-
-            var title = options.lang.title.replace(
-                /\{([^\}]+)\}/g,
-                function ($, key) {
-                    return json[key] || '';
-                }
-            );
-
-            html.push('<h3>' + title + '</h3>');
-
-            var i;
-            var len;
-            var klass;
-            var firstDay = options.first;
-            var days = this.days;
-            html.push('<ul>');
-
-            for (i = 0, len = days.length; i < len; i++) {
-                klass = i === weeks - 1
-                    || firstDay && i === weeks - 2
-                    || !firstDay && i === firstDay
-                    ? ' class="' + helper.getPartClassName('weekend') + '"'
-                    : '';
-
-                html.push('<li' + klass + '>' + days[i] + '</li>');
-            }
-            html.push('</ul>');
-            html.push('<p>');
-
-            var y;
-            var M;
-            var d;
-            var yM;
-
-            // 星期标识
-            var week = 0;
-
-            // 计算1号星期几
-            var first = (weeks + day + 1 - today % weeks) % weeks;
-
-            // 处理上月
-            len = first - firstDay;
-            if (len > 0) {
-                date.setDate(0);
-                y = date.getFullYear();
-                M = date.getMonth() + 1;
-                d = date.getDate();
-                yM = [ y, pad(M), '' ].join(separator);
-                klass = helper.getPartClassName('pre-month');
-
-                for (i = d - len + 1; i <= d; i++) {
-                    week = week % weeks;
-                    html.push(''
-                        + '<a href="#" hidefocus'
-                        +   ' class="' + klass + '"'
-                        +   ' data-date="' + yM + pad(i) + '"'
-                        +   ' data-week="' + week + '"'
-                        + '>'
-                        +   i
-                        + '</a>'
-                    );
-                    week++;
-                }
-
-                date.setDate(d + 1);
-            }
-
-            // 恢复到当前月;
-            date.setDate(1);
-            date.setMonth(month);
-            date.setDate(0);
-
-            yM = [ year, pad(month), '' ].join(separator);
-
-            // 处理当前月
-            for (i = 1, len = date.getDate(); i <= len; i++) {
-                week = week % weeks;
-                html.push(''
-                    + '<a href="#" hidefocus '
-                    +   ' data-date="' + yM + pad(i) + '"'
-                    +   ' data-week="' + week + '"'
-                    + '>'
-                    +   i
-                    + '</a>'
-                );
-                week++;
-            }
-
-            // 处理下月;
-            date.setDate(len + 1);
-            y = date.getFullYear();
-            M = date.getMonth() + 1;
-            yM = [ y, pad(M), '' ].join(separator);
-            klass = helper.getPartClassName('next-month');
-
-            len = weeks * rows - (len + Math.max(0, first - firstDay));
-
-            for (i = 1; i <= len; i++) {
-                week = week % weeks;
-                html.push(''
-                    + '<a href="#" hidefocus'
-                    +   ' class="' + klass + '"'
-                    +   ' data-date="' + yM + pad(i) + '"'
-                    +   ' data-week="' + week + '"'
-                    + '>'
-                    +   i
-                    + '</a>'
-                );
-                week++;
-            }
-
-            html.push('</p>');
-            html.push('</div>');
-
-            cached[cacheKey] = html.join('');
-            return cached[cacheKey];
-        },
-
-        /**
-         * 更新上下月按钮状态
-         *
-         * @param {?Date=} date 当前日期
-         * @private
-         */
-        updatePrevNextStatus: function (date) {
-            var helper = this.helper;
-            var options = this.options;
-            var range  = this.range;
-            var prev = helper.getPart('pre');
-            var next = helper.getPart('next');
-            var getMonth = privates.getYYYYMM;
-            var act;
-
-            date = date || this.date || this.from(this.value);
-            act = !range || !range.begin
-                || getMonth.call(this, range.begin) < getMonth.call(this, date)
-                ? 'show' : 'hide';
-
-            $(prev)[act]();
-
-            var last = new Date(
-                date.getFullYear(),
-                date.getMonth() + options.monthes - 1,
-                1
-            );
-
-            act = !range || !range.end
-                || getMonth.call(this, range.end) > getMonth.call(this, last)
-                    ? 'show' : 'hide'
-
-            $(next)[act]();
-        },
-
-        /**
-         * 选择日期
-         *
-         * @param {HTMLElement} el 点击的当前事件源对象
-         * @fires module:Calendar#pick
-         * @private
-         */
-        pick: function (el) {
-            var value  = el.getAttribute('data-date');
-            var week   = el.getAttribute('data-week');
-            var target = this.target;
-            var date   = this.from(value, DATE_FORMAT);
-
-            value         = this.format(date);
-            this.lastDate = value;
-
-            if (target) {
-                if (target.type) {
-                    target.value = value;
-                    target.focus();
-                }
-                else {
-                    target.innerHTML = value;
-                }
-            }
-
-            /**
-             * @event module:Calendar#pick
-             * @type {Object}
-             * @property {string} value 选中日期的格式化
-             * @property {string} week 选中日期的格式化星期
-             * @property {Date} date 选中的日期对象
-             */
-            this.fire('pick', {
-                value: value,
-                week: this.options.lang.week + this.days[week],
-                date: date
-            });
-            this.hide();
-        }
-
-    };
-
-    /**
-     * 比PC-UI WCal好用的日历控件
-     *
+     * 日历
      * @extends module:Control
      * @requires lib
      * @requires Control
@@ -615,6 +57,7 @@ define(function (require) {
          * @type {Object}
          * @property {boolean} disabled 控件的不可用状态
          * @property {(string | HTMLElement)} main 控件渲染容器
+         * @property {string} prefix 控件class前缀，同时将作为main的class之一
          * @property {(string | HTMLElement)} target 计算日历显示时相对位置的目标对象
          * @property {string} triggers 点击显示日历的节点
          * @property {string} dateFormat 日期显示的格式化方式
@@ -626,7 +69,6 @@ define(function (require) {
          * classList 为 el 即将要应用的class数组引用，dateString 为
          * yyyy-MM-dd格式的当前日期字符串
          * @property {number} monthes 同时显示几个月
-         * @property {number} first 一周的起始日，0为周日，1为周一
          * @property {Object} lang 预设模板
          * @property {string} lang.week 对于 '周' 的称呼
          * @property {string} lang.days 一周对应的显示
@@ -635,35 +77,21 @@ define(function (require) {
          */
         options: {
 
-            // 提示框的不可用状态，默认为false。处于不可用状态的提示框不会出现。
-            disabled: false,
-
-            // 控件渲染主容器
-            main: '',
-
-            // 计算日历显示时相对位置的目标对象
-            target: '',
-
-            // 点击显示日历的节点
-            triggers: '',
-
             // 日期显示的格式化方式
-            dateFormat: '',
+            dateFormat: DATE_FORMAT,
 
             // 可选中的日期区间
-            range: null,
-
-            // 当前选中的日期
-            value: '',
+            range: RANGE,
 
             // 处理每一天的样式
             process: null,
 
             // 同时显示几个月
-            monthes: 2,
+            months: 1,
 
-            // 一周的起始日 0为周日，需要对应lang.days的顺序
-            first: 0,
+            // 一周的起始日 与new Date().getDay()的返回值含义一致
+            // 即: 周一: 0, 周二: 1, ..., 周日: 6
+            weekStart: 0,
 
             // 一些模板
             lang: {
@@ -675,7 +103,7 @@ define(function (require) {
                 days: '日,一,二,三,四,五,六',
 
                 // 每月显示的标题文字
-                title: '{year}年{month}日'
+                title: '{year}年{month}月'
 
             }
         },
@@ -684,21 +112,161 @@ define(function (require) {
          * 控件初始化
          *
          * @param {Object} options 控件配置项
-         * @see module:Calendar#options
-         * @private
          */
         init: function (options) {
-            this.bindEvents(privates);
 
-            this._disabled = options.disabled;
-            this.dateFormat = options.dateFormat || Calendar.DATE_FORMAT || DATE_FORMAT;
-            this.days  = options.lang.days.split(',');
-            this.value = this.format(this.from(options.value));
-            var key = this.cacheKey = options.first + '-' + options.lang.title;
-            cache[key] = cache[key] || {};
+            this.$parent(options);
 
-            this.setRange(options.range || Calendar.RANGE);
+            var main = this.main;
+
+            if (main.tagName === 'INPUT') {
+                var wrap = document.createElement('div');
+                var parent = main.parentNode;
+
+                if (parent) {
+                    parent.insertBefore(wrap, main);
+                }
+
+                wrap.appendChild(main);
+                this.main = wrap;
+                this.input = main;
+            }
+
+            // 初始化取值优先级, JS赋值 > DOM赋值
+            var value = this.value || this.input && this.input.value;
+            var date = this.date = this.from(value);
+            this.days  = this.lang.days.split(',');
+            this.month = this._getMonthFirstDate(date);
+            this.value = this.format(date);
         },
+
+        /**
+         * 生成月份翻页
+         * @private
+         * @param  {string} part 翻页部件
+         * @return {string}
+         */
+        _buildPagerHtml: function (part) {
+            var helper = this.helper;
+            var id = helper.getPartId(part);
+            var className = ''
+                + helper.getPartClassName('pager')
+                + ' '
+                + helper.getPartClassName('pager-' + part);
+            return ''
+                + '<a href="#" '
+                +    'data-direction="' + part + '"'
+                +    'class="' + className + '" '
+                +    'id="' + id + '">'
+                + '</a>';
+        },
+
+        _getMonthFirstDate: function (date) {
+            var first = new Date(date);
+            first.setDate(1);
+            return first;
+        },
+
+        _getMonthLastDate: function (date) {
+            var last = new Date(date);
+            last.setMonth(last.getMonth() + 1);
+            last.setDate(0);
+            return last;
+        },
+
+        initStructure: function () {
+            var main = this.main;
+            var input = this.input;
+
+
+            if (!input) {
+                input = this.input = $('input', main)[0]
+                    || $('<input type="text">').appendTo(main).get(0);
+            }
+
+            var helper = this.helper;
+
+            var content = ''
+                + this._buildPagerHtml('pre')
+                + this._buildPagerHtml('next')
+                + helper.getPartHTML('content', 'ol');
+
+            var popup = this.popup = new Popup({
+                target: input,
+                triggers: [input],
+                content: content
+            });
+
+            popup.render();
+
+            helper.addPartClasses('popup', popup.main);
+
+            this.pre = helper.getPart('pre');
+            this.next = helper.getPart('next');
+            this.content = helper.getPart('content');
+        },
+
+        initEvents: function () {
+            var popup = this.popup;
+            popup.on('click', $.proxy(this._onPopupClick, this));
+            popup.on('hide', $.proxy(this._onPopupHide, this));
+            popup.on('show', $.proxy(this._onPopupBeforeShow, this));
+        },
+
+        repaint: require('./painter').createRepaint(
+            Control.prototype.repaint,
+            // 这两个属性发生变化时, 需要做值同步
+            {
+                name: ['range', 'value'],
+                paint: function (conf, range, value) {
+                    // value值与date值同步
+                    var date  = this.date = this.from(value);
+
+                    // 如果设定了范围, 而且值超出限定范围, 清空值
+                    if (range) {
+
+                        var begin = range.begin;
+                        var end   = range.end;
+
+                        if (begin) {
+                            begin = range.begin = this.from(begin);
+                        }
+
+                        if (end) {
+                            end = range.end = this.from(end);
+                        }
+
+                        if (date < begin || date > end) {
+                            value = this.value = this.date = '';
+                            // 如果值被清空, 那么显示的月份要被重置, 取一个在可选范围内的值
+                            this.month = this._getMonthFirstDate(begin || end);
+                        }
+
+                    }
+
+                    this.input.value = value;
+                }
+            },
+            // 以下四个属性变化时, 都会刷新内容.
+            {
+                name: ['months', 'month', 'range', 'value'],
+                paint: function (conf, months, month) {
+
+                    var content = [];
+
+                    months = this.months = months || 1;
+                    month  = this._getMonthFirstDate(month || this.month);
+                    this._updatePrevNextStatus(month);
+
+                    for (var i = 0; i < months; i++) {
+                        content[i] = this._buildMonth(month);
+                        month.setMonth(month.getMonth() + 1);
+                    }
+
+                    this.content.innerHTML = content.join('');
+                }
+            }
+        ),
 
         /**
          * 解释日期类型
@@ -709,39 +277,41 @@ define(function (require) {
          * @public
          */
         from: function (value, format) {
-            format = format || this.dateFormat;
-            if (lib.isString(value)) {
 
-                if (!value) {
-                    return new Date();
-                }
-
-                format = format.split(/[^yMdW]+/i);
-                value  = value.split(/\D+/);
-
-                var map = {};
-
-                for (var i = 0, l = format.length; i < l; i++) {
-                    if (format[i]
-                        && value[i]
-                        && (format[i].length > 1
-                            && value[i].length === format[i].length
-                            || format[i].length === 1
-                           )
-                    ) {
-                        map[format[i].toLowerCase()] = value[i];
-                    }
-                }
-                var year  = map.yyyy
-                    || map.y
-                    || ((map.yy < 50 ? '20' : '19') + map.yy);
-
-                var month = (map.m || map.mm) | 0;
-                var date  = (map.d || map.dd) | 0;
-                return new Date(year | 0, month - 1, date);
+            if (!value) {
+                return new Date();
             }
 
-            return value;
+            if (lib.isDate(value)) {
+                return value;
+            }
+
+            format = format || this.dateFormat;
+            format = format.split(/[^yMdW]+/i);
+            value  = value.split(/\D+/);
+
+            var map = {};
+
+            for (var i = 0, l = format.length; i < l; i++) {
+                if (format[i]
+                    && value[i]
+                    && (format[i].length > 1
+                        && value[i].length === format[i].length
+                        || format[i].length === 1
+                       )
+                ) {
+                    map[format[i].toLowerCase()] = value[i];
+                }
+            }
+
+            var year  = map.yyyy
+                || map.y
+                || ((map.yy < 50 ? '20' : '19') + map.yy);
+
+            var month = (map.m || map.mm) | 0;
+            var date  = (map.d || map.dd) | 0;
+
+            return new Date(year | 0, month - 1, date);
         },
 
         /**
@@ -760,14 +330,13 @@ define(function (require) {
                 date = this.from(date);
             }
 
-            var options = this.options;
-            var first   = options.first;
-            var y       = date.getFullYear();
-            var M       = date.getMonth() + 1;
-            var d       = date.getDate();
-            var week    = date.getDay();
+            var weekStart = this.weekStart;
+            var y         = date.getFullYear();
+            var M         = date.getMonth() + 1;
+            var d         = date.getDate();
+            var week      = date.getDay();
 
-            if (first) {
+            if (weekStart) {
                 week = (week - 1 + 7) % 7;
             }
 
@@ -782,7 +351,7 @@ define(function (require) {
                 dd: pad(d),
                 d: d,
                 w: week,
-                ww: options.lang.week + week
+                ww: this.lang.week + week
             };
 
             return format.replace(
@@ -794,50 +363,6 @@ define(function (require) {
         },
 
         /**
-         * 初始化DOM结构
-         */
-        initStructure: function () {
-            var options = this.options;
-            var popup = this.popup = new Popup(this.srcOptions);
-            this.main = popup.main;
-            this.addChild(popup);
-            popup.render();
-            if (options.target) {
-                this.setTarget(lib.g(options.target));
-            }
-            return this;
-        },
-
-        /**
-         * 初始化事件绑定
-         */
-        initEvents: function () {
-            var bound = this._bound;
-            var popup = this.popup;
-            popup.on('click', bound.onClick);
-            popup.on('hide', bound.onHide);
-            popup.on('beforeShow', bound.onBeforeShow);
-            return this;
-        },
-
-        /**
-         * 动态更新 target
-         *
-         * @param {HTMLElement} target 新的 target 节点
-         * @public
-         */
-        setTarget: function (target) {
-            if (!target || target.nodeType !== 1) {
-                throw new Error('target 为 null 或非 Element 节点');
-            }
-
-            this.target = target;
-
-            if (this.popup) {
-                this.popup.target = target;
-            }
-        },
-        /**
          * 显示浮层
          *
          * @param {?HTMLElement=} target 触发显示浮层的节点
@@ -845,17 +370,9 @@ define(function (require) {
          * @public
          */
         show: function (target) {
-
             this.popup.show();
-
-            /**
-             * @event module:Calendar#show
-             * @type {object}
-             * @property {?HTMLElement=} target 触发显示浮层的节点
-             */
-            this.fire('show', { target: target });
-
         },
+
         /**
          * 隐藏浮层
          *
@@ -863,6 +380,363 @@ define(function (require) {
          */
         hide: function () {
             this.popup.hide();
+        },
+
+        /**
+         * 获取当前选中的日期
+         *
+         * @return {string} 当前日期格式化值
+         * @public
+         */
+        getValue: function () {
+            var date = this.date;
+            return date ? this.format(date) : '';
+        },
+
+        /**
+         * 获取当前选中的日期
+         *
+         * @return {Date} 获取到的日期
+         * @public
+         */
+        getRawValue: function () {
+            return this.date;
+        },
+
+        /**
+         * 设置允许选中的日期区间
+         *
+         * @param {Object} range 允许选择的日期区间
+         * @public
+         */
+        setRange: function (range) {
+            this.range = null;
+            this.set('range', range);
+        },
+
+        /**
+         * 设置当前选中的日期
+         *
+         * @param {string} value 要设置的日期
+         * @public
+         */
+        setValue: function (value) {
+            this.set('value', value);
+        },
+
+        /**
+         * 取得指定日期的 yyyyMM 格式化后字符串值
+         *
+         * @param {?Date=} date 待格式化的日期
+         * @return {string} 按 yyyyMM格式化后的日期字符串
+         * @private
+         */
+        _getYYYYMM: function (date) {
+            return lib.isString(date)
+                ? date
+                : this.format(this.from(date), 'yyyyMM');
+        },
+
+        /**
+        * 构建指定日期所在月的HTML
+        * @param {Date} date 需要构建月份日期
+        * @return {string}
+        * @protected
+        */
+        _buildMonth: function (date) {
+
+            var helper = this.helper;
+            var html   = [
+                // 包裹
+                '<li class="' + helper.getPartClassName('month') + '">',
+                // 月份标题
+                this._buildMonthTitle(date),
+                // 星期标题
+                this._buildWeekTitle(),
+                // 日期包裹
+                '<p>'
+            ];
+
+            var first = this._getMonthFirstDate(date);
+            var last = this._getMonthLastDate(date);
+            var firstDay = first.getDay();
+            var start = new Date(first);
+            start.setDate(1 - firstDay);
+
+
+            for (var i = 0; i < 42; i++) {
+                if (start < first) {
+                    html.push(this._buildDate(start, 'pre-month'));
+                }
+                else if (start > last) {
+                    html.push(this._buildDate(start, 'next-month'));
+                }
+                else {
+                    html.push(this._buildDate(start));
+                }
+                start.setDate(start.getDate() + 1);
+            }
+
+            // 结束
+            html.push('</p></li>');
+            return html.join('');
+        },
+
+        /**
+         * 构建月份标题HTML
+         * @param  {Date} date 日期
+         * @return {string}
+         */
+        _buildMonthTitle: function (date) {
+            date = {
+                year: date.getFullYear(),
+                month: date.getMonth() + 1
+            };
+
+            var title = this.lang.title.replace(
+                 /\{([^\}]+)\}/g,
+                 function ($, key) {
+                     return date[key] || '';
+                 }
+            );
+
+            return '<h3>' + title + '</h3>';
+        },
+
+        /**
+         * 构建星期标题HTML
+         * @return {string}
+         */
+        _buildWeekTitle: function () {
+            var html = ['<ul>'];
+            var weekendClass = this.helper.getPartClassName('weekend');
+            var days = this.days;
+            var weekStart = this.weekStart;
+
+            for (var i = 0; i < 7; i++) {
+                var day = (weekStart + i) % 7;
+                var klass = i === 0 || i === 6 ? weekendClass : '';
+                html.push('<li class="'  + klass + '">' + days[day] + '</li>');
+            }
+
+            html.push('</ul>');
+            return html.join('');
+        },
+
+        /**
+         * 构建日期HTML
+         * @param  {Date} date 日期
+         * @param  {string} state 日期状态
+         * @return {string}
+         */
+        _buildDate: function (date, state) {
+
+            var day = date.getDay();
+            var value = this.format(date);
+            var helper = this.helper;
+
+            var range = this.range;
+            var disabled = !!range && (range.begin > date || range.end < date);
+            var checked = this.value && this.value === value;
+            var TODAY = this.format(new Date());
+
+            var classList = [];
+
+            if (day === 0 || day === 6) {
+                classList.push(helper.getPartClassName('weekend'));
+            }
+
+            if (state) {
+                classList.push(helper.getPartClassName(state));
+            }
+
+            if (disabled) {
+                classList.push(helper.getPartClassName('disabled'));
+            }
+
+            if (checked) {
+                classList.push(helper.getPartClassName('checked'));
+            }
+
+            if (value === TODAY) {
+                classList.push(helper.getPartClassName('today'));
+            }
+
+
+            var handle = {
+                classList: classList,
+                value: value,
+                date: date,
+                content: date.getDate()
+            };
+
+            if (this.process) {
+                handle = this.process(handle);
+            }
+
+            return ''
+                + '<a href="#" class="' + $.trim(handle.classList.join(' ')) + '"'
+                +     'data-week="' + handle.date.getDay() + '" data-date="' + handle.value + '">'
+                +     handle.content
+                + '</a>';
+        },
+
+        /**
+         * 翻页
+         * @param {sting} direction 可选`pre`和`next`
+         * @protected
+         */
+        _page: function (direction) {
+            var date = new Date(this.month);
+            var delta = direction === 'next' ? 1 : -1;
+            date.setMonth(date.getMonth() + delta);
+            date.setDate(1);
+            this.set('month', date);
+        },
+
+        /**
+         * 更新上下月按钮状态
+         *
+         * @param {Date} month 当前选择的月份
+         * @private
+         */
+        _updatePrevNextStatus: function (month) {
+            var range = this.range;
+            if (!range) {
+                return;
+            }
+            var targetMonth = this._getYYYYMM(month);
+            $(this.pre)[range.begin && targetMonth <= this._getYYYYMM(range.begin) ? 'hide' : 'show']();
+            $(this.next)[range.end && targetMonth >= this._getYYYYMM(range.end) ? 'hide' : 'show']();
+        },
+
+        /**
+         * 选择日期
+         *
+         * @param {Element} element 点击的当前事件源对象
+         * @fires module:Calendar#pick
+         * @private
+         */
+        _pick: function (element) {
+
+            element = $(element);
+
+            var value = element.data('date');
+
+            if (this.value === value) {
+                this.hide();
+                return;
+            }
+
+            var date  = this.from(value, DATE_FORMAT);
+
+            value = this.format(date);
+
+            /**
+             * @event module:Calendar#pick
+             * @type {Object}
+             * @property {string} value 选中日期的格式化
+             * @property {string} week 选中日期的格式化星期
+             * @property {Date} date 选中的日期对象
+             */
+            var event = new $.Event({
+                value: value,
+                type: 'change'
+            });
+
+            // 释放`change`事件
+            this.fire(event);
+
+            // 如果默认动作被阻止, 那么我们就停止
+            if (event.isDefaultPrevented()) {
+                return;
+            }
+
+            // 否则, 进行选中某个日期的默认动作
+            // 1. 缓存最后值
+            // 2. 把输入框设定一下值
+            // 3. 把输入框设为焦点
+            // 4. 隐藏浮层
+            this.hide();
+            $(this.input).focus();
+            this.set('value', value);
+        },
+
+
+        /**
+         * 处理选单点击事件
+         *
+         * @param {Event} e `Popup`的`click`事件
+         * @private
+         */
+        _onPopupClick: function (e) {
+
+            var helper  = this.helper;
+            var element = $(e.target).closest('a', this.popup.main);
+
+            if (!element.is('a')) {
+                return;
+            }
+
+            e.preventDefault();
+
+            // 翻页
+            if (element.hasClass(helper.getPrimaryClassName('pager'))) {
+                this._page(element.data('direction'));
+                return;
+            }
+
+            // 选中
+            if (!element.hasClass(helper.getPrimaryClassName('disabled'))) {
+                this._pick(element);
+            }
+
+        },
+
+        /**
+         * 转发Popup的onBeforeShow事件
+         *
+         * @param {Event} e `Popup`的`show`事件对象
+         * @fires module:Calendar#show
+         * @protected
+         */
+        _onPopupBeforeShow: function (e) {
+
+            var event = new $.Event({
+                type: 'show'
+            });
+
+            /**
+             * @event module:Calendar#show
+             * @type {Event}
+             */
+            this.fire(event);
+
+            if (event.isDefaultPrevented()) {
+                e.preventDefault();
+                return;
+            }
+
+            var date = this.date;
+
+            if (date) {
+                this.set('month', this._getMonthFirstDate(date));
+            }
+        },
+
+
+        /**
+         * 监听 module:Popup 的隐藏事件
+         *
+         * @fires module:Calendar#hide 隐藏事件
+         * @param {Event} e `Popup`的`hide`事件对象
+         * @protected
+         */
+        _onPopupHide: function (e) {
+            /**
+             * @event module:Calendar#hide
+             */
+            this.fire(e);
         },
 
         /**
@@ -874,66 +748,6 @@ define(function (require) {
         checkValidity: function () {
             return this.validate();
         },
-
-        /**
-         * 获取当前选中的日期
-         *
-         * @return {string} 当前日期格式化值
-         * @public
-         */
-        getValue: function () {
-            var date = this.date;
-            var target = this.target;
-            return this.format(date || target && target.value || this.value);
-        },
-
-        /**
-         * 获取当前选中的日期
-         *
-         * @return {Date} 获取到的日期
-         * @public
-         */
-        getValueAsDate: function () {
-            return this.from(this.getValue());
-        },
-
-        /**
-         * 设置允许选中的日期区间
-         *
-         * @param {Object} range 允许选择的日期区间
-         * @public
-         */
-        setRange: function (range) {
-            if (!range) {
-                return;
-            }
-
-            var begin = range.begin;
-            var end   = range.end;
-
-            if (begin && lib.isString(begin)) {
-                range.begin = this.from(begin);
-            }
-
-            if (end && lib.isString(end)) {
-                range.end = this.from(end);
-            }
-            this.range = range;
-            privates.updatePrevNextStatus.call(this);
-        },
-
-        /**
-         * 设置当前选中的日期
-         *
-         * @param {string} value 要设置的日期
-         * @public
-         */
-        setValue: function (value) {
-            this.date = this.from(value);
-            this.value = this.format(this.date);
-            privates.build.call(this);
-        },
-
 
         /**
          * 验证控件
@@ -969,6 +783,11 @@ define(function (require) {
             }
 
             return false;
+        },
+
+        dispose: function () {
+            this.popup.dispose();
+            this.popup = null;
         }
 
 
@@ -988,7 +807,7 @@ define(function (require) {
      * @const
      * @type {?Object}
      */
-    Calendar.RANGE = null;
+    Calendar.RANGE = RANGE;
 
     return Calendar;
 });
