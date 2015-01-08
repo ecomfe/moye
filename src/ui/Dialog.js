@@ -4,360 +4,15 @@
  *
  * @file 弹框组件
  * @author mengke(mengke01@baidu.com)
+ * @author Leon(leon@outlook.com)
  */
+
 define(function (require) {
 
     var $ = require('jquery');
     var lib = require('./lib');
     var Control = require('./Control');
-
-    /**
-     * 对目标字符串进行格式化
-     * 从tangram中抽出
-     * @see http://1.5.13-tangram.baidu.com.r.bae.baidu.com:8081
-     * /api.html#baidu.string.format|tangram
-     *
-     * @param {string} source 目标字符串
-     * @param {(...Object|...string)} opts 提供相应数据的对象或多个字符串
-     * @return {string} 格式化后的字符串
-     * @inner
-     */
-    function format(source, opts) {
-        source = String(source);
-        var data = Array.prototype.slice.call(arguments, 1);
-        var toString = Object.prototype.toString;
-        if (data.length) {
-            // ie 下 Object.prototype.toString.call(null) == '[object Object]'
-            data = data.length === 1
-            ? (
-                opts !== null
-                    && /\[object (Array|Object)\]/.test(toString.call(opts))
-                ? opts
-                : data
-            )
-            : data;
-            return source.replace(/#\{(.+?)\}/g, function (match, key) {
-                var replacer = data[key];
-                // chrome 下 typeof /a/ == 'function'
-                if ('[object Function]' === toString.call(replacer)) {
-                    replacer = replacer(key);
-                }
-                return ('undefined' === typeof replacer ? '' : replacer);
-            });
-        }
-        return source;
-    }
-
-
-    /**
-     * 遮罩层管理类，提供遮罩层的操作函数
-     *
-     * @requires lib
-     * @requires Dialog
-     * @module Mask
-     */
-    var Mask = lib.newClass( /** @lends module:Mask.prototype */ {
-
-        /**
-         * 初始化函数
-         *
-         * @private
-         * @param {Object} opts 初始化选项
-         * @see module:Mask.create
-         * @private
-         */
-        initialize: function (opts) {
-            this.mask = $('<div>')
-                .addClass(opts.className)
-                .css(opts.styles)
-                .appendTo(document.body)
-                .get(0);
-
-            Mask.curMasks++;
-
-            if (6 === lib.browser.ie && !Mask.ie6frame) {
-                var frame = ''
-                    + '<iframe'
-                    + ' src="about:blank"'
-                    + ' frameborder="0"'
-                    + ' style="position:absolute;left:0;top:0;z-index:1;'
-                    + 'filter:alpha(opacity=0)"'
-                    + '></iframe>';
-                Mask.ie6frame = $(frame)
-                    .appendTo(document.body)
-                    .get(0);
-            }
-        },
-
-        /**
-         * 重新绘制遮盖层的位置
-         * 参考esui2
-         *
-         * @see https://github.com/erik168/ER/blob/master/src/esui/Mask.js
-         * @public
-         */
-        repaint: function () {
-
-            var doc = $(document);
-            var width = doc.width();
-            var height = doc.height();
-
-            $(this.mask).css({
-                width: width + 'px',
-                height: height + 'px'
-            });
-
-            if (Mask.ie6frame) {
-                $(Mask.ie6frame).css({
-                    width: width + 'px',
-                    height: height + 'px'
-                });
-            }
-
-        },
-
-        /**
-         * 显示一个遮罩层
-         *
-         * @public
-         */
-        show: function () {
-            if (Mask.ie6frame) {
-                $(Mask.ie6frame)
-                    .css('z-index', this.mask.style.zIndex - 1)
-                    .show();
-            }
-            $(this.mask).show();
-        },
-
-        /**
-         * 隐藏一个遮罩层
-         *
-         * @public
-         */
-        hide: function () {
-            if (Mask.ie6frame) {
-                $(Mask.ie6frame).hide();
-            }
-            $(this.mask).hide();
-        },
-
-        /**
-         * 注销一个遮罩层
-         *
-         * @public
-         */
-        dispose: function () {
-            $(this.mask).remove();
-            Mask.curMasks--;
-
-            if (Mask.curMasks <= 0 && Mask.ie6frame) {
-                $(Mask.ie6frame).remove();
-                Mask.curMasks = 0;
-                Mask.ie6frame = null;
-            }
-        }
-    });
-
-    /**
-     * 当前已经生成的Mask个数
-     *
-     * @type {number}
-     */
-    Mask.curMasks = 0;
-
-    /**
-     * 创建一个遮罩层
-     *
-     * @param {Object} options 遮罩选项
-     * @param {string} options.id 编号
-     * @param {string} options.className 类别名称
-     * @param {Object} options.styles 样式集合
-     * @return {HTMLElement} 遮罩元素
-     */
-    Mask.create = function (options) {
-        return new Mask(options);
-    };
-
-    /**
-     * 私有函数或方法
-     *
-     * @type {Object}
-     * @namespace
-     * @name module:Dialog~privates
-     */
-    var privates = /** @lends module:Dialog~privates */ {
-
-        /**
-         * 获得指定dialog模块的dom元素
-         *
-         * @param {string} name 模块名字
-         * @return {HTMLElement} 模块的DOM元素
-         * @private
-         */
-        getDom:  function (name) {
-            return $('.' + this.options.prefix + '-' + name, this.main)[0];
-        },
-
-        /**
-         * 根据名字构建的css class名称
-         *
-         * @param {string} name 模块名字
-         * @return {string} 构建的class名称
-         * @private
-         */
-        getClass: function (name) {
-            name = name ? '-' + name : '';
-            var skin = this.options.skin;
-            return this.options.prefix + name + (skin ? ' ' + skin + name : '');
-        },
-
-        /**
-         * 渲染主框架
-         *
-         * @private
-         */
-        renderDOM: function () {
-            var opt = this.options;
-            var data = {
-                closeClass: privates.getClass.call(this, 'close'),
-                headerClass: privates.getClass.call(this, 'header'),
-                bodyClass: privates.getClass.call(this, 'body'),
-                footerClass: privates.getClass.call(this, 'footer'),
-
-                title: opt.title,
-                content: opt.content,
-                footer: opt.footer
-            };
-
-            // 渲染主框架内容
-            this.main = $('<div>')
-                .addClass(privates.getClass.call(this))
-                .css({
-                    width: opt.width,
-                    top: opt.top,
-                    position: opt.fixed ? 'fixed' : 'absolute',
-                    zIndex: opt.level
-                })
-                .html(format(this.options.tpl, data))
-                .appendTo(document.body)
-                .get(0);
-
-            // 如果显示mask，则需要创建mask对象
-            if (this.options.showMask) {
-                this.mask = Mask.create({
-                    className: privates.getClass.call(this, 'mask'),
-                    styles: {
-                        zIndex: this.options.level - 1
-                    }
-                });
-            }
-        },
-
-        /**
-         * 绑定组件相关的dom事件
-         *
-         * @private
-         */
-        bind: function () {
-
-            // 绑定关闭按钮
-            var dom = privates.getDom.call(this, 'close');
-            $(dom).on('click', this._bound.onClose);
-        },
-
-        /**
-         * 获得头部区域的dom元素
-         *
-         * @return {HTMLElement} 模块的DOM元素
-         * @private
-         */
-        getHeaderDom: function () {
-            return privates.getDom.call(this, 'header');
-        },
-
-        /**
-         * 获得内容区域的dom元素
-         *
-         * @return {HTMLElement} 模块的DOM元素
-         * @private
-         */
-        getBodyDom: function () {
-            return privates.getDom.call(this, 'body');
-        },
-
-        /**
-         * 获得尾部区域的dom元素
-         *
-         * @return {HTMLElement} 模块的DOM元素
-         * @private
-         */
-        getFooterDom: function () {
-            return privates.getDom.call(this, 'footer');
-        },
-
-        /**
-         * 处理关闭窗口
-         *
-         * @private
-         */
-        onClose: function (e) {
-            privates.onHide.call(this, e);
-        },
-
-        /**
-         * 当视窗大小改变的时候，调整窗口位置
-         *
-         * @private
-         */
-        onResize: function () {
-            var me = this;
-            clearTimeout(me._resizeTimer);
-            me._resizeTimer = setTimeout(function () {
-                me.adjustPos();
-            }, 100);
-        },
-
-        /**
-         * 当触发展示的时候
-         *
-         * @fires module:Dialog#beforeshow
-         * @private
-         */
-        onShow: function (e) {
-            var me = this;
-
-            /**
-             * @event module:Dialog#beforeshow
-             * @type {Object}
-             * @property {DOMEvent} event 事件源对象
-             */
-            me.fire('beforeshow', {
-                event: e
-            });
-            me.show();
-        },
-
-        /**
-         * 当触发隐藏的时候
-         *
-         * @fires module:Dialog#beforehide
-         * @private
-         */
-        onHide: function (e) {
-
-            /**
-             * @event module:Dialog#beforehide
-             * @type {Object}
-             * @property {DOMEvent} event 事件源对象
-             */
-            this.fire('beforehide', {
-                event: e
-            });
-            this.hide();
-        }
-
-    };
+    var Mask = require('./Mask');
 
     /**
      * 对话框
@@ -376,12 +31,12 @@ define(function (require) {
      *     top: '50px',
      *     left: '',
      *     fixed: 1,
-     *     showMask: 1,
+     *     mask: 1,
      *     leve: 10
      *
      *  }).render();
      */
-    var Dialog = Control.extend( /** @lends module:Dialog.prototype */ {
+    var Dialog = Control.extend({
 
         /**
          * 控件类型标识
@@ -406,7 +61,7 @@ define(function (require) {
          * @property {string} options.top 控件距视窗上边缘的高度，默认为auto，会使组件相对于视窗垂直居中
          * @property {string} options.left 控件距视窗左边缘的宽度，默认为auto，会使组件相对于视窗水平居中
          * @property {string} options.fixed 是否固定，不随视窗滚动
-         * @property {string} options.showMask 是否显示覆盖层
+         * @property {string} options.mask 是否显示覆盖层
          * @property {string} options.level 当前dialog的z-index
          * @property {string} options.dragable 是否可以拖动,暂未实现
          * @property {string} options.tpl 默认的框架模板
@@ -415,23 +70,17 @@ define(function (require) {
          */
         options: {
 
-            // 控件渲染主容器,会将容器内的html部分迁移到dialog的body中
-            main: '',
-
-            // 控件class前缀，同时将作为main的class之一
-            prefix: 'ecl-ui-dialog',
-
             // 控件标题
             title: '',
 
             // 控件内容，如果没有指定主渲染容器，则content内容塞到dialog的body中
             content: '',
 
+            // 是否有关闭按钮，默认有，内容为x
+            close: 'x',
+
             // 控件脚注
             footer: '',
-
-            // 控件的皮肤
-            skin: '',
 
             // 控件的默认宽度
             width: '',
@@ -446,20 +95,19 @@ define(function (require) {
             fixed: 1,
 
             // 是否显示覆盖层
-            showMask: 1,
+            mask: true,
+
+            // 当遮罩被点击时, 相当于点击close
+            maskClickClose: true,
+
+            // 隐藏时自动销毁
+            hideDispose: false,
 
             // 当前dialog的z-index
             level: 10,
 
-            // 是否可以拖动,暂未实现
-            dragable: 1,
-
-            // 模板框架
-            tpl: ''
-                + '<div class="#{closeClass}">×</div>'
-                + '<div class="#{headerClass}">#{title}</div>'
-                + '<div class="#{bodyClass}">#{content}</div>'
-                + '<div class="#{footerClass}">#{footer}</div>'
+            // 按钮们
+            buttons: null
         },
 
         /**
@@ -470,53 +118,308 @@ define(function (require) {
          * @private
          */
         init: function (options) {
-            this._disabled = options.disabled;
-            this.bindEvents(privates);
+            this.$parent(options);
+            this.visible = false;
+            // 这里先把窗口的`resize`事件处理函数给包裹一下, 做一个300毫秒的延迟
+            this._onWindowResize = lib.delay($.proxy(this._onWindowResize, this), 300);
         },
 
+        initStructure: function () {
+
+            var helper = this.helper;
+
+            var html = [
+                this.close ? helper.getPartHTML('close', 'div', this.close) : '',
+                helper.getPartHTML('header', 'div'),
+                helper.getPartHTML('body', 'div'),
+                helper.getPartHTML('footer', 'div')
+            ];
+
+            var level = this.level;
+
+            $(this.main)
+                .html(html.join(''))
+                .css('zIndex', level)
+                .appendTo(document.body);
+
+            if (this.mask) {
+                this.mask = Mask.create({
+                    skin: 'dialog',
+                    level: level - 1
+                }).render();
+            }
+
+        },
+
+        initEvents: function () {
+            this.delegate(this.main, 'click', this._onMainClicked);
+            if (this.mask && this.maskClickClose) {
+                this.mask.on('click', $.proxy(this._onCloseClicked, this));
+            }
+        },
+
+        /**
+         * 当窗口主内容被点击时的处理
+         * @param {Event} e 点击事件对象
+         */
+        _onMainClicked: function (e) {
+
+            var target = $(e.target);
+            var helper = this.helper;
+            var main = this.main;
+
+            this.fire(e);
+
+            var close = target.closest(
+                '.' + helper.getPrimaryClassName('close'),
+                main
+            )[0];
+
+            if (close) {
+                this._onCloseClicked();
+                return;
+            }
+
+            // 找部件呀找部件, 好恶心~!
+            var footerBotton = target.closest(
+                '.' + helper.getPrimaryClassName('button'),
+                main
+            )[0];
+
+            if (footerBotton) {
+
+                e.preventDefault();
+
+                this.fire('buttonclick', {
+                    target: e.target,
+                    part: target.data('part')
+                });
+
+                return;
+            }
+
+        },
+
+        /**
+         * 当窗口大小改变时的处理
+         * @param {Event} e 窗口变化事件
+         */
+        _onWindowResize: function (e) {
+            this._position();
+        },
+
+        /**
+         * 当触发隐藏的时候
+         *
+         * @fires module:Dialog#beforehide
+         * @private
+         */
+        _onCloseClicked: function () {
+
+            /**
+             * @event module:Dialog#beforehide
+             * @type {Object}
+             * @property {DOMEvent} event 事件源对象
+             */
+            var event = new $.Event('hide');
+
+            this.fire(event);
+
+            if (event.isDefaultPrevented()) {
+                return;
+            }
+
+            this.hide();
+        },
+
+        repaint: require('./painter').createRepaint(
+            Control.prototype.repaint,
+            {
+                name: ['width', 'height'],
+                paint: function (conf, width, height) {
+                    $(this.main).css({
+                        width: width,
+                        height: height
+                    });
+                }
+            },
+            {
+                name: ['title'],
+                paint: function (conf, title) {
+                    this.helper.getPart('header').innerHTML = title;
+                }
+            },
+            {
+                name: ['content'],
+                paint: function (conf, content) {
+                    this.helper.getPart('body').innerHTML = content;
+                }
+            },
+            {
+                // 这两个属性是有冲突的
+                // 如果有`footer`, 那么就抛弃`buttons`
+                name: ['buttons', 'footer'],
+                paint: function (conf, buttons, footerHTML) {
+
+                    var footer = this.helper.getPart('footer');
+
+                    if (footerHTML) {
+                        footer.innerHTML = footerHTML;
+                        this.buttons = null;
+                    }
+
+                    if (buttons) {
+                        footer.innerHTML = lib
+                            .map(
+                                buttons,
+                                this.getFooterButtonHTML,
+                                this
+                            )
+                            .join('');
+                    }
+
+                }
+            },
+            {
+                name: ['visible'],
+                paint: function (conf, visible) {
+                    if (visible) {
+                        this
+                            // 切换状态
+                            .addState('visible')
+                            // 添加窗口resize的事件处理
+                            .delegate(window, 'resize', this._onWindowResize)
+                            // 调整位置
+                            ._position();
+
+                        // 显示遮罩
+                        this.mask && this.mask.show();
+                    }
+                    else {
+                        this
+                            // 切换状态
+                            .removeState('visible')
+                            // 解除窗口`resize`事件的侦听
+                            .undelegate(window, 'resize', this._onWindowResize);
+
+                        // 隐藏遮罩
+                        this.mask && this.mask.hide();
+                    }
+                }
+            }
+        ),
+
+        getFooterButtonHTML: function (conf) {
+
+            var part = conf.part;
+            var helper = this.helper;
+            var className = ''
+                + helper.getPartClassName(part)
+                + ' '
+                + helper.getPartClassName('button');
+
+            return ''
+                + '<a id="' + helper.getPartId(part) + '" '
+                +     'data-part="' + part + '"'
+                +     'class="' + className + '" '
+                +     'href="#">'
+                +     conf.text
+                + '</a>';
+        },
+
+        /**
+         * 调整Dialog大小
+         *
+         * @param {number} width 宽度
+         * @return {Dialog}
+         */
+        setWidth: function (width) {
+            this.set('width', width);
+            return this;
+        },
+
+        /**
+         * 设定高度
+         * @param {number} height 高度
+         * @return {Dialog}
+         */
+        setHeight: function (height) {
+            this.set('height', height);
+            return this;
+        },
 
         /**
          * 设置dialog的标题
          *
-         * @param {string} content 对话框的标题
+         * @param {string} title 对话框的标题
+         * @return {Dialog}
          * @public
          */
-        setTitle: function (content) {
-            privates.getHeaderDom.call(this).innerHTML = content;
+        setTitle: function (title) {
+            this.set('title', title);
+            return this;
+        },
+
+        /**
+         * 返回当前窗口的title部分
+         * @return {Element}
+         */
+        getTitle: function () {
+            return this.helper.getPart('title');
         },
 
         /**
          * 设置dialog的主体内容，可以是HTML内容
          *
          * @param {string} content 内容字符串
+         * @return {Dialog}
          * @public
          */
         setContent: function (content) {
-            privates.getBodyDom.call(this).innerHTML = content;
+            this.set('content', content);
+            return this;
+        },
+
+        /**
+         * 返回当前窗口的内容部分
+         * @return {Element}
+         */
+        getContent: function () {
+            return this.helper.getPart('body');
         },
 
         /**
          * 设置dialog的页脚内容
          *
-         * @param {string} content 内容字符串
+         * @param {string} footer 内容字符串
+         * @return {Dialog}
          * @public
          */
-        setFooter: function (content) {
-            privates.getFooterDom.call(this).innerHTML = content;
+        setFooter: function (footer) {
+            this.set('footer', footer);
+            return this;
+        },
+
+        /**
+         * 返回当前窗口的footer部分
+         * @return {Element}
+         */
+        getFooter: function () {
+            return this.helper.getPart('footer');
         },
 
         /**
          * 调整弹窗位置
          * @public
          */
-        adjustPos: function () {
+        _position: function () {
             var main = $(this.main);
             var win = $(window);
-            var left = this.options.left;
-            var top = this.options.top;
+            var left = this.left;
+            var top = this.top;
 
             // 如果fixed则需要修正下margin-left
-            if (this.options.fixed) {
+            if (this.fixed) {
                 var cssOpt = {
                     left: left,
                     top: top
@@ -554,116 +457,56 @@ define(function (require) {
                 });
             }
 
-            // 修正mask的遮罩
-            this.mask && this.mask.repaint();
         },
 
         /**
-         * 显示组件
+         * 显示窗口
          * @public
-         * @fires module:Dialog#show
+         * @return {Dialog}
          */
         show: function () {
-
-            // 绑定窗口调整事件
-            $(window).on('resize', this._bound.onResize);
-
-            // 显示遮罩
-            if (this.mask) {
-                this.mask.show();
-            }
-
-
-            // 移除hide状态的class
-            $(this.main).removeClass(privates.getClass.call(this, 'hide'));
-
-            // 调整位置
-            this.adjustPos();
-
-            /**
-             * @event module:Dialog#show
-             */
-            this.fire('show');
-
+            this.set('visible', true);
             return this;
         },
 
-
         /**
-         * 隐藏组件
+         * 隐藏窗口
          * @public
-         *
-         * @fires module:Dialog#hide
+         * @return {Dialog}
          */
         hide: function () {
-            // 隐藏遮罩
-            if (this.mask) {
-                this.mask.hide();
-            }
-
-            // 添加hide的class
-            $(this.main).addClass(privates.getClass.call(this, 'hide'));
-
-            /**
-             * @event module:Dialog#hide
-             */
-            this.fire('hide');
-
-            // 注销resize
-            $(window).off('resize', this._bound.onResize);
-            clearTimeout(this._resizeTimer);
-
-            return this;
-        },
-
-        /**
-         * 绘制控件
-         *
-         * @override
-         * @public
-         */
-        render: function () {
-            var options = this.options;
-            if (!this.rendered) {
-
-                // TODO IE6浏览器不支持fixed定位
-                if (options.fixed && 6 === lib.browser.ie) {
-                    options.fixed = 0;
-                }
-
-                privates.renderDOM.call(this);
-
-                // 设置渲染的内容
-                if (options.main) {
-                    var ctl = lib.g(options.main);
-                    ctl && privates.getBodyDom.call(this).appendChild(ctl);
-                }
-
-                privates.bind.call(this);
-                this.rendered = true;
+            this.set('visible', false);
+            if (this.hideDispose) {
+                this.dispose();
             }
             return this;
         },
 
         /**
-         * 调整Dialog大小
-         *
-         * @param {Number} width 宽度
+         * 添加一个按钮
+         * @param {string} part 按钮标识, 例如: confirm/cancel
+         * @param {string} text 按钮文字
+         * @return {Element}
          */
-        setWidth: function (width) {
-
-            if (!this.rendered || width < 1) {
-                return this;
-            }
-
-            $(this.main).css({
-                width: width + 'px'
-            });
-
-            this.adjustPos();
-
+        addFooterButton: function (part, text) {
+            var buttons = this.buttons || [];
+            this.set(
+                'buttons',
+                buttons.concat({
+                    part: part,
+                    text: text
+                })
+            );
             return this;
+        },
 
+        /**
+         * 获取一个按钮
+         * @param  {string} part 按钮标识
+         * @return {Element}
+         */
+        getFooterButton: function (part) {
+            return this.helper.getPart(part);
         },
 
         /**
@@ -676,27 +519,18 @@ define(function (require) {
         dispose: function () {
 
             /**
-             * @event module:Dialog#beforedispose
+             * @event module:Dialog#dispose
              */
-            this.fire('beforedispose');
+            this.$parent('dispose');
 
-            // 注销dom事件
-            var bound = this._bound;
-
-            $(privates.getDom.call(this, 'close')).off('click', bound.onClose);
-            $(window).off('resize', bound.onResize);
-
-            clearTimeout(this._resizeTimer);
+            this.undelegate(this.main, 'click', this._onMainClicked);
+            this.undelegate(window, 'resize', this._onWindowResize);
+            $(this.main).remove();
 
             // 销毁遮罩
             if (this.mask) {
                 this.mask.dispose();
             }
-
-            /**
-             * @event module:Dialog#dispose
-             */
-            this.parent('dispose');
 
         }
     });
@@ -707,6 +541,94 @@ define(function (require) {
      * @type {Mask}
      */
     Dialog.Mask = Mask;
+
+    Dialog.DEFAULT_ALERT_OPTIONS = {
+        title: '警告',
+        close: false,
+        skin: 'alert',
+        buttons: [{
+            part: 'confirm',
+            text: '确认'
+        }],
+        hideDispose: true,
+        maskClickClose: false
+    };
+
+    /**
+     * 警告窗口
+     * @param  {Ojbect} options 参数
+     * @return {Promise} 当用户点击了ok时, 此promise会被`resolve`
+     */
+    Dialog.alert = function (options) {
+
+        var dialog = new Dialog(
+            lib.extend(
+                {},
+                Dialog.DEFAULT_ALERT_OPTIONS,
+                options
+            )
+        );
+
+        var defer = new $.Deferred();
+
+        dialog
+            .render()
+            .on('buttonclick', function (e) {
+                if (e.part === 'confirm') {
+                    defer.resolve();
+                    this.hide();
+                }
+            })
+            .show();
+
+        return defer.promise();
+    };
+
+    Dialog.DEFAULT_CONFIRM_OPTIONS = {
+        title: '请确认',
+        close: false,
+        skin: 'confirm',
+        buttons: [{
+            text: '确认',
+            part: 'confirm'
+        }, {
+            text: '取消',
+            part: 'cancel'
+        }],
+        hideDispose: true,
+        maskClickClose: false
+    };
+
+    /**
+     * 确认窗口
+     * @param  {Object} options 窗口参数
+     * @return {Promise}
+     */
+    Dialog.confirm = function (options) {
+
+        var dialog = new Dialog(
+            lib.extend(
+                {},
+                Dialog.DEFAULT_CONFIRM_OPTIONS,
+                options
+            )
+        );
+
+        var defer = new $.Deferred();
+
+        dialog
+            .render()
+            .on('buttonclick', function (e) {
+                e.part === 'confirm'
+                    ? defer.resolve()
+                    : defer.reject();
+                this.hide();
+            })
+            .show();
+
+        return defer.promise();
+
+    };
 
     return Dialog;
 });
