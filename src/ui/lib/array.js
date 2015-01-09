@@ -57,7 +57,7 @@ define(function (require) {
             }
             else {
                 var keys = exports.keys(obj);
-                for (i = 0, length = keys.length; i < length; i++ ) {
+                for (i = 0, length = keys.length; i < length; i++) {
                     var key = keys[i];
                     iterator.call(context, obj[key], key, obj);
                 }
@@ -80,7 +80,7 @@ define(function (require) {
             }
             else {
                 var keys = exports.keys(obj);
-                for (i = 0, length = keys.length; i < length; i++ ) {
+                for (i = 0, length = keys.length; i < length; i++) {
                     var key = keys[i];
                     result.push(iterator.call(context, obj[key], key, obj));
                 }
