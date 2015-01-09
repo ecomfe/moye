@@ -3,6 +3,7 @@
  * @author leonlu <leonlu@outlook.com>
  * @date 2014-07-24
  */
+
 define(function (require) {
 
     var lib = require('../lib');
@@ -11,7 +12,7 @@ define(function (require) {
     /**
      * 将参数用`-`连接成字符串
      *
-     * @param {string...} args 需要连接的串
+     * @param {string} args 需要连接的串
      * @return {string}
      * @ignore
      */
@@ -68,7 +69,7 @@ define(function (require) {
             else {
                 classes.push(joinByStrike(prefix, type));
                 if (skin) {
-                    for (var i = 0, len = skin.length; i < len; i++) {
+                    for (i = 0, len = skin.length; i < len; i++) {
                         skin[i] && classes.push(
                             joinByStrike(skinPrefix, skin[i]),
                             joinByStrike(skinPrefix, skin[i], type)
@@ -197,11 +198,11 @@ define(function (require) {
         /**
          * 获取控件的状态样式字符串，具体可参考{@link lib#getStateClasses}方法
          *
-         * @param {string} [part] 部件名称
+         * @param {string} part 部件名称
          * @return {string}
          */
-        getStateClassName: function (state) {
-            return this.getStateClasses(state).join(' ');
+        getStateClassName: function (part) {
+            return this.getStateClasses(part).join(' ');
         },
 
         /**
@@ -265,13 +266,29 @@ define(function (require) {
          *
          * @param {string} part 部件名称
          * @param {string} nodeName 部件使用的元素类型
+         * @param {Object} attributes 属性值们
          * @return {string}
          */
-        getPartBeginTag: function (part, nodeName) {
+        getPartBeginTag: function (part, nodeName, attributes) {
+
+            attributes = attributes
+                ? lib
+                    .map(attributes, function (value, name) {
+                        return name + '="' + value + '"';
+                    })
+                    .join(' ')
+                : '';
+
             var html = ''
                 + '<' + nodeName + ' '
+                // 这个用于直接取部件
                 +     'id="' + this.getPartId(part) + '" '
-                +     'class="' + this.getPartClassName(part) + '">';
+                // 这里用于做部件辨识
+                +     'data-part="' + part + '"'
+                // 这个当然就是做样式啦
+                +     'class="' + this.getPartClassName(part) + '"'
+                +     '' + attributes + '>';
+
             return html;
         },
 
@@ -280,6 +297,7 @@ define(function (require) {
          *
          * @param {string} part 部件名称
          * @param {string} nodeName 部件使用的元素类型
+         * @param {Object} attributes 属性值们
          * @return {string}
          */
         getPartEndTag: function (part, nodeName) {
@@ -294,11 +312,13 @@ define(function (require) {
          *
          * @param {string} part 部件名称
          * @param {string} nodeName 部件使用的元素类型
+         * @param {string} content innerHTML
+         * @param {Object} attributes 属性值们
          * @return {string}
          */
-        getPartHTML: function (part, nodeName, content) {
+        getPartHTML: function (part, nodeName, content, attributes) {
             nodeName = nodeName || 'div';
-            return this.getPartBeginTag(part, nodeName)
+            return this.getPartBeginTag(part, nodeName, attributes)
                 + (content || '')
                 + this.getPartEndTag(part, nodeName);
         },
@@ -308,13 +328,18 @@ define(function (require) {
          *
          * @param {string} part 部件名称
          * @param {string} [nodeName="div"] 使用的元素类型
+         * @param {string} content innerHTML
+         * @param {Object} attributes 属性值们
+         * @return {Element}
          */
-        createPart: function (part, nodeName, content) {
-            var element = document.createElement(nodeName || 'div');
-            element.id = this.getPartId(part);
-            this.addPartClasses(part, element);
-            element.innerHTML = content;
-            return element;
+        createPart: function (part, nodeName, content, attributes) {
+            return $('<' + (nodeName || 'div') + '>')
+                .attr(attributes || {})
+                .attr('id', this.getPartId(part))
+                .data('part', part)
+                .addClass(this.getPartClassName(part))
+                .html(content)
+                .get(0);
         }
 
     };
