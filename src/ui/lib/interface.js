@@ -162,9 +162,7 @@ define(function (require) {
                 }
                 // 重载: fire(eventType, eventArgs)
                 else {
-                    args = args || {};
-                    args.type = type;
-                    event = new $.Event(args);
+                    event = new $.Event(type, args);
                 }
 
                 // 如果没指定target, 那么谁fire, 谁是target~
