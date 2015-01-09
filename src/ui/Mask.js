@@ -32,14 +32,12 @@ define(function (require) {
         init: function (options) {
             this.$parent(options);
             currentMaskCount++;
-
-            if (lib.browser.ie < 7) {
-                this._onWindowResize = lib.delay($.proxy(this._onWindowResize, this), 300);
-            }
         },
 
         initStructure: function () {
-            $(this.main).appendTo(document.body);
+            $(this.main)
+                .appendTo(document.body)
+                .css('zIndex', this.level);
         },
 
         initEvents: function () {
@@ -60,41 +58,19 @@ define(function (require) {
                 paint: function (conf, visible) {
                     if (visible) {
                         this.addState('visible');
-                        if (lib.browser.ie < 7) {
-                            this._position();
-                            this.delegate(window, 'resize', this._onWindowResize);
-                        }
+                        lib.fixed(this.main, {
+                            right: 0,
+                            bottom: 0,
+                            left: 0,
+                            top: 0
+                        });
                     }
                     else {
                         this.removeState('visible');
-                        if (lib.browser.ie < 7) {
-                            this.undelegate(window, 'resize', this._onWindowResize);
-                        }
                     }
                 }
             }
         ),
-
-        /**
-         * 定位
-         * @protected
-         */
-        _position: function () {
-            var win = $(window);
-            lib.fixed(this.main, {
-                width: win.width(),
-                height: win.height(),
-                left: 0,
-                top: 0
-            });
-        },
-
-        /**
-         * window的`resize`事件处理函数
-         */
-        _onWindowResize: function () {
-            this._position();
-        },
 
         /**
          * 显示一个遮罩层

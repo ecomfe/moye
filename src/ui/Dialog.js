@@ -53,20 +53,17 @@ define(function (require) {
          * @name module:Dialog#options
          * @type {Object}
          * @property {(string | HTMLElement)} options.main 控件渲染容器
-         * @property {string} options.prefix 控件class前缀，同时将作为main的class之一
          * @property {string} options.title 控件标题
          * @property {string} options.content 控件内容
-         * @property {string} options.skin 控件的皮肤
-         * @property {string} options.width 控件的默认宽度
-         * @property {string} options.top 控件距视窗上边缘的高度，默认为auto，会使组件相对于视窗垂直居中
-         * @property {string} options.left 控件距视窗左边缘的宽度，默认为auto，会使组件相对于视窗水平居中
-         * @property {string} options.fixed 是否固定，不随视窗滚动
+         * @property {number} options.width 控件的默认宽度. 这个是必填的. 我们也提供了默认宽度, 400px;
+         * @property {number} options.height 控件的默认高度, 这个参数是可选的.
+         *                                   在不设定此高度时, 我们会根据对话框的实际高度来做视窗居中定位.
          * @property {string} options.mask 是否显示覆盖层
          * @property {string} options.level 当前dialog的z-index
-         * @property {string} options.dragable 是否可以拖动,暂未实现
-         * @property {string} options.tpl 默认的框架模板
          * @property {string} options.footer 控件脚注
-         * @private
+         * @property {Array.Object} options.buttons 控件脚注中的按钮
+         * @property {Array.Object} options.buttons.text 脚注按钮的文字
+         * @property {Array.Object} options.buttons.part 控件按钮的标识
          */
         options: {
 
@@ -83,16 +80,7 @@ define(function (require) {
             footer: '',
 
             // 控件的默认宽度
-            width: '',
-
-            // 控件距视窗上边缘的高度，默认为auto，会使组件相对于视窗垂直居中
-            top: '',
-
-            // 控件距视窗左边缘的宽度，默认为auto，会使组件相对于视窗水平居中
-            left: '',
-
-            // 是否固定，不随视窗滚动，不支持IE6，IE6自动设置为fixed=0
-            fixed: 1,
+            width: 400,
 
             // 是否显示覆盖层
             mask: true,
@@ -121,7 +109,7 @@ define(function (require) {
             this.$parent(options);
             this.visible = false;
             // 这里先把窗口的`resize`事件处理函数给包裹一下, 做一个300毫秒的延迟
-            this._onWindowResize = lib.delay($.proxy(this._onWindowResize, this), 300);
+            // this._onWindowResize = lib.delay($.proxy(this._onWindowResize, this), 300);
         },
 
         initStructure: function () {
@@ -237,9 +225,18 @@ define(function (require) {
             {
                 name: ['width', 'height'],
                 paint: function (conf, width, height) {
+                    var main = $(this.main);
+                    width = this.width = parseInt(width, 10) || main.width();
+                    height = this.height = parseInt(height, 10) || main.height();
                     $(this.main).css({
-                        width: width,
-                        height: height
+                        width: width + 'px',
+                        marginLeft: -width / 2 + 'px',
+                        marginTop: -height / 2 + 'px'
+                    });
+                    // 兼容ie6的定位问题
+                    lib.fixed(this.main, {
+                        top: '50%',
+                        left: '50%'
                     });
                 }
             },
@@ -284,14 +281,13 @@ define(function (require) {
                 name: ['visible'],
                 paint: function (conf, visible) {
                     if (visible) {
-                        this
-                            // 切换状态
-                            .addState('visible')
-                            // 添加窗口resize的事件处理
-                            .delegate(window, 'resize', this._onWindowResize)
-                            // 调整位置
-                            ._position();
-
+                        // 切换状态, 先把自己给显示出来
+                        this.addState('visible');
+                        // 然后我们利用宽高, 重置一下左/上的缩进
+                        this.set({
+                            width: 0,
+                            height: 0
+                        });
                         // 显示遮罩
                         this.mask && this.mask.show();
                     }
@@ -409,57 +405,6 @@ define(function (require) {
         },
 
         /**
-         * 调整弹窗位置
-         * @public
-         */
-        _position: function () {
-            var main = $(this.main);
-            var win = $(window);
-            var left = this.left;
-            var top = this.top;
-
-            // 如果fixed则需要修正下margin-left
-            if (this.fixed) {
-                var cssOpt = {
-                    left: left,
-                    top: top
-                };
-
-                if (!left) {
-                    cssOpt.left = '50%';
-                    cssOpt.marginLeft = (-main.width() / 2) + 'px';
-                }
-
-                if (!top) {
-                    // 这里固定为0.35的位置
-                    cssOpt.top = 0.35 * (win.height() - main.height()) + 'px';
-                }
-
-                $(this.main).css(cssOpt);
-            }
-
-            // absolute则需要动态计算left，top使dialog在视窗的指定位置
-            else {
-
-                if (!left) {
-                    left = (win.scrollLeft() + (win.width() - main.width()) / 2) + 'px';
-                }
-
-                if (!top) {
-                    // 这里固定为0.35的位置
-                    top = (win.scrollTop() + (win.height() - main.height()) * 0.35) + 'px';
-                }
-
-                main.css({
-                    position: 'absolute',
-                    left: left,
-                    top: top
-                });
-            }
-
-        },
-
-        /**
          * 显示窗口
          * @public
          * @return {Dialog}
@@ -524,7 +469,6 @@ define(function (require) {
             this.$parent('dispose');
 
             this.undelegate(this.main, 'click', this._onMainClicked);
-            this.undelegate(window, 'resize', this._onWindowResize);
             $(this.main).remove();
 
             // 销毁遮罩
@@ -619,9 +563,9 @@ define(function (require) {
         dialog
             .render()
             .on('buttonclick', function (e) {
-                e.part === 'confirm'
-                    ? defer.resolve()
-                    : defer.reject();
+                var part = e.part;
+                var result = part === 'confirm' ? 'resolve' : 'reject';
+                defer[result](part);
                 this.hide();
             })
             .show();
