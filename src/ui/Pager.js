@@ -11,10 +11,11 @@ define(function (require) {
     var $ = require('jquery');
     var Control = require('./Control');
     var painter = require('./painter');
+    var lib = require('./lib');
 
     /**
      * 分页控件
-     * 
+     *
      * 提供Ajax及本地数据分页功能
      * @extends module:Control
      * @requires lib
@@ -36,7 +37,7 @@ define(function (require) {
 
         /**
          * 控件类型标识
-         * 
+         *
          * @type {string}
          * @private
          */
@@ -44,7 +45,7 @@ define(function (require) {
 
         /**
          * 控件配置项
-         * 
+         *
          * @name module:Pager#optioins
          * @type {Object}
          * @property {boolean} options.disabled 控件的不可用状态
@@ -52,11 +53,9 @@ define(function (require) {
          * @property {number} options.page 当前页，第一页从0开始
          * @property {number} options.first 起始页码，通常值为 0 或 1，默认 0
          * @property {number} options.padding 当页数较多时，首尾显示页码的个数
-         * @property {boolean} options.showAlways 是否一直显示分页控件
          * @property {number} options.showCount 当页数较多时，中间显示页码的个数
          * @property {number} options.total 总页数
-         * @property {string} options.prefix 控件class前缀，同时将作为main的class之一
-         * @property {string} options.disabledClass 分页项不用可时的class定义
+         * @property {boolean} options.showAlways 是否一直显示分页控件
          * @property {Object.<string, string>} options.lang 用于显示上下页的文字
          * @property {string} options.lang.prev 上一页显示文字(支持HTML)
          * @property {string} options.lang.next 下一页显示文字(支持HTML)
@@ -64,12 +63,6 @@ define(function (require) {
          * @private
          */
         options: {
-
-            // 控件的不可用状态
-            disabled: false,
-
-            // 控件渲染主容器
-            main: '',
 
             // 当前页，第一页从0开始
             page: 0,
@@ -88,9 +81,6 @@ define(function (require) {
 
             // 总页数
             total: 0,
-
-            // 控件class前缀，同时将作为main的class之一
-            prefix: 'ecl-ui-pager',
 
             // 分页项不用可时的class定义
             disabledClass: 'disabled',
@@ -111,93 +101,105 @@ define(function (require) {
 
         /**
          * 控件初始化
-         * 
+         *
          * @param {Object} options 控件配置项
          * @see module:Pager#options
          * @private
          */
         init: function (options) {
-
-            this.disabled  = options.disabled;
-            this.showCount = (options.showCount || Pager.SHOW_COUNT) | 0;
-            this.total     = options.total | 0;
-            this.padding   = options.padding | 0;
-            this.page      = 0;
-            options.first  &= 1;
-
-            this.setPage(options.page | 0);
-
-            var lang = options.lang;
-            lang.prev.replace(/\{prefix\}/gi, options.prefix);
-            lang.next.replace(/\{prefix\}/gi, options.prefix);
-
+            this.$parent(options);
+            var main = $(this.main);
+            this.showCount = +this.showCount || Pager.SHOW_COUNT;
+            this.total     = +this.total || main.data('total') || 0;
+            this.padding   = +this.padding || 0;
+            this.page      = +this.page || main.data('page') || 0;
+            this.first     &= 1;
         },
 
         initEvents: function () {
-            $(this.main)
-                .on('click', $.proxy(this._onMainClicked, this));
+            this.delegate(this.main, 'click', this._onMainClicked);
         },
 
         repaint: painter.createRepaint(
             Control.prototype.repaint,
             {
-                name: [ 'page', 'total' ],
+                name: ['page', 'total'],
                 paint: function (painter, page, total) {
                     var main = $(this.main);
 
-                    if (total > 1 || this.options.showAlways) {
-                        main.html(this._build()).show();
-                    }
-                    else {
+                    // page的可选区间在[0, total); 所以我们做这个规范化处理
+                    this.page = Math.max(Math.min(page - this.first, this.total - 1), 0);
+
+                    // total的取值间是[1, total], 如果total为0或1,
+                    // 那么我们认为没有必要显示pager;
+                    if (total < 2 && !this.showAlways) {
                         main.hide();
                     }
+                    else {
+                        main.html(this._build()).show();
+                    }
+
                 }
             }
         ),
 
         /**
          * 设置页码
-         * 
+         *
          * @param {number} page 新页码
          * @public
          */
         setPage: function (page) {
-            page -= this.options.first;
-            page = Math.max(0, Math.min(page | 0, this.total - 1));
             this.set('page', page);
         },
 
         /**
          * 获取当前页码
-         * 
+         *
          * @return {number} 控件当前页码
          * @public
          */
         getPage: function () {
-            return this.page + this.options.first;
+            return this.page + this.first;
         },
 
         /**
          * 设置总页数
-         * 
+         *
          * @param {number} total 要设置的总页数
          * @public
          */
         setTotal: function (total) {
             this.set({
                 page: 0,
-                total: (total | 0) || 1
+                total: +total
             });
         },
 
         /**
          * 获取总页数
-         * 
+         *
          * @return {number} 控件总页数
          * @public
          */
         getTotal: function () {
             return this.total;
+        },
+
+        getItemText: function (index, part) {
+            return this.lang[part] || index;
+        },
+
+        getItemHTML: function (index, part) {
+            var helper = this.helper;
+            var states = [].slice.call(arguments, 1);
+            var className = lib.map(states, helper.getPartClassName, helper).join(' ');
+            var page = index + this.first;
+
+            return ''
+                + '<a href="#" data-page="' + page + '" class="' + className + '">'
+                +     this.getItemText(index + 1, part)
+                + '</a>';
         },
 
         /**
@@ -207,172 +209,116 @@ define(function (require) {
          * @private
          */
         _build: function () {
-            var options    = this.options;
-            var lang       = options.lang;
-            var prefix     = options.prefix + '-';
-            var showAlways = options.showAlways;
-            var showCount  = this.showCount;
-            var total      = this.total;
-            var page       = this.page + 1;
-            var padding    = this.padding;
-            var html       = [];
-            var htmlLength = 0;
 
-            if (total < 2) {
-                if (showAlways) {
-                    setSpecial(0, 'prev', true);
-                    setSpecial(0, 'current');
-                    setSpecial(0, 'next', true);
-                }
+            var page = this.page;
+            var total = this.total;
+            var padding = this.padding;
+            var showCount = this.showCount;
 
-                return html.join('');
+            showCount = showCount > total ? total : showCount;
+
+            var wing = Math.floor(showCount / 2);
+
+            var paddingLeft = padding;
+            var wingLeft = wing;
+            var paddingRight = padding;
+            var wingRight = wing;
+
+            var reduceLeftToRight = page - wing;
+
+            // 如果wingLeft小于0, 那么把小于0的部分移动到wingRight
+            if (reduceLeftToRight < 0) {
+                wingLeft += reduceLeftToRight;
+                wingRight -= reduceLeftToRight;
             }
 
-            var start = 1;
-            var end = total;
-            var wing = (showCount - showCount % 2) / 2;
+            var reduceRightToLeft = page + wing + 1 - total;
 
-            function setNum(i) {
-                html[htmlLength++] = ''
-                    + '<a href="#" data-page="' + (i - 1) + '">'
-                    +   i
-                    + '</a>';
+            // 如果wingRight大于total, 那么把超长的部分移动到wingLeft
+            if (reduceRightToLeft > 0) {
+                wingLeft += reduceRightToLeft;
+                wingRight -= reduceRightToLeft;
             }
 
-            function setSpecial(i, name, disabled) {
-                var klass = prefix + name;
-                if (disabled) {
-                    klass += ' ' + prefix + 'disabled';
-                }
-                html[htmlLength++] = ''
-                    + '<a href="#" data-page="'
-                    +   i + '" class="' + klass + '">'
-                    +   (lang[name] || i + 1)
-                    + '</a>';
-            }
+            // 生成左半端页码
+            var left = this.range(0, page, paddingLeft, wingLeft);
+            // 生成右半端页码
+            var right = this.range(page + 1, total, wingRight, paddingRight);
 
-            showCount = wing * 2 + 1;
-
-            if (showCount < total) {
-                end = showCount;
-                if (page > wing + 1) {
-                    if (page + wing > total) {
-                        start = total - wing * 2;
-                        end   = total;
-                    }
-                    else {
-                        start = page - wing;
-                        end   = page + wing;
-                    }
-                }
-            }
-
-            // previous page
-            if (page > 1 || showAlways) {
-                setSpecial(page - 2, 'prev', page < 2);
-            }
-
-            // padding-left
-            for (i = 0; i < padding; i++) {
-                if (i + 1 < start) {
-                    setNum(i + 1);
-                }
-            }
-
-            // ..
-            if (start > padding + 2) {
-                setSpecial(page - 2, 'ellipsis');
-            }
-
-            if (start === padding + 2) {
-                setNum(padding + 1);
-            }
-
-            // current page & wing
-            var current = page;
-            for (var i = start; i <= end; i++) {
-                i === current ? setSpecial(i - 1, 'current') : setNum(i);
-            }
-
-            // ..
-            var pos = total - padding;
-            if (end < pos - 1) {
-                setSpecial(page, 'ellipsis');
-            }
-
-            if (end === pos - 1) {
-                setNum(pos);
-            }
-
-            // padding-right
-            for (i = 0; i < padding; i++) {
-                if (pos + i + 1 > end) {
-                    setNum(pos + i + 1);
-                }
-            }
-
-            // next page
-            if (page < total || showAlways) {
-                setSpecial(page, 'next', page >= total);
-            }
+            var html = lib.map(
+                left.concat(page).concat(right),
+                function (index) {
+                    return index < 0
+                        // 哈哈, 这是ellipsis
+                        ? this.getItemHTML(-index, 'ellipsis')
+                        // 这此进正常的孩子们
+                        : this.getItemHTML(index, index === page ? 'current' : 'item');
+                },
+                this
+            );
 
             return html.join('');
+        },
+
+        /**
+         * 生成一个页码数组, 如果需要ellipsis, 那么ellpsis用负数表示它;
+         * 即ellipsis在5号位置, 那么他就是-5
+         * 输入: start 0, stop 10, paddingLeft 3 paddingRight 3
+         * 输出: 0, 1, 2, -3, 8, 9, 10
+         * @param  {number} start        起始页码
+         * @param  {number} stop         结束页面(不包含)
+         * @param  {number} paddingLeft  起始页码之后, 应展开的页码个数
+         * @param  {number} paddingRight 结束页面之前, 应展开的页码个数
+         * @return {Array.number}        [start, paddingLeft, .., paddingRight, stop]
+         */
+        range: function (start, stop, paddingLeft, paddingRight) {
+            if (start + paddingLeft < stop - paddingRight) {
+                return lib
+                    .range(start, start + paddingLeft)
+                    .concat(-start - paddingLeft)
+                    .concat(lib.range(stop - paddingRight, stop));
+            }
+            else {
+                return lib.range(start, stop);
+            }
         },
 
         /**
          * 页码改变时
          *
          * @param {Event} e 事件对象
-         * @fires module:Pager#click
-         * @fires module:Pager#change
-         * @private
+         * @protected
          */
-        _onMainClicked: function (e, target) {
+        _onMainClicked: function (e) {
+
             e.preventDefault();
 
-            var target = e.target;
+            var target = $(e.target).closest('a', this.main);
+            var helper = this.helper;
 
-            /**
-             * @event module:Pager#click
-             */
-            this.fire('click');
-
-            var main = this.main;
-            if (this.disabled || !target || target === main) {
+            if (!target.length || target.hasClass(helper.getPrimaryClassName('current'))) {
                 return;
             }
 
-            if (target.tagName !== 'A') {
-                target = $(target).closest('A', main)[0];
+            var page = target.data('page');
 
-                if (target === undefined || target === main) {
-                    return;
-                }
+            /**
+             * @event module:Pager#change
+             * @type {Object}
+             * @property {number} page 新的页码
+             */
+            var event = new $.Event('change', {
+                page: page
+            });
+
+            this.fire(event);
+
+            if (event.isDefaultPrevented()) {
+                return;
             }
 
-            var current = target.getAttribute('data-page');
-
-            if (current !== null) {
-                current |= 0;
-            }
-
-            var page = this.page;
-
-            if (
-                current !== null
-                && 0 <= current
-                && current < this.total
-                && current !== page
-            ) {
-                var first = this.options.first & 1;
-
-                /**
-                 * @event module:Pager#change
-                 * @type {Object}
-                 * @property {number} page 新的页码
-                 */
-                this.fire('change', { page: current + first });
-            }
+            this.page = null;
+            this.set('page', page);
         }
     });
 
