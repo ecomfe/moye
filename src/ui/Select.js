@@ -183,6 +183,10 @@ define(function (require) {
                 );
         },
 
+        initEvents: function () {
+            this.delegate(this.main, 'click', this._onMainClicked);
+        },
+
         repaint: require('./painter').createRepaint(
             Control.prototype.repaint,
             {
@@ -333,7 +337,9 @@ define(function (require) {
                  * @property {string} name 选中项的文字
                  * @property {Date} shortText 选中项的文字的切割值
                  */
-                this.fire('change', changesIndex);
+                this.fire('change', {
+                    value: value
+                });
             }
         },
 
@@ -409,6 +415,15 @@ define(function (require) {
                 this.removeState('expanded');
                 this.getValue() && this.addState('selected');
             }
+        },
+
+        _onMainClicked: function (e) {
+            e.preventDefault();
+        },
+
+        dispose: function () {
+            this.undelegate(this.main, 'click', this._onMainClicked);
+            this.$parent();
         }
 
 
