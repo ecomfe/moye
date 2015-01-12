@@ -283,15 +283,12 @@ define(function (require) {
          * @return {Array.number}        [start, paddingLeft, .., paddingRight, stop]
          */
         range: function (start, stop, paddingLeft, paddingRight) {
-            if (start + paddingLeft < stop - paddingRight) {
-                return lib
+            return start + paddingLeft < stop - paddingRight
+                ? lib
                     .range(start, start + paddingLeft)
                     .concat(-start - paddingLeft)
-                    .concat(lib.range(stop - paddingRight, stop));
-            }
-            else {
-                return lib.range(start, stop);
-            }
+                    .concat(lib.range(stop - paddingRight, stop))
+                : lib.range(start, stop);
         },
 
         /**
