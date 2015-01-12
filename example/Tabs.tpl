@@ -18,75 +18,120 @@ ul {
 {% filter: markdown %}
 # Tabs 选项卡
 
-### DEMO
------------------------
+### 正常模式
+
+点击标签可以切换
+
+> 可以通过阻止`change`事件对象的默认行为来阻止切换标签
 
 {% /filter%}
 <div class="content">
-  <ul class="ecl-ui-tabs-labels">
-    <li>CSS控件</li>
-    <li class="ecl-ui-tabs-selected">UI控件拆分</li>
-    <li>UI栅格化设计</li>
-    <li>如何使用</li>
-    <li>新UI设计规范</li>
-    <li>再点你也切换不了</li>
-  </ul>  
+    <ul id="tabs" class="ui-tabs"></ul>
 </div>
-{% filter: markdown %}
-
-### 源码
------------------------
-
-```html
-<ul id="tabs" class="ecl-ui-tabs-labels">
-  <li>CSS控件</li>
-  <li class="ecl-ui-tabs-selected">UI控件拆分</li>
-  <li>UI栅格化设计</li>
-  <li>如何使用</li>
-  <li>新UI设计规范</li>
-  <li>再点你也切换不了</li>
-</ul>
-```
-
-```js
-require(['ui/Tabs'], function (Tabs) {
-
-  var tabs = new Tabs({
-    main: document.getElementById('tabs'),
-    onChange: function (e) {
-      //console.log('changed:from %s to %s', e.oldIndex, e.newIndex);
-    }
-  }).render();
-
-  //console.log(tabs.selectedIndex);
-
-  tabs.onBeforeChange = function (oldIndex, newIndex) {
-    if (newIndex === 5) {
-      return false;
-    }
-  };
-
-});
-```
-{% /filter %}
-{% content: script %}
 <script>
 require(['ui/Tabs'], function (Tabs) {
 
-  var tabs = new Tabs({
-    main: document.getElementById('tabs'),
-    onChange: function (e) {
-      //console.log('changed:from %s to %s', e.oldIndex, e.newIndex);
-    }
-  }).render();
-
-  //console.log(tabs.selectedIndex);
-
-  tabs.onBeforeChange = function (oldIndex, newIndex) {
-    if (newIndex === 5) {
-      return false;
-    }
-  };
+    new Tabs({
+        main: document.getElementById('tabs'),
+        activeIndex: 0,
+        tabs: [
+            {title: 'CSS控件'},
+            {title: 'UI控件拆分'},
+            {title: 'UI栅格化设计'},
+            {title: '如何使用'},
+            {title: '新UI设计规范'},
+            {title: '再点你也切换不了'}
+        ]
+    })
+    .on('change', function (e) {
+        if (e.activeIndex === 5) {
+            e.preventDefault();
+        }
+    })
+    .render();
 
 });
 </script>
+{% filter: markdown %}
+
+```html
+<ul id="tabs" class="ui-tabs"></ul>
+```
+
+```js
+new Tabs({
+    main: document.getElementById('tabs'),
+    activeIndex: 0,
+    mode: 'mouseover',
+    tabs: [
+        {title: 'CSS控件'},
+        {title: 'UI控件拆分'},
+        {title: 'UI栅格化设计'},
+        {title: '如何使用'},
+        {title: '新UI设计规范'},
+        {title: '再点你也切换不了'}
+    ]
+})
+.on('change', function (e) {
+    if (e.activeIndex === 5) {
+        e.preventDefault();
+    }
+})
+.render();
+```
+
+## 鼠标移到标签上时切换
+
+> 设置参数`mode`为`mouseover`
+
+{% /filter %}
+
+
+<div class="content">
+    <ul id="mouseover-tabs" class="ui-tabs"></ul>
+</div>
+
+<script>
+require(['ui/Tabs'], function (Tabs) {
+
+    new Tabs({
+        main: document.getElementById('mouseover-tabs'),
+        activeIndex: 0,
+        mode: 'mouseover',
+        tabs: [
+            {title: 'CSS控件'},
+            {title: 'UI控件拆分'},
+            {title: 'UI栅格化设计'},
+            {title: '如何使用'},
+            {title: '新UI设计规范'}
+        ]
+    })
+    .render();
+
+});
+</script>
+
+{% filter: markdown %}
+
+```html
+<div class="content">
+    <ul id="mouseover-tabs" class="ui-tabs"></ul>
+</div>
+```
+
+```js
+new Tabs({
+    main: document.getElementById('mouseover-tabs'),
+    activeIndex: 0,
+    mode: 'mouseover',
+    tabs: [
+        {title: 'CSS控件'},
+        {title: 'UI控件拆分'},
+        {title: 'UI栅格化设计'},
+        {title: '如何使用'},
+        {title: '新UI设计规范'}
+    ]
+})
+.render();
+```
+{% /filter %}

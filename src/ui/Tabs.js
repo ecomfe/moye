@@ -21,59 +21,7 @@ define(function (require) {
      */
     var privates = /** @lends module:Tabs~privates */ {
 
-        /**
-         * 点击事件处理
-         *
-         * @param {?Event} e DOM 事件对象
-         * @fires module:Tabs#change
-         * @private
-         */
-        onClick: function (e) {
-            var main = this.main;
-            var options = this.options;
 
-            var target = $(e.target);
-            if (!target.is('li')) {
-                target = target.closest('li', main);
-                if (!target.length) {
-                    return;
-                }
-            }
-
-            var selectedClass = options.prefix + '-selected';
-            var hasSelected = target.hasClass(selectedClass);
-            var index = target.attr('data-index') | 0;
-
-            if (hasSelected
-                || this.onBeforeChange(this.selectedIndex, index) === false
-            ) {
-                return;
-            }
-
-            var labels = this.labels;
-            $(labels[this.selectedIndex]).removeClass(selectedClass);
-            $(labels[index]).addClass(selectedClass);
-
-            var selectedLabel = labels[index];
-
-            /**
-             * @event module:Tabs#change
-             * @type {Object}
-             * @property {HTMLElement} selected 选中选项卡
-             * @property {number} oldIndex 旧的选中选项卡索引值
-             * @property {number} newIndex 新的选中选项卡索引值
-             */
-            this.fire(
-                'change',
-                {
-                    selected: selectedLabel,
-                    oldIndex: this.selectedIndex,
-                    newIndex: index
-                }
-            );
-            this.selectedIndex = index;
-
-        }
     };
 
     /**
@@ -99,25 +47,28 @@ define(function (require) {
          *
          * @name module:Tabs#options
          * @type {Object}
-         * @property {boolean} options.disabled 控件的不可用状态
-         * @property {(string | HTMLElement)} options.main 控件渲染容器
-         * @property {string} options.prefix 控件class前缀，同时将作为main的class之一
-         * @property {number} selectedIndex 默认选中项的索引值
+         * @property {string} item 标签项的selector样式
+         * @property {boolean} allowClose 是否可以关闭
+         * @property {number} activeIndex 默认选中项的索引值
+         * @property {Array.Object} tabs  标签们的配置
          * @private
          */
         options: {
 
-            // 提示框的不可用状态，默认为false。处于不可用状态的提示框不会出现。
-            disabled: false,
+            // 是否允许关闭标签
+            // allowClose: false,
 
-            // 控件渲染主容器
-            main: '',
+            // 选中项
+            activeIndex: 0,
 
-            // 控件class前缀，同时将作为main的class之一
-            prefix: 'ecl-ui-tabs',
+            // 选项标签标识
+            item: 'li',
 
-            // 默认选中项
-            selectedIndex: 0
+            // 切换方式, 可选`click`/`hover`
+            mode: 'click',
+
+            // 标签配置
+            tabs: []
         },
 
         /**
@@ -128,64 +79,124 @@ define(function (require) {
          * @private
          */
         init: function (options) {
-            this.main = lib.g(options.main);
-            this.labels = $('.' + options.prefix + '-labels', this.main)[0];
-            this.selectedIndex = options.selectedIndex | 0;
+            this.$parent(options);
 
-            this.bindEvents(privates);
+            this.activeIndex = +options.activeIndex || 0;
+
+            // 获取tabs配置
+            this.tabs = this.tabs && this.tabs.length
+                ? this.tabs
+                : $(this.main).data('tabs') || [];
+
+            this._onSwitch = $.proxy(this._onSwitch, this);
         },
 
+        initEvents: function () {
+            // 先给选项卡父容器添加事件监听
+            $(this.main).on(this.mode, this.item, this._onSwitch);
+        },
 
-        /**
-         * 绘制控件
-         *
-         * @public
-         */
-        render: function () {
-            var options = this.options;
+        repaint: require('./painter').createRepaint(
+            Control.prototype.repaint,
+            {
+                name: 'tabs',
+                paint: function (conf, tabs) {
 
-            if (!this.rendered) {
-                this.rendered = true;
+                    var main = $(this.main);
+                    var helper = this.helper;
 
-                // 先给选项卡父容器添加事件监听
-                $(this.labels).on('click', this._bound.onClick);
+                    if (this.helper.isInStage('INITED') && main.data('dom-inited')) {
+                        return;
+                    }
 
-                // 找出所有选项卡
-                var labels = $('li', this.labels).toArray();
+                    var html = [];
 
-                // 是否支持伪元素
-                var noPseudoElement = lib.browser.ie6;
-                $.each(
-                    labels,
-                    function (i, label) {
-                        // 自动加上索引标识
-                        label.setAttribute('data-index', i);
+                    // 是否支持伪元素
+                    var noPseudoElement = lib.browser.ie6;
+                    var item = this.item;
 
-                        // 对于不支持伪元素的 ie6，自动插入一个 <i> 标签
-                        // TODO: innerHTML vs dom clone
+                    for (var i = 0, len = tabs.length; i < len; i++) {
+
+                        var clazz = ''
+                            + helper.getPartClassName('item')
+                            + ' '
+                            + (i === 0 ? helper.getPartClassName('item-first') : '');
+
+                        html[i] = ''
+                            + '<' + item + ' class="' + clazz + '" data-index="' + i + '">'
+                            +     tabs[i].title
+                            + '</' + item + '>';
+
                         if (noPseudoElement) {
-                            label.innerHTML += '<i></i>';
+                            html[i] += '<i></i>';
                         }
                     }
-                );
 
-                var selectedClass = options.prefix + '-selected';
-                var selectedLabel = $('.' + selectedClass, this.labels)[0];
+                    main.html(html.join(''));
 
-                this.labels = labels;
-
-                if (selectedLabel) {
-                    this.selectedIndex =
-                        selectedLabel.getAttribute('data-index') | 0;
                 }
-                else {
-                    selectedLabel = labels[this.selectedIndex];
-                    selectedLabel && $(selectedLabel).trigger('click');
+            },
+            {
+                name: 'activeIndex',
+                paint: function (conf, activeIndex) {
+                    var activeClass = this.helper.getPartClassName('active');
+                    $(this.item, this.main).each(function (i) {
+                        if (i === activeIndex) {
+                            $(this).addClass(activeClass)
+                        }
+                        else {
+                            $(this).removeClass(activeClass);
+                        }
+                    });
                 }
-
             }
+        ),
 
-            return this;
+
+        add: function (tab) {
+            var activeIndex = this.activeIndex;
+            var tabs = this.tabs.slice().concat(tab);
+            this.tabs = null;
+            this.activeIndex = null;
+            this.set({
+                tabs: tabs,
+                activeIndex: activeIndex
+            });
+        },
+
+        /**
+         * 移除标签
+         * @param  {number} index 标签序号
+         * @return {Tabs}
+         */
+        remove: function (index) {
+            var activeIndex = this.activeIndex;
+
+            // 如果移除的是当前激活的标签, 把激活标签弄成0
+            // 如果激活标签在被移除标签后面, 那把它-1
+            // 否则激活标签不变
+            activeIndex = activeIndex === index
+                ? 0
+                : (activeIndex > index ? activeIndex - 1 : activeIndex);
+
+            var tabs = this.tabs.slice();
+            tabs.splice(index, 1);
+            this.activeIndex = this.tabs = null;
+
+            this.set({
+                tabs: tabs,
+                activeIndex: activeIndex
+            });
+
+        },
+
+        /**
+         * 选择标签
+         * @param  {number} index 标签序号
+         * @return {Tabs}
+         */
+        select: function (index) {
+            this.set('activeIndex', index);
         },
 
         /**
@@ -201,6 +212,52 @@ define(function (require) {
         /* jshint unused:false */
         onBeforeChange: function (oldIndex, newIndex) {
             return true;
+        },
+
+        /**
+         * 点击事件处理
+         *
+         * @param {?Event} e DOM 事件对象
+         * @fires module:Tabs#change
+         * @private
+         */
+        _onSwitch: function (e) {
+            var main        = this.main;
+            var target      = $(e.target).closest(this.item, main);
+
+            if (!target.is(this.item)) {
+                return;
+            }
+
+            var activeIndex = this.activeIndex;
+            var index       = target.data('index');
+
+            if (activeIndex === index) {
+                return;
+            }
+
+            var event = new $.Event('change', {
+                activeIndex: index
+            });
+
+            /**
+             * @event module:Tabs#change
+             * @type {Object}
+             * @property {HTMLElement} activeIndex 选中标签序号
+             */
+            this.fire(event);
+
+            if (event.isDefaultPrevented()) {
+                return;
+            }
+
+            var activeClass = this.helper.getPartClassName('active');
+            var items       = $(this.item, main);
+
+            items.eq(activeIndex).removeClass(activeClass);
+            items.eq(index).addClass(activeClass);
+
+            this.activeIndex = index;
         }
 
 
