@@ -1,45 +1,42 @@
 /**
  * MOYE
  * Copyright 2014 Baidu Inc. All rights reserved.
- * 
+ *
  * @file 翻页样式
  * @author leon <leonlu@outlook.com>
  */
 
 @import './variable.less';
+@import './dep.less';
 
 .@{pager-prefix} {
-    display: inline-block;
-    *display: inline;
-    vertical-align: top;
+    .inline-block();
 
     a {
-        float: left;
-        margin: 3px; 
-        text-decoration: none; 
-        border: 1px solid @pager-item-border-color;
-        overflow: hidden;
-        padding: 2px 5px;
+        .inline-block();
+
+        width: 23px;
+        height: 23px;
+        padding: 0;
+        margin: 0 3px;
+
+        text-decoration: none;
+        line-height: 23px;
         color: @pager-item-color;
-        font: normal 12px/1.2 Arial, Helvetica, sans-serif;
+        font-size: 12px;
+        font-family: Arial, Helvetica, sans-serif;
         text-align: center;
         background-color: @pager-item-background-color;
+        border: 1px solid @pager-item-border-color;
 
         &:hover {
             background-color: @pager-item-hover-background-color;
         }
 
-        // 小三角
-        em { 
-            vertical-align: middle;
-            border: 5px solid #fff;
-            font-size: 0;
-            margin: auto 3px;
-            *zoom: 1;
-        }
-
-        &:hover em {
-            border-color: @pager-item-hover-background-color; 
+        &.@{pager-prefix}-prev,
+        &.@{pager-prefix}-next {
+            width: auto;
+            padding: 0 5px;
         }
 
         &.@{pager-prefix}-ellipsis {
@@ -52,35 +49,23 @@
             }
         }
 
-        &.@{pager-prefix}-prev em,
-        &.@{pager-prefix}-prev:hover em {
-            border-right-color: @pager-item-triangle-color; 
-            border-left: none;
-        }
-
-        &.@{pager-prefix}-next em,
-        &.@{pager-prefix}-next:hover em {
-            border-left-color: @pager-item-triangle-color; 
-            border-right: none;
-        }
-
         &.@{pager-prefix}-current {
             font-weight: 700;
-            border: none;    
+            border: none;
             color: @pager-item-current-color;
             cursor: default;
-    
             &:hover {
                 background: none;
-                em {
-                    border-color: @pager-item-hover-background-color;
-                }
             }
         }
 
         &.@{pager-prefix}-disabled {
             color: @pager-item-disabled-color;
             cursor: default;
+            &:hover {
+                border-color: @pager-item-border-color;
+                background-color: @pager-item-background-color;
+            }
         }
 
     }
@@ -89,5 +74,5 @@
         color: @pager-item-disabled-color;
         cursor: default;
     }
-    
+
 }

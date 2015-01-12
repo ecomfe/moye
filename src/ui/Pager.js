@@ -77,7 +77,7 @@ define(function (require) {
             showAlways: true,
 
             // 当页数较多时，中间显示页码的个数
-            showCount: 0,
+            showCount: 5,
 
             // 总页数
             total: 0,
@@ -89,10 +89,10 @@ define(function (require) {
             lang: {
 
                 // 上一页显示文字
-                prev: '<em></em>上一页',
+                prev: '上一页',
 
                 // 下一页显示文字
-                next: '下一页<em></em>',
+                next: '下一页',
 
                 // 省略号
                 ellipsis: '..'
@@ -109,7 +109,7 @@ define(function (require) {
         init: function (options) {
             this.$parent(options);
             var main = $(this.main);
-            this.showCount = +this.showCount || Pager.SHOW_COUNT;
+            this.showCount = +this.showCount;
             this.total     = +this.total || main.data('total') || 0;
             this.padding   = +this.padding || 0;
             this.page      = +this.page || main.data('page') || 0;
@@ -192,13 +192,21 @@ define(function (require) {
 
         getItemHTML: function (index, part) {
             var helper = this.helper;
-            var states = [].slice.call(arguments, 1);
-            var className = lib.map(states, helper.getPartClassName, helper).join(' ');
+            var states = [].slice.call(arguments, 1).concat('item');
+            var className = lib.reduce(
+                states,
+                function (result, part) {
+                    if (part) {
+                        result.push(helper.getPartClassName(part));
+                    }
+                    return result;
+                },
+                []
+            );
             var page = index + this.first;
-
             return ''
-                + '<a href="#" data-page="' + page + '" class="' + className + '">'
-                +     this.getItemText(index + 1, part)
+                + '<a href="#" data-page="' + page + '" class="' + className.join(' ') + '">'
+                +     this.getItemText(index + 1, part || 'item')
                 + '</a>';
         },
 
@@ -252,7 +260,7 @@ define(function (require) {
                         // 哈哈, 这是ellipsis
                         ? this.getItemHTML(-index, 'ellipsis')
                         // 这此进正常的孩子们
-                        : this.getItemHTML(index, index === page ? 'current' : 'item');
+                        : this.getItemHTML(index, index === page ? 'current' : '');
                 },
                 this
             );
@@ -329,14 +337,6 @@ define(function (require) {
             this.set('page', page);
         }
     });
-
-    /**
-     * 当页数较多时，中间显示页码的个数
-     *
-     * @const
-     * @type {number}
-     */
-    Pager.SHOW_COUNT = 5;
 
     return Pager;
 });
