@@ -257,7 +257,18 @@ define(function (require) {
                 this
             );
 
-            return html.join('');
+            return ''
+                + this.getItemHTML(
+                    Math.max(page - 1, 0),
+                    'prev',
+                    page > 0 ? '' : 'disabled'
+                )
+                + html.join('')
+                + this.getItemHTML(
+                    Math.min(page + 1, total - 1),
+                    'next',
+                    page < total - 1 ? '' : 'disabled'
+                );
         },
 
         /**
