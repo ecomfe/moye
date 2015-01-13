@@ -13,18 +13,6 @@ define(function (require) {
     var Control = require('./Control');
 
     /**
-     * 私有函数或方法
-     *
-     * @type {Object}
-     * @namespace
-     * @name module:Tabs~privates
-     */
-    var privates = /** @lends module:Tabs~privates */ {
-
-
-    };
-
-    /**
      * 选项卡组件
      *
      * @constructor
@@ -64,7 +52,7 @@ define(function (require) {
             // 选项标签标识
             item: 'li',
 
-            // 切换方式, 可选`click`/`hover`
+            // 切换方式, 可选`click`/`mouseover`
             mode: 'click',
 
             // 标签配置
@@ -142,7 +130,7 @@ define(function (require) {
                     var activeClass = this.helper.getPartClassName('active');
                     $(this.item, this.main).each(function (i) {
                         if (i === activeIndex) {
-                            $(this).addClass(activeClass)
+                            $(this).addClass(activeClass);
                         }
                         else {
                             $(this).removeClass(activeClass);
@@ -188,6 +176,7 @@ define(function (require) {
                 activeIndex: activeIndex
             });
 
+            return this;
         },
 
         /**
@@ -197,21 +186,7 @@ define(function (require) {
          */
         select: function (index) {
             this.set('activeIndex', index);
-        },
-
-        /**
-         * 切换选项卡前判定
-         *
-         * 主要用于业务逻辑判断是否允许切换选项卡，默认允许，不允许则需要明确返回 false
-         *
-         * @param {number} oldIndex 原选中项索引值
-         * @param {number} newIndex 新选中项索引值
-         * @return {boolean} 是否允许切换
-         * @public
-         */
-        /* jshint unused:false */
-        onBeforeChange: function (oldIndex, newIndex) {
-            return true;
+            return this;
         },
 
         /**
