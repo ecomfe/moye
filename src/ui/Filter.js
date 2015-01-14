@@ -244,10 +244,16 @@ define(function (require) {
 
             groups: 'p',
 
+            item: 'label',
+
             checkedClass: 'checked',
 
             disabledClass: 'disabled'
 
+        },
+
+        init: function (options) {
+            this.$parent(options);
         },
 
         /**
@@ -257,7 +263,7 @@ define(function (require) {
          * @see module:Filter#options
          * @private
          */
-        init: function (options) {
+        initStructure: function (options) {
             var me = this;
 
             me.disabled  = options.disabled;
@@ -268,7 +274,6 @@ define(function (require) {
 
             me.main = me.main[0];
 
-            me.bindEvents(privates);
 
         },
 
@@ -300,11 +305,11 @@ define(function (require) {
 
                 var groups = me.groups = {};
 
-                $(options.groups).each(function (index, group) {
+                $(me.group).each(function (index, group) {
                     groups[$('input', group).attr('name')] = group;
                 });
 
-                $main.on('click', me._bound.onClick);
+                $main.on('click', $.proxy(privates.onClick, this));
             }
 
             return me;

@@ -2,8 +2,8 @@
  * Moye (Zhixin UI)
  * Copyright 2014 Baidu Inc. All rights reserved.
  *
- * @file 比 PC-UI WCal 好用的日历控件
  * @author chris(wfsr@foxmail.com)
+ * @author Leon(leon@outlook.com)
  */
 
 define(function (require) {
@@ -639,10 +639,7 @@ define(function (require) {
              * @property {string} week 选中日期的格式化星期
              * @property {Date} date 选中的日期对象
              */
-            var event = new $.Event({
-                value: value,
-                type: 'change'
-            });
+            var event = new $.Event('change', {value: value});
 
             // 释放`change`事件
             this.fire(event);
@@ -702,9 +699,7 @@ define(function (require) {
          */
         _onPopupBeforeShow: function (e) {
 
-            var event = new $.Event({
-                type: 'show'
-            });
+            var event = new $.Event('show');
 
             /**
              * @event module:Calendar#show

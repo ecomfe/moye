@@ -610,7 +610,7 @@ define(function (require) {
          * @return {module:log} log
          */
         stop: function () {
-            $(document).on('mousedown', onClick);
+            $(document).off('mousedown', onClick);
 
             return this;
         },

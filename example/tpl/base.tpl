@@ -5,11 +5,11 @@
 <meta charset="utf-8" />
 <title>${name} - Moye</title>
 <link rel="stylesheet" href="./css/common.less" />
-<script src="http://s1.bdstatic.com/r/www/cache/ecom/esl/1-6-8/esl.js"></script>
-<script src="http://s1.bdstatic.com/r/www/cache/static/jquery/jquery-1.10.2.min_f2fb5194.js"></script>
+<script src="./js/esl.js"></script>
+<script src="./js/jquery-1.10.2.min.js"></script>
 <script>
 require.config({
-  baseUrl: '../src',
+  baseUrl: '../src'
 });
 </script>
 {% contentplaceholder: style %}
@@ -27,5 +27,14 @@ require.config({
 {% contentplaceholder: content %}
 </div>
 {% contentplaceholder: script %}
+<script>
+require(['jquery', 'ui/lib'], function ($, lib) {
+    lib.fixed($('.nav')[0], {
+        top: 0,
+        left: 0,
+        bottom: 0
+    });
+});
+</script>
 </body>
 </html>

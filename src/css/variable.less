@@ -26,15 +26,8 @@
 @footer-z-index: 1000;
 @modal-z-index: 1050;
 
-// 前缀配置
-@moye-common-prefix: ui;
-@moye-card-prefix: ecl-ui;
-
-// 默认全局配置
-@moye-prefix: @moye-common-prefix;
-
 // 翻页器
-@pager-prefix: ecl-ui-pager;
+@pager-prefix: ui-pager;
 @pager-item-color: #03c;
 @pager-item-border-color: #ccc;
 @pager-item-background-color: #fff;
@@ -43,20 +36,30 @@
 @pager-item-triangle-color: #666;
 @pager-item-disabled-color: #999;
 
-@button-prefix: replace(~"prefix-button", 'prefix', @moye-prefix);
+// 按钮
+@button-prefix: ui-button;
 @button-background: #2196ff;
 @button-color: #fff;
 @button-border-color: #f3f3f3;
 @butotn-disabled-background-color: #e7e7e7;
 
+// 复选框
+@checkbox-prefix: ui-checkbox;
+
+// 单选框
+@radio-prefix: ui-radio;
+
+
 // 日历
-@cal-prefix: replace(~"prefix-calendar", 'prefix', @moye-prefix);
+@cal-prefix: ui-calendar;
 
 // 城市控件
-@city-prefix: ecl-ui-city;
+@city-prefix: ui-city;
+
+@mask-prefix: ui-mask;
 
 // 对话窗
-@dialog-prefix: ecl-ui-dialog;
+@dialog-prefix: ui-dialog;
 
 // 筛选
 @filter-prefix: ecl-ui-filter;
@@ -80,13 +83,13 @@
 @rating-prefix: ecl-ui-rating;
 
 // 下拉选择框
-@sel-prefix: ecl-ui-sel;
+@select-prefix: ui-select;
 
 // 选项卡
-@tabs-prefix: ecl-ui-tabs;
+@tabs-prefix: ui-tabs;
 
 // 浮动提示
-@tip-prefix: ecl-ui-tip;
+@tip-prefix: ui-tip;
 @tip-border-color: #c1d5ea;
 @tip-border-width: 8px;
 @tip-background-color: #e2eefa;
@@ -100,7 +103,7 @@
 @scrollbar-thumb-size: 10px;
 
 // 幻灯片
-@slider-prefix: ecl-ui-slider;
+@slider-prefix: ui-slider;
 @slider-width: 423px;           //slider宽度
 @slider-height: 638px;          //slider高度
 @slider-z-index: 1;             //slider按钮层级

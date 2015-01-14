@@ -287,7 +287,10 @@ define(function (require) {
                 +     'data-part="' + part + '"'
                 // 这个当然就是做样式啦
                 +     'class="' + this.getPartClassName(part) + '"'
-                +     '' + attributes + '>';
+                // 附加属性
+                +     attributes
+                // 如果是自闭合标签, 那么这里不添加开始标签结束符
+                +  (SELF_CLOSING_TAGS.hasOwnProperty(nodeName) ? '' : '>');
 
             return html;
         },

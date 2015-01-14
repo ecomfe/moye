@@ -90,6 +90,25 @@ define(function (require) {
 
         },
 
+        /**
+         * ES5的reduce函数啦~
+         * @param  {Object|Array} obj      处理的数据
+         * @param  {Function}     iterator 迭代器
+         * @param  {*}            result   结果
+         * @param  {Object}       context  执行上下文
+         * @return {Object}
+         */
+        reduce: function (obj, iterator, result, context) {
+            exports.each(
+                obj,
+                function (value, key) {
+                    result = iterator.call(context, result, value, key);
+                },
+                context
+            );
+            return result;
+        },
+
         keys: Object.keys
             ? Object.keys
             : function (obj) {
@@ -100,7 +119,25 @@ define(function (require) {
                     }
                 }
                 return keys;
+            },
+
+        range:  function(start, stop, step) {
+            if (arguments.length <= 1) {
+                stop = start || 0;
+                start = 0;
             }
+
+            step = step || 1;
+
+            var length = Math.max(Math.ceil((stop - start) / step), 0);
+            var range = Array(length);
+
+            for (var idx = 0; idx < length; idx++, start += step) {
+              range[idx] = start;
+            }
+
+            return range;
+        }
 
     };
 

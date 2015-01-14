@@ -2,6 +2,7 @@
  * @file 生命周期辅助工具
  * @author leon <leonlu@outlook.com>
  */
+
 define(function (require) {
 
     var main = require('../main');
@@ -34,8 +35,7 @@ define(function (require) {
          * 改变控件的生命周期阶段
          *
          * @param {string} stage 生命周期阶段
-         * @private
-         * @return {SELF}
+         * @return {Control}
          */
         changeStage: function (stage) {
             if (LIFE_CYCLE[stage] === null) {
@@ -47,10 +47,10 @@ define(function (require) {
 
         /**
          * 初始化上下文
+         * @return {Control}
          */
         initContext: function () {
             var control = this.control;
-            var id      = control.id;
             var context = control.context;
 
             // 如果参数中指定了一个context属性, 但它的值不是一个Context

@@ -10,7 +10,7 @@ define(function (require) {
 
     var TextBox = Control.extend({
 
-        type: 'textbox',
+        type: 'TextBox',
 
         options: {
             main: '',
@@ -24,21 +24,10 @@ define(function (require) {
          * @protected
          */
         init: function (options) {
-            var me = this;
-            var main = $(options.main);
-            var input = options.input ? $(options.input) : main.find('input');
-
-            $.extend(
-                this,
-                this.options,
-                options,
-                {
-                    input: input.get(0),
-                    value: options.value || input.val()
-                }
-            );
-
-            me.main = main.get(0);
+            this.$parent(options);
+            var input = options.input || $(this.main).find('input');
+            this.value = options.value || input.val();
+            this.input = options.input || input[0];
         },
 
         /**
@@ -51,25 +40,38 @@ define(function (require) {
             // 将HTMLElement事件代理到`Control`事件
             this.delegate(input, 'input', this._on)
                 .delegate(input, 'blur',  this._on)
-                .delegate(input, 'focus', this._on);
+                .delegate(input, 'focus', this._on)
+                .delegate(input, 'keyup', this._on);
 
             return this;
         },
 
-        repaint: painter.createRepaint([{
-            name: ['width', 'height'],
-            paint: function (conf, width, height) {
-                $(this.main).css({
-                    width: width,
-                    height: height
-                });
+        repaint: painter.createRepaint(
+            {
+                name: ['width'],
+                paint: function (conf, width, height) {
+                    width && $(this.main).css('width', width);
+                }
+            },
+            {
+                name: ['height'],
+                paint: function (conf, height) {
+                    height && $(this.main).css('height', height);
+                }
+            },
+            {
+                name: ['name'],
+                paint: function (conf, name) {
+                    this.input.name = name;
+                }
+            },
+            {
+                name: ['value'],
+                paint: function (conf, value) {
+                    this.setValue(value || '');
+                }
             }
-        }, {
-            name: ['value'],
-            paint: function (conf, value) {
-                this.setValue(value || '');
-            }
-        }]),
+        ),
 
         /**
          * HTMLElement事件处理函数
@@ -78,7 +80,14 @@ define(function (require) {
          * @param {Event} e HTMLElement事件
          */
         _on: function (e) {
-            this.fire(e.type, e);
+
+            if (e.type === 'keyup' && e.keyCode === 13) {
+                this.fire('enter', e);
+            }
+            else {
+                this.fire(e.type, e);
+            }
+
         },
 
         /**

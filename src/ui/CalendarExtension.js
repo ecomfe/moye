@@ -439,7 +439,7 @@ define(function (require) {
          * @private
          */
         onHide: function (e) {
-            $.each(this.menus, function (i, menu) {
+            lib.each(this.menus, function (menu) {
                 menu.hide();
             });
         }
@@ -518,7 +518,7 @@ define(function (require) {
          */
         dispose: function () {
 
-            $.each(this.menus, function (i, menu) {
+            lib.each(this.menus, function (menu) {
                 menu.dispose();
             });
 

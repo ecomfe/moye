@@ -730,7 +730,7 @@ define(function (require) {
             var value;
             var className;
             var inRange;
-            
+
             for (i = 0, len = monthes.length; i < len; i++) {
                 days  = monthes[i].getElementsByTagName('a');
                 for (j = 0; day = days[j]; j++) {
@@ -1016,7 +1016,7 @@ define(function (require) {
         getDaysInfo: function () {
             var els = this.getDayElements();
             var data = {};
-            $.each(els, function (i, el) {
+            lib.each(els, function (el, i) {
                 var date = el.getAttribute('data-date');
                 data[date] = {
                     // 当天日期（yyyy-MM-dd格式）

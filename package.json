@@ -39,7 +39,7 @@
     "marked": "^0.3.2",
     "requirejs": "~2.1.9"
   },
-  "main": "src/ui/lib.js",
+  "main": "src/ui/main.js",
   "controls": [
     {
       "name": "Button"
@@ -48,31 +48,13 @@
       "name": "Calendar"
     },
     {
-      "name": "CalendarExtension"
-    },
-    {
       "name": "City"
     },
     {
       "name": "Dialog"
     },
     {
-      "name": "Filter"
-    },
-    {
-      "name": "FloatTip"
-    },
-    {
-      "name": "Lunar"
-    },
-    {
-      "name": "Lazy"
-    },
-    {
       "name": "Pager"
-    },
-    {
-      "name": "PicUploader"
     },
     {
       "name": "Rating"

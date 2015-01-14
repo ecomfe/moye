@@ -30,8 +30,7 @@ define(function (require) {
         require('./lib/object'),
         require('./lib/page'),
         require('./lib/string'),
-        require('./lib/type'),
-        require('./lib/Event')
+        require('./lib/type')
     );
 
     return lib;

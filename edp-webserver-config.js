@@ -44,67 +44,56 @@ etpl.compile(require('fs').readFileSync('./example/tpl/base.tpl', 'utf-8'));
 
 exports.getLocations = function () {
     return [
-        { 
-            location: /\/$/, 
+        {
+            location: /\/$/,
             handler: home( 'index.html' )
         },
-        { 
-            location: /^\/redirect-local/, 
-            handler: redirect('redirect-target', false) 
-        },
-        { 
-            location: /^\/redirect-remote/, 
-            handler: redirect('http://www.baidu.com', false) 
-        },
-        { 
-            location: /^\/redirect-target/, 
-            handler: content('redirectd!') 
-        },
-        { 
-            location: '/empty', 
-            handler: empty() 
-        },
-        { 
-            location: /\.css($|\?)/, 
+        {
+            location: /\.css($|\?)/,
             handler: [
                 autocss()
             ]
         },
-        { 
-            location: /\.tpl($|\?)/, 
+        {
+            location: /\.tpl($|\?)/,
             handler: [
                 file(),
                 function (context) {
 
                     var name = path.basename(context.request.pathname, '.tpl');
-                    var data = context.content.toString( 'utf-8' );
-                    var renderer = etpl.compile( data );
+                    var data = context.content.toString('utf-8');
+                    var renderer = etpl.compile(data);
                     var html = renderer({
                         controls: controls,
                         name: name
                     });
 
-                    context.header[ 'content-type' ] = 'text/html';
+                    context.header['content-type'] = 'text/html';
                     context.content = html;
                 }
             ]
         },
-        { 
-            location: /\.less($|\?)/, 
+        {
+            location: /\.less($|\?)/,
             handler: [
                 file(),
-                less()
+                less({
+                    paths: [
+                        __dirname,
+                        __dirname + '/dep'
+                    ]
+                })
             ]
         },
-        { 
-            location: /\.styl($|\?)/, 
+        {
+            location: /\.styl($|\?)/,
             handler: [
                 file(),
                 stylus()
             ]
         },
-        { 
-            location: /^.*$/, 
+        {
+            location: /^.*$/,
             handler: [
                 file(),
                 proxyNoneExists()

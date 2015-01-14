@@ -1,5 +1,10 @@
+/**
+ * @file 控件小助手
+ * @author Leon(lupengyu@baidu)
+ */
+
 define(function (require) {
-    
+
     var $ = require('jquery');
 
     /**
@@ -15,7 +20,9 @@ define(function (require) {
     $.extend(
         Helper.prototype,
         require('./helper/dom'),
-        require('./helper/life')
+        require('./helper/life'),
+        require('./helper/children'),
+        require('./helper/plugin')
     );
 
     return Helper;

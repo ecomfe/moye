@@ -14,6 +14,8 @@
 
     &-popup {
         position: absolute;
+        // @hack firefox需要给一个top, 否则会把body撑开
+        top: 0;
         width: 360px;
         z-index: 1000;
         border: 1px solid #ddd;

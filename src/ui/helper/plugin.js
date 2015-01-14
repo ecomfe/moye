@@ -2,7 +2,9 @@
  * @file 插件相关的小工具
  * @author Leon(lupengyu@baidu)
  */
+
 define(function (require) {
+
     return {
 
         /**
@@ -26,7 +28,7 @@ define(function (require) {
             var plugins = this.control.plugins;
             for (var i = plugins.length - 1; i >= 0; i--) {
                 plugins[i].activate();
-            };
+            }
         },
 
         /**
@@ -36,7 +38,7 @@ define(function (require) {
             var plugins = this.control.plugins;
             for (var i = plugins.length - 1; i >= 0; i--) {
                 plugins[i].inactivate();
-            };
+            }
         },
 
         /**
@@ -47,8 +49,8 @@ define(function (require) {
             var plugins = control.plugins;
             for (var i = plugins.length - 1; i >= 0; i--) {
                 plugins[i].dispose();
-            };
-            contorl.plugins = [];
+            }
+            control.plugins = [];
         }
 
     };

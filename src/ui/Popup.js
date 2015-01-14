@@ -82,9 +82,7 @@ define(function (require) {
              * @event module:Popup#show
              * @type {Object}
              */
-            var event = new $.Event({
-                type: 'show'
-            });
+            var event = new $.Event('show');
 
             this.fire(event);
 
@@ -111,9 +109,7 @@ define(function (require) {
                 return;
             }
 
-            var event = new $.Event({
-                type: 'hide'
-            });
+            var event = new $.Event('hide');
 
             this.fire(event);
 

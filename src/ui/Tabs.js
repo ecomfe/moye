@@ -4,6 +4,7 @@
 
  * @file 选项卡组件
  * @author chris(wfsr@foxmail.com)
+ * @author Leon(leon@outlook.com)
  */
 
 define(function (require) {
@@ -44,6 +45,7 @@ define(function (require) {
         options: {
 
             // 是否允许关闭标签
+            // TODO
             // allowClose: false,
 
             // 选中项
@@ -141,6 +143,11 @@ define(function (require) {
         ),
 
 
+        /**
+         * 添加一个标签项
+         * @param {Object} tab 标签项配置
+         * @return {Tabs}
+         */
         add: function (tab) {
             var activeIndex = this.activeIndex;
             var tabs = this.tabs.slice().concat(tab);
@@ -150,6 +157,7 @@ define(function (require) {
                 tabs: tabs,
                 activeIndex: activeIndex
             });
+            return this;
         },
 
         /**

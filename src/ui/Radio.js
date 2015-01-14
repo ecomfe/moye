@@ -9,13 +9,16 @@ define(function (require) {
 
     var Radio = Control.extend({
 
+        type: 'Radio',
+
         options: {
             item: 'label',
             activeClass: 'active'
         },
 
         init: function (options) {
-            $.extend(this, this.options, options);
+            this.$parent(options);
+            this.datasource = this.datasource || $(this.main).data('datasource');
         },
 
         initStructure: function () {
@@ -82,7 +85,7 @@ define(function (require) {
 
         getValueFromDom: function (dom) {
             dom = $(dom);
-            return dom.attr('value') || dom.attr('data-value');
+            return dom.is('input') ? dom.val() : dom.data('value');
         },
 
         /**
@@ -92,16 +95,16 @@ define(function (require) {
          */
         setValue: function (value) {
             var me = this;
-            $(this.item, this.main).each(function (index, item) {
-                var itemValue = me.getValueFromDom(item);
-                var item = $(item);
-                var activeClass = this.activeClass;
+            var activeClass = me.activeClass;
+            $(me.item, this.main).each(function (index, dom) {
+                var itemValue = me.getValueFromDom(dom);
+                var dom = $(dom);
                 if (value == itemValue) {
-                    item.addClass(activeClass)
-                    me.current = item;
+                    dom.addClass(activeClass).find('input').get(0).checked = true;
+                    me.current = dom[0];
                 }
                 else {
-                    item.removeClass(activeClass);
+                    dom.removeClass(activeClass);
                 }
             });
             return this;

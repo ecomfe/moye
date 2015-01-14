@@ -10,9 +10,8 @@ define(function (require) {
 
     var $ = require('jquery');
     var lib = require('./lib');
+    var main = require('./main');
     var Helper = require('./Helper');
-
-    var guid = 0;
 
     /**
      * 控件基类
@@ -34,35 +33,9 @@ define(function (require) {
         type: 'Control',
 
         /**
-         * 控件可用状态
-         *
-         * @type {boolean}
-         * @private
-         */
-        _disabled: false,
-
-
-        /**
-         * 缓存被代理后的事件处理函数
-         *
-         * @param {Object.<string, Function>} provider 提供事件方法的对象
-         * @protected
-         */
-        bindEvents: function (provider) {
-            var me = this;
-            var bound = this._bound || {};
-
-            $.each(provider, function (name, fn) {
-                if (/^on[A-Z]/.test(name)) {
-                    bound[name] = $.proxy(fn, me);
-                }
-            });
-
-            this._bound = bound;
-        },
-
-        /**
          * 将DOM元素element的eventName事件处理函数handler的作用域绑定到当前Control实例
+         *
+         * TODO 把此功能移动至helper
          *
          * 每个handler的代理函数都会被缓存，并重复利用。
          * 但element/eventName并不会被区别对待。
@@ -124,6 +97,8 @@ define(function (require) {
         /**
          * 取消一个代理
          *
+         * TODO 把此功能移动至helper
+         *
          * @protected
          * @param {HTMLElement} element 事件来源HTMLElement
          * @param {string} eventName 事件类型
@@ -183,12 +158,12 @@ define(function (require) {
          */
         initialize: function (options) {
 
-            this.helper = new Helper(this);
+            var helper = this.helper = new Helper(this);
 
-            this.helper.changeStage('NEW');
+            helper.changeStage('NEW');
             this.currentStates = {};
 
-            options = this.setOptions(options);
+            options = options || {};
 
             /**
              * 控件的主元素
@@ -197,39 +172,54 @@ define(function (require) {
              * @protected
              * @readonly
              */
-            this.main   = options.main ? lib.g(options.main) : this.createMain();
-            this.id     = options.hasOwnProperty('id') ? options.id : lib.guid();
-            this.skin   = options.hasOwnProperty('skin') ? [].concat(options.skin) : [];
-            this.states = options.hasOwnProperty('states') ? options.states : [];
+            this.main = options.main ? lib.g(options.main) : this.createMain();
+            this.id   = options.id || lib.guid();
+
+            if (options.hasOwnProperty('states')) {
+                var states = this.states = options.states;
+                if (lib.isString(states)) {
+                    this.states = [states];
+                }
+            }
+
+            if (options.hasOwnProperty('skin')) {
+                var skin = this.skin = options.skin;
+                if (lib.isString(skin)) {
+                    this.skin = [skin];
+                }
+            }
 
             delete options.id;
             delete options.skin;
             delete options.states;
 
-            // 常用的两个与状态相关的属性，直接在这里给转化成状态
-            if (options.disabled) {
-                this.states.push('disabled');
-                delete options.disabled;
-            }
-
-            if (options.readOnly) {
-                this.states.push('readOnly');
-                delete options.readOnly;
-            }
-
-            if (this.init) {
-                this.init(options);
-                this.init = null;
-            }
-
-            // 强制添加guid
-            if ($.type(this.id) === 'undefined') {
-                this.id = guid++;
-            }
-
+            // 处理配置参数中, 以onXxx开头的事件绑定
+            // 这里会把这一类的事件绑定参数给清除掉, 后边init时不会有这些参数的干扰
+            // {@link Module:lib#configurable.bindEvents}
+            this.bindEvents(options);
+            // 调用init接口, 进行参数的初始化
+            this.init(options);
+            // 初始化上下文
+            helper.initContext();
+            // 子控件容器
             this.children = [];
+            this.childrenIndex = {};
+            helper.initPlugins();
+            helper.changeStage('INITED');
+        },
 
-            this.helper.changeStage('INITED');
+        /**
+         * 初始化参数
+         *
+         * 可以帮你把原型上的options和传递进来的参数自动合并到控件实例上
+         *
+         * @param {Object} options 参数
+         */
+        init: function (options) {
+            if (!this.helper.isInStage('NEW')) {
+                return;
+            }
+            this.setOptions(options);
         },
 
 
@@ -237,18 +227,27 @@ define(function (require) {
          * 渲染控件
          *
          * @return {module:Control} 当前实例
-         * @abstract
          * @protected
          */
         render: function () {
 
             if (this.helper.isInStage('INITED')) {
 
+                /**
+                 * @event beforerender
+                 *
+                 * 开始初次渲染
+                 */
+                this.fire('beforerender');
+
                 this.initStructure();
                 this.initEvents();
 
                 // 为控件主元素添加id
-                $(this.main).attr('data-ctrl-id', this.helper.getPartId());
+                $(this.main).attr(
+                    main.getConfig('instanceAttr'),
+                    this.id
+                );
 
                 this.helper.addPartClasses();
 
@@ -258,20 +257,22 @@ define(function (require) {
                     }
                 }
 
-                if (this.plugins && this.plugins.length) {
-                    for (var i = 0, len = this.plugins.length; i < len; i++) {
-                        this.plugins[i].execute(this);
-                    }
-                }
-
             }
 
             // 由子控件实现
             this.repaint();
 
             if (this.helper.isInStage('INITED')) {
+
                 // 切换控件所属生命周期阶段
                 this.helper.changeStage('RENDERED');
+
+                /**
+                 * @event afterrender
+                 *
+                 * 结束初次渲染
+                 */
+                this.fire('afterrender');
             }
 
             return this;
@@ -301,9 +302,33 @@ define(function (require) {
          * 重绘视图
          *
          * @abstract
-         * @return {Control} self
+         * @param {Array.string} changes 发生变化的属性名们
+         * @param {Object} changesIndex 发生变化的属性名和属性值
+         * @return {Control}
          */
         repaint: function (changes, changesIndex) {
+
+            if (!changes) {
+
+                // 常用的两个与状态相关的属性，直接在这里给转化成状态
+                if (this.disabled) {
+                    this.disable();
+                    delete this.disabled;
+                }
+
+                if (this.hidden) {
+                    this.hide();
+                    delete this.hidden;
+                }
+
+                // 如果是输入控件, 那么这里搞一下只读状态
+                if (lib.isFunction(this.getValue)) {
+                    this.setReadOnly(this.readOnly);
+                    delete this.readOnly;
+                }
+
+            }
+
             return this;
         },
 
@@ -363,7 +388,7 @@ define(function (require) {
                 this.repaint(changes, changesIndex);
             }
 
-            return this;
+            return changesIndex;
         },
 
         /**
@@ -395,11 +420,15 @@ define(function (require) {
          * 将控件添加到页面的某个元素中
          *
          * @param {HTMLElement} wrap 被添加到的页面元素
+         * @return {Control}
          * @public
          */
         appendTo: function (wrap) {
-            this.main = wrap || this.main;
-            this.render();
+            if (this.helper.isInStage('INITED')) {
+                this.render();
+            }
+            wrap.appendChild(this.main);
+            return this;
         },
 
         /**
@@ -461,18 +490,27 @@ define(function (require) {
          * @return {Control} self
          */
         removeState: function (state) {
-            if (!this.hasState(state)) {
-                return this;
+            var me = this;
+
+            if (!me.hasState(state)) {
+                return me;
             }
 
-            this.currentStates[state] = false;
-            this.helper.removeStateClasses(this, state);
+            me.currentStates[state] = false;
+            this.helper.removeStateClasses(state);
 
-            this.fire('statechange', {
+            me.fire('statechange', {
                 state: state,
                 action: 'remove'
             });
 
+            return me;
+        },
+
+        toggleState: function (state) {
+            this.hasState(state)
+                ? this.removeState(state)
+                : this.addState(state);
             return this;
         },
 
@@ -486,6 +524,18 @@ define(function (require) {
             return !!this.currentStates[state];
         },
 
+        show: function () {
+            return this.removeState('hidden');
+        },
+
+        hide: function () {
+            return this.addState('hidden');
+        },
+
+        toggle: function () {
+            return this.toggleState('hidden');
+        },
+
         /**
          * 设置控件状态为禁用
          *
@@ -493,9 +543,11 @@ define(function (require) {
          * @public
          */
         disable: function () {
-            this._disabled = true;
 
             this.addState('disabled');
+
+            // 顺手把子控件也给禁用了
+            this.helper.disableChildren();
 
             /**
              * @event module:Control#disable
@@ -510,10 +562,11 @@ define(function (require) {
          * @public
          */
         enable: function () {
-            this._disabled = false;
 
             this.removeState('disabled');
 
+            // 顺手把子控件也给启用了
+            this.helper.enableChildren();
             /**
              * @event module:Control#enable
              */
@@ -530,6 +583,22 @@ define(function (require) {
             return this.hasState('disabled');
         },
 
+        /**
+         * 是否为只读状态
+         * @return {boolean}
+         */
+        isReadOnly: function () {
+            return this.hasState('readonly');
+        },
+
+        setReadOnly: function (isReadOnly) {
+            if (isReadOnly) {
+                this.addState('readOnly');
+            }
+            else {
+                this.removeState('readOnly');
+            }
+        },
 
         /**
          * 添加子控件
@@ -539,13 +608,26 @@ define(function (require) {
          * @public
          */
         addChild: function (control, name) {
+
             var children = this.children;
+            var childrenIndex = this.childrenIndex;
+
+            var oldParent = control.getParent();
+
+            if (oldParent) {
+                oldParent.removeChild(control);
+            }
+
+            control.setParent(this);
 
             name = name || control.childName;
 
             if (name) {
-                children[name] = control;
+                childrenIndex[name] = control;
             }
+
+            // 把子控件塞到父控件的上下文中
+            control.setContext(this.context);
 
             children.push(control);
         },
@@ -558,11 +640,19 @@ define(function (require) {
          */
         removeChild: function (control) {
             var children = this.children;
-            for (var name in children) {
-                if (children.hasOwnProperty(name) && children[name] === control) {
-                    delete this[name];
+            var childrenIndex = this.childrenIndex;
+
+            for (var i = children.length - 1; i >= 0; i--) {
+                if (children[i] === control) {
+                    children.splice(i, 1);
                 }
             }
+
+            var name = control.childName;
+
+            delete childrenIndex[name];
+
+            control.setParent(null);
         },
 
         /**
@@ -577,13 +667,53 @@ define(function (require) {
         },
 
         /**
+         * 设置父控件
+         * @param {Control} parent 父控件
+         * @return {Control}
+         */
+        setParent: function (parent) {
+            this.parent = parent;
+            return this;
+        },
+
+        /**
+         * 获取父控件
+         * @return {Control}
+         */
+        getParent: function () {
+            return this.parent;
+        },
+
+        /**
          * 批量初始化子控件
          *
          * @param {HTMLElement} wrap 容器DOM元素
          * @public
          */
-        initChildren: function (wrap) {
-            throw new Error('not implement initChildren');
+        initChildren: function () {
+            this.helper.initChildren();
+        },
+
+        setContext: function (context) {
+
+            var currentContext = this.context;
+
+            if (context === currentContext) {
+                return;
+            }
+
+            if (currentContext) {
+                this.context.remove(this);
+            }
+
+            context.add(this);
+
+            $(this.main).attr(
+                main.getConfig('contextAttr'),
+                context.id
+            );
+
+            this.context = context;
         },
 
         /**
@@ -594,25 +724,23 @@ define(function (require) {
          */
         dispose: function () {
 
-            var child;
-            while ((child = this.children.pop())) {
-                child.dispose();
-            }
+            this.fire('beforedispose');
 
-            for (var type in this._listners) {
-                this.un(type);
-            }
+            // 销毁子控件
+            // {@link Module:helper/children.disposeChildren()}
+            this.helper.disposeChildren();
 
-            var main = this.main;
-            if (main && main.parentNode) {
-                main.parentNode.removeChild(main);
-                delete this.main;
-            }
+            // 销毁事件池
+            // {@link Module:lib/interface/obserable.destroyEvents()}
+            this.destroyEvents();
+
+            // 更新状态
+            this.helper.changeStage('DISPOSED');
 
             /**
              * @event module:Control#dispose
              */
-            this.fire('dispose');
+            this.fire('afterdispose');
         },
 
         /**
@@ -620,6 +748,7 @@ define(function (require) {
          *
          * @public
          * @param {Plugin} plugin 插件
+         * @return {Control}
          */
         use: function (plugin) {
             var plugins = this.plugins;
@@ -633,8 +762,8 @@ define(function (require) {
 
             // 如果控件已经渲染过了，那么直接执行插件
             // 否则控件会在渲染时，执行插件
-            if (this.helper.isInStage('RENDERED')) {
-                plugin.execute(this);
+            if (!this.helper.isInStage('NEW')) {
+                plugin.activate(this);
             }
 
             return this;

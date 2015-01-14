@@ -23,7 +23,8 @@ define(function (require) {
         'Function',
         'Number',
         'Date',
-        'Object'
+        'Object',
+        'Boolean'
     ];
 
     array.each(types, function (name) {

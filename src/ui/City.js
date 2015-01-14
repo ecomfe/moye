@@ -209,8 +209,7 @@ define(function (require) {
         _pick: function (el) {
             var value = el.innerHTML;
 
-            var event = new $.Event({
-                type: 'pick',
+            var event = new $.Event('pick', {
                 target: this,
                 value: value
             });
@@ -343,9 +342,7 @@ define(function (require) {
                 return;
             }
 
-            var event = new $.Event({
-                type: 'show'
-            });
+            var event = new $.Event('show');
 
             /**
              * @event module:City#beforeShow

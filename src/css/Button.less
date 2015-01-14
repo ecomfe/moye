@@ -6,7 +6,8 @@
 @import './dep.less';
 @import './variable.less';
 
-.@{button-prefix} {
+
+.moye-button() {
     .inline-block();
     .box-sizing(content-box);
     margin: 0;
@@ -21,6 +22,8 @@
     background-color: @button-background;
     border: 1px solid @button-border-color;
     outline: 0;
+
+    .transition(background-color, .3s);
 
     &:hover {
         background-color: lighten(@button-background, 5%);
@@ -40,5 +43,8 @@
             background-color: @butotn-disabled-background-color;
         }
     }
+}
 
+.@{button-prefix} {
+    .moye-button();
 }

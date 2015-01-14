@@ -2,18 +2,28 @@
 
 .skin-jinrong-pager {
 
-    @pager-item-current-color: #714fa1;
+    @pager-item-current-color: #c40004;
 
     a {
-        color: #000;
+        color: #6c6f71;
+        &:hover {
+            background-color: #fff;
+            color: @pager-item-current-color;
+            border: 1px solid @pager-item-current-color;
+        }
+    }
+
+    a.@{pager-prefix}-ellipsis:hover {
+        color: #6c6f71;
+        border: 0;
     }
 
     a.@{pager-prefix}-current {
-    
+
         background-color: @pager-item-current-color;
         color: #fff;
         border: 1px solid @pager-item-current-color;
-    
+
         &:hover {
             background-color: lighten(@pager-item-current-color, 5%);
         }

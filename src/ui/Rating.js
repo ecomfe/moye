@@ -12,13 +12,95 @@ define(function (require) {
     var Control = require('./Control');
 
     /**
-     * 私有函数或方法
+     * 评分组件
+     * TODO: 半星支持
      *
-     * @type {Object}
-     * @namespace
-     * @name module:Rating~privates
+     * @extends module:Control
+     * @requires Control
+     * @exports Rating
      */
-    var privates = /** @lends module:Rating~privates */ {
+    var Rating = Control.extend({
+
+        options: {
+            // 最多星星数
+            max: 5,
+            // 星级
+            value: 0
+        },
+
+        /**
+         * 控件类型
+         *
+         * @const
+         * @type {string}
+         */
+        type: 'Rating',
+
+
+        /**
+         * 初始化控件
+         *
+         * @param {Object} options 控件配置项
+         * @see module:Rating#options
+         * @private
+         */
+        init: function (options) {
+            this.$parent(options);
+        },
+
+        initStructure: function () {
+            var html = [ '<ul class="' + prefix + '-stars">' ];
+
+            for (var i = 0; i < options.max; i++) {
+                html.push(
+                    '<li ',
+                    'class="' + prefix + '-star' + '" ',
+                    'data-value="' + (i + 1) + '"',
+                    '>',
+                    // 默认星星字符
+                    (options.skin ? '' : '☆'),
+                    '</li>'
+                );
+            }
+
+            html.push('</ul>');
+            this.main.innerHTML = html.join('');
+        },
+
+        initEvents: function () {
+
+        },
+
+        /**
+         * 绘制控件
+         *
+         * @public
+         */
+        render: function () {
+            var options = this.options;
+
+            if (!this.rendered) {
+                this.rendered = true;
+
+                // 生成星星
+                var prefix = options.prefix;
+
+
+                // 绑定事件
+                var bound = this._bound;
+                this.stars = $('.' + prefix + '-star')
+                    .hover(bound.onMouseOver, bound.onMouseOut)
+                    .on('click', bound.onClick)
+                    .toArray();
+
+            }
+
+            privates.resetRating.call(this);
+
+            this._disabled && this.disable();
+
+            return this;
+        },
 
         /**
          * 清洗点亮的星星
@@ -141,106 +223,6 @@ define(function (require) {
                 privates.drain.call(this);
                 privates.resetRating.call(this);
             }
-        }
-    };
-
-    /**
-     * 评分组件
-     * TODO: 半星支持
-     *
-     * @extends module:Control
-     * @requires Control
-     * @exports Rating
-     */
-    var Rating = Control.extend(/** @lends module:Rating.prototype */{
-
-        options: {
-            // 可用性
-            disabled: false,
-
-            // 主元素
-            main: '',
-
-            // class前缀
-            prefix: 'ecl-ui-rating',
-
-            // 最多星星数
-            max: 5,
-
-            // 星级
-            value: 0,
-
-            // 如果需要自定义星星样式，则置为1，然后通过className去控制样式
-            skin: 0
-        },
-
-        /**
-         * 控件类型
-         *
-         * @const
-         * @type {string}
-         */
-        type: 'Rating',
-
-
-        /**
-         * 初始化控件
-         *
-         * @param {Object} options 控件配置项
-         * @see module:Rating#options
-         * @private
-         */
-        init: function (options) {
-            this.main = lib.g(options.main);
-            this._disabled = options.disabled;
-
-            this.bindEvents(privates);
-        },
-
-        /**
-         * 绘制控件
-         *
-         * @public
-         */
-        render: function () {
-            var options = this.options;
-
-            if (!this.rendered) {
-                this.rendered = true;
-
-                // 生成星星
-                var prefix = options.prefix;
-                var html = [ '<ul class="' + prefix + '-stars">' ];
-
-                for (var i = 0; i < options.max; i++) {
-                    html.push(
-                        '<li ',
-                        'class="' + prefix + '-star' + '" ',
-                        'data-value="' + (i + 1) + '"',
-                        '>',
-                        // 默认星星字符
-                        (options.skin ? '' : '☆'),
-                        '</li>'
-                    );
-                }
-
-                html.push('</ul>');
-                this.main.innerHTML = html.join('');
-
-                // 绑定事件
-                var bound = this._bound;
-                this.stars = $('.' + prefix + '-star')
-                    .hover(bound.onMouseOver, bound.onMouseOut)
-                    .on('click', bound.onClick)
-                    .toArray();
-
-            }
-
-            privates.resetRating.call(this);
-
-            this._disabled && this.disable();
-
-            return this;
         },
 
         /**

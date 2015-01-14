@@ -1,0 +1,34 @@
+.ui-textbox {
+    position: relative;
+
+    &-autocomplete {
+        position: absolute;
+        margin-top: -1px;
+        width: 100%;
+        top: 100%;
+        left: 0;
+        z-index: 100;
+        background-color: #fff;
+        border: 1px solid #999;
+
+        &-item {
+            display: block;
+            height: 20px;
+            padding: 5px;
+            line-height: 20px;
+            text-decoration: none;
+            color: #333;
+
+            &:hover, &.hover {
+                background-color: #eaeaea;
+            }
+
+            em {
+                color: #ff2900;
+            }
+
+        }
+
+    }
+
+}

@@ -38,7 +38,7 @@ define(function (require) {
              * @type {Object}
              * @property {Event} event 事件源对象
              */
-            this.fire('click', { event: e });
+            this.fire('click', {event: e});
         },
 
         /**
@@ -66,7 +66,7 @@ define(function (require) {
          */
         onDocClick: function (e) {
             var main = this.main;
-            var target = $(e.target).closest('.' + this.options.flag);
+            var target = $(e.target).closest('.' + this.flag);
 
             if (
                 target.is(main)
@@ -88,7 +88,7 @@ define(function (require) {
          * @private
          */
         onShow: function (e) {
-            var target = $(e.target).closest('.' + this.options.flag);
+            var target = $(e.target).closest('.' + this.flag);
 
             privates.clear.call(this);
 
@@ -109,12 +109,17 @@ define(function (require) {
                         .off(events.un, bound.onHide);
                 }
 
-                if (this.options.mode === 'click') {
+                if (this.mode === 'click') {
                     $(document).on('click', bound.onDocClick);
                 }
             }
 
-            this.current = target;
+            target = target[0];
+
+            var event = new $.Event('beforeShow', {
+                target: target,
+                event: e
+            });
 
             /**
              * @event module:Tip#beforeShow
@@ -122,9 +127,13 @@ define(function (require) {
              * @property {HTMLElement} target 事件源 DOM 对象
              * @property {Event} e 事件源对象
              */
-            this.fire('beforeShow', { target: target.get(0), event: e });
+            this.fire(event);
 
-            var delay = this.options.showDelay;
+            // 使用事件中的target作为target,
+            // 这样在`beforeShow`事件中可以修改target, 动态指定显示的目标
+            target = this.current = event.target || target;
+
+            var delay = this.showDelay;
             if (delay) {
                 var me = this;
                 this._showTimer = setTimeout(function () {
@@ -145,13 +154,11 @@ define(function (require) {
         onHide: function () {
 
             var me = this;
-            var options = this.options;
             privates.clear.call(me);
-            if (options.hideDelay) {
-                var me = this;
+            if (this.hideDelay) {
                 this._hideTimer = setTimeout(function () {
                     me.hide();
-                }, options.hideDelay);
+                }, this.hideDelay);
             }
             else {
                 this.hide();
@@ -164,14 +171,13 @@ define(function (require) {
 
         onMouseLeave: function () {
             var me = this;
-            var options = me.options;
             privates.clear.call(me);
-            if (options.hideDelay) {
+            if (this.hideDelay) {
                 me._hideTimer = setTimeout(
                     function () {
                         me.hide();
                     },
-                    options.hideDelay
+                    this.hideDelay
                 );
             }
             else {
@@ -185,13 +191,11 @@ define(function (require) {
          * @private
          */
         computePosition: function () {
-            var options      = this.options;
             var target       = $(this.current);
             var main         = $(this.main);
             var arrow        = this.elements.arrow;
-            var dir          = options.arrow;
+            var dir          = this.arrow;
             var position     = target.offset();
-            var prefix       = options.prefix + '-arrow';
 
             // 目标的8个关键坐标点
             var top          = position.top;
@@ -282,10 +286,14 @@ define(function (require) {
                 second = dir.charAt(1);
             }
 
-            var lrtb   = { l: 'left', r: 'right', t: 'top', b: 'bottom' };
-            var offset = options.offset;
+            var lrtb   = {l: 'left', r: 'right', t: 'top', b: 'bottom'};
+            var offset = this.offset;
+            var helper = this.helper;
 
-            arrow.className = prefix + ' ' + prefix + '-' + lrtb[first];
+            arrow.className = ''
+                + helper.getPartClassName('arrow')
+                + ' '
+                + helper.getPartClassName('arrow-' + lrtb[first]);
 
             // 改变箭头方向后需要校准箭头宽高
             // XXX: 如果通过 tpl 修改了控件模板，
@@ -294,7 +302,7 @@ define(function (require) {
             arrowHeight = arrow.firstChild.offsetHeight;
 
             // 提示层在目标上部或下部显示时的定位处理
-            if ({ t: 1, b: 1 }[first]) {
+            if ({t: 1, b: 1}[first]) {
                 left = {
                     l: left + offset.x,
                     c: center - (mainWidth / 2),
@@ -319,7 +327,7 @@ define(function (require) {
             }
 
             // 提示层在目标左边或右边显示时的定位处理
-            else if ({ l: 1, r: 1 }[first]) {
+            else if ({l: 1, r: 1}[first]) {
                 top = {
                     t: top + offset.y,
                     c: middle - (mainHeight / 2),
@@ -410,9 +418,6 @@ define(function (require) {
             // 提示框的不可用状态，默认为false。处于不可用状态的提示框不会出现。
             disabled: false,
 
-            // 控件渲染主容器
-            main: '',
-
             // 提示框的箭头参数，默认为false，不带箭头
             // 可以初始化时通过指定arrow属性为“1”开启箭头模式
             // 也可以手动指定箭头方向：
@@ -435,9 +440,6 @@ define(function (require) {
             // 提示的内容信息
             content: '',
 
-            // 控件class前缀，同时将作为main的class之一
-            prefix: 'ecl-ui-tip',
-
             // 自动绑定本控件功能的class
             triggers: 'tooltips',
 
@@ -452,16 +454,8 @@ define(function (require) {
 
                 // y 轴方向偏移量
                 y: 0
-            },
+            }
 
-            // 控件模板
-            tpl: ''
-                + '<div class="{prefix}-arrow {prefix}-arrow-top">'
-                +   '<em></em>'
-                +   '<ins></ins>'
-                + '</div>'
-                + '<div class="{prefix}-title"></div>'
-                + '<div class="{prefix}-body"></div>'
         },
 
         /**
@@ -472,19 +466,11 @@ define(function (require) {
          * @private
          */
         init: function (options) {
-            options.hideDelay = options.hideDelay < 0
-                ? Tip.HIDE_DELAY : options.hideDelay;
 
-            this._disabled  = options.disabled;
-            this.title      = options.title;
-            this.content    = options.content;
+            this.$parent(options);
 
-            var prefix = options.prefix;
-            var main   = this.main = document.createElement('div');
-
-            main.className  = prefix;
-            main.innerHTML  = options.tpl.replace(/{prefix}/g, prefix);
-            main.style.left = '-2000px';
+            this.hideDelay = this.hideDelay < 0
+                ? Tip.HIDE_DELAY : this.hideDelay;
 
             this.events = {
                 over: {
@@ -495,68 +481,74 @@ define(function (require) {
                     on: 'click',
                     un: 'click'
                 }
-            }[options.mode];
+            }[this.mode];
 
-            // 绑定事件方法的 this
-            this.bindEvents(privates);
+            var me = this;
+            var bound = this._bound = {};
+
+            lib.each(privates, function (handler, name) {
+                if (/^on/.test(name)) {
+                    bound[name] = $.proxy(handler, me);
+                }
+            });
+
         },
 
+        initStructure: function () {
 
-        /**
-         * 绘制控件
-         *
-         * @fires module:Tip#click
-         * @return {module:Tip} 当前实例
-         * @override
-         * @public
-         */
-        render: function () {
+            var me = this;
 
-            var me      = this;
-            var main    = $(this.main);
-            var options = this.options;
-            var events  = this.events;
+            var helper = me.helper;
+            // 拼DOM
+            var html = ''
+                + helper.getPartHTML('arrow', 'div', '<em></em><ins></ins>')
+                + helper.getPartHTML('title', 'div', me.title || '')
+                + helper.getPartHTML('body', 'div', me.body || '');
 
-            if (!this.rendered) {
-                this.rendered = true;
+            // 给样式, 弄到DOM树上
+            $(me.main)
+                .css('left', '-2000px')
+                .html(html)
+                .appendTo(document.body);
 
-                main.appendTo(document.body);
+            // 把部件绑定到自己身上
+            me.elements = {
+                arrow: helper.getPart('arrow'),
+                title: helper.getPart('title'),
+                body: helper.getPart('body')
+            };
 
-                var bound = this._bound;
-
-                main.on('click', bound.onClick);
-
-                if (this.options.mode === 'over') {
-                    main.on('mouseenter', bound.onMouseEnter);
-                    main.on('mouseleave', bound.onMouseLeave);
-                }
-
-                var elements = this.elements = {};
-                var prefix = options.prefix + '-';
-
-                $.each(
-                    'arrow,title,body'.split(','),
-                    function (i, name) {
-                        elements[name] = main.find('.' + prefix + name)[0];
-                    }
-                );
-
-                this.addTriggers(options.triggers);
-
+            if (!this.title) {
+                $(helper.getPart('title')).hide();
             }
 
-            if (!events && this.triggers) {
-                if (options.showDelay) {
-                    this._showTimer = setTimeout(function () {
+            if (!me.events && me.triggers) {
+                if (me.showDelay) {
+                    me._showTimer = setTimeout(function () {
                         me.show(me.triggers[0]);
                     });
                 }
                 else {
-                    this.show(this.triggers[0]);
+                    me.show(me.triggers[0]);
                 }
             }
 
-            return this;
+        },
+
+        initEvents: function () {
+            var bound = this._bound;
+            var main = $(this.main);
+
+            main.on('click', bound.onClick);
+
+            if (this.mode === 'over') {
+                main.on('mouseenter', bound.onMouseEnter);
+                main.on('mouseleave', bound.onMouseLeave);
+            }
+
+            var triggers = this.triggers;
+            this.triggers = [];
+            this.addTriggers(triggers);
         },
 
         /**
@@ -567,27 +559,29 @@ define(function (require) {
          * @public
          */
         addTriggers: function (triggers) {
-            var options = this.options;
             var events  = this.events;
-            var flag    = options.flag;
+            var flag    = this.flag;
 
-            this.triggers = typeof triggers === 'string'
-                ? $('.' + options.triggers)
-                : $(triggers);
-
-            var onShow = this._bound.onShow;
+            this.triggers = [].concat(triggers, this.triggers);
 
             if (!events) {
                 return;
             }
 
-            this.triggers.each(function (i, trigger) {
+            triggers = typeof triggers === 'string'
+                ? $('.' + triggers)
+                : $(triggers);
+
+            var onShow = this._bound.onShow;
+
+            triggers.each(function (i, trigger) {
                 trigger = $(trigger);
                 if (!trigger.hasClass(flag)) {
                     trigger.addClass(flag);
                     trigger.on(events.on, onShow);
                 }
             });
+
 
         },
 
@@ -634,7 +628,6 @@ define(function (require) {
          * @public
          */
         show: function (target) {
-            var options  = this.options;
             var elements = this.elements;
 
             privates.clear.call(this);
@@ -643,20 +636,21 @@ define(function (require) {
 
             $(window).on('resize', this._bound.onResize);
 
-            elements.body.innerHTML  = this.content;
+            // 此部分功能将在`beforeShow`事件中调用`setContent`/`setTitle`接口完成
+            // elements.body.innerHTML  = this.content;
 
-            var title = $(elements.title);
+            // var title = $(elements.title);
 
-            if (this.title) {
-                title.html(this.title).show();
-            }
-            else {
-                title.empty().hide();
-            }
+            // if (this.title) {
+            //     title.html(this.title).show();
+            // }
+            // else {
+            //     title.empty().hide();
+            // }
 
-            if (!options.arrow) {
-                $(elements.arrow).hide();
-            }
+            // if (!this.arrow) {
+            //     $(elements.arrow).hide();
+            // }
 
             privates.computePosition.call(this);
             this._visible = true;
@@ -666,7 +660,7 @@ define(function (require) {
              * @type {Object}
              * @property {HTMLElement} target 事件源 DOM 对象
              */
-            this.fire('show', { target: target });
+            this.fire('show', {target: target});
 
         },
 
@@ -687,7 +681,7 @@ define(function (require) {
                     .on(events.on, bound.onShow)
                     .off(events.un, bound.onHide);
 
-                if (this.options.mode === 'click') {
+                if (this.mode === 'click') {
                     $(document).off('click', bound.onDocClick);
                 }
             }
@@ -714,9 +708,7 @@ define(function (require) {
          * @public
          */
         isVisible: function () {
-
             return !!this._visible;
-
         },
 
         /**
@@ -724,7 +716,7 @@ define(function (require) {
          *
          * 如果参数为空，则隐藏提示层的标题部分
          *
-         * @param {string} html
+         * @param {string} html 作为提示层标题的代码
          * @public
          */
         setTitle: function (html) {
@@ -749,7 +741,6 @@ define(function (require) {
          * @override
          */
         dispose: function () {
-            var options = this.options;
             var events  = this.events;
             var bound   = this._bound;
 
@@ -757,16 +748,16 @@ define(function (require) {
                 return;
             }
 
-            var flag = options.flag;
+            var flag = this.flag;
 
-            $.each(this.triggers || [], function (i, trigger) {
+            lib.each(this.triggers || [], function (trigger) {
                 trigger = $(trigger);
                 trigger.hasClass(flag) && trigger.removeClass(flag).off(events.on, bound.onShow);
             });
 
             var main = this.main;
 
-            if (options.mode === 'over') {
+            if (this.mode === 'over') {
                 $(main).off('mouseenter', bound.onMouseEnter);
                 $(main).off('mouseleave', bound.onMouseLeave);
             }
@@ -775,7 +766,7 @@ define(function (require) {
             }
 
             this.current = null;
-            this.parent();
+            this.$parent();
         }
 
     });

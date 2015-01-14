@@ -28,10 +28,7 @@ define(function (require) {
          */
         options: {
 
-            // 控件渲染主容器
-            main: '',
-
-            text: null,
+            text: '',
 
             width: '',
 
@@ -47,10 +44,8 @@ define(function (require) {
          * @private
          */
         init: function (options) {
-            $.extend(this, this.options, options);
-            this.text = options.text === null
-                ? this.main.innerHTML
-                : options.text;
+            this.$parent(options);
+            this.text = this.text || this.main.innerHTML;
         },
 
         /**
@@ -67,20 +62,26 @@ define(function (require) {
          *
          * @protected
          */
-        repaint: painter.createRepaint([ {
-            name: [ 'width', 'height' ],
-            paint: function (conf, width, height) {
-                $(this.main).css({
-                    width: width,
-                    height: height
-                });
+        repaint: painter.createRepaint(
+            {
+                name: [ 'width', 'height' ],
+                paint: function (conf, width, height) {
+                    width && $(this.main).css('width', width);
+                }
+            },
+            {
+                name: ['height'],
+                paint: function (conf, height) {
+                    height && $(this.main).css('height', height);
+                }
+            },
+            {
+                name: [ 'text' ],
+                paint: function (conf, text) {
+                    this.setText(text);
+                }
             }
-        }, {
-            name: [ 'text' ],
-            paint: function (conf, text) {
-                this.setText(text);
-            }
-        } ]),
+        ),
 
         /**
          * 设定按钮文本
@@ -109,15 +110,14 @@ define(function (require) {
          * @private
          */
         onClick: function (e) {
-
-            if (this.hasState('disabled')) {
+            // 搞成按钮的A标签点击都要被阻止跳转
+            if (this.main.tagName === 'A') {
                 e.preventDefault();
-                return;
             }
-
-            this.fire('click', e);
+            if (!this.hasState('disabled')) {
+                this.fire('click', e);
+            }
         }
-
 
     });
 

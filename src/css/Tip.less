@@ -15,9 +15,9 @@
     border: 1px solid @tip-border-color;
     background-color: @tip-background-color;
 
-    .@{tip-prefix}-arrow,
-    .@{tip-prefix}-arrow em,
-    .@{tip-prefix}-arrow ins {
+    &-arrow,
+    &-arrow em,
+    &-arrow ins {
         width: 0;
         height: 0;
         font-size: 0;
@@ -26,7 +26,7 @@
         position: absolute;
     }
 
-    .@{tip-prefix}-arrow {
+    &-arrow {
 
         em {
             border: @tip-border-width solid transparent;
@@ -46,7 +46,7 @@
     }
 
     // tip显示在trigger左侧(箭头在控件右侧)
-    .@{tip-prefix}-arrow-left {
+    &-arrow-left {
         right: 0;
 
         em {
@@ -62,7 +62,7 @@
     }
 
     // tip显示在trigger右侧(箭头在控件左侧)
-    .@{tip-prefix}-arrow-right {
+    &-arrow-right {
         left: -@tip-border-width - 1;
 
         em {
@@ -78,7 +78,7 @@
     }
 
     // tip显示在trigger顶部(箭头在控件底部)
-    .@{tip-prefix}-arrow-top {
+    &-arrow-top {
         bottom: 0;
 
         em {
@@ -94,7 +94,7 @@
     }
 
     // tip显示在trigger底部(箭头在控件顶部)
-    .@{tip-prefix}-arrow-bottom {
+    &-arrow-bottom {
         top: -@tip-border-width;
 
         em {
@@ -110,13 +110,13 @@
     }
 
     // 标题定义
-    .@{tip-prefix}-title {
+    &-title {
         height: 50px;
         background-color: @tip-background-color;
     }
 
     // 内容部分定义
-    .@{tip-prefix}-body {
+    &-body {
 
     }
 }

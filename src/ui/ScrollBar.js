@@ -38,13 +38,228 @@ define(function (require) {
         };
 
     /**
-     * 私有函数或方法
+     * 滚动条组件
      *
-     * @type {Object}
-     * @namespace
-     * @name module:ScrollBar~privates
+     * @extends module:ScrollBar
+     * @requires lib
+     * @requires Control
+     * @exports ScrollBar
+     * @example
+     *
+     * var scrollbar = new ScrollBar({
+     *     main: lib.g('ecl-ui-scrollbar-main'),
+     *     thumb: lib.g('ecl-ui-scrollbar-thumb'),
+     *     disabled: 0
+     *});
+     *
+     *
      */
-    var privates = /** @lends module:ScrollBar~privates */ {
+    var ScrollBar = Control.extend(/** @lends module:ScrollBar.prototype */{
+
+        /**
+         * 控件类型标识
+         *
+         * @type {string}
+         * @override
+         * @private
+         */
+        type: 'ScrollBar',
+
+        /**
+         * 控件配置项
+         *
+         * @name module:ScrollBar#options
+         * @type {Object}
+         * @property {boolean} options.disabled 是否禁用组件
+         * @property {(string | HTMLElement)} options.main 主元素
+         * @property {(string | HTMLElement)} options.panel 需要滚动的元素，
+         * 如果不设则按class规则查找`options.prefix` + `panel`
+         * @property {(string | HTMLElement)} options.thumb 滚动条按钮元素
+         * 如果不设则按class规则查找`options.prefix` + `thumb` ，
+         * 并且将thumb父级元素作为track
+         * @property {Number} options.wheelspeed 滚动速度，百分比，越大滚动越快
+         * @property {string} options.direction 滚动方向
+         * @property {string} options.prefix class默认前缀
+         * @property {string} options.mode 使用的模式(`scroll` or `position`)，
+         * scrollTop模式or style.top模式
+         * 使用的css是不一样的,默认scrollTop模式
+         * @property {boolean} options.preventWheelScroll
+         * 如果true会始终阻止滚轮滚动页面，及时当前面板已经滚动到头
+         * 此处会防止因面板较短导致的页面频繁滚动
+         * @property {boolean} options.autoThumbSize
+         * 是否自动调整thumb的高度，以适应滚动内容的大小
+         * @property {boolean} options.minThumbSize
+         * 自动调整thumb高度时，最小的thumb高度(px)
+         * @private
+         */
+        options: {
+
+            // 需要滚动的元素
+            panel: '',
+
+            // 组件控制的滑动按钮
+            thumb: '',
+
+            // 滚轮速度
+            wheelspeed: 0.05,
+
+            // 滑动门方向`horizontal` or `vertical`
+            direction: 'vertical',
+
+            // 使用的模式，scrollTop模式or style.top模式，使用的css是不一样的
+            mode: '',
+
+            // 如果true会始终阻止滚轮滚动页面，即使当前已经滚动到头
+            preventWheelScroll: false,
+
+            // 是否自动调整thumb的高度
+            autoThumbSize: true,
+
+            // 最小的thumb高度,px
+            minThumbSize: 30
+        },
+
+        /**
+         * 控件初始化
+         *
+         * @param {Object} options 控件配置项
+         * @see module:Control#options
+         * @private
+         */
+        init: function (options) {
+
+            this.$parent(options);
+
+            this.curPos = 0;
+
+            this.bindEvents(privates);
+
+            // 当前滚动坐标
+            this.xAxis = opt.direction === 'horizontal';
+
+            var sizeProp = this.xAxis ? 'Width' : 'Height';
+            this.offsetProp = 'offset' + sizeProp;
+            this.clientProp = 'client' + sizeProp;
+            this.scrollProp = 'scroll' + sizeProp;
+            this.scrollDirection = 'scroll' + (this.xAxis ? 'Left' : 'Top');
+            this.posMode = opt.mode === 'position';
+
+            // 滚动主元素
+            this.main = lib.g(opt.main);
+
+            // 需要滚动的元素
+            if (!opt.panel) {
+                this.panel = $('.' + privates.getClass.call(this, 'panel'), this.main)[0];
+            }
+            else {
+                this.panel = lib.g(opt.panel);
+            }
+
+            // 滚动条按钮
+            if (!opt.thumb) {
+                this.thumb = $('.' + privates.getClass.call(this, 'thumb'), this.main)[0];
+            }
+            else {
+                this.thumb = lib.g(opt.thumb);
+            }
+
+            // 滚动条
+            this.track = this.thumb.offsetParent;
+
+            var bound = this._bound;
+
+            $(this.thumb).on('mousedown', bound.onThumbdown);
+            $(this.track).on('mouseup', bound.onTrackUp);
+            $(this.panel).on(wheelEvent, bound.onMouseWheel);
+            $(this.main)
+                .on('mouseenter', bound.onMainEnter)
+                .on('mouseleave', bound.onMainLeave);
+
+        },
+
+        /**
+         * 滚动到指定位置
+         * @param { ( Number | string ) } pos 滚动的距离，
+         * 可以设置·begin· or ·end· 或者百分比
+         * @return {module:ScrollBar} 本对象
+         * @public
+         */
+        scrollTo: function (pos) {
+            if (pos === 'begin') {
+                pos = 0;
+            }
+            else if (pos === 'end') {
+                pos = 1;
+            }
+            // 滚动距离
+            else if (pos > 1) {
+                pos = pos / (this.panelSize * (1 - this.scrollRatio));
+            }
+            // 滚动百分比
+            else {
+                pos = pos * 1 || 0;
+            }
+            privates.setScrollPercent.call(this, pos);
+        },
+
+        /**
+         * 重新计算滚动比例
+         *
+         * @return {module:ScrollBar} 本对象
+         * @public
+         */
+        refresh: function () {
+
+            this.panelSize = this.panel[this.scrollProp];
+
+            // 当前内容的缩放级别
+            this.scrollRatio = this.main[this.clientProp] / this.panelSize;
+
+            var act = this.scrollRatio >= 1
+                ? 'addClass'
+                : 'removeClass';
+
+            // 设置祖先元素为禁用
+            $(this.main)[act](privates.getClass.call(this, 'noscroll'));
+
+            // 滑块轨道的大小
+            var trackLen = this.track[this.clientProp];
+
+            if (this.options.autoThumbSize && this.scrollRatio < 1) {
+
+                var thumbSize = Math.max(
+                this.options.minThumbSize, this.scrollRatio * trackLen);
+
+                this.thumb.style[
+                    this.xAxis
+                    ? 'width'
+                    : 'height'
+                ] = thumbSize + 'px';
+            }
+
+            this.trackSize = trackLen - this.thumb[this.offsetProp];
+
+            this.scrollTo(this.curPos);
+            this._disabled = this.scrollRatio >= 1;
+
+            return this;
+        },
+
+        /**
+         * 绘制控件
+         *
+         * @override
+         * @public
+         */
+        render: function () {
+            if (!this.options.main) {
+                throw new Error('invalid main');
+            }
+
+            this.refresh();
+            return this;
+        },
+
         /**
          * 按下导航条的按钮时处理
          *
@@ -215,243 +430,6 @@ define(function (require) {
         getClass: function (name) {
             name = name ? '-' + name : '';
             return this.options.prefix + name;
-        }
-
-    };
-
-    /**
-     * 滚动条组件
-     *
-     * @extends module:ScrollBar
-     * @requires lib
-     * @requires Control
-     * @exports ScrollBar
-     * @example
-     *
-     * var scrollbar = new ScrollBar({
-     *     main: lib.g('ecl-ui-scrollbar-main'),
-     *     thumb: lib.g('ecl-ui-scrollbar-thumb'),
-     *     disabled: 0
-     *});
-     *
-     *
-     */
-    var ScrollBar = Control.extend(/** @lends module:ScrollBar.prototype */{
-
-        /**
-         * 控件类型标识
-         *
-         * @type {string}
-         * @override
-         * @private
-         */
-        type: 'ScrollBar',
-
-        /**
-         * 控件配置项
-         *
-         * @name module:ScrollBar#options
-         * @type {Object}
-         * @property {boolean} options.disabled 是否禁用组件
-         * @property {(string | HTMLElement)} options.main 主元素
-         * @property {(string | HTMLElement)} options.panel 需要滚动的元素，
-         * 如果不设则按class规则查找`options.prefix` + `panel`
-         * @property {(string | HTMLElement)} options.thumb 滚动条按钮元素
-         * 如果不设则按class规则查找`options.prefix` + `thumb` ，
-         * 并且将thumb父级元素作为track
-         * @property {Number} options.wheelspeed 滚动速度，百分比，越大滚动越快
-         * @property {string} options.direction 滚动方向
-         * @property {string} options.prefix class默认前缀
-         * @property {string} options.mode 使用的模式(`scroll` or `position`)，
-         * scrollTop模式or style.top模式
-         * 使用的css是不一样的,默认scrollTop模式
-         * @property {boolean} options.preventWheelScroll
-         * 如果true会始终阻止滚轮滚动页面，及时当前面板已经滚动到头
-         * 此处会防止因面板较短导致的页面频繁滚动
-         * @property {boolean} options.autoThumbSize
-         * 是否自动调整thumb的高度，以适应滚动内容的大小
-         * @property {boolean} options.minThumbSize
-         * 自动调整thumb高度时，最小的thumb高度(px)
-         * @private
-         */
-        options: {
-
-            // 是否禁用组件
-            disabled: false,
-
-            // 组件控制的主元素
-            main: '',
-
-            // 需要滚动的元素
-            panel: '',
-
-            // 组件控制的滑动按钮
-            thumb: '',
-
-            // 滚轮速度
-            wheelspeed: 0.05,
-
-            // 滑动门方向`horizontal` or `vertical`
-            direction: 'vertical',
-
-            // 控件class前缀，同时将作为main的class之一
-            prefix: 'ecl-ui-scrollbar',
-
-            // 使用的模式，scrollTop模式or style.top模式，使用的css是不一样的
-            mode: '',
-
-            // 如果true会始终阻止滚轮滚动页面，即使当前已经滚动到头
-            preventWheelScroll: false,
-
-            // 是否自动调整thumb的高度
-            autoThumbSize: true,
-
-            // 最小的thumb高度,px
-            minThumbSize: 30
-        },
-
-        /**
-         * 控件初始化
-         *
-         * @param {Object} options 控件配置项
-         * @see module:Control#options
-         * @private
-         */
-        init: function () {
-            if (!this.options.main) {
-                throw new Error('invalid main');
-            }
-
-            var opt = this.options;
-            this._disabled = !!opt.disabled;
-            this.curPos = 0;
-
-            this.bindEvents(privates);
-
-            // 当前滚动坐标
-            this.xAxis = opt.direction === 'horizontal';
-
-            var sizeProp = this.xAxis ? 'Width' : 'Height';
-            this.offsetProp = 'offset' + sizeProp;
-            this.clientProp = 'client' + sizeProp;
-            this.scrollProp = 'scroll' + sizeProp;
-            this.scrollDirection = 'scroll' + (this.xAxis ? 'Left' : 'Top');
-            this.posMode = opt.mode === 'position';
-
-            // 滚动主元素
-            this.main = lib.g(opt.main);
-
-            // 需要滚动的元素
-            if (!opt.panel) {
-                this.panel = $('.' + privates.getClass.call(this, 'panel'), this.main)[0];
-            }
-            else {
-                this.panel = lib.g(opt.panel);
-            }
-
-            // 滚动条按钮
-            if (!opt.thumb) {
-                this.thumb = $('.' + privates.getClass.call(this, 'thumb'), this.main)[0];
-            }
-            else {
-                this.thumb = lib.g(opt.thumb);
-            }
-
-            // 滚动条
-            this.track = this.thumb.offsetParent;
-
-            var bound = this._bound;
-
-            $(this.thumb).on('mousedown', bound.onThumbdown);
-            $(this.track).on('mouseup', bound.onTrackUp);
-            $(this.panel).on(wheelEvent, bound.onMouseWheel);
-            $(this.main)
-                .on('mouseenter', bound.onMainEnter)
-                .on('mouseleave', bound.onMainLeave);
-
-        },
-
-        /**
-         * 滚动到指定位置
-         * @param { ( Number | string ) } pos 滚动的距离，
-         * 可以设置·begin· or ·end· 或者百分比
-         * @return {module:ScrollBar} 本对象
-         * @public
-         */
-        scrollTo: function (pos) {
-            if (pos === 'begin') {
-                pos = 0;
-            }
-            else if (pos === 'end') {
-                pos = 1;
-            }
-            // 滚动距离
-            else if (pos > 1) {
-                pos = pos / (this.panelSize * (1 - this.scrollRatio));
-            }
-            // 滚动百分比
-            else {
-                pos = pos * 1 || 0;
-            }
-            privates.setScrollPercent.call(this, pos);
-        },
-
-        /**
-         * 重新计算滚动比例
-         *
-         * @return {module:ScrollBar} 本对象
-         * @public
-         */
-        refresh: function () {
-
-            this.panelSize = this.panel[this.scrollProp];
-
-            // 当前内容的缩放级别
-            this.scrollRatio = this.main[this.clientProp] / this.panelSize;
-
-            var act = this.scrollRatio >= 1
-                ? 'addClass'
-                : 'removeClass';
-
-            // 设置祖先元素为禁用
-            $(this.main)[act](privates.getClass.call(this, 'noscroll'));
-
-            // 滑块轨道的大小
-            var trackLen = this.track[this.clientProp];
-
-            if (this.options.autoThumbSize && this.scrollRatio < 1) {
-
-                var thumbSize = Math.max(
-                this.options.minThumbSize, this.scrollRatio * trackLen);
-
-                this.thumb.style[
-                    this.xAxis
-                    ? 'width'
-                    : 'height'
-                ] = thumbSize + 'px';
-            }
-
-            this.trackSize = trackLen - this.thumb[this.offsetProp];
-
-            this.scrollTo(this.curPos);
-            this._disabled = this.scrollRatio >= 1;
-
-            return this;
-        },
-
-        /**
-         * 绘制控件
-         *
-         * @override
-         * @public
-         */
-        render: function () {
-            if (!this.options.main) {
-                throw new Error('invalid main');
-            }
-
-            this.refresh();
-            return this;
         },
 
         /**

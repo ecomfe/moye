@@ -31,7 +31,8 @@
         position: absolute;
         width: @switch-btn-width;
         height: @switch-btn-height;
-        top: @slider-height/2 - @switch-btn-height/2;
+        top: 50%;
+        margin-top: @switch-btn-height;
         font: bolder ~'24px/@{switch-btn-height}' '';
         text-align: center;
         color: #FFF;
@@ -63,11 +64,11 @@
     }
 
     //索引按钮
-    &-index {
+    &-pager {
         position: absolute;
-        bottom: -20px;
-        left: @slider-width/2 - 40;
-        z-index: @slider-z-index;
+        bottom: 0;
+        left: 50%;
+        z-index: @slider-z-index + 2;
         cursor: pointer;
 
         i {
@@ -92,24 +93,24 @@
 
 
     //slider 垂直动画样式
-    &-stage-vertical{
+    &-stage-vertical {
         white-space: normal;
     }
 
-    &-stage-vertical &-item{
+    &-stage-vertical &-item {
         float: left;
     }
 
-    //透明度动画class
-    &-stage-abs &-item{
+    // 透明度动画class
+    &-stage-opactiy &-item {
         position: absolute;
     }
 
-    &-cover{
+    &-cover {
         z-index: @slider-z-index;
     }
 
-    &-top{
+    &-top {
         z-index: @slider-z-index + 1;
     }
 

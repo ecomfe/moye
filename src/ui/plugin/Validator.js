@@ -4,9 +4,10 @@
  */
 
 define(function (require) {
-    
-    var $ = require('jquery');
+
+    var $        = require('jquery');
     var Validity = require('./Validity');
+    var lib      = require('../lib');
 
     function Validitor(options) {
         $.extend(this, this.options, options);
@@ -31,7 +32,7 @@ define(function (require) {
 
             // 如果设定开启自动校验，那么就把alisten中设定的事件名绑定上validate方法
             if (me.auto) {
-                $.each(me.listen, function (i, eventName) {
+                lib.each(me.listen, function (eventName) {
                     control.on(eventName, validate);
                 });
             }
@@ -39,8 +40,8 @@ define(function (require) {
         },
 
         /**
-         * asdfasdfs
-         * 
+         * TODO
+         *
          * @private
          * @param {[type]} validity [validity description]
          * @return {[type]} [return description]
@@ -51,15 +52,15 @@ define(function (require) {
 
         /**
          * 校验输入值
-         * 
+         *
          * 校验规则可以是以下三种类型
          * 1：schema
          * 2：函数
-         * 
+         *
          * @param {MOYE/Control} control 控件
          * @param {*} value 值
          * @param {Object | Function} schema 校验规则
-         * @return {Promise} 
+         * @return {Promise}
          */
         validate: function (control) {
 
@@ -91,7 +92,7 @@ define(function (require) {
             }
 
             // 基于schema的校验规则
-            $.each(schema, function (key, rule) {
+            lib.each(schema, function (rule) {
 
                 // 执行校验
                 var ret = rule.check(value, control);
@@ -130,19 +131,19 @@ define(function (require) {
 
         /**
          * 异步校验成功
-         * 
+         *
          * 这里是说有所有异步校验都通过了
-         * 
+         *
          * @private
          * @param {Validity} validity 校验合法性实例
          * @param {Array.[ValidityState]} states 校验状态们
          * @param {Array.[string]} names 校验规则的名称
          */
         __finish: function (validity, states, names) {
-            
+
             var target = this.target;
 
-            $.each(states, function (i, state) {
+            lib.each(states, function (state, i) {
                 validity.addState(names[i], state);
             });
 
@@ -163,7 +164,7 @@ define(function (require) {
 
         /**
          * 更新控件状态
-         * 
+         *
          * @private
          * @param {Validity} validity 合法性实例
          */
