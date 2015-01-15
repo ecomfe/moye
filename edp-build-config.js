@@ -50,13 +50,17 @@ etpl.compile(require('fs').readFileSync('./example/tpl/base.tpl', 'utf-8'));
 
 exports.getProcessors = function () {
     var lessProcessor = new LessCompiler({
-        entryExtnames: 'tpl'
+        entryExtnames: 'tpl',
+        paths: [
+            __dirname,
+            __dirname + '/dep'
+        ]
     });
     var cssProcessor = new CssCompressor();
     var moduleProcessor = new ModuleCompiler();
     var jsProcessor = new JsCompressor();
     var pathMapperProcessor = new PathMapper({
-        mapper: function(value) {
+        mapper: function (value) {
             value = value.replace( this.from, this.to );
             if (/\.tpl$/.test(value)) {
                 value = value.replace(/\.tpl$/, '.html');
@@ -64,6 +68,7 @@ exports.getProcessors = function () {
             return value;
         }
     });
+    var asset = new PathMapper();
     var addCopyright = new AddCopyright();
     var etplCompiler = {
         files: [ '*.tpl' ],
@@ -83,15 +88,9 @@ exports.getProcessors = function () {
     };
 
     return {
-        'default': [ 
-            etplCompiler,
-            moduleProcessor, 
-            pathMapperProcessor, 
-            lessProcessor
-        ],
-        'release': [
+        'default': [
             etplCompiler, lessProcessor, cssProcessor, moduleProcessor,
-            jsProcessor, pathMapperProcessor, addCopyright
+            jsProcessor, pathMapperProcessor, asset, addCopyright
         ]
     };
 };
@@ -100,6 +99,8 @@ exports.exclude = [
     'tool',
     'doc',
     'test',
+    'dep',
+    '*.log',
     'node_modules',
     'module.conf',
     'demo',
