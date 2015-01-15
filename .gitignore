@@ -10,3 +10,4 @@ SpecRunner.html
 *.orig
 undefined/
 example-dist
+*.log
