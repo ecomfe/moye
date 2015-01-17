@@ -10,7 +10,14 @@
 
 #### 普通青年
 
-{% /filter%}
+```js
+require(['jquery', 'ui/Button'], function ($, Button) {
+    new Button({
+        main: document.getElementById('button1')
+    })
+    .render();
+});
+```
 <div class="content">
     <button id="button1">ok</button>
 </div>
@@ -23,20 +30,19 @@ require(['jquery', 'ui/Button'], function ($, Button) {
 });
 </script>
 
-{%filter:markdown%}
+#### 参数配置
 
 ```js
 require(['jquery', 'ui/Button'], function ($, Button) {
     new Button({
-        main: document.getElementById('button1')
+        main: document.getElementById('button2'),
+        width: '100px',
+        height: '61.8px',
+        text: 'hello world~'
     })
     .render();
 });
 ```
-
-#### 参数配置
-{%/filter%}
-
 <div class="content">
     <button id="button2">ok</button>
 </div>
@@ -52,22 +58,24 @@ require(['jquery', 'ui/Button'], function ($, Button) {
 });
 </script>
 
-{%filter:markdown%}
+#### 事件绑定
 
 ```js
 require(['jquery', 'ui/Button'], function ($, Button) {
+
+    var i = 0;
+
     new Button({
-        main: document.getElementById('button2'),
-        width: '100px',
-        height: '61.8px',
-        text: 'hello world~'
+        main: document.getElementById('button3'),
+        text: '赞'
     })
-    .render();
+    .render()
+    .on('click', function (e) {
+        this.setText('+' + (++i));
+    });
+
 });
 ```
-
-#### 事件绑定
-{%/filter%}
 
 <div class="content">
     <button id="button3">ok</button>
@@ -89,27 +97,19 @@ require(['jquery', 'ui/Button'], function ($, Button) {
 });
 </script>
 
-{%filter:markdown%}
+
+#### 应用于`<a>`标签
 
 ```js
 require(['jquery', 'ui/Button'], function ($, Button) {
 
-    var i = 0;
-
     new Button({
-        main: document.getElementById('button3'),
-        text: '赞'
+        main: document.getElementById('button4')
     })
-    .render()
-    .on('click', function (e) {
-        this.setText('+' + (++i));
-    });
+    .render();
 
 });
 ```
-
-#### 应用于`<a>`标签
-{%/filter%}
 
 <div class="content">
     <a id="button4" href="http://www.baidu.com" target="_blank">其实，我是一个链接~</a>
@@ -125,19 +125,23 @@ require(['jquery', 'ui/Button'], function ($, Button) {
 });
 </script>
 
-{%filter:markdown%}
+
+#### 禁用状态
+
 ```js
 require(['jquery', 'ui/Button'], function ($, Button) {
 
     new Button({
-        main: document.getElementById('button4')
+        main: document.getElementById('button5'),
+        disabled: true
     })
-    .render();
+    .render()
+    .on('click', function () {
+        console.log('如果这里被调用就出错了哟~');
+    });
 
 });
 ```
-#### 禁用状态
-{%/filter%}
 
 <div class="content">
     <button id="button5" type="submit">不许动</button>
@@ -156,19 +160,5 @@ require(['jquery', 'ui/Button'], function ($, Button) {
 
 });
 </script>
-{% filter: markdown %}
-```js
-require(['jquery', 'ui/Button'], function ($, Button) {
 
-    new Button({
-        main: document.getElementById('button5'),
-        disabled: true
-    })
-    .render()
-    .on('click', function () {
-        console.log('如果这里被调用就出错了哟~');
-    });
-
-});
-```
-{% /filter %}
+{%/filter%}

@@ -18,73 +18,65 @@
 </style>
 {% content: content %}
 {% filter: markdown %}
+
 # Pager
 
-###应用于中间页
+### 应用于中间页
+
+```js
+$('[data-skin]').each(function (i, pager) {
+    new Pager({
+        main: pager,
+        page: 0,
+        first: 0,
+        total: 10,
+        padding: 3,
+        skin: [pager.getAttribute('data-skin')]
+    })
+    .render();
+});
+```
 
 - 金融 ( 皮肤:`jinrong` )
-
-{%/filter%}
 
 <div class="content">
     <div data-skin="jinrong" class="ui-pager"></div>
 </div>
 
-{%filter: markdown%}
-
 - 教育 ( 皮肤:`jiaoyu` )
 
-{%/filter%}
 
 <div class="content">
     <div data-skin="jiaoyu" class="ui-pager"></div>
 </div>
 
-{%filter: markdown%}
-
 - 健康 ( 皮肤:`jiankang` )
 
-{%/filter%}
 
 <div class="content">
     <div data-skin="jiankang" class="ui-pager"></div>
 </div>
 
-{%filter: markdown%}
 
 - 微购 ( 皮肤:`weigou` )
-
-{%/filter%}
 
 <div class="content">
     <div data-skin="weigou" class="ui-pager"></div>
 </div>
 
-{%filter: markdown%}
-
 - 游戏 ( 皮肤:`youxi` )
-
-{%/filter%}
 
 <div class="content">
     <div data-skin="youxi" class="ui-pager"></div>
 </div>
 
-{%filter: markdown%}
-
 - 汽车 ( 皮肤:`qiche` )
-
-{%/filter%}
 
 <div class="content">
     <div data-skin="qiche" class="ui-pager"></div>
 </div>
 
-{%filter: markdown%}
-
 - 婚庆  ( 皮肤:`hunqin` )
-
-{%/filter%}
 
 <div class="content">
     <div data-skin="hunqing" class="ui-pager"></div>
@@ -106,32 +98,35 @@ require(['jquery', 'ui/Pager'], function ($, Pager) {
 });
 </script>
 
-{% filter: markdown %}
-
-源码
+### 设置总页数
 
 ```js
-require(['jquery', 'ui/Pager'], function ($, Pager) {
-    $('').each(function (i, pager) {
-        new Pager({
-            main: pager,
-            page: 0,
-            first: 1,
-            total: 10,
-            skin: [pager.getAttribute('data-skin'), 'mp']
-        })
-        .on('change', function (e) {
-            this.setPage(e.page);
-        })
-        .render();
+require(['ui/Pager'], function (Pager) {
+    var pager = new Pager({
+        main: $('#pager2'),
+        total: 10
+    })
+    .render();
+
+    var Select = new Select({
+        main: document.getElementById('page-size'),
+        value: 10,
+        datasource: [{
+            name: '10',
+            value: 10
+        }, {
+            name: '20',
+            value: 20
+        }, {
+            name: '50',
+            value: 50
+        }]
+    }).render().on('change', function (e) {
+        pager.setTotal(e.value);
     });
 });
 ```
 
-### 设置总页数
-------------------------
-
-{%/filter%}
 
 <div class="content">
     <div id="pager2" class="ui-pager"></div>
@@ -168,40 +163,10 @@ require(['ui/Pager', 'ui/Select'], function (Pager, Select) {
 });
 </script>
 
-{%filter: markdown%}
-
-```js
-require(['ui/Pager'], function (Pager) {
-    var pager = new Pager({
-        main: $('#pager2'),
-        total: 10
-    })
-    .render();
-
-    var Select = new Select({
-        main: document.getElementById('page-size'),
-        value: 10,
-        datasource: [{
-            name: '10',
-            value: 10
-        }, {
-            name: '20',
-            value: 20
-        }, {
-            name: '50',
-            value: 50
-        }]
-    }).render().on('change', function (e) {
-        pager.setTotal(e.value);
-    });
-});
-```
-
 ### 应用于大搜索卡片
 
 示例：
 
-{% /filter %}
 
 <div class="content">
     <div id="pager1" class="ui-pager"></div>
@@ -219,10 +184,6 @@ require(['ui/Pager'], function (Pager) {
     .render();
 });
 </script>
-
-{%filter: markdown%}
-
-源码
 
 ```js
 require(['ui/Pager'], function (Pager) {

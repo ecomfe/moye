@@ -4,13 +4,26 @@
 <link rel="stylesheet" href="../src/css/Select.less" >
 {% content: content %}
 {% filter: markdown %}
+
 # Select
 
-### DEMO
------------------------
+```html
+<div>筛选：<div id="cycle" class="ui-select"></div></div>
+```
 
-{% /filter %}
-
+```js
+new Select({
+  main: document.getElementById('cycle'),
+  datasource: [
+    {value: 0, name: '不限'},
+    {value: 1, name: '中关村、上地'},
+    {value: 2, name: '公主坟商圈'},
+    {value: 3, name: '劲松潘家园'},
+    {value: 4, name: '亚运村'},
+    {value: 5, name: '北京南站商圈超长'}
+  ]
+}).render();
+```
 
 <div class="content">
   <div id='content_left'>
@@ -38,26 +51,4 @@ require(['ui/Select'], function (Select) {
 });
 </script>
 
-{% filter: markdown %}
-
-### 源码
------------------------
-
-```html
-<div>筛选：<div id="cycle" class="ui-select"></div></div>
-```
-
-```js
-new Select({
-  main: document.getElementById('cycle'),
-  datasource: [
-    {value: 0, name: '不限'},
-    {value: 1, name: '中关村、上地'},
-    {value: 2, name: '公主坟商圈'},
-    {value: 3, name: '劲松潘家园'},
-    {value: 4, name: '亚运村'},
-    {value: 5, name: '北京南站商圈超长'}
-  ]
-}).render();
-```
 {% /filter %}

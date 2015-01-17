@@ -16,25 +16,61 @@ require.config({
 </head>
 <body>
 <div class="nav">
-  <a href="#" class="logo"><img src="./img/moye.png" alt=""></a>
-  <ul>
-    {% for: ${controls} as ${control} %}
-    <li><a href="${control.name}.tpl" class="{% if: ${control.name}.toLowerCase() == ${name}.toLowerCase() %}active{%/if%}">${control.name}</a>
-    {% /for %}
-  </ul>
+    <a href="#" class="logo"><img src="./img/moye.png" alt=""></a>
+    <ul>
+        {% for: ${controls} as ${control} %}
+        <li><a href="${control.name}.tpl" class="{% if: ${control.name}.toLowerCase() == ${name}.toLowerCase() %}active{%/if%}">${control.name}</a>
+        {% /for %}
+    </ul>
 </div>
 <div class="container">
-{% contentplaceholder: content %}
+    <div id="main">
+        {% contentplaceholder: content %}
+    </div>
+    <div id="dark-bg">
+        <div id="top-nav">
+            <ul id="lang-nav" class="ui-tabs" data-ctrl-context="default" data-ctrl-id="moye-8">
+                <li class="ui-tabs-item ui-tabs-item-first ui-tabs-active" data-index="0">js</li>
+                <li class="ui-tabs-item" data-index="1">html</li>
+            </ul>
+        </div>
+    </div>
 </div>
-{% contentplaceholder: script %}
 <script>
-require(['jquery', 'ui/lib'], function ($, lib) {
+require(['jquery', 'ui/lib', 'ui/Tabs'], function ($, lib, Tabs) {
     lib.fixed($('.nav')[0], {
         top: 0,
         left: 0,
         bottom: 0
     });
+
+    var tabs = [{
+        title: 'js'
+    }, {
+        title: 'html'
+    }];
+
+    new Tabs({
+        main: document.getElementById('lang-nav'),
+        tabs: tabs
+    }).render().on('change', function (e) {
+        switchCode(tabs[e.activeIndex].title);
+    });
+
+    function switchCode(title) {
+        $('pre code').each(function () {
+            var code = $(this);
+            var pre = code.parent();
+            if (code.hasClass('lang-' + title)) {
+                pre.show();
+            }
+            else {
+                pre.hide();
+            }
+        });
+    }
 });
 </script>
+{% contentplaceholder: script %}
 </body>
 </html>

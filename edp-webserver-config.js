@@ -12,11 +12,21 @@ highlight.configure({
   classPrefix: ''
 });
 
+var renderer = new marked.Renderer();
+
+renderer.code = function (code, language) {
+
+    console.log(language)
+    var style = 'display:' + (language === 'js' ? 'block' : 'none');
+
+    return ''
+        + '<pre style="' + style + '"><code class="lang lang-' + language + '">'
+        + highlight.highlightAuto(code).value
+        + '</code></pre>';
+};
+
 marked.setOptions({
-  renderer: new marked.Renderer(),
-  highlight: function (code) {
-    return highlight.highlightAuto(code).value;
-  },
+  renderer: renderer,
   gfm: true,
   tables: true,
   breaks: false,

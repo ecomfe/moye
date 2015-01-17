@@ -2,38 +2,12 @@
 
 {% content: style %}
 <link rel="stylesheet" href="../src/css/Calendar.less">
-<style>
-  .line input {
-    -moz-box-sizing: content-box;
-    box-sizing: content-box;
-    padding: 4px 5px;
-    height: 16px;
-    line-height: 16px;
-    margin: 0;
-    outline: none;
-  }
-
-  .line button {
-    margin-left: 10px;
-  }
-
-  .line {
-    margin: 10px 0;
-  }
-</style>
 {% content: content %}
 
 {% filter: markdown %}
-# Calendar 日历
 
-## 简易日历
-{% /filter%}
+## 日历
 
-<div class="content line">
-  预约时间：<input type="text" id="calendar1" value="2014-08-08"/>
-</div>
-
-{%filter: markdown%}
 ```js
 require(['ui/Calendar'], function (Calendar) {
 
@@ -43,7 +17,11 @@ require(['ui/Calendar'], function (Calendar) {
 
 });
 ```
-{%/filter%}
+
+<div class="content line">
+  预约时间：<input type="text" id="calendar1" value="2014-08-08"/>
+</div>
+
 
 <script>
 require(['ui/Calendar'], function (Calendar) {
@@ -55,30 +33,7 @@ require(['ui/Calendar'], function (Calendar) {
 });
 </script>
 
-{% filter: markdown %}
-
 ## 显示多个月份供选择
-
-{% /filter%}
-
-<div class="content line">
-  预约时间：<input type="text" id="calendar2" value="2014-08-08"/>
-</div>
-
-<script>
-require(['ui/Calendar'], function (Calendar) {
-
-  new Calendar({
-    main: document.getElementById('calendar2'),
-    months: 3
-  }).render();
-
-});
-</script>
-
-{%filter: markdown%}
-
-源码
 
 ```html
 预约时间：<input type="text" id="calendar2" value="2014-08-08"/>
@@ -95,36 +50,25 @@ require(['ui/Calendar'], function (Calendar) {
 });
 ```
 
-## 可选范围
-
-可以通过配置`Calendar`的`range`属性来设定日历的可选范围，或者可以通过`setRange`方法可动态设定。示例：
-
-{%/filter%}
-
 <div class="content line">
-  预约时间：<input type="text" id="calendar3" value="2014-08-08"/>
+  预约时间：<input type="text" id="calendar2" value="2014-08-08"/>
 </div>
 
 <script>
 require(['ui/Calendar'], function (Calendar) {
 
   new Calendar({
-    main: document.getElementById('calendar3'),
-    months: 2,
-    range: {
-      begin: '2015-01-01',
-      end: new Date()
-    }
+    main: document.getElementById('calendar2'),
+    months: 3
   }).render();
 
 });
 </script>
 
-{%filter: markdown%}
+
+## 可选范围
 
 > 此处请注意, 如果设定的值不在可选的范围内, 值被会被清空.
-
-源码
 
 ```html
 <div class="content">
@@ -147,11 +91,61 @@ require(['ui/Calendar'], function (Calendar) {
 });
 
 ```
+
+可以通过配置`Calendar`的`range`属性来设定日历的可选范围，或者可以通过`setRange`方法可动态设定。示例：
+
+<div class="content line">
+  预约时间：<input type="text" id="calendar3" value="2014-08-08"/>
+</div>
+
+<script>
+require(['ui/Calendar'], function (Calendar) {
+
+  new Calendar({
+    main: document.getElementById('calendar3'),
+    months: 2,
+    range: {
+      begin: '2015-01-01',
+      end: new Date()
+    }
+  }).render();
+
+});
+</script>
+
 ## 特殊日期
 
-可以通过process参数来处理任意特殊日期的显示值或样式。可用于处理节日特殊样式等等情况, 示例:
+```html
+价格日历：<input type="text" value="2014-10-01" id="price-calendar">
+```
 
-{%/filter%}
+```js
+require(['ui/Calendar'], function (Calendar) {
+
+  var begin = new Date();
+  var end = new Date(begin);
+
+  end.setMonth(end.getMonth() + 3);
+
+  new Calendar({
+    main: document.getElementById('price-calendar'),
+    months: 3,
+    range: {
+      begin: begin,
+      end: end
+    },
+    process: function (data) {
+      if (data.value === '2015-02-19') {
+        data.content = '春节';
+      }
+      return data;
+    }
+  }).render();
+
+});
+```
+
+可以通过process参数来处理任意特殊日期的显示值或样式。可用于处理节日特殊样式等等情况, 示例:
 
 <div class="content">
   <div class="line">
@@ -187,38 +181,4 @@ require(['ui/Calendar'], function (Calendar) {
 
 });
 </script>
-
-{%filter: markdown%}
-
-源码：
-
-```html
-价格日历：<input type="text" value="2014-10-01" id="price-calendar">
-```
-
-```js
-require(['ui/Calendar'], function (Calendar) {
-
-  var begin = new Date();
-  var end = new Date(begin);
-
-  end.setMonth(end.getMonth() + 3);
-
-  new Calendar({
-    main: document.getElementById('price-calendar'),
-    months: 3,
-    range: {
-      begin: begin,
-      end: end
-    },
-    process: function (data) {
-      if (data.value === '2015-02-19') {
-        data.content = '春节';
-      }
-      return data;
-    }
-  }).render();
-
-});
-```
 {%/filter%}
