@@ -2,9 +2,6 @@
     "name": "Moye",
     "version": "0.7.4",
     "description": "知心UI组件库",
-    "dependencies": {
-        "est": "1.x"
-    },
     "devDependencies": {
         "etpl": "^2.1.0-rc",
         "highlight.js": "^8.1.0",
