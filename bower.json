@@ -1,0 +1,46 @@
+{
+  "name": "moye",
+  "version": "0.7.5",
+  "homepage": "https://github.com/ecomfe/moye",
+  "authors": [
+    {
+      "name": "hushicai",
+      "email": "bluthcy@gmail.com"
+    },
+    {
+      "name": "jinzhubaofu",
+      "email": "jinzhubaofu@gmail.com"
+    },
+    {
+      "name": "kekee000",
+      "email": "kekee000@gmail.com"
+    },
+    {
+      "name": "plhyc1216",
+      "email": "plhyc11081216@gmail.com"
+    },
+    {
+      "name": "Virola",
+      "email": "virola@foxmail.com"
+    }
+  ],
+  "description": "moye ui lib",
+  "main": "src/ui/main.js",
+  "keywords": [
+    "moye",
+    "ui"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "dep",
+    "test",
+    "tests",
+    "example"
+  ],
+  "dependencies": {
+    "est": "https://github.com/ecomfe/est.git#~1.3.0"
+  }
+}
