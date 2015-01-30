@@ -83,6 +83,9 @@ define(function (require) {
              */
             indicator: true,
 
+            // 触发展开的交互动作
+            mode: 'click',
+
             /**
              * 数据适配器
              * 在生成控件时重写此参数, 可以灵活适配各种数据格式
@@ -156,13 +159,14 @@ define(function (require) {
                 target: this.main,
                 triggers: [this.main],
                 offset: this.offset,
-                skin: skins
+                skin: skins,
+                mode: this.mode
             });
 
             popup
-                .on('click', $.proxy(this._onPopupClick, this))
-                .on('show', $.proxy(this._onPopupShow, this))
-                .on('hide', $.proxy(this._onPopupHide, this))
+                .on('click', $.proxy(this.onPopupClick, this))
+                .on('show', $.proxy(this.onPopupShow, this))
+                .on('hide', $.proxy(this.onPopupHide, this))
                 .render();
 
             helper.addPartClasses('popup', popup.main);
@@ -184,7 +188,7 @@ define(function (require) {
         },
 
         initEvents: function () {
-            this.delegate(this.main, 'click', this._onMainClicked);
+            this.delegate(this.main, 'click', this.onMainClicked);
         },
 
         repaint: require('./painter').createRepaint(
@@ -282,7 +286,7 @@ define(function (require) {
                         input.value = value;
                     }
 
-                    helper.getPart('label').innerHTML = text + this._getIndicatorHTML();
+                    helper.getPart('label').innerHTML = text + this.getIndicatorHTML();
                 }
             },
             {
@@ -293,12 +297,12 @@ define(function (require) {
                     }
                     this.helper.getPart('label').innerHTML = ''
                         + defaultLabel
-                        + this._getIndicatorHTML();
+                        + this.getIndicatorHTML();
                 }
             }
         ),
 
-        _getIndicatorHTML: function () {
+        getIndicatorHTML: function () {
             var indicator = this.indicator;
             return lib.isBoolean(indicator) && indicator === false
                 ? ''
@@ -326,7 +330,7 @@ define(function (require) {
          * @param {Element} target 点击的当前事件源对象
          * @protected
          */
-        _pick: function (target) {
+        pick: function (target) {
             var value = $(target).data('value');
             var changesIndex = this.set('value', value);
             if (changesIndex) {
@@ -371,11 +375,11 @@ define(function (require) {
          * @param {Event} e 从`Popup`传来的点击事件对象
          * @protected
          */
-        _onPopupClick: function (e) {
+        onPopupClick: function (e) {
             var target = e.target;
             if (target.tagName === 'A') {
                 e.preventDefault();
-                this._pick(target);
+                this.pick(target);
                 this.popup.hide();
                 this.removeState('expanded');
             }
@@ -388,7 +392,7 @@ define(function (require) {
          * @fires module:Select#beforeShow
          * @protected
          */
-        _onPopupShow: function (e) {
+        onPopupShow: function (e) {
             if (this.isDisabled()) {
                 e.preventDefault();
                 return;
@@ -407,7 +411,7 @@ define(function (require) {
          * @param {Event} e 浮层隐藏事件对象
          * @protected
          */
-        _onPopupHide: function (e) {
+        onPopupHide: function (e) {
             // 转发事件
             this.fire(e);
             // 如果没有被阻止, 那就执行默认动作.
@@ -417,12 +421,12 @@ define(function (require) {
             }
         },
 
-        _onMainClicked: function (e) {
+        onMainClicked: function (e) {
             e.preventDefault();
         },
 
         dispose: function () {
-            this.undelegate(this.main, 'click', this._onMainClicked);
+            this.undelegate(this.main, 'click', this.onMainClicked);
             this.$parent();
         }
 

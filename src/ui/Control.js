@@ -86,7 +86,7 @@ define(function (require) {
             // 通过命名空间来保证$(element).off(xxx)可以正确地解除事件绑定
             // 如果不使用命名空间，$(element).off(xxx)会把所有的处理函数全都取消掉
             // 这里第一级是eventName，第二级是Control实例id，第三级是代理函数id
-            var fullEventName = eventName + '.' + this.guid + '.' + guid;
+            var fullEventName = eventName + '.' + this.id + '.' + guid;
 
             // 绑定事件
             $(element).on(fullEventName, proxy);
@@ -127,7 +127,7 @@ define(function (require) {
             // 通过命名空间来保证$(element).off(xxx)可以正确地解除事件绑定
             // 如果不使用命名空间，$(element).off(xxx)会把绑定的所有代理函数全都取消掉
             // 这里第一级是eventName，第二级是Control实例id，第三级是代理函数id
-            var fullEventName = eventName + '.' + this.guid + '.' + guid;
+            var fullEventName = eventName + '.' + this.id + '.' + guid;
             var handleObj = cached[guid];
             var proxy = handleObj.proxy;
 

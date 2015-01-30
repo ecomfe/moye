@@ -16,7 +16,6 @@ var renderer = new marked.Renderer();
 
 renderer.code = function (code, language) {
 
-    console.log(language)
     var style = 'display:' + (language === 'js' ? 'block' : 'none');
 
     return ''
