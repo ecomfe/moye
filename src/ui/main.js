@@ -40,7 +40,7 @@ define(function (require) {
 
         /**
          * 依照配置, 初始化指定元素中的所有MOYE组件
-         * @param  {Element} container    容器元素
+         * @param  {Element} container  容器元素
          * @param  {Object}  properties 配置
          * @param  {Context} context    上下文
          * @return {Object}  容器内所有被初始化的组件实例
@@ -54,40 +54,29 @@ define(function (require) {
             context = context || defaultContext;
             context.fill(properties);
 
-            // 原本用的是[].slice.call(document.body.getElementsByTagName())
-            // 但是在ie678上报错啊...
-            var rawElements = container.getElementsByTagName('*');
-            var elements = [];
 
-            for (var i = 0, len = rawElements.length; i < len; i++) {
-                if (rawElements[i].nodeType === 1) {
-                    elements.push(rawElements[i]);
-                }
-            }
+            $('[' + confAttr + ']', container).each(function (i, element) {
 
-            for (i = 0, len = elements.length; i < len; i++) {
-
-                var element    = elements[i];
                 var id         = element.getAttribute(confAttr);
                 var instanceId = element.getAttribute(config.instanceAttr);
 
                 // 元素上没有id标识, 或者已经有了实例ID标识, 跳过
                 if (!id || instanceId) {
-                    continue;
+                    return;
                 }
 
                 var conf = properties[id];
 
                 // 如果没有配置项, 跳过
                 if (!conf) {
-                    continue;
+                    return;
                 }
 
                 var type = conf.type;
 
                 // 如果配置项中没有指定`type`, 跳过
                 if (!type) {
-                    continue;
+                    return;
                 }
 
                 // 生成参数
@@ -110,7 +99,7 @@ define(function (require) {
 
                 // 如果没有成功创建实例, 跳过
                 if (!control) {
-                    continue;
+                    return;
                 }
 
                 // 渲染控件
@@ -131,7 +120,7 @@ define(function (require) {
                     throw error;
                 }
 
-            }
+            });
 
             return controls;
         },
