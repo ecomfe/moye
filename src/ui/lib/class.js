@@ -11,6 +11,7 @@ define(function (require) {
 
     var METHOD_CLASS_ATTR = '__class__';
     var METHOD_NAME_ATTR = '__name__';
+    var PROP_CLASS_POOL_ATTR = '__classess__';
 
     var classPool = {};
 
@@ -62,6 +63,13 @@ define(function (require) {
 
         // 附加父类属性
         SubClass.$parent = ParentClass;
+
+        // 如果派生出来的子类有类型, 那么把它放到父类的子类池里...
+        var subClassName = proto.type || proto.$class;
+        if (subClassName) {
+            ParentClass[PROP_CLASS_POOL_ATTR][subClassName] = SubClass;
+        }
+
         // 返回结果
         return SubClass;
     }
@@ -106,6 +114,26 @@ define(function (require) {
     }
 
     /**
+     * 获取Class的某个派生类
+     * @param  {Function} Class      类
+     * @param  {string} subClassType 派生类名
+     * @return {Function}
+     */
+    function getClass(Class, subClassType) {
+        var pool = Class[PROP_CLASS_POOL_ATTR];
+        return pool[subClassType];
+    }
+
+    /**
+     * 获取所有的派生类
+     * @param  {Function} Class 某个类
+     * @return {Object}
+     */
+    function getAllClasses(Class) {
+        return Class[PROP_CLASS_POOL_ATTR];
+    }
+
+    /**
      * 创建新类
      *
      * @param  {Object}   proto 类的原型对象
@@ -117,12 +145,33 @@ define(function (require) {
                 ? this.initialize.apply(this, arguments)
                 : this;
         };
-        Class.extend = curry(extend, Class);
-        Class.implement = curry(implement, Class);
+
         Class.prototype = proto || {};
-        Class.prototype.constructor = Class;
-        Class.prototype.$parent = parent;
+
+        // 注册到类池中
         register(Class);
+
+        // 构造函数
+        Class.prototype.constructor = Class;
+
+        // 调用父类方法
+        Class.prototype.$parent = parent;
+
+        // 继承
+        Class.extend = curry(extend, Class);
+
+        // 接口
+        Class.implement = curry(implement, Class);
+
+        // 获取派生子类
+        Class.getClass = curry(getClass, Class);
+
+        // 获取所有的派生子类
+        Class.getAllClasses = curry(getAllClasses, Class);
+
+        // 派生子类池
+        Class[PROP_CLASS_POOL_ATTR] = {};
+
         return Class;
     }
 
