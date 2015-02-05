@@ -37,12 +37,13 @@ define(function (require) {
          * 如果不传递`part`参数，则生成如下：
          *
          * - `ui-{type}`
-         * - `skin-{type}`
+         * - `skin-{skin}`
+         * - `skin-{skin}-{type}`
          *
          * 如果有`part`参数，则生成如下：
          *
          * - `ui-{type}-{part}`
-         * - `skin-{type}-{part}`
+         * - `skin-{skin}-{type}-{part}`
          *
          * @param {string?} part 部件名称
          * @return {string[]}
