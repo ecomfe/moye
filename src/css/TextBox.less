@@ -9,64 +9,141 @@
 @import './variable.less';
 @import './mixin.less';
 
-.@{textbox-prefix} {
+// keep the same height as button
+@moye-textbox-font-family: @default-base-font-family;
+@moye-textbox-text-size: @moye-medium;
+@moye-textbox-height: 2.5rem;
+@moye-textbox-border-color: #ccc;
+@moye-textbox-padding-vertical: 0.6875rem;
+@moye-textbox-padding-horizontal: 1rem;
+@moye-textbox-border-width: 1px;
+@moye-textbox-background-color: @moye-white;
+@moye-textbox-text-color: @moye-full-black;
+@moye-textbox-font-size: @moye-medium;
+@moye-textbox-placeholder-color: #bbb;
 
-    @width: 100px;
-    @height: 28px;
-    @border-color: #ccc;
-    @font-size: 13px;
-    @focus-border-color: #3994ef;
-    @read-only-border-color: multiply(rgba(0, 0, 0, .15), #fff);
-    @read-only-color: multiply(rgba(0, 0, 0, 1), #fff);
-    @disabled-border-color: @read-only-border-color;
+// radius
+@moye-textbox-radius: 0;
+
+
+.moye-textbox-height(@height, @padding: @moye-textbox-padding-vertical, @border: @moye-textbox-border-width) {
+    .moye-border-box-size-rem(height, @height, @padding, @border);
+    .moye-border-box-size-rem(line-height, @height, @padding, @border);
+}
+
+.moye-textbox-width(@width, @padding: @moye-textbox-padding-horizontal, @border: @moye-textbox-border-width) {
+    .moye-border-box-size-rem(width, @width, @padding, @border);
+}
+
+
+// 基础部分
+.@{moye-prefix}-textbox {
 
     .inline-block();
-    width: @width;
-    height: @height;
+    vertical-align: top;
 
     input {
-        @padding-top: 4px;
-        @padding-left: 5px;
-        @border-width: 1px;
-        .box-sizing(content-box);
         margin: 0;
-        padding: @padding-top @padding-left;
-        width: @width - 2 * @padding-left - 2 * @border-width;
-        height: @height - 2 * @padding-top - 2 * @border-width;
-        border: @border-width solid @border-color;
+        .box-sizing(content-box);
 
-        font-size: @font-size;
-        line-height: @height - @padding-top * 2;
+        .moye-padding(
+            @moye-textbox-padding-vertical,
+            @moye-textbox-padding-horizontal
+        );
+
+        .moye-textbox-height(
+            @moye-textbox-height,
+            @moye-textbox-padding-vertical,
+            @moye-textbox-border-width
+        );
+
+        .moye-rem(
+            font-size,
+            @moye-textbox-font-size
+        );
+
         vertical-align: top;
+        outline: none;
+        color: @moye-textbox-text-color;
+
+        background-color: @moye-textbox-background-color;
+        border: @moye-textbox-border-width solid @moye-textbox-border-color;
 
         .transition(border-color .3s ease-in);
-        outline: none;
+        .placeholder(@moye-textbox-placeholder-color);
 
         &:focus {
-            border-color: @focus-border-color;
+            border-color: @moye-textbox-focus-border-color;
+            background-color: @moye-textbox-focus-background-color;
+            color: @moye-textbox-focus-text-color;
         }
+
     }
 
-    @valid-color: #2ecc71;
-    @invalid-color: #ff2900;
+}
 
-    &-disabled input {
-        background-color: #f8f8f8;
-        color: #999;
+// 状态
+
+// active state
+// @moye-textbox-active-border-color: @primary-color;
+// @moye-textbox-active-background-color: @black-10;
+// @moye-textbox-active-color: #333;
+
+// focus state
+@moye-textbox-focus-border-color: @moye-primary-color;
+@moye-textbox-focus-background-color: @moye-white;
+@moye-textbox-focus-text-color: @moye-full-black;
+
+// 禁用 disabled
+@moye-textbox-disabled-border-color: @moye-light-grey;
+@moye-textbox-disabled-background-color: @moye-dark-white;
+@moye-textbox-disabled-color: @moye-dark-grey;
+
+.@{moye-prefix}-textbox-disabled input {
+    background-color: @moye-textbox-disabled-background-color;
+    color: @moye-textbox-disabled-color;
+    border-color: @moye-textbox-disabled-border-color;
+}
+
+
+// 只读 readonly
+@moye-textbox-readonly-border-color: #CCC;
+@moye-textbox-readonly-text-color: multiply(rgba(0, 0, 0, 1), #fff);
+@moye-textbox-readonly-background-color: multiply(rgba(0, 0, 0, .15), #fff);
+
+.@{moye-prefix}-textbox-readonly input {
+    background-color: @moye-textbox-readonly-background-color;
+    color: @moye-textbox-readonly-text-color;
+    border-color: @moye-textbox-readonly-border-color;
+}
+
+
+// 成功/合法
+@moye-textbox-success-border-color: @moye-success-color;
+@moye-textbox-success-background-color: #FFF;
+@moye-textbox-success-text-color: #333;
+
+.@{moye-prefix}-textbox-success input,
+.@{moye-prefix}-textbox-valid input {
+    background-color: @moye-textbox-success-background-color;
+    color: @moye-textbox-success-text-color;
+    border-color: @moye-textbox-success-border-color;
+    &:focus {
+        border-color: @moye-textbox-success-border-color;
     }
+}
 
-    &-valid input {
-        border-color: @valid-color;
-        &:focus {
-            border-color: @valid-color;
-        }
+// 失败/非法
+@moye-textbox-error-border-color: @moye-error-border-color;
+@moye-textbox-error-background-color: @moye-error-background-color;
+@moye-textbox-error-text-color: @moye-error-text-color;
+
+.@{moye-prefix}-textbox-error input,
+.@{moye-prefix}-textbox-invalid input {
+    background-color: @moye-textbox-error-background-color;
+    color: @moye-textbox-error-text-color;
+    border-color: @moye-textbox-error-border-color;
+    &:focus {
+        border-color: @moye-textbox-error-border-color;
     }
-
-    &-invalid input {
-        border-color: @invalid-color;
-        &:focus {
-            border-color: @invalid-color;
-        }
-    }
-
 }

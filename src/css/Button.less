@@ -5,46 +5,90 @@
 
 @import './dep.less';
 @import './variable.less';
+@import './mixin.less';
 
+// 按钮
+@moye-button-background-color: @moye-primary-color;
+@moye-button-text-color: #fff;
+@moye-button-border-color: #f3f3f3;
+@moye-button-disabled-background-color: #e7e7e7;
+@moye-button-padding-vertical: 0.6875rem;
+@moye-button-padding-horizontal: 1rem;
+@moye-button-font-size: @moye-font-size;
+@moye-button-border-width: 1px;
+@moye-button-height: 2.5rem;
 
-.moye-button() {
+.moye-button-height(@height; @padding; @border;) {
+    .moye-border-box-size-rem(
+        height,
+        @height,
+        @padding,
+        @border
+    );
+    .moye-border-box-size-rem(
+        line-height,
+        @height,
+        @padding,
+        @border
+    );
+}
+
+.moye-button-width(@width; @padding; @border;) {
+    .moye-border-box-size-rem(
+        width,
+        @height,
+        @padding,
+        @border
+    );
+}
+
+.@{moye-prefix}-button {
     .inline-block();
     .box-sizing(content-box);
+
     margin: 0;
-    padding: 0 15px;
-    height: 26px;
-    line-height: 26px;
-    font-size: 13px;
-    color: @button-color;
+
+    .moye-padding(
+        @moye-button-padding-vertical,
+        @moye-button-padding-horizontal
+    );
+
+    .moye-button-height(
+        @moye-button-height,
+        @moye-button-padding-vertical,
+        @moye-button-border-width
+    );
+
+    .moye-rem(font-size, @moye-button-font-size);
+
+    color: @moye-button-text-color;
     text-align: center;
     text-decoration: none;
-    cursor: pointer;
-    background-color: @button-background;
-    border: 1px solid @button-border-color;
+    background-color: @moye-button-background-color;
+
+    border: @moye-button-border-width solid @moye-button-border-color;
     outline: 0;
+
+    cursor: pointer;
 
     .transition(background-color, .3s);
 
     &:hover {
-        background-color: lighten(@button-background, 5%);
+        background-color: lighten(@moye-button-background-color, 5%);
     }
 
     &:active {
-        background-color: darken(@button-background, 10%);
+        background-color: darken(@moye-button-background-color, 10%);
     }
 
     &:visited {
-        color: @button-color;
+        color: @moye-button-text-color;
     }
 
     &-disabled {
-        background-color: @butotn-disabled-background-color;
+        background-color: @moye-button-disabled-background-color;
         &:hover, &:active {
-            background-color: @butotn-disabled-background-color;
+            background-color: @moye-button-disabled-background-color;
         }
     }
-}
-
-.@{button-prefix} {
-    .moye-button();
 }

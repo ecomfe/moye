@@ -9,7 +9,16 @@
 @import './variable.less';
 @import './dep.less';
 
-.@{pager-prefix} {
+// 翻页器
+@moye-pager-item-color: #03c;
+@moye-pager-item-border-color: #ccc;
+@moye-pager-item-background-color: #fff;
+@moye-pager-item-hover-background-color: #EFF4FA;
+@moye-pager-item-current-color: #666;
+@moye-pager-item-triangle-color: #666;
+@moye-pager-item-disabled-color: #999;
+
+.@{moye-prefix}-pager {
     .inline-block();
 
     a {
@@ -22,15 +31,15 @@
 
         text-decoration: none;
         line-height: 23px;
-        color: @pager-item-color;
+        color: @moye-pager-item-color;
         font-size: 12px;
         font-family: Arial, Helvetica, sans-serif;
         text-align: center;
-        background-color: @pager-item-background-color;
-        border: 1px solid @pager-item-border-color;
+        background-color: @moye-pager-item-background-color;
+        border: 1px solid @moye-pager-item-border-color;
 
         &:hover {
-            background-color: @pager-item-hover-background-color;
+            background-color: @moye-pager-item-hover-background-color;
         }
 
         &.@{pager-prefix}-prev,
@@ -44,7 +53,7 @@
             &:hover {
                 background: none;
                 em {
-                    border-color: @pager-item-hover-background-color;
+                    border-color: @moye-pager-item-hover-background-color;
                 }
             }
         }
@@ -52,7 +61,7 @@
         &.@{pager-prefix}-current {
             font-weight: 700;
             border: none;
-            color: @pager-item-current-color;
+            color: @moye-pager-item-current-color;
             cursor: default;
             &:hover {
                 background: none;
@@ -60,18 +69,18 @@
         }
 
         &.@{pager-prefix}-disabled {
-            color: @pager-item-disabled-color;
+            color: @moye-pager-item-disabled-color;
             cursor: default;
             &:hover {
-                border-color: @pager-item-border-color;
-                background-color: @pager-item-background-color;
+                border-color: @moye-pager-item-border-color;
+                background-color: @moye-pager-item-background-color;
             }
         }
 
     }
 
     &-disabled {
-        color: @pager-item-disabled-color;
+        color: @moye-pager-item-disabled-color;
         cursor: default;
     }
 

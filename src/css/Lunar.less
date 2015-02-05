@@ -1,19 +1,19 @@
 /**
  * MOYE
  * Copyright 2014 Baidu Inc. All rights reserved.
- * 
+ *
  * @file 农历
  * @author leon <leonlu@outlook.com>
  */
 
 @import './variable.less';
 
-.@{lunar-prefix}-pre,
-.@{lunar-prefix}-next {
+.@{moye-prefix}-lunar-pre,
+.@{moye-prefix}-lunar-next {
     background: url(http://open.baidu.com/stat/ticket/cal.gif) 0 -19px;
 }
 
-.@{lunar-prefix} {
+.@{moye-prefix}-lunar {
     position: relative;
     width: 784px;
     border: 1px solid #b5b5b5;
@@ -69,37 +69,37 @@
             background: #FFFFCA;
         }
 
-        &.@{lunar-prefix}-disabled,
-        &.@{lunar-prefix}-disabled:hover {
+        &.@{moye-prefix}-lunar-disabled,
+        &.@{moye-prefix}-lunar-disabled:hover {
             color: #ddd;
             cursor: not-allowed;
             background: none;
         }
     }
 
-    .@{lunar-prefix}-today {
+    .@{moye-prefix}-lunar-today {
         color: red;
         background: #FFFFCA;
     }
 
-    .@{lunar-prefix}-weekend {
+    .@{moye-prefix}-lunar-weekend {
         color: orange;
     }
 
-    .@{lunar-prefix}-checked {
+    .@{moye-prefix}-lunar-checked {
         color: #fff;
         background: #3977d2;
     }
 
-    .@{lunar-prefix}-pre-month,
-    .@{lunar-prefix}-next-month {
+    .@{moye-prefix}-lunar-pre-month,
+    .@{moye-prefix}-lunar-next-month {
         color: #999;
     }
 
-} 
+}
 
-.@{lunar-prefix}-pre,
-.@{lunar-prefix}-next {
+.@{moye-prefix}-lunar-pre,
+.@{moye-prefix}-lunar-next {
     width: 5px;
     height: 9px;
     font-size: 0;
@@ -108,17 +108,17 @@
     top: 16px;
 }
 
-.@{lunar-prefix}-pre {
+.@{moye-prefix}-lunar-pre {
     left: 56px;
 }
 
-.@{lunar-prefix}-next {
+.@{moye-prefix}-lunar-next {
     left: 72px;
     background-position: 0 -28px;
 }
 
-.@{lunar-prefix}-go-today,
-.@{lunar-prefix}-add-event {
+.@{moye-prefix}-lunar-go-today,
+.@{moye-prefix}-lunar-add-event {
     position: absolute;
     top: 7px;
     font-size: 14px;
@@ -134,9 +134,9 @@
 }
 
 
-.@{lunar-prefix}-go-today {
+.@{moye-prefix}-lunar-go-today {
     left: 5px;
 }
-.@{lunar-prefix}-add-event {
+.@{moye-prefix}-lunar-add-event {
     right: 5px;
 }

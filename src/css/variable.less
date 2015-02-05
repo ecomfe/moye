@@ -2,115 +2,148 @@
  * MOYE
  * Copyright 2014 Baidu Inc. All rights reserved.
  *
- * @file 样式变量
- * @author leon <leonlu@outlook.com>
+ * @moye-file 样式变量
+ * @moye-author leon <leonlu@moye-outlook.com>
  */
 
-// default typographic settings
-@default-font-size: 16;
-@default-text-color: #666;
-@default-input-placeholder-color: #999;
-@default-base-font-family: 'Helvetica Neue', Arial, sans-serif;
+// moye控件样式前缀
+@moye-prefix: ui;
+@moye-state-prefix: state;
 
-// * IE6/7下如果已经找到字体，不会再按字符进行fallback，故必须将雅黑置首位，写上Arial是为了在雅黑的情况下显示更好的英文字体
-@default-heading-font-family: 'Helvetica Neue', Arial, 'Hiragino Sans GB', 'Microsoft Yahei', 'WenQuanYi Micro Hei', sans-serif;
-@default-old-ie-heading-font-family: 'Microsoft Yahei', Arial, sans-serif;
-@default-code-font-family: Monaco, Consolas, monospace;
+/*-------------------
+      Base Sizes
+--------------------*/
 
-// default visual settings
-@default-border-radius: 3px;
-@default-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+@moye-rem        : 1em;
+@moye-font-size  : unit(@default-font-size, px);
 
-// z-index settings (compatible with BootStrap, ESUI)
-@header-z-index: 1000;
-@footer-z-index: 1000;
-@modal-z-index: 1050;
+/*-------------------
+      Base Font Family
+--------------------*/
 
-// 翻页器
-@pager-prefix: ui-pager;
-@pager-item-color: #03c;
-@pager-item-border-color: #ccc;
-@pager-item-background-color: #fff;
-@pager-item-hover-background-color: #EFF4FA;
-@pager-item-current-color: #666;
-@pager-item-triangle-color: #666;
-@pager-item-disabled-color: #999;
+@moye-font-family : 'Helvetica Neue', Arial, 'Hiragino Sans GB', 'Microsoft Yahei', 'Wen-quanYi Micro Hei', sans-serif;
 
-// 按钮
-@button-prefix: ui-button;
-@button-background: #2196ff;
-@button-color: #fff;
-@button-border-color: #f3f3f3;
-@butotn-disabled-background-color: #e7e7e7;
+/*---  Colors  ---*/
+@moye-black            : #1B1C1D;
+@moye-blue             : #3B83C0;
+@moye-green            : #5BBD72;
+@moye-grey             : #CCCCCC;
+@moye-orange           : #E07B53;
+@moye-pink             : #D9499A;
+@moye-purple           : #564F8A;
+@moye-red              : #D95C5C;
+@moye-teal             : #00B5AD;
+@moye-yellow           : #F2C61F;
 
-// 复选框
-@checkbox-prefix: ui-checkbox;
+/*---  Light Colors  ---*/
+@moye-light-black       : #333333;
+@moye-light-blue        : #54C8FF;
+@moye-light-green       : #2ECC40;
+@moye-light-orange      : #FF851B;
+@moye-light-pink        : #FF8EDF;
+@moye-light-purple      : #CDC6FF;
+@moye-light-red         : #FF695E;
+@moye-light-teal        : #6DFFFF;
+@moye-light-yellow      : #FFE21F;
 
-// 单选框
-@radio-prefix: ui-radio;
+/*---   Neutrals  ---*/
+@moye-full-black        : #000000;
+@moye-dark-grey         : #AAAAAA;
+@moye-light-grey        : #DCDDDE;
+@moye-off-white         : #FAFAFA;
+@moye-dark-white        : #F0F0F0;
+@moye-white             : #FFFFFF;
 
+/*-------------------
+    Emotive Colors
+--------------------*/
 
-// 日历
-@cal-prefix: ui-calendar;
+/* Positive */
+@moye-positive-color            : @moye-green;
+@moye-positive-background-color : #EEFFE7;
+@moye-positive-border-color     : #B7CAA7;
+@moye-positive-header-color     : #356E36;
+@moye-positive-text-color       : #3C763D;
 
-// 城市控件
-@city-prefix: ui-city;
+/* Negative */
+@moye-negative-color            : @moye-red;
+@moye-negative-background-color : #FFF0F0;
+@moye-negative-border-color     : #DBB1B1;
+@moye-negative-header-color     : #912D2B;
+@moye-negative-text-color       : #A94442;
 
-@mask-prefix: ui-mask;
+/* Info */
+@moye-info-color                : #31CCEC;
+@moye-info-background-color     : #E9FAFF;
+@moye-info-border-color         : #AAD6DF;
+@moye-info-header-color         : #297187;
+@moye-info-text-color           : #337B92;
 
-// 对话窗
-@dialog-prefix: ui-dialog;
-
-// 筛选
-@filter-prefix: ecl-ui-filter;
-
-// 浮动提示
-@floattip-prefix: ecl-ui-floattip;
-
-// 文本框控件
-@textbox-prefix: ui-textbox;
-
-// 农历
-@lunar-prefix: ecl-ui-lunar;
-
-// 短信校验码
-@message-auth-code-prefix: ecl-message-auth-code;
-
-// 图片上传
-@picuploader-prefix: ecl-ui-picuploader;
-
-// 打分
-@rating-prefix: ecl-ui-rating;
-
-// 下拉选择框
-@select-prefix: ui-select;
-
-// 选项卡
-@tabs-prefix: ui-tabs;
-
-// 浮动提示
-@tip-prefix: ui-tip;
-@tip-border-color: #c1d5ea;
-@tip-border-width: 8px;
-@tip-background-color: #e2eefa;
-@tip-arrow-border-width: 2px;
+/* Warning */
+@moye-warning-color             : #F2C037;
+@moye-warning-border-color      : #D9CAAB;
+@moye-warning-background-color  : #FFFBE6;
+@moye-warning-header-color      : #825C01;
+@moye-warning-text-color        : #876A38;
 
 
-// 滚动条
-@scrollbar-prefix: ecl-ui-scrollbar;
-@scrollbar-width: 500px;
-@scrollbar-height: 300px;
-@scrollbar-thumb-size: 10px;
+/*-------------------
+    Brand Colors
+--------------------*/
 
-// 幻灯片
-@slider-prefix: ui-slider;
-@slider-width: 423px;           //slider宽度
-@slider-height: 638px;          //slider高度
-@slider-z-index: 1;             //slider按钮层级
-@switch-btn-width: 40px;        //切换按钮宽度
-@switch-btn-height: 40px;       //切换按钮高度
+@moye-primary-color            : @moye-blue;
+@moye-secondary-color          : @moye-black;
 
-// 插件
-@textbox-box-tip-prefix: ui-textbox-tip;
-@uc-safe-input-prefix: uc-safe-input;
-@validate-tip: ui-validate-tip;
+/* Positive / Negative Dupes */
+@moye-success-color            : @moye-positive-color;
+@moye-error-color              : @moye-negative-color;
+@moye-success-background-color : @moye-positive-background-color;
+@moye-error-background-color   : @moye-negative-background-color;
+@moye-success-text-color       : @moye-positive-text-color;
+@moye-error-text-color         : @moye-negative-text-color;
+@moye-success-border-color     : @moye-positive-border-color;
+@moye-error-border-color       : @moye-negative-border-color;
+@moye-success-header-color     : @moye-positive-header-color;
+@moye-error-header-color       : @moye-negative-header-color;
+
+
+
+/*-------------------
+        Sizes
+--------------------*/
+
+/*
+  To have sizing resolve to a specified pixel values adjust
+  the numerator to the desired font size and the denominator
+  to the base em size
+*/
+
+@moye-mini-size        : (10 / 14);
+@moye-tiny-size        : (12 / 14);
+@moye-small-size       : (13 / 14);
+@moye-medium-size      : (14 / 14);
+@moye-large-size       : (16 / 14);
+@moye-big-size         : (18 / 14);
+@moye-huge-size        : (20 / 14);
+@moye-massive-size     : (24 / 14);
+
+/*-------------------
+       Em Sizes
+--------------------*/
+
+/* Exact pixel values expressed in em */
+@moye-mini            : unit(round(@moye-mini-size * @moye-rem) / @moye-rem, rem);
+@moye-tiny            : unit(round(@moye-tiny-size * @moye-rem) / @moye-rem, rem);
+@moye-small           : unit(round(@moye-small-size * @moye-rem) / @moye-rem, rem);
+@moye-medium          : unit(round(@moye-medium-size * @moye-rem) / @moye-rem, rem);
+@moye-large           : unit(round(@moye-large-size * @moye-rem) / @moye-rem, rem);
+@moye-big             : unit(round(@moye-big-size * @moye-rem) / @moye-rem, rem);
+@moye-huge            : unit(round(@moye-huge-size * @moye-rem) / @moye-rem, rem);
+@moye-massive         : unit(round(@moye-massive-size * @moye-rem) / @moye-rem, rem);
+@moye-relative-mini   : unit(round(@moye-mini-size * @moye-rem) / @moye-rem, em);
+@moye-relative-tiny   : unit(round(@moye-tiny-size * @moye-rem) / @moye-rem, em);
+@moye-relative-small  : unit(round(@moye-small-size * @moye-rem) / @moye-rem, em);
+@moye-relative-medium : unit(round(@moye-medium-size * @moye-rem) / @moye-rem, em);
+@moye-relative-large  : unit(round(@moye-large-size * @moye-rem) / @moye-rem, em);
+@moye-relative-big    : unit(round(@moye-big-size * @moye-rem) / @moye-rem, em);
+@moye-relative-huge   : unit(round(@moye-huge-size * @moye-rem) / @moye-rem, em);

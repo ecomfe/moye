@@ -6,14 +6,20 @@
 @import './variable.less';
 @import './dep.less';
 
-.@{tip-prefix} {
+// 浮动提示
+@moye-tip-border-color: #c1d5ea;
+@moye-tip-border-width: 8px;
+@moye-tip-background-color: #e2eefa;
+@moye-tip-arrow-border-width: 2px;
+
+.@{moye-prefix}-tip {
     width: 268px;
     height: 120px;
     top: 0;
     z-index: 1000;
     position: absolute;
-    border: 1px solid @tip-border-color;
-    background-color: @tip-background-color;
+    border: 1px solid @moye-tip-border-color;
+    background-color: @moye-tip-background-color;
 
     &-arrow,
     &-arrow em,
@@ -29,18 +35,18 @@
     &-arrow {
 
         em {
-            border: @tip-border-width solid transparent;
+            border: @moye-tip-border-width solid transparent;
 
             // 修复ie6 无法边框透明的bug
-            _border: @tip-border-width solid @tip-background-color;
-            _filter: chroma(color=@tip-background-color);
+            _border: @moye-tip-border-width solid @moye-tip-background-color;
+            _filter: chroma(color=@moye-tip-background-color);
         }
 
         ins {
-            border: @tip-border-width solid transparent;
+            border: @moye-tip-border-width solid transparent;
             // 修复ie6 无法边框透明的bug
-            _border: @tip-border-width solid @tip-border-color;
-            _filter: chroma(color=@tip-border-color);
+            _border: @moye-tip-border-width solid @moye-tip-border-color;
+            _filter: chroma(color=@moye-tip-border-color);
         }
 
     }
@@ -51,29 +57,29 @@
 
         em {
             border-right: none;
-            border-left-color: @tip-border-color;
+            border-left-color: @moye-tip-border-color;
         }
 
         ins {
             border-right: none;
-            border-left-color: @tip-background-color;
-            left: -@tip-arrow-border-width;
+            border-left-color: @moye-tip-background-color;
+            left: -@moye-tip-arrow-border-width;
         }
     }
 
     // tip显示在trigger右侧(箭头在控件左侧)
     &-arrow-right {
-        left: -@tip-border-width - 1;
+        left: -@moye-tip-border-width - 1;
 
         em {
             border-left: none;
-            border-right-color: @tip-border-color;
+            border-right-color: @moye-tip-border-color;
         }
 
         ins {
             border-left: none;
-            border-right-color: @tip-background-color;
-            left: @tip-arrow-border-width;
+            border-right-color: @moye-tip-background-color;
+            left: @moye-tip-arrow-border-width;
         }
     }
 
@@ -83,40 +89,36 @@
 
         em {
             border-bottom: none;
-            border-top-color: @tip-border-color;
+            border-top-color: @moye-tip-border-color;
         }
 
         ins {
             border-bottom: none;
-            border-top-color: @tip-background-color;
-            top: -@tip-arrow-border-width;
+            border-top-color: @moye-tip-background-color;
+            top: -@moye-tip-arrow-border-width;
         }
     }
 
     // tip显示在trigger底部(箭头在控件顶部)
     &-arrow-bottom {
-        top: -@tip-border-width;
+        top: -@moye-tip-border-width;
 
         em {
             border-top: none;
-            border-bottom-color: @tip-border-color;
+            border-bottom-color: @moye-tip-border-color;
         }
 
         ins {
             border-top: none;
-            border-bottom-color: @tip-background-color;
-            top: @tip-arrow-border-width;
+            border-bottom-color: @moye-tip-background-color;
+            top: @moye-tip-arrow-border-width;
         }
     }
 
     // 标题定义
     &-title {
         height: 50px;
-        background-color: @tip-background-color;
+        background-color: @moye-tip-background-color;
     }
 
-    // 内容部分定义
-    &-body {
-
-    }
 }

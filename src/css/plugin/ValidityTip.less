@@ -1,36 +1,16 @@
 /**
  * MOYE
  * Copyright 2014 Baidu Inc. All rights reserved.
- * 
+ *
  * @file TextBoxPlugin 文本框 - 校验提示 - 插件 - 样式
  * @author leon <leonlu@outlook.com>
  */
 
 @import '../variable.less';
+@import '../dep.less';
 
-.@{validate-tip} {
-    display: inline-block;
-    *display: inline;
-    *zoom: 1;
+.@{moye-prefix}-validate-tip {
+    .inline-block();
     line-height: 30px;
     vertical-align: top;
-}
-
-.skin-inline-@{validate-tip} {
-
-    margin-left: -25px;
-
-    .iconfont {
-        margin-right: 15px;
-        font-size: 18px;
-    }
-
-    &-valid {
-        color: #2ecc71;
-    }
-
-    &-invalid {
-        color: #ff2900;
-    }
-
 }

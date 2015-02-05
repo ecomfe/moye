@@ -6,40 +6,47 @@
 @import './dep.less';
 @import './variable.less';
 
-.@{slider-prefix} {
+@moye-slider-width: 423px;           //slider宽度
+@moye-slider-height: 638px;          //slider高度
+@moye-slider-z-index: 1;             //slider按钮层级
+@moye-slider-switch-btn-width: 40px;        //切换按钮宽度
+@moye-slider-switch-btn-height: 40px;       //切换按钮高度
+
+
+.@{moye-prefix}-slider {
     position: relative;
-    width: @slider-width;
-    height: @slider-height;
+    width: @moye-slider-width;
+    height: @moye-slider-height;
 
     //舞台
     &-stage {
         position: relative;
-        _width: @slider-width;
-        height: @slider-height;
+        _width: @moye-slider-width;
+        height: @moye-slider-height;
         overflow: hidden;
         white-space: nowrap;
     }
 
     &-item {
-        width: @slider-width;
-        height: @slider-height;
+        width: @moye-slider-width;
+        height: @moye-slider-height;
     }
 
     //向前和向后按钮
     &-prev,
     &-next {
         position: absolute;
-        width: @switch-btn-width;
-        height: @switch-btn-height;
+        width: @moye-slider-switch-btn-width;
+        height: @moye-slider-switch-btn-height;
         top: 50%;
-        margin-top: @switch-btn-height;
-        font: bolder ~'24px/@{switch-btn-height}' '';
+        margin-top: @moye-slider-switch-btn-height;
+        font: bolder ~'24px/@{moye-slider-switch-btn-height}' '';
         text-align: center;
         color: #FFF;
         background: #CCC;
         background: rgba(204, 204, 204, 0.7);
         left: 2px;
-        z-index: @slider-z-index + 10;
+        z-index: @moye-slider-z-index + 10;
         -webkit-user-select:none;
         -moz-user-select:none;
         -ms-user-select:none;
@@ -68,7 +75,7 @@
         position: absolute;
         bottom: 0;
         left: 50%;
-        z-index: @slider-z-index + 2;
+        z-index: @moye-slider-z-index + 2;
         cursor: pointer;
 
         i {
@@ -107,11 +114,11 @@
     }
 
     &-cover {
-        z-index: @slider-z-index;
+        z-index: @moye-slider-z-index;
     }
 
     &-top {
-        z-index: @slider-z-index + 1;
+        z-index: @moye-slider-z-index + 1;
     }
 
 }
