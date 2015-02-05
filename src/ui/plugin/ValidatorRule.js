@@ -2,9 +2,11 @@
  * @file 一大堆校验规则
  * @author Leon(lupengyu@baidu)
  */
+
 define(function (require) {
 
     var ValidityState = require('./ValidityState');
+    var lib = require('../lib');
 
     function format(template, obj) {
         obj = obj || {};
@@ -13,21 +15,30 @@ define(function (require) {
         });
     }
 
-    function ValidityRule(options) {
-        $.extend(this, options);
-    }
+    var ValidityRule = lib.newClass({
 
-    ValidityRule.prototype.getErrorMessage = function (control) {
-        var errorMessage = control[this.type + 'ErrorMessage'] || this.errorMessage;
-        return format(errorMessage, control);
-    };
+        options: {},
 
-    ValidityRule.prototype.getLimitCondition = function(control) {
-        return control[this.type];
-    };
+        $class: 'ValidityRule',
 
-    var rules = {
-        maxByteLength: {
+        initialize: function (options) {
+            lib.extend(this, this.options, options);
+        },
+
+        getErrorMessage: function (control) {
+            var errorMessage = control[this.type + 'ErrorMessage'] || this.errorMessage;
+            return format(errorMessage, control);
+        },
+
+        getLimitCondition: function (control) {
+            return control[this.type];
+        }
+
+    });
+
+    var rules = [
+        {
+            type: 'maxByteLength',
             errorMessage: '${title}长度不能超过${maxByteLength}，中文占两字符',
             check: function (value, control) {
                 var len = value.replace(/[^\x00-\xff]/g, 'xx').length;
@@ -37,7 +48,8 @@ define(function (require) {
                 );
             }
         },
-        mobile: {
+        {
+            type: 'mobile',
             errorMessage: '${title}不符合手机号码格式',
             check: function (value, control) {
                 return new ValidityState(
@@ -46,8 +58,9 @@ define(function (require) {
                 );
             }
         },
-        pattern: {
-            errorMessage: '${title}不符合格式',
+        {
+            type: 'pattern',
+            errorMessage: '${title}不符合格式要求',
             check: function (value, control) {
                 var pattern = this.getLimitCondition(control);
                 return new ValidityState(
@@ -56,7 +69,8 @@ define(function (require) {
                 );
             }
         },
-        required: {
+        {
+            type: 'required',
             errorMessage: '请填写${title}',
             check: function (value, control) {
                 return new ValidityState(
@@ -65,20 +79,10 @@ define(function (require) {
                 );
             }
         }
-    };
+    ];
 
-    for (var type in rules) {
-        var Rule = new Function();
-        Rule.prototype = $.extend(
-            new ValidityRule(),
-            rules[type],
-            {
-                constructor: Rule,
-                type: type
-            }
-        );
-        rules[type] = Rule;
-    }
+
+    lib.each(rules, ValidityRule.extend);
 
     /**
      * 从组件属性上查找已注册了的校验器
@@ -86,16 +90,16 @@ define(function (require) {
      * @return {Array.ValiditorRule}
      */
     ValidityRule.getRules = function (control) {
-        var result = [];
-        for (var prop in control) {
-            if (control.hasOwnProperty(prop)) {
-                var Rule = rules[prop];
-                if (Rule) {
+        return lib.reduce(
+            this.getAllClasses(),
+            function (result, Rule, type) {
+                if (control.hasOwnProperty(type)) {
                     result.push(new Rule());
                 }
-            }
-        }
-        return result;
+                return result;
+            },
+            []
+        );
     };
 
     return ValidityRule;

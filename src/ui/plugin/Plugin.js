@@ -11,8 +11,10 @@ define(function (require) {
 
         $class: 'Plugin',
 
+        options: {},
+
         initialize: function (options) {
-            lib.extend(this, options);
+            lib.extend(this, this.options, options);
         },
 
         /**
@@ -42,7 +44,6 @@ define(function (require) {
          * 销毁
          */
         dispose: function () {
-
         }
 
     });
