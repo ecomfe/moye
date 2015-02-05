@@ -78,16 +78,23 @@ new TextBox({
     <div id="textbox2" class="ui-textbox ui-textbox-disabled">
         <input type="text" value="禁用">
     </div>
+</div>
+<div class="content">
     <div id="textbox3" class="ui-textbox ui-textbox-readOnly">
         <input type="text" value="只读">
     </div>
+</div>
+<div class="content">
     <div id="textbox4" class="ui-textbox ui-textbox-valid">
         <input type="text" value="通过校验">
     </div>
+</div>
+<div class="content">
     <div id="textbox4" class="ui-textbox ui-textbox-invalid">
         <input type="text" value="未通过校验">
     </div>
 </div>
+
 <script>
 require(['ui/TextBox'], function (TextBox) {
     new TextBox({
@@ -104,4 +111,6 @@ require(['ui/TextBox'], function (TextBox) {
 
 });
 </script>
+
+
 {%/filter%}
