@@ -108,14 +108,18 @@ define(function (require) {
 
             /**
              * 弹出模式
-             * 可选值: click | over
+             * 可选值: click | over | static
+             *
+             * click: 当trigger被点击时展现, 当点击到trigger之外的元素时隐藏;
+             * over: 当trigger有鼠标经过时展现, 当有鼠标移出时隐藏;
+             * static: 不需要指定trigger, 只有当调用`show`方法时展现;
+             *
              * @type {String}
              */
             mode: 'click',
 
             /**
              * 延迟显示/隐藏
-             * @TODO
              * @type {Number}
              */
             delay: 0,
@@ -237,6 +241,11 @@ define(function (require) {
             var boundTarget;
             var selector = null;
 
+            // 如果是静态模式, 我们不需要绑定任何触发显示的事件, 坐等外层的show调用即可
+            if (mode === 'static') {
+                return;
+            }
+
             if (liveTriggers) {
                 boundTarget = $(liveTriggers);
                 selector = triggers;
@@ -292,8 +301,8 @@ define(function (require) {
         /**
          * 显示浮层
          *
-         * @fires module:Popup#show 显示事件
          * @public
+         * @return {Popup}
          */
         show: function () {
 
@@ -326,11 +335,15 @@ define(function (require) {
 
             // 清理hide的闹钟
             clearTimeout(me._hideTimer);
+
+            return this;
         },
 
         /**
          * 隐藏浮层
+         *
          * @public
+         * @return {Popup}
          */
         hide: function () {
 
@@ -359,6 +372,8 @@ define(function (require) {
 
             // 清理show的闹钟
             clearTimeout(me._showTimer);
+
+            return this;
         },
 
         /**
