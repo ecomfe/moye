@@ -85,7 +85,23 @@ define(function (require) {
             }
 
             return sign + str;
-        }
+        },
+
+        format: (function () {
+            var map = {
+                '!': 1,
+                '@': 2,
+                '#': 3,
+                '$': 4,
+                '%': 5
+            };
+            return function (template, a, b, c, d, e) {
+                var args = arguments;
+                return template.replace(/(!|@|#|\$|%)\{([\w]+)\}/g, function (all, source, prop) {
+                    return args[map[source]][prop] || '';
+                });
+            };
+        })()
 
     };
 });
