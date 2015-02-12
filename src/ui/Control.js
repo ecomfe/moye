@@ -33,6 +33,13 @@ define(function (require) {
         type: 'Control',
 
         /**
+         * 控件处于某些状态时, 忽略其某些交互
+         * // TODO 暂时无用
+         * @type {Array}
+         */
+        ignoreStates: ['disable'],
+
+        /**
          * 将DOM元素element的eventName事件处理函数handler的作用域绑定到当前Control实例
          *
          * TODO 把此功能移动至helper
@@ -308,22 +315,24 @@ define(function (require) {
          */
         repaint: function (changes, changesIndex) {
 
-            if (!changes) {
+            if (this.helper.isInStage('INITED')) {
 
-                // 常用的两个与状态相关的属性，直接在这里给转化成状态
+                // 常用几个与状态相关的属性，直接在这里给转化成状态
+                // 禁用状态
                 if (this.disabled) {
                     this.disable();
                     delete this.disabled;
                 }
 
+                // 隐藏状态
                 if (this.hidden) {
                     this.hide();
                     delete this.hidden;
                 }
 
-                // 如果是输入控件, 那么这里搞一下只读状态
+                // 只读状态(必须是输入控件才搞一下)
                 if (lib.isFunction(this.getValue)) {
-                    this.setReadOnly(this.readOnly);
+                    this.setReadOnly(!!this.readOnly);
                     delete this.readOnly;
                 }
 
@@ -663,7 +672,7 @@ define(function (require) {
          * @public
          */
         getChild: function (name) {
-            return this.children[name];
+            return this.childrenIndex[name];
         },
 
         /**
@@ -757,6 +766,8 @@ define(function (require) {
             if (!this.plugins) {
                 plugins = this.plugins = [];
             }
+
+            plugin = this.helper.createPluginInstance(plugin);
 
             plugins.push(plugin);
 

@@ -6,6 +6,7 @@
 define(function (require) {
 
     var lib = require('../lib');
+    var Plugin = require('../plugin/Plugin');
 
     return {
 
@@ -23,8 +24,14 @@ define(function (require) {
             var type;
             var options = {};
 
+            // 如果conf是一个对象, 并且有activate的主接口
+            // 那么我们认为它是一个Plugin实例, 那么就直接返回了...
+            if (conf instanceof Plugin) {
+                return conf;
+            }
+
             // 如果是一个函数, 那么我们把它成构造函数来耍
-            if (lib.isFunction(conf)) {
+            else if (lib.isFunction(conf)) {
                 PluginClass = conf;
             }
             // 如果是一个字符串, 那么我们去尝试找一下这个类型
