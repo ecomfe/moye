@@ -24,16 +24,9 @@ define(function (require) {
          *
          * @name module:Button#optioins
          * @type {Object}
-         * @property {string} options.prefix 控件class前缀，同时将作为main的class之一
          */
         options: {
-
-            text: '',
-
-            width: '',
-
-            height: ''
-
+            text: ''
         },
 
         /**
@@ -63,25 +56,40 @@ define(function (require) {
          * @protected
          */
         repaint: painter.createRepaint(
+            Control.prototype.repaint,
             {
-                name: [ 'width', 'height' ],
-                paint: function (conf, width, height) {
-                    width && $(this.main).css('width', width);
-                }
-            },
-            {
-                name: ['height'],
-                paint: function (conf, height) {
-                    height && $(this.main).css('height', height);
-                }
-            },
-            {
-                name: [ 'text' ],
+                name: ['text'],
                 paint: function (conf, text) {
                     this.setText(text);
                 }
             }
         ),
+
+        /**
+         * 禁用
+         * @override
+         * @return {Button}
+         */
+        disable: function () {
+            if (!this.hasState('disabled')) {
+                this.addState('disabled');
+                $(this.main).attr('disabled', true);
+            }
+            return this;
+        },
+
+        /**
+         * 启用
+         * @override
+         * @return {Button}
+         */
+        enable: function () {
+            if (this.hasState('disabled')) {
+                this.removeState('disabled');
+                $(this.main).attr('disabled', false);
+            }
+            return this;
+        },
 
         /**
          * 设定按钮文本
