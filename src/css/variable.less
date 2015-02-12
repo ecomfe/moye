@@ -9,6 +9,7 @@
 // moye控件样式前缀
 @moye-prefix: ui;
 @moye-state-prefix: state;
+@moye-skin-prefix: skin;
 
 /*-------------------
       Base Sizes
@@ -118,32 +119,25 @@
   to the base em size
 */
 
-@moye-mini-size        : (10 / 14);
-@moye-tiny-size        : (12 / 14);
-@moye-small-size       : (13 / 14);
-@moye-medium-size      : (14 / 14);
-@moye-large-size       : (16 / 14);
-@moye-big-size         : (18 / 14);
-@moye-huge-size        : (20 / 14);
-@moye-massive-size     : (24 / 14);
+@moye-mini-size        : (12 / 16);
+@moye-tiny-size        : (14 / 16);
+@moye-small-size       : (15 / 16);
+@moye-medium-size      : (16 / 16);
+@moye-large-size       : (18 / 16);
+@moye-big-size         : (20 / 16);
+@moye-huge-size        : (22 / 16);
+@moye-massive-size     : (24 / 16);
 
 /*-------------------
        Em Sizes
 --------------------*/
 
-/* Exact pixel values expressed in em */
-@moye-mini            : unit(round(@moye-mini-size * @moye-rem) / @moye-rem, rem);
-@moye-tiny            : unit(round(@moye-tiny-size * @moye-rem) / @moye-rem, rem);
-@moye-small           : unit(round(@moye-small-size * @moye-rem) / @moye-rem, rem);
-@moye-medium          : unit(round(@moye-medium-size * @moye-rem) / @moye-rem, rem);
-@moye-large           : unit(round(@moye-large-size * @moye-rem) / @moye-rem, rem);
-@moye-big             : unit(round(@moye-big-size * @moye-rem) / @moye-rem, rem);
-@moye-huge            : unit(round(@moye-huge-size * @moye-rem) / @moye-rem, rem);
-@moye-massive         : unit(round(@moye-massive-size * @moye-rem) / @moye-rem, rem);
-@moye-relative-mini   : unit(round(@moye-mini-size * @moye-rem) / @moye-rem, em);
-@moye-relative-tiny   : unit(round(@moye-tiny-size * @moye-rem) / @moye-rem, em);
-@moye-relative-small  : unit(round(@moye-small-size * @moye-rem) / @moye-rem, em);
-@moye-relative-medium : unit(round(@moye-medium-size * @moye-rem) / @moye-rem, em);
-@moye-relative-large  : unit(round(@moye-large-size * @moye-rem) / @moye-rem, em);
-@moye-relative-big    : unit(round(@moye-big-size * @moye-rem) / @moye-rem, em);
-@moye-relative-huge   : unit(round(@moye-huge-size * @moye-rem) / @moye-rem, em);
+/* Exact pixel values expressed in rem */
+@moye-mini            : unit(round(@moye-mini-size * @moye-font-size) / @moye-font-size, rem);     // 12px
+@moye-tiny            : unit(round(@moye-tiny-size * @moye-font-size) / @moye-font-size, rem);     // 14px
+@moye-small           : unit(round(@moye-small-size * @moye-font-size) / @moye-font-size, rem);    // 15px
+@moye-medium          : unit(round(@moye-medium-size * @moye-font-size) / @moye-font-size, rem);   // 16px
+@moye-large           : unit(round(@moye-large-size * @moye-font-size) / @moye-font-size, rem);    // 18px
+@moye-big             : unit(round(@moye-big-size * @moye-font-size) / @moye-font-size, rem);      // 20px
+@moye-huge            : unit(round(@moye-huge-size * @moye-font-size) / @moye-font-size, rem);     // 22px
+@moye-massive         : unit(round(@moye-massive-size * @moye-font-size) / @moye-font-size, rem);  // 24px
