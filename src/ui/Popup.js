@@ -325,10 +325,13 @@ define(function (require) {
                     // 重新定位置
                     // 如果有target, 那么定位到target上, 否则定位到当前的trigger上
                     me.locate(me.target || me.trigger);
-                    if (me.mode === 'click') {
+                    var mode = me.mode;
+                    if (mode === 'click') {
                         me.delegate(document, 'click', me.onDocumentClicked);
                     }
-                    me.delegate(window, 'resize', me.onWindowResize);
+                    if (mode !== 'static') {
+                        me.delegate(window, 'resize', me.onWindowResize);
+                    }
                 },
                 me.delay
             );
@@ -360,11 +363,14 @@ define(function (require) {
                 function () {
                     // 把自己飞走
                     $(me.main).css('left', '-2000px');
+                    var mode = me.mode;
                     // 取消全局事件的绑定
-                    if (me.mode === 'click') {
+                    if (mode === 'click') {
                         me.undelegate(document, 'click', me.onDocumentClicked);
                     }
-                    me.undelegate(window, 'resize', me.onWindowResize);
+                    if (mode !== 'static') {
+                        me.undelegate(window, 'resize', me.onWindowResize);
+                    }
                     me.trigger = null;
                 },
                 me.delay
@@ -417,8 +423,13 @@ define(function (require) {
             // 如果不是，那么先将它隐藏。
             // 这里隐藏主要作用是取消挂载到document上的`click`事件处理，而不是真的想要隐藏它。
             // 如果不把钩子去掉，那会让接下来`显示`之后，事件冒泡上来到钩子上，又把它给隐藏了。
-            if (previousTrigger && currentTrigger !== previousTrigger) {
+            if (previousTrigger) {
                 this.hide();
+                // 如果前trigger和现trigger是同一个元素, 那么我们把这种行为当作toggle;
+                // 默认动作就是`hide`
+                if (currentTrigger === previousTrigger) {
+                    return;
+                }
             }
 
             /**
