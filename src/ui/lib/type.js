@@ -24,7 +24,8 @@ define(function (require) {
         'Number',
         'Date',
         'Object',
-        'Boolean'
+        'Boolean',
+        'RegExp'
     ];
 
     array.each(types, function (name) {
@@ -37,6 +38,10 @@ define(function (require) {
 
     exports.isElement = function (obj) {
         return !!(obj && obj.nodeType === 1);
+    };
+
+    exports.isPromise = function (obj) {
+        return obj && exports.isFunction(obj.then);
     };
 
     exports.typeOf = function (obj) {
