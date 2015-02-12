@@ -11,7 +11,6 @@
 
 // keep the same height as button
 @moye-textbox-font-family: @default-base-font-family;
-@moye-textbox-text-size: @moye-medium;
 @moye-textbox-height: 2.5rem;
 @moye-textbox-border-color: #ccc;
 @moye-textbox-padding-vertical: 0.6875rem;
@@ -43,6 +42,10 @@
     vertical-align: top;
 
     input {
+
+        content: @moye-textbox-font-size;
+        content-a: @moye-medium;
+
         margin: 0;
         .box-sizing(content-box);
 
@@ -69,7 +72,7 @@
         background-color: @moye-textbox-background-color;
         border: @moye-textbox-border-width solid @moye-textbox-border-color;
 
-        .transition(border-color .3s ease-in);
+        .transition(border-color .3s, background-color .3s, color .3s);
         .placeholder(@moye-textbox-placeholder-color);
 
         &:focus {
@@ -95,26 +98,32 @@
 @moye-textbox-focus-text-color: @moye-full-black;
 
 // 禁用 disabled
-@moye-textbox-disabled-border-color: @moye-light-grey;
-@moye-textbox-disabled-background-color: @moye-dark-white;
-@moye-textbox-disabled-color: @moye-dark-grey;
+@moye-textbox-disabled-border-color: @moye-grey;
+@moye-textbox-disabled-background-color: #f8f8f8;
+@moye-textbox-disabled-text-color: @moye-light-black;
 
 .@{moye-prefix}-textbox-disabled input {
     background-color: @moye-textbox-disabled-background-color;
-    color: @moye-textbox-disabled-color;
+    color: @moye-textbox-disabled-text-color;
     border-color: @moye-textbox-disabled-border-color;
+    cursor: not-allowed;
 }
 
 
 // 只读 readonly
-@moye-textbox-readonly-border-color: #CCC;
-@moye-textbox-readonly-text-color: multiply(rgba(0, 0, 0, 1), #fff);
-@moye-textbox-readonly-background-color: multiply(rgba(0, 0, 0, .15), #fff);
+@moye-textbox-readonly-border-color: @moye-grey;
+@moye-textbox-readonly-text-color: @moye-light-black;
+@moye-textbox-readonly-background-color: #f8f8f8;
 
 .@{moye-prefix}-textbox-readonly input {
     background-color: @moye-textbox-readonly-background-color;
     color: @moye-textbox-readonly-text-color;
     border-color: @moye-textbox-readonly-border-color;
+    &:focus {
+        background-color: @moye-textbox-readonly-background-color;
+        color: @moye-textbox-readonly-text-color;
+        border-color: @moye-textbox-readonly-border-color;
+    }
 }
 
 

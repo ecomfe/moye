@@ -2,6 +2,7 @@
  * @file 文本输入框
  * @author leon <lupengyu@baidu.com>
  */
+
 define(function (require) {
 
     var $       = require('jquery');
@@ -13,14 +14,12 @@ define(function (require) {
         type: 'TextBox',
 
         options: {
-            main: '',
-            plugins: []
         },
 
         /**
          * 初始化参数
          *
-         * @param {object} options 参数
+         * @param {Object} options 参数
          * @protected
          */
         init: function (options) {
@@ -34,6 +33,7 @@ define(function (require) {
          * 初始化事件绑定
          *
          * @protected
+         * @return {TextBox}
          */
         initEvents: function () {
             var input = this.input;
@@ -47,18 +47,7 @@ define(function (require) {
         },
 
         repaint: painter.createRepaint(
-            {
-                name: ['width'],
-                paint: function (conf, width, height) {
-                    width && $(this.main).css('width', width);
-                }
-            },
-            {
-                name: ['height'],
-                paint: function (conf, height) {
-                    height && $(this.main).css('height', height);
-                }
-            },
+            Control.prototype.repaint,
             {
                 name: ['name'],
                 paint: function (conf, name) {
@@ -81,11 +70,30 @@ define(function (require) {
          */
         _on: function (e) {
 
-            if (e.type === 'keyup' && e.keyCode === 13) {
-                this.fire('enter', e);
+            if (this.isReadOnly()) {
+                e.preventDefault();
+                return;
             }
-            else {
-                this.fire(e.type, e);
+
+            var type = e.type;
+
+            if (type === 'keyup' && e.keyCode === 13) {
+                type = 'enter';
+            }
+
+            if (type === 'input') {
+                type = 'change';
+            }
+
+
+            var event = new $.Event(type, {
+                target: this
+            });
+
+            this.fire(event);
+
+            if (event.isDefaultPrevented()) {
+                e.preventDefault();
             }
 
         },
@@ -113,20 +121,27 @@ define(function (require) {
 
         /**
          * 禁用
+         * @return {TextBox}
          */
         disable: function () {
-            this.addState('disabled');
-            this.input.disabled = true;
+            if (!this.hasState('disabled')) {
+                this.addState('disabled');
+                this.input.disabled = true;
+            }
+            return this;
         },
 
         /**
          * 激活
          *
-         * @return {[type]} [return description]
+         * @return {TextBox}
          */
         enable: function () {
-            this.removeState('disabled');
-            this.input.disabled = false;
+            if (this.hasState('disabled')) {
+                this.removeState('disabled');
+                this.input.disabled = false;
+            }
+            return this;
         },
 
         /**
@@ -135,7 +150,7 @@ define(function (require) {
          * @param {boolean} readOnly 是否只读
          */
         setReadOnly: function (readOnly) {
-            this[readOnly ? 'addState' : 'removeState']('readOnly');
+            this[readOnly ? 'addState' : 'removeState']('readonly');
             $(this.input).attr('readonly', !!readOnly);
         },
 
@@ -145,7 +160,7 @@ define(function (require) {
          * @return {boolean}
          */
         isReadOnly: function () {
-            return this.hasState('readOnly');
+            return this.hasState('readonly');
         }
 
     });
