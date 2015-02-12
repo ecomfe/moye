@@ -75,7 +75,7 @@ define(function (require) {
             valueUseIndex: false,
 
             // 在没有选项被选中时的显示值
-            defaultLabel: '请选择',
+            emptyText: '请选择',
 
             /**
              * 自动在label结尾处添加一个小三角icon作为状态指示器
@@ -278,7 +278,7 @@ define(function (require) {
 
                     // 没找到结果
                     if (!text) {
-                        text = this.defaultLabel;
+                        text = this.emptyText;
                         this.removeState('expanded');
                         input.value = '';
                     }
@@ -290,13 +290,13 @@ define(function (require) {
                 }
             },
             {
-                name: ['defaultLabel'],
-                paint: function (conf, defaultLabel) {
+                name: ['emptyText'],
+                paint: function (conf, emptyText) {
                     if (this.hasState('selected')) {
                         return;
                     }
                     this.helper.getPart('label').innerHTML = ''
-                        + defaultLabel
+                        + emptyText
                         + this.getIndicatorHTML();
                 }
             }
