@@ -2,11 +2,55 @@
  * @file 表单 - 字段关联插件
  * @author Leon(lupengyu@baidu)
  */
+
 define(function (require) {
 
     var $ = require('jquery');
     var lib = require('../lib');
     var Plugin = require('./Plugin');
+
+    var DEFAULT_ACTIONS = {
+        show: function (state) {
+            state ? this.show() : this.hide();
+        },
+        hide: function (state) {
+            state ? this.hide() : this.show();
+        },
+        disable: function (state) {
+            state ? this.disable() : this.enable();
+        },
+        enable: function (state) {
+            state ? this.enable() : this.disable();
+        }
+    };
+
+    var DEFAULT_LOGICS = {
+        equal: function (conf) {
+            return this.getValue() === conf.value;
+        },
+        valid: function (conf) {
+            return this.checkValidity();
+        }
+    };
+
+    var DEFAULT_PATTERNS = {
+        all: function (states) {
+            for (var i = states.length - 1; i >= 0; i--) {
+                if (!states[i]) {
+                    return false;
+                }
+            }
+            return true;
+        },
+        any: function (states) {
+            for (var i = states.length - 1; i >= 0; i--) {
+                if (states[i]) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    };
 
     var FormRelation = Plugin.extend({
 
@@ -18,7 +62,7 @@ define(function (require) {
 
         initialize: function (options) {
             this.$parent(options);
-            this._onFieldChange = $.proxy(this._onFieldChange, this);
+            this.onFieldChange = $.proxy(this.onFieldChange, this);
         },
 
         activate: function (control) {
@@ -27,7 +71,7 @@ define(function (require) {
         },
 
         inactivate: function () {
-            this.control.off('fieldchange', this._onFieldChange);
+            this.control.off('fieldchange', this.onFieldChange);
         },
 
         bind: function () {
@@ -38,14 +82,14 @@ define(function (require) {
                 me.check(field);
             });
             // 兰后, 监听字段变化
-            control.on('fieldchange', me._onFieldChange);
+            control.on('fieldchange', me.onFieldChange);
         },
 
         /**
          * 字段变化处理函数
          * @param  {Event} e  字段变化事件
          */
-        _onFieldChange: function (e) {
+        onFieldChange: function (e) {
             this.check(e.target);
         },
 
@@ -61,10 +105,8 @@ define(function (require) {
                 return;
             }
 
-            var value = source.getValue();
-
             // 首先，找出所在依赖于source的控件们
-            var reliers = this.findReliers(source);
+            var reliers = this.findRelies(source);
 
             if (!reliers.length) {
                 return;
@@ -72,75 +114,89 @@ define(function (require) {
 
             // 每个依赖于source的relation都计算一下关系状态
             // 如果结果是true, 执行action, 否则，执行action-inverse
-            for (var i = reliers.length - 1; i >= 0; i--) {
-                var relation = reliers[i];
-                var state    = this.getRelationState(relation);
-                var targets  = [].concat(relation.targets);
-                var actions  = [].concat(relation.actions);
-                this.execute(targets, actions, state);
-            };
+            lib.each(
+                reliers,
+                function (rely) {
+                    var state    = this.getRelationState(rely);
+                    var targets  = [].concat(rely.targets);
+                    var actions  = [].concat(rely.actions);
+
+                    if (lib.isPromise(state)) {
+                        state.then($.proxy(this.execute, this, targets, actions));
+                    }
+                    else {
+                        this.execute(targets, actions, state)
+                    }
+
+                },
+                this
+            );
 
         },
 
         /**
          * 寻找依赖于指定字段source的字段
-         * @param  {[type]} source [description]
-         * @return {[type]}        [description]
+         * @param  {Control} source 发生变化的控件
+         * @return {Array.Control}  依赖于此控件的控件们
          */
-        findReliers: function (source) {
+        findRelies: function (source) {
             var relations = this.relations;
             var dependences = [];
             for (var i = relations.length - 1; i >= 0; i--) {
                 var relation = relations[i];
-
                 for (var j = 0, len = relation.dependences.length; j < len; j++) {
-                    dependence = relation.dependences[j];
+                    var dependence = relation.dependences[j];
                     if (dependence.id === source.id) {
                         dependences.push(relation);
                         break;
                     }
                 }
-
-            };
+            }
             return dependences;
         },
 
         /**
          * 计算执行条件是否成立
+         * @param {Object} relation 关系
          * @return {boolean}
          */
         getRelationState: function (relation) {
 
             var me = this;
-            var dependences = relation.dependences;
+            var states = [];
+            var defer = false;
 
-            var states = $.map(dependences, function (dependence) {
-                return me.getLogicState(dependence);
-            });
+            for (var i = 0, dependences = relation.dependences, len = dependences.length; i < len; i++) {
+                var dependence = dependences[i];
+                var state = states[i] = me.getLogicState(dependence);
+                if (lib.isPromise(state)) {
+                    defer = true;
+                }
+            }
 
-            return this.getPatternState(relation, states);
+            return defer
+                ? $.when.apply(null, states).then(function () {
+                    return me.getPatternState(relation, [].slice.call(arguments));
+                })
+                : me.getPatternState(relation, states);
         },
 
         /**
          * 计算某字段是否满足依赖关系设定
-         * @param  {object} relation 依赖关系配置
+         * @param  {Object} relation 依赖关系配置
          * @return {boolean}
          */
-        getLogicState: function (relation) {
-            var form  = this.control;
-            var id    = relation.childName || relation.id;
+        getLogicState: function (dependence) {
+            var id  = dependence.childName || dependence.id;
             var field = this.getField(id);
 
             // 如果字段丢了, 那可是大事啊...后边的操作也没办法做了啊...
             // 直接丢一个error吧
             if (!field) {
-                throw new Error({
-                    id: 101,
-                    message: 'lost field control[' + id + ']'
-                });
+                throw new Error('lost field control[' + id + ']');
             }
 
-            var logic = relation.logic;
+            var logic = dependence.logic;
 
             // 如果logic本身就是函数, 那么就直接执行它
             // 否则解析一下它
@@ -149,7 +205,7 @@ define(function (require) {
                 : DEFAULT_LOGICS[logic];
 
             // 找到了就执行, 找不到直接给false
-            return logic ? logic.call(field, relation) : false;
+            return logic ? logic.call(field, dependence) : false;
         },
 
         /**
@@ -165,13 +221,14 @@ define(function (require) {
                 if (id === childName) {
                     return field;
                 }
-            };
+            }
             return null;
         },
 
         /**
          * 合并单项依赖状态, 给出依赖状态结果
-         * @param  {Array[boolean]} states
+         * @param {Object} relation 关系
+         * @param  {Array.bool} states 状态
          * @return {boolean}
          */
         getPatternState: function (relation, states) {
@@ -186,9 +243,9 @@ define(function (require) {
 
         /**
          * 执行动作
-         * @param  {Array[string]}          targets 一组控件的id
-         * @param  {Array[Function|String]} actions 一组动作
-         * @param  {boolean}                state   关系状态
+         * @param  {Array.string}          targets 一组控件的id
+         * @param  {Array.Function|string} actions 一组动作
+         * @param  {bool|Promise}          state   关系状态
          */
         execute: function (targets, actions, state) {
 
@@ -230,46 +287,6 @@ define(function (require) {
         }
 
     });
-
-    var DEFAULT_LOGICS = {
-        equal: function (conf) {
-            return this.getValue() == conf.value;
-        }
-    };
-
-    var DEFAULT_PATTERNS = {
-        all: function (states) {
-            for (var i = states.length - 1; i >= 0; i--) {
-                if (!states[i]) {
-                    return false;
-                }
-            }
-            return true;
-        },
-        any: function (states) {
-            for (var i = states.length - 1; i >= 0; i--) {
-                if (states[i]) {
-                    return true;
-                }
-            }
-            return false;
-        }
-    };
-
-    var DEFAULT_ACTIONS = {
-        show: function (state) {
-            state ? this.show() : this.hide();
-        },
-        hide: function (state) {
-            state ? this.hide() : this.show();
-        },
-        disable: function (state) {
-            state ? this.disable() : this.enable();
-        },
-        enable: function (state) {
-            state ? this.enable() : this.disable();
-        }
-    };
 
     FormRelation.patterns = DEFAULT_PATTERNS;
     FormRelation.logics = DEFAULT_LOGICS;

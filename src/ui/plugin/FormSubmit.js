@@ -7,27 +7,22 @@ define(function (require) {
     var $ = require('jquery');
     var Plugin = require('./Plugin');
     var lib = require('../lib');
-    var Control = require('../Control');
 
     var FormSubmit = Plugin.extend({
 
         $class: 'FormSubmit',
 
         initialize: function (options) {
-            this.$parent(options);
             this.triggers = options || [];
-            this.submit = $.proxy(this.submit, this);
             this.id = this.id || lib.guid();
+            this.bounds = [];
         },
 
         activate: function (control) {
             this.$parent(control);
-            var control = this.control = control;
+            this.control = control;
+            this.submit = $.proxy(this.submit, this);
             control.on('afterrender', $.proxy(this.bindEvents, this));
-        },
-
-        inactivate: function () {
-            // TODO
         },
 
         /**
@@ -35,44 +30,32 @@ define(function (require) {
          */
         bindEvents: function () {
 
-            var me = this;
-            var control = this.control;
-            var triggers = this.triggers;
+            for (var i = this.triggers.length - 1; i >= 0; i--) {
+                var trigger    = this.triggers[i];
+                var targetType = trigger.type;
+                var eventType  = trigger.eventType || FormSubmit.defaults.eventType;
+                var targetId   = trigger.id;
+                var target;
 
-            for (var i = triggers.length - 1; i >= 0; i--) {
-                var trigger = triggers[i];
-                var type = trigger.type;
-                var hanlder = 'bind' + lib.capitalize(type);
-                this[hanlder] && this[hanlder](trigger.id, trigger.eventType);
-            };
+                if (targetType === 'control') {
+                    target = this.control.context.get(targetId);
+                    if (target) {
+                        target.on(eventType, this.submit);
+                    }
+                }
+                else {
+                    target = lib.g(targetId);
+                    if (target) {
+                        this.bounds.push({
+                            element: target,
+                            eventType: eventType
+                        });
+                        $(target).on(eventType + '.' + this.id, this.submit);
+                    }
+                }
 
-        },
-
-        /**
-         * 对控件进行事件绑定, 将指定的控件的指定事件代理到表单的提交动作
-         * @param  {object} conf 触发配置
-         */
-        bindControl: function (controlId, eventType) {
-            var control = this.control.context.get(controlId);
-            eventType = eventType || FormSubmit.defaults.eventType;
-            if (control) {
-                control.on(eventType, this.submit);
             }
-        },
 
-        /**
-         * 对一个DOM元素做事件绑定
-         * @param  {string} elementId 元素id
-         * @param  {string} eventType 事件类型
-         */
-        bindElement: function (elementId, eventType) {
-            var element = lib.g(elementId);
-
-            eventType = eventType || FormSubmit.defaults.eventType;
-
-            if (element) {
-                $(element).on(eventType + '.' + this.id, this.submit);
-            }
         },
 
         /**
@@ -80,16 +63,19 @@ define(function (require) {
          *
          * 实际上是触发控件的提交动作
          *
-         * @param  {Event} e 源事件
+         * @param {Event} e 源事件
          */
         submit: function (e) {
-            this.control.submit();
+            this.control.onSubmit(e);
         },
 
         dispose: function () {
             this.triggers = null;
+            for (var i = this.bounds.length - 1; i >= 0; i--) {
+                var bounds = this.bounds[i];
+                $(bounds.element).off(bounds.eventType + '.' + this.id, this.submit);
+            }
             this.$parent();
-            // TODO
         }
 
     });

@@ -2,6 +2,7 @@
  * @file 表单控件
  * @author Leon(lupengyu@baidu)
  */
+
 define(function (require) {
 
     var $       = require('jquery');
@@ -33,7 +34,6 @@ define(function (require) {
         },
 
         initStructure: function () {
-            var options = this.options;
             var main = this.main;
             if (main.tagName === 'FORM') {
                 main.action = this.action || main.action;
@@ -43,9 +43,8 @@ define(function (require) {
         },
 
         initEvents: function () {
-            var options = this.options;
             if (this.main.tagName === 'FORM') {
-                this.delegate(this.main, 'submit', this.submit);
+                this.delegate(this.main, 'submit', this.onSubmit);
             }
         },
 
@@ -60,24 +59,29 @@ define(function (require) {
         ),
 
         /**
+         * 表单提交时的处理函数
+         * @private
+         * @param  {Event} e 提交事件
+         */
+        onSubmit: function (e) {
+            var event = new $.Event('submit');
+            this.fire(event);
+            if (event.isDefaultPrevented()) {
+                e.preventDefault();
+                return;
+            }
+        },
+
+        /**
          * 提交表单
+         *
+         * @public
          * @return {Form}
          */
-        submit: function (e) {
-
-            var event = new $.Event('submit');
-
-            this.fire(event);
-
-            if (event.isDefaultPrevented()) {
-                e && e.preventDefault();
-                return false;
-            }
-
+        submit: function () {
             if (this.main.tagName === 'FORM') {
                 this.main.submit();
             }
-
             return this;
         },
 
@@ -87,6 +91,17 @@ define(function (require) {
          */
         getData: function () {
             var controls = this.getInputControls();
+
+            var rawData = lib.reduce(
+                $(this.main).serializeArray(),
+                function (result, pair) {
+                    result[pair.name] = pair.value;
+                    return result;
+                },
+                {}
+            );
+
+            // 这里支持一下原生dom的值
             var data = {};
 
             lib.each(controls, function (control) {
@@ -108,7 +123,7 @@ define(function (require) {
                 }
             });
 
-            return data;
+            return lib.extend(rawData, data);
         },
 
         /**
@@ -117,8 +132,8 @@ define(function (require) {
          */
         getInputControls: function () {
 
-            var me = this;
             var controls = [];
+            var context = this.context;
 
             // 深度优先遍历DOM树
             // 从根结点->叶子结点搜索控件
@@ -134,7 +149,7 @@ define(function (require) {
                         // 是一个输入控件
                         && lib.isFunction(control.getValue)
                         // 与form在同一上下文中
-                        && control.context === me.context
+                        && control.context === context
                     ) {
                         controls.push(control);
                     }
@@ -143,11 +158,53 @@ define(function (require) {
                     }
                 });
             }
-            walk(me.main);
+            walk(this.main);
             return controls;
+        },
+
+        check: function (checker) {
+            var defer = false;
+            var valid = true;
+            var states = [];
+            for (var i = 0, inputs = this.getInputControls(), len = inputs.length; i < len; i++) {
+                var state = inputs[i][checker]();
+                states[i] = state;
+                if (!defer && !lib.isPromise(state)) {
+                    valid = state && valid;
+                }
+            }
+            return defer
+                ? $.when.apply(null, states).then(function () {
+                    for (var i = arguments.length - 1; i >= 0; i--) {
+                        if (!arguments[i]) {
+                            return false;
+                        }
+                    }
+                    return true;
+                })
+                : valid;
+        },
+
+        validate: function () {
+            return this.check('validate');
+        },
+
+        checkValidity: function () {
+            return this.check('checkValidity');
+        },
+
+        dispose: function () {
+            if (this.main.tagName === 'FORM') {
+                this.undelegate(this.main, 'submit', this.onSubmit);
+            }
+            this.$parent();
         }
 
     });
+
+    function check(handler) {
+
+    }
 
     return Form;
 });
