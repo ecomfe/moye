@@ -25,6 +25,7 @@
     position: absolute;
 }
 #example {
+    width: 50%;
     position: relative;
     height: 400px;
 }
@@ -43,7 +44,7 @@
 {% content: content %}
 
 {% filter: markdown %}
-# Tip 打分组件
+# Tip 组件
 
 ### DEMO
 -----------------------
@@ -57,7 +58,6 @@
 
 ```html
 <div class="content">
-    <div class="ecl-ui-rating" id="rating"></div>
 </div>
 ```
 
@@ -65,11 +65,12 @@
 var tip = new Tip({
     arrow: '1',
     hideDelay: 1,
-    offset: { x: 5, y: 5},
-    onBeforeShow: function () {
-      this.title = Math.random();
-    }
-}).render();
+    offset: {x: 5, y: 5}
+})
+.render()
+.on('show', function (e) {
+    this.setContent(Math.random());
+});
 ```
 
 ### 方位关系
@@ -78,6 +79,42 @@ var tip = new Tip({
 <div id="example">
     <div id="cube" class="tooltips" data-tooltips="lc" onclick="">单击切换模式:lc</div>
 </div>
+
+
+{% filter: markdown %}
+
+### static模式
+-----------------------
+
+<button id="static-show">显示</button>
+<button id="static-hide">隐藏</button>
+<button id="static-dispose">销毁</button>
+
+```js
+var staticTip = new Tip({
+    arrow: '1',
+    hideDelay: 1,
+    mode: 'static',
+    content: '上传成功~',
+    offset: {x: 5, y: 5}
+})
+.render();
+
+$('#static-show').click(function () {
+    staticTip.show();
+});
+
+$('#static-hide').click(function () {
+    staticTip.hide();
+});
+
+$('#static-dispose').click(function () {
+    staticTip.dispose();
+});
+```
+
+{% /filter %}
+
 
 {% content: script %}
 <script>
@@ -97,25 +134,26 @@ require(['ui/Tip'], function (Tip) {
 
     var tip = new Tip({
         arrow: '1',
-        hideDelay: 1,
-        offset: { x: 0, y: 5},
-        onBeforeShow: function () {
-          this.title = Math.random();
-        }
-    }).render();
+        hideDelay: 100,
+        offset: {x: 5, y: 2}
+    })
+    .render()
+    .on('show', function (e) {
+        this.setContent(Math.random());
+    });
 
     var arrow = {
-        tl: 'tc', 
-        tc: 'tr', 
-        tr: 'rt', 
-        rt: 'rc', 
-        rc: 'rb', 
-        rb: 'br', 
-        br: 'bc', 
-        bc: 'bl', 
-        bl: 'lb', 
-        lb: 'lc', 
-        lc: 'lt', 
+        tl: 'tc',
+        tc: 'tr',
+        tr: 'rt',
+        rt: 'rc',
+        rc: 'rb',
+        rb: 'br',
+        br: 'bc',
+        bc: 'bl',
+        bl: 'lb',
+        lb: 'lc',
+        lc: 'lt',
         lt: 'tl'
     };
 
@@ -123,6 +161,27 @@ require(['ui/Tip'], function (Tip) {
         var $this = $(this);
         var direction = arrow[$this.attr('data-tooltips')];
         $this.attr('data-tooltips', direction).text('单击切换模式:' + direction);
+    });
+
+    // static tip
+    var staticTip = new Tip({
+        arrow: '1',
+        hideDelay: 1,
+        mode: 'static',
+        content: '上传成功~'
+    })
+    .render();
+
+    $('#static-show').click(function () {
+        staticTip.show();
+    });
+
+    $('#static-hide').click(function () {
+        staticTip.hide();
+    });
+
+    $('#static-dispose').click(function () {
+        staticTip.dispose();
     });
 
 });

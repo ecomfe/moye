@@ -39,6 +39,9 @@
         },
         {
             "name": "TextBox"
+        },
+        {
+            "name": "Tip"
         }
     ],
     "directories": {

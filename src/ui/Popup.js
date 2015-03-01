@@ -4,8 +4,8 @@
  *
  * @file  弹出层
  * @author  chris(wfsr@foxmail.com)
+ * @author  liulangyu(liulangyu90316@gmail.com)
  */
-
 
 define(function (require) {
 
@@ -22,6 +22,7 @@ define(function (require) {
      * @exports Popup
      * @see module:City
      * @see module:Calendar
+     * @see module:Tip
      */
     var Popup = Control.extend(/** @lends module:Popup.prototype */{
 
@@ -49,7 +50,6 @@ define(function (require) {
          * 可选值（默认为 bl）：
          * tr | rt | rb | br | bl | lb | lt | tl | tc | rc | bc | lc
          * 也可通过在 triggers 上设置 data-popup来指定
-         * @property {string} prefix 控件class前缀，同时将作为main的class之一
          * @property {Object.<string, number>} offset 弹出层显示的偏移量
          * @property {number} offset.x x 轴方向偏移量
          * @property {number} offset.y y轴方向偏移量
@@ -66,7 +66,7 @@ define(function (require) {
              *
              * 触发显示的元素设定请参看triggers和liveTriggers
              *
-             * @type {string|HTMLElement}
+             * @type {string | HTMLElement}
              */
             target: '',
 
@@ -114,15 +114,15 @@ define(function (require) {
              * over: 当trigger有鼠标经过时展现, 当有鼠标移出时隐藏;
              * static: 不需要指定trigger, 只有当调用`show`方法时展现;
              *
-             * @type {String}
+             * @type {string}
              */
             mode: 'click',
 
-            /**
-             * 延迟显示/隐藏
-             * @type {Number}
-             */
-            delay: 0,
+            // 显示延迟时间
+            showDelay: 50,
+
+            // 隐藏延迟时间
+            hideDelay: 50,
 
             /**
              * 浮层显示的偏移量
@@ -142,7 +142,7 @@ define(function (require) {
                 /**
                  * y 轴方向偏移量
                  *
-                 * @type {string}
+                 * @type {number}
                  * @defaultvalue
                  */
                 y: 0
@@ -155,7 +155,7 @@ define(function (require) {
          *
          * @param {Object} options 配置项
          * @see module:Popup#options
-         * @private
+         * @protected
          */
         init: function (options) {
             this.$parent(options);
@@ -165,10 +165,10 @@ define(function (require) {
             if (!options.content) {
                 this.content = this.main.innerHTML;
             }
+
             if (options.mode === 'over') {
-                this.delay = options.delay > 0
-                    ? options.delay
-                    : 50;
+                this.showDelay = options.showDelay > 0 ? options.showDelay : 50;
+                this.hideDelay = options.hideDelay > 0 ? options.hideDelay : 50;
             }
         },
 
@@ -179,21 +179,36 @@ define(function (require) {
                 .html(this.content || this.main.innerHTML);
         },
 
+        /**
+         * 初始化事件绑定
+         *
+         * @protected
+         */
         initEvents: function () {
             // 窗口大小变化事件需要一个特殊的delay处理
             this.onWindowResize = lib.delay($.proxy(this.onWindowResize, this), 100);
-            this.showBound = $.proxy(this.onTargetClick, this);
-            this.hideBound = $.proxy(this.onDocumentClicked, this);
+            this.showBound = $.proxy(this.onShow, this);
+            this.hideBound = $.proxy(this.onHide, this);
             this.bindTriggersEvents(this.triggers, this.liveTriggers);
             this.delegate(this.main, 'click', this.onMainClick);
+
+            if (this.mode === 'over') {
+                this.delegate(this.main, 'mouseenter', this.onMainMouseEnter);
+                this.delegate(this.main, 'mouseleave', this.onMainMouseLeave);
+            }
         },
 
+        /**
+         * 重绘
+         *
+         * @protected
+         */
         repaint: require('./painter').createRepaint(
             Control.prototype.repaint,
             {
                 name: 'content',
                 paint: function (conf, content) {
-                    this.main.innerHTML = content || '';
+                    this.setContent(content);
                 }
             },
             function (changes, changesIndex) {
@@ -231,8 +246,8 @@ define(function (require) {
          * 如果不指定liveTriggers, 那么直接对triggers进行事件绑定
          *
          * @private
-         * @param {Array.Element|string} triggers 触发popup显示的元素们
-         * @param {Array.Element|string} liveTriggers 动态触发容器
+         * @param {Array.<Element> | string} triggers 触发popup显示的元素们
+         * @param {Array.<Element> | string} liveTriggers 动态触发容器
          */
         bindTriggersEvents: function (triggers, liveTriggers) {
             var mode = this.mode;
@@ -270,14 +285,18 @@ define(function (require) {
         /**
          * 清除triggers的各种事件绑定
          *
-         * @param {Array.Element} triggers 触发popup显示的元素们
-         * @param {Arra.Element|string} liveTriggers 动态触发显示元素们
+         * @param {Array.<Element>} triggers 触发popup显示的元素们
+         * @param {Arra.<Element> | string} liveTriggers 动态触发显示元素们
          * @private
          */
         clearTriggersEvents: function (triggers, liveTriggers) {
             var mode = this.mode;
             var target;
             var selector = null;
+
+            if (mode === 'static') {
+                return;
+            }
 
             if (liveTriggers) {
                 target = $(liveTriggers);
@@ -287,10 +306,13 @@ define(function (require) {
                 target = $(triggers);
             }
 
-            if (mode === 'hover') {
+            if (mode === 'over') {
                 target
                     .off('mouseenter', selector, this.showBound)
                     .off('mouseleave', selector, this.hideBound);
+
+                this.undelegate(this.main, 'mouseenter', this.onMainMouseEnter);
+                this.undelegate(this.main, 'mouseleave', this.onMainMouseLeave);
             }
             else {
                 triggers
@@ -313,13 +335,14 @@ define(function (require) {
             }
 
             me.addState('show');
+            this._visible = true;
 
             // 这里使用setTimeout的原因有三个
-            // 1. 支持delay参数
+            // 1. 支持delay
             // 2. 在over模式下, 鼠标从trigger向main移动的过程中, 会先触发hide, 再触发show.
             //    必须使用一个timer来延迟hide的动作, 否则就没有办法完成main的mouseenter事件的触发
             // 3. 如果立即绑定document.body的click事件, 还会接收到target的click事件(冒泡上来的)
-            //    这时又会有一次处理过程, 会导致targer的clici事件被处理两次, 变成了toggle
+            //    这时又会有一次处理过程, 会导致targer的click事件被处理两次, 变成了toggle
             me._showTimer = setTimeout(
                 function () {
                     // 重新定位置
@@ -327,13 +350,13 @@ define(function (require) {
                     me.locate(me.target || me.trigger);
                     var mode = me.mode;
                     if (mode === 'click') {
-                        me.delegate(document, 'click', me.onDocumentClicked);
+                        me.delegate(document, 'click', me.onHide);
                     }
                     if (mode !== 'static') {
                         me.delegate(window, 'resize', me.onWindowResize);
                     }
                 },
-                me.delay
+                me.showDelay
             );
 
             // 清理hide的闹钟
@@ -357,7 +380,7 @@ define(function (require) {
             }
 
             me.removeState('show');
-
+            this._visible = false;
 
             me._hideTimer = setTimeout(
                 function () {
@@ -366,14 +389,14 @@ define(function (require) {
                     var mode = me.mode;
                     // 取消全局事件的绑定
                     if (mode === 'click') {
-                        me.undelegate(document, 'click', me.onDocumentClicked);
+                        me.undelegate(document, 'click', me.onHide);
                     }
                     if (mode !== 'static') {
                         me.undelegate(window, 'resize', me.onWindowResize);
                     }
                     me.trigger = null;
                 },
-                me.delay
+                me.hideDelay
             );
 
             // 清理show的闹钟
@@ -388,17 +411,17 @@ define(function (require) {
          * @private
          */
         onWindowResize: function () {
-            this.locate();
+            this.locate(this.target || this.trigger);
         },
 
         /**
-         * 当挂接目标被点击时处理函数
+         * 显示浮层前处理
          *
          * @param {Event} e DOM 事件对象
-         * @fires module:Popup#beforeShow 显示前事件
+         * @fires module:Popup#show 显示事件
          * @private
          */
-        onTargetClick: function (e) {
+        onShow: function (e) {
 
             if (this.isDisabled()) {
                 return;
@@ -437,7 +460,8 @@ define(function (require) {
              * @type {Object}
              */
             var event = new $.Event('show', {
-                trigger: currentTrigger
+                trigger: currentTrigger,
+                target: target
             });
 
             this.fire(event);
@@ -448,6 +472,7 @@ define(function (require) {
             }
 
             this.trigger = currentTrigger;
+
             this.show();
         },
 
@@ -455,20 +480,30 @@ define(function (require) {
          * 隐藏浮层前处理
          *
          * @private
+         * @fires module:Popup#hide 隐藏事件
          * @param {Event} e 隐藏浮层事件
          */
-        onDocumentClicked: function (e) {
+        onHide: function (e) {
+            var target = $(e.target);
+            var main   = $(this.main);
 
-            var target = e.target;
-            var main   = this.main;
-
+            // 非over模式并且target不是浮层元素或不是trigger元素
             if (e.type !== 'mouseleave'
-                && (main === target || $.contains(main, target))
+                && (target.is(main)
+                    || ~$.inArray(target[0], $(this.triggers))
+                    || $.contains(main, target)
+                    )
             ) {
                 return;
             }
 
-            var event = new $.Event('hide');
+            /**
+             * @event module:Popup#hide
+             * @type {Object}
+             */
+            var event = new $.Event('hide', {
+                target: e.target
+            });
 
             this.fire(event);
 
@@ -481,7 +516,8 @@ define(function (require) {
 
         /**
          * 浮层哟, 被点击了呢~
-         * @param  {Event} e 点击事件
+         * @fires module:Popup#click 浮层点击事件
+         * @param {Event} e 点击事件
          */
         onMainClick: function (e) {
             /**
@@ -493,12 +529,40 @@ define(function (require) {
         },
 
         /**
-         * 计算浮层及箭头显示位置
+         * over模式，浮层mouseenter
          *
-         * @protected
+         * @param {Event} e mouseenter事件
+         * @private
+         */
+        onMainMouseEnter: function (e) {
+            this.clear();
+        },
+
+        /**
+         * over模式，浮层mouseleave
+         *
+         * @param {Event} e mouseleave事件
+         * @private
+         */
+        onMainMouseLeave: function (e) {
+            this.clear();
+            // TODO 是否state改变应该在timer之后处理？？
+            this.addState('show');
+            this.onHide(e);
+        },
+
+        /**
+         * 计算浮层显示位置
+         *
+         * @public
          * @param {Element} target 挂靠目标元素
          */
         locate: function (target) {
+            // static 模式计算
+            var mode = this.mode;
+            if (mode === 'static') {
+                return;
+            }
 
             target           = $(target);
 
@@ -529,8 +593,8 @@ define(function (require) {
             var scrollRight  = scrollLeft + win.width();
             var scrollBottom = scrollTop + win.height();
 
-            // 属性配置优于实例配置
-            var dirFromAttr = target.attr('data-popup');
+            // 属性配置优于实例配置(兼容处理，兼容tip)
+            var dirFromAttr = target.attr('data-popup') || target.attr('data-tooltips');
             if (dirFromAttr) {
                 dir = /[trbl]{2}/.test(dirFromAttr) ? dirFromAttr : '1';
             }
@@ -539,7 +603,7 @@ define(function (require) {
             var first;
 
             // 未指定方向时自动按下右上左顺序计算可用方向（以不超出视窗为原则）
-            if (dir === 'auto') {
+            if (!dir || dir === '1') {
 
                 // 目标宽度大于提示层宽度时优先考虑水平居中
                 var horiz = width > mainWidth
@@ -592,43 +656,74 @@ define(function (require) {
                 second = dir.charAt(1);
             }
 
+            // 记录计算后的dir，方便子类后续处理
+            this._dir = dir;
+
             var offset = this.offset;
 
             // 提示层在目标上部或下部显示时的定位处理
             if ({t: 1, b: 1}[first]) {
                 left = {
-                    l: left,
+                    l: left + offset.x,
                     c: center - (mainWidth / 2),
-                    r: right - mainWidth
+                    r: right - mainWidth - offset.x
                 }[second];
 
                 top = {
-                    t: top - mainHeight,
-                    b: bottom
+                    t: top - mainHeight - offset.y,
+                    b: bottom + offset.y
                 }[first];
-
             }
 
             // 提示层在目标左边或右边显示时的定位处理
             else if ({l: 1, r: 1}[first]) {
                 top = {
-                    t: top,
+                    t: top + offset.y,
                     c: middle - (mainHeight / 2),
-                    b: bottom - mainHeight
+                    b: bottom - mainHeight - offset.y
                 }[second];
 
                 left = {
                     l: left - mainWidth - offset.x,
                     r: right + offset.x
                 }[first];
-
             }
 
             main.css({
-                left: left + offset.x + 'px',
-                top: top + offset.y + 'px'
+                left: left + 'px',
+                top: top + 'px'
             });
+        },
 
+        /**
+         * 设置浮层显示的内容
+         *
+         * @param {string} html 要提示的内容的HTML
+         * @public
+         */
+        setContent: function (html) {
+            this.content = html || '';
+            $(this.main).html(this.content);
+        },
+
+        /**
+         * 判断提示层是否可见
+         *
+         * @public
+         * @return {boolean} 可见的状态
+         */
+        isVisible: function () {
+            return !!this._visible;
+        },
+
+        /**
+         * 清除各种闹钟
+         *
+         * @private
+         */
+        clear: function () {
+            clearTimeout(this._showTimer);
+            clearTimeout(this._hideTimer);
         },
 
         dispose: function () {
