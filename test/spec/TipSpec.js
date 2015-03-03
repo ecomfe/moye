@@ -3,26 +3,23 @@ define(function (require) {
     var $ = require('jquery');
     var lib = require('ui/lib');
     var Tip = require('ui/Tip');
-    
+
     var tip;
 
     beforeEach(function () {
-        document.body.insertAdjacentHTML(
-            'beforeEnd', ''
-                + '<div id="tipContainer">'
-                +   '<a href="http://www.foo.com/" onclick="return false" class="tooltips" data-tooltips="n/a">'
-                +       '<em>foo</em>'
-                +   '</a>'
-                +   '<a href="http://www.bar.com/" class="tooltips" style="position:absolute;right:0"'
-                +   '   data-tooltips="rc">bar</a>'
-                + '</div>'
-        );
+        var tpl = ''
+            + '<div id="tipContainer">'
+            +     '<a href="http://www.foo.com/" onclick="return false" class="tooltips" data-tooltips="n/a">'
+            +         '<em>foo</em>'
+            +     '</a>'
+            +     '<a href="http://www.bar.com/" class="tooltips" style="position:absolute;top:0;left:0;height:50px;width:50px;"'
+            +     '   data-tooltips="rt">bar</a>'
+            + '</div>';
+        $(document.body).append(tpl);
 
         tip = new Tip({
             mode: 'over',
             arrow: '1',
-            showDelay: 0,
-            hideDelay: 0,
             offset: {
                 x: 5,
                 y: 5
@@ -31,25 +28,19 @@ define(function (require) {
         tip.render();
 
         jasmine.Clock.useMock();
-        
     });
 
 
     afterEach(function () {
-        tip.dispose();
-        document.body.removeChild(lib.g('tipContainer'));
+        tip.destroy();
+        $('#tipContainer').remove();
     });
-  
+
     describe('基本接口', function () {
 
-        it('控件类型', function () {
-
-            expect(tip.type).toBe('Tip');
-
-        });
-
         it('点击模式', function () {
-            tip.dispose();
+
+            tip.destroy();
 
             expect(tip.main).toBeUndefined();
 
@@ -60,116 +51,231 @@ define(function (require) {
             });
             tip.render();
 
-            var links = document.getElementById('tipContainer').getElementsByTagName('a');
+            var links = $('#tipContainer a');
             var target = links[0];
 
-            var onBeforeShow = function (json) {
-                expect(json.target).toBe(target);
+            var onShow = function (e) {
+                expect(e.target).toBe(target);
 
-                tip.setTitle('title');
-                tip.setContent('content');
+                this.setContent('content');
             };
 
-            var onHide = function () {
-                expect(this.current).toBe(null);
+            var onHide = function (e) {
+                expect(this.trigger).toBe(null);
+
+                expect(this._dir).not.toBe('n/a');
             };
 
-            tip.on('beforeShow', onBeforeShow);
+            tip.on('show', onShow);
             tip.on('hide', onHide);
 
-            $(target.firstChild).trigger('click');
+            $(target).trigger('click');
 
             expect(tip.isVisible()).toBeTruthy();
-            expect(tip.elements.title.innerHTML).toBe('title');
             expect(tip.elements.body.innerHTML).toBe('content');
 
-            tip.setTitle();
-            expect(tip.elements.title.offsetWidth).toBe(0);
+            // title待定
+            // tip.setTitle();
+            // expect(tip.elements.title.offsetWidth).toBe(0);
 
+            // toggle了
             $(target).trigger('click');
             expect(tip.isVisible()).toBeFalsy();
 
-            $(target.parentNode).trigger('click');
+            $(target).trigger('click');
+            $(document).trigger('click');
             expect(tip.isVisible()).toBeFalsy();
 
             target = links[1];
             $(target).trigger('click');
 
-            tip.un('beforeShow', onBeforeShow);
+            tip.un('show', onShow);
             tip.un('hide', onHide);
 
         });
 
-        it('hover 模式', function () {
-            var links = document.getElementById('tipContainer').getElementsByTagName('a');
+        it('over 模式', function () {
+            tip.destroy();
+
+            expect(tip.main).toBeUndefined();
+
+            var delay = 100;
+            tip = new Tip({
+                mode: 'over',
+                showDelay: delay,
+                hideDelay: delay
+            });
+            tip.render();
+
+            var main = $(tip.main);
+
+            var links = $('#tipContainer a');
             var target = links[0];
 
-            var onBeforeShow = function (json) {
-                expect(json.target).toBe(target);
+            var onShow = function (e) {
+                expect(e.target).toBe(target);
 
-                tip.setTitle('title');
-                tip.setContent('content');
+                // this.setTitle('title');
+                this.setContent('content');
             };
 
             var onHide = function () {
-                expect(this.current).toBe(null);
+                expect(this.trigger).toBe(null);
             };
 
-            tip.on('beforeShow', onBeforeShow);
+            // main click
+            var onClick = function (e) {
+                expect(e.type).toBe('click');
+            };
+
+            tip.on('show', onShow);
             tip.on('hide', onHide);
+            tip.on('click', onClick);
 
             $(target).trigger('mouseenter');
 
+            main.trigger('click');
+
             expect(tip.isVisible()).toBeTruthy();
-            expect(tip.elements.title.innerHTML).toBe('title');
+            // expect(tip.elements.title.innerHTML).toBe('title');
             expect(tip.elements.body.innerHTML).toBe('content');
 
-            tip.setTitle();
-            expect(tip.elements.title.offsetWidth).toBe(0);
+            // tip.setTitle();
+            // expect(tip.elements.title.offsetWidth).toBe(0);
 
+            jasmine.Clock.tick(delay);
             $(target).trigger('mouseleave');
+
+            jasmine.Clock.tick(delay);
             expect(tip.isVisible()).toBeFalsy();
 
             $(target.parentNode).trigger('mouseenter');
             expect(tip.isVisible()).toBeFalsy();
 
+            // main enter leave
             target = links[1];
             $(target).trigger('mouseenter');
+            jasmine.Clock.tick(delay);
 
-            tip.un('beforeShow', onBeforeShow);
+            main.trigger('mouseenter');
+            expect(tip.isVisible()).toBeTruthy();
+            main.trigger('mouseleave');
+            jasmine.Clock.tick(delay);
+            expect(tip.isVisible()).toBeFalsy();
+
+
+            tip.un('show', onShow);
             tip.un('hide', onHide);
+            tip.un('click', onClick);
 
         });
 
-        it('延迟显示隐藏', function () {
-            tip.dispose();
+        it('static 模式', function () {
+            tip.destroy();
+
+            expect(tip.main).toBeUndefined();
+
+            tip = new Tip({
+                arrow: '1',
+                hideDelay: 0,
+                showDelay: 0,
+                mode: 'static',
+                content: 'static'
+            })
+            .render();
+
+            var main = $(tip.main);
+            main.css({
+                width: 100,
+                height: 100
+            });
+
+            tip.show();
+            expect(tip.isVisible()).toBeTruthy();
+
+            // 位置计算(无offset，默认水平居中，垂直0.4)
+            var win = $(window);
+            var offset = main.offset();
+            expect(main.css('position')).toBe('fixed');
+            expect(parseInt(offset.left), 10).toBe(parseInt((win.width() - main.width()) / 2), 10);
+            expect(parseInt(offset.top), 10).toBe(parseInt((win.height() - main.height()) * 0.4), 10);
+
+            tip.hide();
+            expect(tip.isVisible()).toBeFalsy();
+
+            tip.destroy();
+
+        });
+
+
+
+        it('其它接口', function () {
+
+            tip.destroy();
 
             expect(tip.main).toBeUndefined();
 
             var delay = 100;
-
             tip = new Tip({
-                mode: 'click',
+                mode: 'over',
+                arrow: 'bl',
                 showDelay: delay,
-                hideDelay: delay
+                hideDelay: delay,
+                content: 'content',
+                offset: {
+                    x: 10,
+                    y: 10
+                }
             });
-            tip.render();        
+            tip.render();
 
-            var links = document.getElementById('tipContainer').getElementsByTagName('a');
-            var target = links[0];
+            // 位置计算
+            var main = $(tip.main);
+            main.css('position', 'absolute');
 
-            $(target).trigger('click');
+            expect(tip.type).toBe('Tip');
 
-            expect(tip.isVisible()).toBeFalsy();
+            var tipTarget = $('<div id="tipTarget"></div>');
+            tipTarget
+                .css({
+                    position: 'absolute',
+                    height: 100,
+                    width: 100,
+                    left: 100,
+                    top: 100
+                })
+                .appendTo(document.body);
+
+            var links = $('#tipContainer a');
+            var target = links[1];
+
+            $(target).trigger('mouseenter');
             jasmine.Clock.tick(delay);
-            expect(tip.isVisible()).toBeTruthy();
 
-            $(target.parentNode).trigger('click');
+            // rt
+            expect(main.offset().top).toBe(10);
+            expect(main.offset().left).toBe(60);
 
-            expect(tip.isVisible()).toBeTruthy();
+            tip.setTarget(tipTarget.get(0));
+
+            $(target).trigger('mouseleave');
             jasmine.Clock.tick(delay);
-            expect(tip.isVisible()).toBeFalsy();
+            $(target).trigger('mouseenter');
+            jasmine.Clock.tick(delay);
 
+            // bl
+            expect(main.offset().top).toBe(210);
+            expect(main.offset().left).toBe(110);
+
+            $(window).trigger('resize');
+
+            // clear
+            $(target).trigger('mouseleave');
+            tip.clear();
+            expect(tip.trigger).not.toBe(null);
+
+
+            tipTarget.remove();
         });
     });
 

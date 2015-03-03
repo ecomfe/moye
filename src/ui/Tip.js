@@ -289,8 +289,10 @@ define(function (require) {
             var offsetY = offset.y;
 
             if (this.mode === 'static') {
+                var isFixed = this.fixed;
+
                 var cssOpt = {
-                    position: this.fixed ? 'fixed' : 'absolute',
+                    position: isFixed ? 'fixed' : 'absolute',
                     left: offsetX,
                     top: offsetY
                 };
@@ -307,10 +309,12 @@ define(function (require) {
 
                 main.css(cssOpt);
 
-                lib.fixed(this.main, {
-                    left: cssOpt.left,
-                    top: cssOpt.top
-                });
+                if (isFixed) {
+                    lib.fixed(this.main, {
+                        left: cssOpt.left,
+                        top: cssOpt.top
+                    });
+                }
 
                 return;
             }
@@ -370,7 +374,7 @@ define(function (require) {
                     t: top - arrowHeight - mainHeight - offset.y,
                     b: bottom + arrowHeight + offset.y
                 }[first];
-                main.css('top', top + offset.y + 'px');
+                main.css('top', top + 'px');
             }
 
             // 提示层在目标左边或右边显示时的定位处理
@@ -392,7 +396,7 @@ define(function (require) {
                     l: left - arrowWidth - mainWidth - offset.x,
                     r: right + arrowWidth + offset.x
                 }[first];
-                main.css('left', left + offset.x + 'px');
+                main.css('left', left + 'px');
             }
         }
     });

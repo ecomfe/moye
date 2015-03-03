@@ -315,7 +315,7 @@ define(function (require) {
                 this.undelegate(this.main, 'mouseleave', this.onMainMouseLeave);
             }
             else {
-                triggers
+                $(triggers)
                     .off('click', this.showBound);
             }
         },
@@ -335,7 +335,6 @@ define(function (require) {
             }
 
             me.addState('show');
-            this._visible = true;
 
             // 这里使用setTimeout的原因有三个
             // 1. 支持delay
@@ -343,21 +342,27 @@ define(function (require) {
             //    必须使用一个timer来延迟hide的动作, 否则就没有办法完成main的mouseenter事件的触发
             // 3. 如果立即绑定document.body的click事件, 还会接收到target的click事件(冒泡上来的)
             //    这时又会有一次处理过程, 会导致targer的click事件被处理两次, 变成了toggle
-            me._showTimer = setTimeout(
-                function () {
-                    // 重新定位置
-                    // 如果有target, 那么定位到target上, 否则定位到当前的trigger上
-                    me.locate(me.target || me.trigger);
-                    var mode = me.mode;
-                    if (mode === 'click') {
-                        me.delegate(document, 'click', me.onHide);
-                    }
-                    if (mode !== 'static') {
-                        me.delegate(window, 'resize', me.onWindowResize);
-                    }
-                },
-                me.showDelay
-            );
+            var showFunc = function () {
+                // 重新定位置
+                // 如果有target, 那么定位到target上, 否则定位到当前的trigger上
+                me.locate(me.target || me.trigger);
+                var mode = me.mode;
+                if (mode === 'click') {
+                    me.delegate(document, 'click', me.onHide);
+                }
+                if (mode !== 'static') {
+                    me.delegate(window, 'resize', me.onWindowResize);
+                }
+
+                me._isVisible = true;
+            }
+
+            if (me.showDelay) {
+                me._showTimer = setTimeout(showFunc, me.showDelay);
+            }
+            else {
+                showFunc();
+            }
 
             // 清理hide的闹钟
             clearTimeout(me._hideTimer);
@@ -369,6 +374,7 @@ define(function (require) {
          * 隐藏浮层
          *
          * @public
+         * @fires module:Popup#hide 隐藏事件
          * @return {Popup}
          */
         hide: function () {
@@ -380,24 +386,34 @@ define(function (require) {
             }
 
             me.removeState('show');
-            this._visible = false;
 
-            me._hideTimer = setTimeout(
-                function () {
-                    // 把自己飞走
-                    $(me.main).css('left', '-2000px');
-                    var mode = me.mode;
-                    // 取消全局事件的绑定
-                    if (mode === 'click') {
-                        me.undelegate(document, 'click', me.onHide);
-                    }
-                    if (mode !== 'static') {
-                        me.undelegate(window, 'resize', me.onWindowResize);
-                    }
-                    me.trigger = null;
-                },
-                me.hideDelay
-            );
+            var hideFunc = function () {
+                // 把自己飞走
+                $(me.main).css('left', '-2000px');
+                var mode = me.mode;
+                // 取消全局事件的绑定
+                if (mode === 'click') {
+                    me.undelegate(document, 'click', me.onHide);
+                }
+                if (mode !== 'static') {
+                    me.undelegate(window, 'resize', me.onWindowResize);
+                }
+                me.trigger = null;
+                me._isVisible = false;
+
+                /**
+                 * @event module:Popup#hide
+                 * @type {Object}
+                 */
+                me.fire('hide');
+            }
+
+            if (me.hideDelay) {
+                me._hideTimer = setTimeout(hideFunc, me.hideDelay);
+            }
+            else {
+                hideFunc();
+            }
 
             // 清理show的闹钟
             clearTimeout(me._showTimer);
@@ -461,7 +477,7 @@ define(function (require) {
              */
             var event = new $.Event('show', {
                 trigger: currentTrigger,
-                target: target
+                target: e.currentTarget
             });
 
             this.fire(event);
@@ -480,7 +496,6 @@ define(function (require) {
          * 隐藏浮层前处理
          *
          * @private
-         * @fires module:Popup#hide 隐藏事件
          * @param {Event} e 隐藏浮层事件
          */
         onHide: function (e) {
@@ -494,20 +509,6 @@ define(function (require) {
                     || $.contains(main, target)
                     )
             ) {
-                return;
-            }
-
-            /**
-             * @event module:Popup#hide
-             * @type {Object}
-             */
-            var event = new $.Event('hide', {
-                target: e.target
-            });
-
-            this.fire(event);
-
-            if (event.isDefaultPrevented()) {
                 return;
             }
 
@@ -595,6 +596,7 @@ define(function (require) {
 
             // 属性配置优于实例配置(兼容处理，兼容tip)
             var dirFromAttr = target.attr('data-popup') || target.attr('data-tooltips');
+
             if (dirFromAttr) {
                 dir = /[trbl]{2}/.test(dirFromAttr) ? dirFromAttr : '1';
             }
@@ -713,7 +715,7 @@ define(function (require) {
          * @return {boolean} 可见的状态
          */
         isVisible: function () {
-            return !!this._visible;
+            return this.mode !== 'static' ? !!this.trigger : !!this._isVisible;
         },
 
         /**
@@ -727,10 +729,16 @@ define(function (require) {
         },
 
         dispose: function () {
-            this.clearTriggersEvents();
+            this.clearTriggersEvents(this.triggers, this.liveTriggers);
             this.$parent();
-        }
+        },
 
+        // 待定
+        destroy: function () {
+            this.dispose();
+            $(this.main).remove();
+            delete this.main;
+        }
     });
 
     return Popup;
