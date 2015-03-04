@@ -112,11 +112,17 @@ define(function (require) {
             var links = $('#tipContainer a');
             var target = links[0];
 
+            var onBeforeShow = function (e) {
+                expect(e.target).toBe(target);
+
+                this.setContent('content');
+            };
+
             var onShow = function (e) {
                 expect(e.target).toBe(target);
 
                 // this.setTitle('title');
-                this.setContent('content');
+                this.setContent('content2');
             };
 
             var onHide = function () {
@@ -128,6 +134,7 @@ define(function (require) {
                 expect(e.type).toBe('click');
             };
 
+            tip.on('beforeshow', onBeforeShow);
             tip.on('show', onShow);
             tip.on('hide', onHide);
             tip.on('click', onClick);
@@ -136,7 +143,7 @@ define(function (require) {
 
             main.trigger('click');
 
-            expect(tip.isVisible()).toBeTruthy();
+            expect(tip.isVisible()).toBeFalsy();
             // expect(tip.elements.title.innerHTML).toBe('title');
             expect(tip.elements.body.innerHTML).toBe('content');
 
@@ -144,6 +151,8 @@ define(function (require) {
             // expect(tip.elements.title.offsetWidth).toBe(0);
 
             jasmine.Clock.tick(delay);
+            expect(tip.isVisible()).toBeTruthy();
+            expect(tip.elements.body.innerHTML).toBe('content2');
             $(target).trigger('mouseleave');
 
             jasmine.Clock.tick(delay);
@@ -162,6 +171,13 @@ define(function (require) {
             main.trigger('mouseleave');
             jasmine.Clock.tick(delay);
             expect(tip.isVisible()).toBeFalsy();
+
+            // clear
+            $(target).trigger('mouseenter');
+            jasmine.Clock.tick(delay);
+            $(target).trigger('mouseleave');
+            tip.clear();
+            expect(tip.trigger).not.toBe(null);
 
 
             tip.un('show', onShow);
@@ -256,6 +272,7 @@ define(function (require) {
             expect(main.offset().top).toBe(10);
             expect(main.offset().left).toBe(60);
 
+            // setTarget
             tip.setTarget(tipTarget.get(0));
 
             $(target).trigger('mouseleave');
@@ -269,13 +286,67 @@ define(function (require) {
 
             $(window).trigger('resize');
 
-            // clear
-            $(target).trigger('mouseleave');
-            tip.clear();
-            expect(tip.trigger).not.toBe(null);
+            var onBeforeShow = function (e) {
+                e.preventDefault();
+            };
 
+            // preventDefault
+            tip.on('beforeshow', onBeforeShow);
+
+            $(target).trigger('mouseleave');
+            jasmine.Clock.tick(delay);
+            $(target).trigger('mouseenter');
+            jasmine.Clock.tick(delay);
+            expect(tip.isVisible()).toBeFalsy();
 
             tipTarget.remove();
+        });
+
+        it('liveTriggers', function () {
+            tip.destroy();
+
+            expect(tip.main).toBeUndefined();
+
+            var delay = 100;
+            tip = new Tip({
+                mode: 'over',
+                showDelay: delay,
+                hideDelay: delay,
+                liveTriggers: '#tipContainer',
+                trigger: '.tooltips'
+            });
+            tip.render();
+
+            var tipContainer = $('#tipContainer');
+            var links = $('#tipContainer a');
+            var target = links[0];
+
+            tipContainer.trigger({
+                type: 'mouseenter',
+                target: target
+            });
+            jasmine.Clock.tick(delay);
+            expect(tip.isVisible()).toBeTruthy();
+            tipContainer.trigger({
+                type: 'mouseleave',
+                target: target
+            });
+            jasmine.Clock.tick(delay);
+
+            tipContainer.append('<span class="tooltips live-test">test</span>');
+
+            expect(tip.isVisible()).toBeFalsy();
+
+            var newTarget = $('.live-test').get(0);
+
+            tipContainer.trigger({
+                type: 'mouseenter',
+                target: newTarget
+            });
+
+            jasmine.Clock.tick(delay);
+            expect(tip.isVisible()).toBeTruthy();
+
         });
     });
 
