@@ -69,7 +69,7 @@ var tip = new Tip({
     offset: {x: 5, y: 2}
 })
 .render()
-.on('show', function (e) {
+.on('beforeshow', function (e) {
     this.setContent(Math.random());
 });
 ```
@@ -140,7 +140,8 @@ require(['ui/Tip'], function (Tip) {
         offset: {x: 5, y: 2}
     })
     .render()
-    .on('show', function (e) {
+    .on('beforeshow', function (e) {
+        e.preventDefault();
         this.setContent(Math.random());
     });
 

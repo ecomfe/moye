@@ -324,6 +324,7 @@ define(function (require) {
          * 显示浮层
          *
          * @public
+         * @fires module:Popup#show 显示事件
          * @return {Popup}
          */
         show: function () {
@@ -355,7 +356,12 @@ define(function (require) {
                 }
 
                 me._isVisible = true;
-            }
+
+                /**
+                 * @event module:Popup#show
+                 */
+                me.fire('show');
+            };
 
             if (me.showDelay) {
                 me._showTimer = setTimeout(showFunc, me.showDelay);
@@ -403,10 +409,9 @@ define(function (require) {
 
                 /**
                  * @event module:Popup#hide
-                 * @type {Object}
                  */
                 me.fire('hide');
-            }
+            };
 
             if (me.hideDelay) {
                 me._hideTimer = setTimeout(hideFunc, me.hideDelay);
@@ -434,7 +439,7 @@ define(function (require) {
          * 显示浮层前处理
          *
          * @param {Event} e DOM 事件对象
-         * @fires module:Popup#show 显示事件
+         * @fires module:Popup#beforeshow 显示前事件
          * @private
          */
         onShow: function (e) {
@@ -472,13 +477,10 @@ define(function (require) {
             }
 
             /**
-             * @event module:Popup#show
+             * @event module:Popup#beforeshow
              * @type {Object}
              */
-            var event = new $.Event('show', {
-                trigger: currentTrigger,
-                target: e.currentTarget
-            });
+            var event = new $.Event('beforeshow');
 
             this.fire(event);
 
