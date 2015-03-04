@@ -359,8 +359,10 @@ define(function (require) {
 
                 /**
                  * @event module:Popup#show
+                 * @type {Object}
+                 * @property {HTMLElement} target 事件源 DOM 对象
                  */
-                me.fire('show');
+                me.fire('show', {target: me.trigger});
             };
 
             if (me.showDelay) {
@@ -479,8 +481,9 @@ define(function (require) {
             /**
              * @event module:Popup#beforeshow
              * @type {Object}
+             * @property {HTMLElement} target 事件源 DOM 对象
              */
-            var event = new $.Event('beforeshow');
+            var event = new $.Event('beforeshow', {target: currentTrigger});
 
             this.fire(event);
 
@@ -717,7 +720,7 @@ define(function (require) {
          * @return {boolean} 可见的状态
          */
         isVisible: function () {
-            return this.mode !== 'static' ? !!this.trigger : !!this._isVisible;
+            return !!this._isVisible;
         },
 
         /**

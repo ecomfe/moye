@@ -141,7 +141,6 @@ require(['ui/Tip'], function (Tip) {
     })
     .render()
     .on('beforeshow', function (e) {
-        e.preventDefault();
         this.setContent(Math.random());
     });
 
