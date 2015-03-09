@@ -9,126 +9,178 @@
 .markdown .ui-tabs {
     width: auto;
 }
+
+.markdown h3 {
+    padding-top: 20px;
+    border-bottom: 2px solid #275cea;
+}
+
+
 </style>
 {% content: content %}
-
 {% filter: markdown %}
 
 # Tabs 选项卡
+{%/filter%}
+
+<!-- **********************************************************************
+                            例子：正常模式
+*********************************************************************** -->
+
+{% filter: markdown %}
 
 ### 正常模式
-
-```html
-<ul id="tabs" class="ui-tabs"></ul>
-```
-
-```js
-new Tabs({
-    main: document.getElementById('tabs'),
-    activeIndex: 0,
-    mode: 'mouseover',
-    tabs: [
-        {title: 'CSS控件'},
-        {title: 'UI控件拆分'},
-        {title: 'UI栅格化设计'},
-        {title: '如何使用'},
-        {title: '新UI设计规范'},
-        {title: '再点你也切换不了'}
-    ]
-})
-.on('change', function (e) {
-    if (e.activeIndex === 5) {
-        e.preventDefault();
-    }
-})
-.render();
-```
-
 点击标签可以切换
 
 > 可以通过阻止`change`事件对象的默认行为来阻止切换标签
 
-{%/filter%}
+```js
+require(['ui/Tabs', 'ui/plugin/TabsBar'], function (Tabs) {
 
-<div class="content">
-    <ul id="tabs" class="ui-tabs"></ul>
-</div>
+    var tab = new Tabs({
+        main: document.getElementById('tabs1'),
+        // mode: 'click',  // 默认为click
+        plugins: ['TabsBar']
+    }).render();
 
-{%filter: markdown%}
-
-<script>
-require(['ui/Tabs'], function (Tabs) {
-
-    new Tabs({
-        main: document.getElementById('tabs'),
-        activeIndex: 0,
-        tabs: [
-            {title: 'CSS控件'},
-            {title: 'UI控件拆分'},
-            {title: 'UI栅格化设计'},
-            {title: '如何使用'},
-            {title: '新UI设计规范'},
-            {title: '再点你也切换不了'}
-        ]
-    })
-    .on('change', function (e) {
-        if (e.activeIndex === 5) {
+    tab.on('change', function (e) {
+        if (e.activeIndex === 3) {
             e.preventDefault();
         }
-    })
-    .render();
+    });
 
 });
-</script>
-
-## 鼠标移到标签上时切换
-
-> 设置参数`mode`为`mouseover`
-
-```html
-<div class="content">
-    <ul id="mouseover-tabs" class="ui-tabs"></ul>
-</div>
-```
-
-```js
-new Tabs({
-    main: document.getElementById('mouseover-tabs'),
-    activeIndex: 0,
-    mode: 'mouseover',
-    tabs: [
-        {title: 'CSS控件'},
-        {title: 'UI控件拆分'},
-        {title: 'UI栅格化设计'},
-        {title: '如何使用'},
-        {title: '新UI设计规范'}
-    ]
-})
-.render();
 ```
 
 {%/filter%}
 
 <div class="content">
-    <ul id="mouseover-tabs" class="ui-tabs"></ul>
+    <div id="tabs1" class="ui-tabs">
+
+        <ul class="ui-tabs-wrapper">
+            <li class="ui-tabs-item ui-tabs-item-first" data-index="0">CSS控件</li>
+            <li class="ui-tabs-item ui-tabs-item-active" data-index="1">UI控件拆分</li>
+            <li class="ui-tabs-item" data-index="2">UI栅格化设计</li>
+            <li class="ui-tabs-item  ui-tabs-item-last" data-index="3">新UI设计规范</li>
+        </ul>
+    </div>
 </div>
 
-<script>
-require(['ui/Tabs'], function (Tabs) {
 
-    new Tabs({
-        main: document.getElementById('mouseover-tabs'),
-        activeIndex: 0,
-        mode: 'mouseover',
-        tabs: [
-            {title: 'CSS控件'},
-            {title: 'UI控件拆分'},
-            {title: 'UI栅格化设计'},
-            {title: '如何使用'},
-            {title: '新UI设计规范'}
-        ]
-    })
-    .render();
+<script>
+require(['ui/Tabs', 'ui/plugin/TabsBar'], function (Tabs) {
+
+    var tab = new Tabs({
+        main: document.getElementById('tabs1'),
+        // mode: 'click',  // 默认为click
+        // plugins: ['TabsBar']
+    }).render();
+
+    tab.on('change', function (e) {
+        if (e.activeIndex === 3) {
+            e.preventDefault();
+        }
+    });
 
 });
 </script>
+
+
+
+
+<!-- **********************************************************************
+                            例子：hover切换元素
+*********************************************************************** -->
+{% filter: markdown %}
+
+### hover切换元素
+
+```js
+require(['ui/Tabs', 'ui/plugin/TabsBar'], function (Tabs) {
+
+    var tab = new Tabs({
+        main: document.getElementById('tabs2'),
+        plugins: ['TabsBar'],
+        mode: 'hover'
+    }).render();
+});
+```
+
+
+{%/filter%}
+
+
+<div class="content">
+    <div id="tabs2" class="ui-tabs">
+        <div class="ui-tabs-bar"></div>
+        <ul class="ui-tabs-wrapper">
+            <li class="ui-tabs-item ui-tabs-item-first" data-index="0">CSS控件</li>
+            <li class="ui-tabs-item ui-tabs-item-active" data-index="1">UI控件拆分</li>
+            <li class="ui-tabs-item" data-index="2">UI栅格化设计</li>
+            <li class="ui-tabs-item  ui-tabs-item-last" data-index="3">新UI设计规范</li>
+        </ul>
+    </div>
+</div>
+
+
+<script>
+require(['ui/Tabs', 'ui/plugin/TabsBar'], function (Tabs) {
+
+    var tab = new Tabs({
+        main: document.getElementById('tabs2'),
+        plugins: ['TabsBar'],
+        mode: 'hover'
+    }).render();
+});
+</script>
+
+
+<!-- **********************************************************************
+                            例子：自动切换
+*********************************************************************** -->
+{% filter: markdown %}
+
+### 自动切换
+
+```js
+require(['ui/Tabs', 'ui/plugin/TabsBar'], function (Tabs) {
+
+    var tab = new Tabs({
+        main: document.getElementById('tabs3'),
+        plugins: ['TabsBar'],
+        mode: 'auto'
+    }).render();
+});
+```
+
+
+{%/filter%}
+
+
+<div class="content">
+    <div id="tabs3" class="ui-tabs">
+        <div class="ui-tabs-bar"></div>
+        <ul class="ui-tabs-wrapper">
+            <li class="ui-tabs-item ui-tabs-item-first" data-index="0">CSS控件</li>
+            <li class="ui-tabs-item ui-tabs-item-active" data-index="1">UI控件拆分</li>
+            <li class="ui-tabs-item" data-index="2">UI栅格化设计</li>
+            <li class="ui-tabs-item  ui-tabs-item-last" data-index="3">新UI设计规范</li>
+        </ul>
+    </div>
+</div>
+
+
+<script>
+require(['ui/Tabs', 'ui/plugin/TabsBar'], function (Tabs) {
+
+    var tab = new Tabs({
+        main: document.getElementById('tabs3'),
+        plugins: ['TabsBar'],
+        mode: 'auto'
+    }).render();
+});
+</script>
+
+
+
+
