@@ -64,11 +64,12 @@
 ```js
 var tip = new Tip({
     arrow: '1',
-    hideDelay: 1,
-    offset: {x: 5, y: 5}
+    hideDelay: 20,
+    showDelay: 10,
+    offset: {x: 5, y: 2}
 })
 .render()
-.on('show', function (e) {
+.on('beforeshow', function (e) {
     this.setContent(Math.random());
 });
 ```
@@ -92,7 +93,7 @@ var tip = new Tip({
 
 ```js
 var staticTip = new Tip({
-    arrow: '1',
+    arrow: false,
     hideDelay: 1,
     mode: 'static',
     content: '上传成功~',
@@ -134,11 +135,12 @@ require(['ui/Tip'], function (Tip) {
 
     var tip = new Tip({
         arrow: '1',
-        hideDelay: 100,
+        hideDelay: 20,
+        showDelay: 10,
         offset: {x: 5, y: 2}
     })
     .render()
-    .on('show', function (e) {
+    .on('beforeshow', function (e) {
         this.setContent(Math.random());
     });
 
@@ -165,7 +167,7 @@ require(['ui/Tip'], function (Tip) {
 
     // static tip
     var staticTip = new Tip({
-        arrow: '1',
+        arrow: false,
         hideDelay: 1,
         mode: 'static',
         content: '上传成功~'
@@ -181,7 +183,7 @@ require(['ui/Tip'], function (Tip) {
     });
 
     $('#static-dispose').click(function () {
-        staticTip.dispose();
+        staticTip.destroy();
     });
 
 });
