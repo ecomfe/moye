@@ -4,6 +4,7 @@
  *
  * @file 分页控件
  * @author  chris(wfsr@foxmail.com)
+ *          wuqi03(wuqi03@baidu.com)
  */
 
 define(function (require) {
@@ -56,6 +57,7 @@ define(function (require) {
          * @property {number} options.showCount 当页数较多时，中间显示页码的个数
          * @property {number} options.total 总页数
          * @property {boolean} options.showAlways 是否一直显示分页控件
+         * @property {string} options.anchor 分页锚点跳转url
          * @property {Object.<string, string>} options.lang 用于显示上下页的文字
          * @property {string} options.lang.prev 上一页显示文字(支持HTML)
          * @property {string} options.lang.next 下一页显示文字(支持HTML)
@@ -85,6 +87,34 @@ define(function (require) {
             // 分页项不用可时的class定义
             disabledClass: 'disabled',
 
+            // 是否是url锚点
+            anchor: '',
+
+            /**
+             * 显示模式
+             * 可选值: normal | simple
+             *
+             * normal: 显示方式是  <  1 2 3 .. 12  > ，每个分页是一个item;
+             * simple: 显示方式是  <  2/10  > ，除了上一页和下一页外被视为是一个item;
+             *
+             * @type {string}
+             */
+            mode: 'normal',
+
+            setTpl: {
+                /**
+                 * pager item字符串
+                 *
+                 * @param {number=} page 当前显示页码
+                 * @param {number=} total 总页码
+                 * @param {string=} className 该item的className
+                 * @return {string|null}
+                 */
+                setItemHTML: function (page, total, className) {
+                    return null;
+                }
+            },
+
             // 上下页显示文字
             lang: {
 
@@ -113,11 +143,11 @@ define(function (require) {
             this.total     = +this.total || main.data('total') || 0;
             this.padding   = +this.padding || 0;
             this.page      = +this.page || main.data('page') || 0;
-            this.first     &= 1;
+            this.first     = this.anchor ? 1 : this.first & 1;
         },
 
         initEvents: function () {
-            this.delegate(this.main, 'click', this._onMainClicked);
+            this.delegate(this.main, 'click', this.onMainClicked);
         },
 
         repaint: painter.createRepaint(
@@ -130,13 +160,21 @@ define(function (require) {
                     // page的可选区间在[0, total); 所以我们做这个规范化处理
                     this.page = Math.max(Math.min(page - this.first, this.total - 1), 0);
 
+                    // 如果有锚点，需要根据当前url设置当前页码
+                    if (this.anchor && this.helper.isInStage('INITED')) {
+                        this.set(
+                            'page',
+                            (+getQuery(window.location.href).page || this.page + this.first) - this.first
+                        );
+                    }
+
                     // total的取值间是[1, total], 如果total为0或1,
                     // 那么我们认为没有必要显示pager;
                     if (total < 2 && !this.showAlways) {
                         main.hide();
                     }
                     else {
-                        main.html(this._build()).show();
+                        main.html(this.build()).show();
                     }
 
                 }
@@ -150,6 +188,8 @@ define(function (require) {
          * @public
          */
         setPage: function (page) {
+            // 强行触发set生效
+            this.page = null;
             this.set('page', page);
         },
 
@@ -190,6 +230,12 @@ define(function (require) {
             return this.lang[part] || index;
         },
 
+        /**
+         * 默认分页item
+         * @param {number} index 当前渲染item的index
+         * @param {string} part 当前渲染item的状态
+         * @return {string} item的html字符串
+         */
         getItemHTML: function (index, part) {
             var helper = this.helper;
             var states = [].slice.call(arguments, 1).concat('item');
@@ -204,8 +250,20 @@ define(function (require) {
                 []
             );
             var page = index + this.first;
+            var anchor = this.anchor
+                ? (~this.anchor.indexOf('?')
+                ? this.anchor + '&page=' + page
+                : this.anchor + '?page=' + page)
+                : '#';
+
+            if (part !== 'prev' && part !== 'next' && typeof this.setTpl.setItemHTML() === 'string') {
+                return this.setTpl.setItemHTML(page, this.total, className.join(' '));
+            }
+
             return ''
-                + '<a href="#" data-page="' + page + '" class="' + className.join(' ') + '">'
+                + '<a href="'
+                + anchor
+                + '" data-page="' + page + '" class="' + className.join(' ') + '">'
                 +     this.getItemText(index + 1, part || 'item')
                 + '</a>';
         },
@@ -216,7 +274,7 @@ define(function (require) {
          * @return {string} 分页的HTML代码
          * @private
          */
-        _build: function () {
+        build: function () {
 
             var page = this.page;
             var total = this.total;
@@ -248,22 +306,29 @@ define(function (require) {
                 wingRight -= reduceRightToLeft;
             }
 
-            // 生成左半端页码
-            var left = this.range(0, page, paddingLeft, wingLeft);
-            // 生成右半端页码
-            var right = this.range(page + 1, total, wingRight, paddingRight);
+            var html;
 
-            var html = lib.map(
-                left.concat(page).concat(right),
-                function (index) {
-                    return index < 0
-                        // 哈哈, 这是ellipsis
-                        ? this.getItemHTML(-index, 'ellipsis')
-                        // 这此进正常的孩子们
-                        : this.getItemHTML(index, index === page ? 'current' : '');
-                },
-                this
-            );
+            if (this.mode === 'normal') {
+                // 生成左半端页码
+                var left = this.range(0, page, paddingLeft, wingLeft);
+                // 生成右半端页码
+                var right = this.range(page + 1, total, wingRight, paddingRight);
+
+                html = lib.map(
+                    left.concat(page).concat(right),
+                    function (index) {
+                        return index < 0
+                            // 哈哈, 这是ellipsis
+                            ? this.getItemHTML(-index, 'ellipsis')
+                            // 这此进正常的孩子们
+                            : this.getItemHTML(index, index === page ? 'current' : '');
+                    },
+                    this
+                );
+            }
+            else if (this.mode === 'simple') {
+                html = [this.getItemHTML(this.page, 'item')];
+            }
 
             return ''
                 + this.getItemHTML(
@@ -303,17 +368,19 @@ define(function (require) {
          * 页码改变时
          *
          * @param {Event} e 事件对象
+         * @return {*}
          * @protected
          */
-        _onMainClicked: function (e) {
-
-            e.preventDefault();
+        onMainClicked: function (e) {
 
             var target = $(e.target).closest('a', this.main);
             var helper = this.helper;
 
-            if (!target.length || target.hasClass(helper.getPrimaryClassName('current'))) {
-                return;
+            if (!target.length
+                || target.hasClass(helper.getPrimaryClassName('current'))
+                || target.hasClass(helper.getPrimaryClassName('disabled'))) {
+                // 阻止默认行为和冒泡
+                return false;
             }
 
             var page = target.data('page');
@@ -329,6 +396,13 @@ define(function (require) {
 
             this.fire(event);
 
+            // 刷新页面
+            if (this.anchor) {
+                return;
+            }
+
+            e.preventDefault();
+
             if (event.isDefaultPrevented()) {
                 return;
             }
@@ -337,6 +411,31 @@ define(function (require) {
             this.set('page', page);
         }
     });
+
+    /**
+     * 获取url参数
+     * @param {string} url url字符串
+     * @return {Object} result queryList对象
+     */
+    function getQuery(url) {
+        var result = {};
+        url = url.split('?');
+
+        if (!url[1]) {
+            return result;
+        }
+
+        var queryList = url[1].split('&');
+
+        $.each(queryList, function (i, item) {
+            var query = item.split('=');
+            result[query[0]] = query[1];
+        });
+
+        return result;
+    }
+
+
 
     return Pager;
 });

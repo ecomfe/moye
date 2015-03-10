@@ -11,3 +11,4 @@ SpecRunner.html
 undefined/
 example-dist
 *.log
+.idea/
