@@ -1,4 +1,4 @@
-{% target: pager(master=base) %}
+{% target: Pager(master=base) %}
 
 {% content: style %}
 <link rel="stylesheet" href="../src/css/Pager.less" />
@@ -10,13 +10,52 @@
 <link rel="stylesheet" href="../src/css/theme/Pager.youxi.less" />
 <link rel="stylesheet" href="../src/css/theme/Pager.hunqing.less" />
 <link rel="stylesheet" href="../src/css/theme/Pager.qiche.less" />
+<link rel="stylesheet" href="../src/css/theme/Pager.koubei.less" />
 <link rel="stylesheet" href="../src/css/Select.less" />
 <style>
     .content {
         text-align: center;
     }
+
+    #pager-normal .ui-pager-item {
+        color: #999;
+        border: 0;
+        text-decoration: none;
+        font-size: 16px;
+    }
+
+    #pager-normal .ui-pager-item:hover {
+        color: #1796f9;
+        background: #fff;
+    }
+
+    #pager-normal .ui-pager-prev,
+    #pager-normal .ui-pager-next {
+        border: 1px solid #1796f9;
+        color: #1796f9;
+        line-height: 14px;
+        padding: 3px;
+        height: 12px;
+        font-size: 12px;
+    }
+
+    #pager-normal .ui-pager-disabled {
+        color: #999;
+        border-color: #999;
+    }
+
+    #pager-normal .ui-pager-disabled:hover {
+        color: #999;
+    }
+
+    #pager-normal .ui-pager-current {
+        color: #1796f9;
+    }
+
+
 </style>
 {% content: content %}
+
 {% filter: markdown %}
 
 # Pager
@@ -80,6 +119,12 @@ $('[data-skin]').each(function (i, pager) {
 
 <div class="content">
     <div data-skin="hunqing" class="ui-pager"></div>
+</div>
+
+- 口碑  ( 皮肤:`koubei` )
+
+<div class="content">
+    <div data-skin="koubei" class="ui-pager"></div>
 </div>
 
 <script>
@@ -163,6 +208,8 @@ require(['ui/Pager', 'ui/Select'], function (Pager, Select) {
 });
 </script>
 
+
+
 ### 应用于大搜索卡片
 
 示例：
@@ -185,20 +232,259 @@ require(['ui/Pager'], function (Pager) {
 });
 </script>
 
+
 ```js
+// 分页是链接
 require(['ui/Pager'], function (Pager) {
-    var pager1 = new Pager({
-        main: 'pager1',
+    new Pager({
+        main: document.getElementById('pager-url'),
         page: 0,
         first: 1,
-        total: 10
-    })
-    .on('change', function (e) {
-        this.setPage(e.page);
+        total: 5,
+        showCount: 10,
+        anchor: '/example/Pager.tpl'
     })
     .render();
 });
 ```
+
+### 分页是链接
+
+示例：
+
+
+<div class="content">
+    <div id="pager-url" class="ui-pager"></div>
+</div>
+
+<script>
+    require(['ui/Pager'], function (Pager) {
+        new Pager({
+            main: document.getElementById('pager-url'),
+            page: 0,
+            first: 1,
+            total: 5,
+            showCount: 10,
+            anchor: '/example/Pager.tpl'
+        })
+        .render();
+    });
+</script>
+
+
+
+```js
+// 普通分页活用
+require(['ui/Pager'], function (Pager) {
+    new Pager({
+        main: document.getElementById('pager-normal'),
+        page: 0,
+        first: 1,
+        total: 5,
+        showCount: 10,
+        lang: {
+            prev: '◀',
+            next: '▶'
+        },
+        setTpl: {
+            setItemHTML: function (page, total, className) {
+            return '<a href="#" data-page="'
+                + page + '" class="' + className + '">●</a>'
+            }
+        }
+    })
+    .render();
+});
+```
+
+### 普通分页活用
+
+示例：
+
+
+<div class="content">
+    <div id="pager-normal" class="ui-pager"></div>
+</div>
+
+<script>
+    require(['ui/Pager'], function (Pager) {
+        new Pager({
+            main: document.getElementById('pager-normal'),
+            page: 0,
+            first: 1,
+            total: 5,
+            showCount: 10,
+            lang: {
+                prev: '◀',
+                next: '▶'
+            },
+            setTpl: {
+                setItemHTML: function (page, total, className) {
+                    return '<a href="#" data-page="'
+                        + page + '" class="' + className + '">●</a>'
+                }
+            }
+        })
+        .render();
+    });
+</script>
+
+
+
+```js
+// 精简版分页
+require(['ui/Pager'], function (Pager) {
+    new Pager({
+        main: document.getElementById('pager-simple'),
+        page: 0,
+        first: 1,
+        total: 5,
+        showCount: 10,
+        mode: 'simple',
+        setTpl: {
+            setItemHTML: function (page, total) {
+                return page + '/' + total;
+            }
+        }
+    })
+    .render();
+});
+```
+
+### 精简版分页
+
+示例：
+
+
+<div class="content">
+    <div id="pager-simple" class="ui-pager"></div>
+</div>
+
+<script>
+    require(['ui/Pager'], function (Pager) {
+        new Pager({
+            main: document.getElementById('pager-simple'),
+            page: 0,
+            first: 1,
+            total: 5,
+            showCount: 10,
+            mode: 'simple',
+            setTpl: {
+                setItemHTML: function (page, total) {
+                    return page + '/' + total;
+                }
+            }
+        })
+        .render();
+    });
+</script>
+
+
+```js
+// 精简版分页灵活运用
+require(['ui/Pager'], function (Pager) {
+    new Pager({
+        main: document.getElementById('pager-simple'),
+        page: 0,
+        first: 1,
+        total: 5,
+        showCount: 10,
+        mode: 'simple',
+        setTpl: {
+            setItemHTML: function (page, total) {
+                return ' 当前第<input value="'
+                    + page
+                    + '" style="width: 20px;text-align:center" />'
+                    + '页，共' + total + '页 ';
+            }
+        }
+    })
+    .render();
+});
+```
+
+### 精简版分页灵活运用
+
+示例：
+
+
+<div class="content">
+    <div id="pager-simple-change" class="ui-pager"></div>
+</div>
+
+<script>
+    require(['ui/Pager'], function (Pager) {
+        new Pager({
+            main: document.getElementById('pager-simple-change'),
+            page: 0,
+            first: 1,
+            total: 5,
+            showCount: 10,
+            mode: 'simple',
+            setTpl: {
+                setItemHTML: function (page, total) {
+                    return ' 当前第<input value="'
+                            + page
+                            + '" style="width: 20px;text-align:center" />'
+                            + '页，共' + total + '页 ';
+                }
+            }
+
+        })
+        .render();
+    });
+</script>
+
+
+### 分页getPage和setPage使用
+
+示例：
+
+
+<div class="content">
+    <div id="pager-set" class="ui-pager"></div>
+    <div class="pager-op">
+        <a id="pager-set-prev">上一页</a>
+        <a id="pager-set-next">下一页</a>
+    </div>
+</div>
+
+<script>
+    require(['ui/Pager'], function (Pager) {
+        var pagerTest = new Pager({
+            main: document.getElementById('pager-set'),
+            page: 0,
+            first: 1,
+            total: 5,
+            showCount: 10,
+            mode: 'simple',
+            setTpl: {
+                setItemHTML: function (page, total) {
+                    return ' 当前第<input value="'
+                            + page
+                            + '" style="width: 20px;text-align:center" />'
+                            + '页，共' + total + '页 ';
+                }
+            }
+
+        })
+        .render();
+
+        $('#pager-set-prev').click(function () {
+            var page = pagerTest.getPage();
+
+            pagerTest.setPage(page - 1);
+        });
+
+        $('#pager-set-next').click(function () {
+            var page = pagerTest.getPage();
+
+            pagerTest.setPage(page + 1);
+        });
+    });
+</script>
+
+
 
 ### 全部配置参数
 ------------------------
@@ -213,6 +499,10 @@ require(['ui/Pager'], function (Pager) {
 | showAlways   |boolean    |  是否一直显示分页控件  |
 | showCount    |number     |  当页数较多时，中间显示页码的个数  |
 | total        |number     |  总页数  |
+| anchor       |string     |  跳转链接  |
+| mode         |string     |  分页类型（normal/simple）  |
+| setTpl       |Object<string, function>|  设置模板html  |
+| setTpl.setItemHTML    |function|  itemHTML字符串  |
 | lang         |Object<string, string>|  用于显示上下页的文字  |
 | lang.prev    |string     |  上一页显示文字(支持HTML)  |
 | lang.next    |string     |  下一页显示文字(支持HTML)  |

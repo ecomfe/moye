@@ -1,0 +1,44 @@
+@import '../dep.less';
+@import '../variable.less';
+
+.skin-koubei-pager {
+
+    @pager-item-font-color: #8e8c87;
+    @pager-item-current-color: #e8e8e8;
+
+    a {
+        color: #ccc9be;
+        background-color: #fff;
+        border: 1px solid #fff;
+        .border-radius(2px);
+        text-decoration: none;
+
+        &:hover {
+            text-decoration: none;
+            background-color: @pager-item-current-color;
+            color: @pager-item-font-color;
+            border: 1px solid @pager-item-current-color;
+        }
+    }
+
+    a.@{moye-prefix}-pager-ellipsis:hover {
+        text-decoration: none;
+        border: 0;
+    }
+
+    a.@{moye-prefix}-pager-current {
+
+        background-color: @pager-item-current-color;
+        color: @pager-item-font-color;
+        border: 1px solid @pager-item-current-color;
+
+        &:hover {
+            background-color: @pager-item-current-color;
+        }
+
+    }
+
+    a.@{moye-prefix}-pager-disabled {
+        display: none;
+    }
+}
