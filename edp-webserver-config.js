@@ -63,11 +63,21 @@ exports.getLocations = function () {
                 autocss()
             ]
         },
+        // smarty的配置
+        {
+            location: /^\/example\/smarty\/index\.php$/,
+            handler: [
+                php('php-cgi', '')
+            ]
+        },
+        // etpl的配置
         {
             location: /\.tpl($|\?)/,
             handler: [
                 file(),
                 function (context) {
+
+                    console.log(112321);
 
                     var name = path.basename(context.request.pathname, '.tpl');
                     var data = context.content.toString('utf-8');
@@ -92,13 +102,6 @@ exports.getLocations = function () {
                         __dirname + '/dep'
                     ]
                 })
-            ]
-        },
-        {
-            location: /\.styl($|\?)/,
-            handler: [
-                file(),
-                stylus()
             ]
         },
         {
