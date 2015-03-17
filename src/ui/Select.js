@@ -158,7 +158,6 @@ define(function (require) {
                 main: helper.createPart('popup'),
                 target: this.main,
                 triggers: [this.main],
-                offset: this.offset,
                 skin: skins,
                 mode: this.mode
             });
