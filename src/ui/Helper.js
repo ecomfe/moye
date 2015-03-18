@@ -22,11 +22,10 @@ define(function (require) {
         require('./helper/dom'),
         require('./helper/life'),
         require('./helper/children'),
-        require('./helper/plugin')
+        require('./helper/plugin'),
+        require('./helper/event')
     );
 
     return Helper;
 
 });
-
-
