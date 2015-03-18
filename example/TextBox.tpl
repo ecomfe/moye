@@ -37,7 +37,7 @@ require(['ui/TextBox'], function (TextBox) {
     new TextBox({
         main: document.getElementById('textbox1')
     })
-    .on('input', function () {
+    .on('change', function () {
         document.getElementById('welcome').innerText = '你好，' + this.getValue();
     })
     .render();

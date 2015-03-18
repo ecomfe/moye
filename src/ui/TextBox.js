@@ -8,6 +8,7 @@ define(function (require) {
     var $       = require('jquery');
     var Control = require('./Control');
     var painter = require('./painter');
+    var lib     = require('./lib');
 
     var TextBox = Control.extend({
 
@@ -24,9 +25,11 @@ define(function (require) {
          */
         init: function (options) {
             this.$parent(options);
-            var input = options.input || $(this.main).find('input');
+            var input = options.input
+                ? $(options.input)
+                : $(this.main).find('input');
             this.value = options.value || input.val();
-            this.input = options.input || input[0];
+            this.input = input[0];
         },
 
         /**
@@ -37,11 +40,19 @@ define(function (require) {
          */
         initEvents: function () {
             var input = this.input;
+            var dispatchEvent = this.dispatchEvent;
+
             // 将HTMLElement事件代理到`Control`事件
-            this.delegate(input, 'input', this._on)
-                .delegate(input, 'blur',  this._on)
-                .delegate(input, 'focus', this._on)
-                .delegate(input, 'keyup', this._on);
+            this.delegate(input, 'blur',  dispatchEvent)
+                .delegate(input, 'focus', dispatchEvent)
+                .delegate(input, 'keyup', dispatchEvent);
+
+            if (lib.browser.ie < 9) {
+                this.delegate(input, 'propertychange', dispatchEvent);
+            }
+            else {
+                this.delegate(input, 'input', dispatchEvent);
+            }
 
             return this;
         },
@@ -68,7 +79,7 @@ define(function (require) {
          * @private
          * @param {Event} e HTMLElement事件
          */
-        _on: function (e) {
+        dispatchEvent: function (e) {
 
             if (this.isReadOnly()) {
                 e.preventDefault();
@@ -81,16 +92,14 @@ define(function (require) {
                 type = 'enter';
             }
 
-            if (type === 'input') {
+            if (type === 'input'
+                || type === 'propertychange' && e.originalEvent.propertyName === 'value'
+            ) {
                 type = 'change';
             }
 
 
-            var event = new $.Event(type, {
-                target: this
-            });
-
-            this.fire(event);
+            var event = this.fire(type);
 
             if (event.isDefaultPrevented()) {
                 e.preventDefault();
