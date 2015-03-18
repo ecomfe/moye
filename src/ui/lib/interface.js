@@ -150,7 +150,7 @@ define(function (require) {
              * @public
              * @param {string} type 事件类型
              * @param {Object} args 透传的事件数据对象
-             * @return {Observable}
+             * @return {Event}
              */
             fire: function (type, args) {
                 var event;
@@ -177,15 +177,11 @@ define(function (require) {
                 var allListeners = [].concat(listeners, globalListeners);
                 var count = allListeners.length;
 
-                if (!count) {
-                    return;
-                }
-
                 for (var i = 0; i < count; i++) {
                     allListeners[i].call(this, event);
                 }
-
-                return this;
+                
+                return event;
             },
 
             /**
