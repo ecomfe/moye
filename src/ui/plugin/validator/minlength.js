@@ -1,6 +1,7 @@
 /**
- * @file 最小长度
+ * @file 最小长度校验规则
  * @author leon<lupengyu@baidu.com>
+ * @author wuhuiyao(wuhuiyao@baidu.com)
  */
 
 define(function (require) {
@@ -11,7 +12,7 @@ define(function (require) {
     ValidateRule.register('minlength', {
 
         check: function (value, control) {
-            var minLength = control.minLength;
+            var minLength = this.minLength;
             var result = (value + '').length >= minLength;
             return new ValidityState(
                 result,

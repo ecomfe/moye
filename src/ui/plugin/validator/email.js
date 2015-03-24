@@ -1,6 +1,7 @@
 /**
- * @file RequiredValidator
+ * @file 邮箱校验规则
  * @author leon<lupengyu@baidu.com>
+ * @author wuhuiyao(wuhuiyao@baidu.com)
  */
 
 define(function (require) {
@@ -12,7 +13,7 @@ define(function (require) {
 
     ValidateRule.register('email', {
         check: function (value, control) {
-            var state = reg.test(value);
+            var state = !value || reg.test(value);
             return new ValidityState(state, this.getMessage(control, state));
         },
         message: {

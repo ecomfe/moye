@@ -1,5 +1,5 @@
 /**
- * @file RequiredValidateRule
+ * @file 手机号码校验规则
  * @author leon<lupengyu@baidu.com>
  */
 
@@ -17,7 +17,7 @@ define(function (require) {
         },
 
         check: function (value, control) {
-            var state = regex.test(value);
+            var state = !value || regex.test(value);
             return new ValidityState(state, this.getMessage(control, state));
         }
 
