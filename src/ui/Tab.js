@@ -20,22 +20,21 @@ define(function (require) {
      * @constructor
      * @extends module:Control
      * @requires Control
-     * @exports Tabs
+     * @exports Tab
      */
-    var Tabs = Control.extend(/** @lends module:Tabs.prototype */{
-
+    var Tab = Control.extend(/** @lends module:Tab.prototype */{
         /**
          * 控件类型标识
          *
          * @type {string}
          * @private
          */
-        type: 'Tabs',
+        type: 'Tab',
 
         /**
          * 控件配置项
          *
-         * @name module:Tabs#options
+         * @name module:Tab#options
          * @type {Object}
          * @property {number} slideInterval 在auto模式 下自动切换的间隔,单位ms
          * @property {number} activeIndex 选中项
@@ -56,7 +55,7 @@ define(function (require) {
          * 控件初始化
          *
          * @param {Object} options 控件配置项
-         * @see module:Tabs#options
+         * @see module:Tab#options
          * @private
          */
         init: function (options) {
@@ -67,6 +66,7 @@ define(function (require) {
             this.itemClass = '.' + this.helper.getPartClassName('item');
 
             this.onSwitch = $.proxy(this.onSwitch, this);
+
         },
 
         initEvents: function () {
@@ -96,6 +96,16 @@ define(function (require) {
                     items
                         .eq(activeIndex).addClass(activeClass)
                         .siblings().removeClass(activeClass);
+
+                    items.each(function (index, item) {
+                        var itemPanelName = $(item).data('panel');
+                        if (itemPanelName) {
+                            var itemPanel = $(itemPanelName);
+                            if (itemPanel.length) {
+                                activeIndex === index ? itemPanel.show() : itemPanel.hide();
+                            }
+                        }
+                    });
                 }
             }
         ),
@@ -138,7 +148,7 @@ define(function (require) {
          * 选择标签
          * @param {number} index 标签序号
          * @param {boolean} silent 为true则不触发change事件
-         * @return {Tabs}
+         * @return {Tab}
          */
         select: function (index, silent) {
             var activeIndex = this.activeIndex;
@@ -153,7 +163,7 @@ define(function (require) {
                 });
 
                 /**
-                 * @event module:Tabs#change
+                 * @event module:Tab#change
                  * @type {Object}
                  * @property {number} activeIndex 选中标签序号
                  */
@@ -166,17 +176,6 @@ define(function (require) {
 
             this.set('activeIndex', index);
 
-            /**
-             * @event module:Tabs#afterchange
-             * @type {Object}
-             * @property {number} activeIndex 选中标签序号
-             */
-            this.fire(
-                new $.Event('afterchange', {
-                    activeIndex: index
-                })
-            );
-
             return this;
         },
 
@@ -184,7 +183,7 @@ define(function (require) {
          * 点击事件处理
          *
          * @param {?Event} e DOM事件对象
-         * @fires module:Tabs#change
+         * @fires module:Tab#change
          * @private
          */
         onSwitch: function (e) {
@@ -199,5 +198,5 @@ define(function (require) {
 
     });
 
-    return Tabs;
+    return Tab;
 });

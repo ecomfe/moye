@@ -1,5 +1,5 @@
 /**
- * @file moye - Tabs - Bar
+ * @file moye - Tab - Bar
  * @author kaivean(kaisey2012@163.com)
  */
 
@@ -8,9 +8,9 @@ define(function (require) {
     var $ = require('jquery');
     var Plugin = require('./Plugin');
 
-    var TabsBar = Plugin.extend({
+    var TabBar = Plugin.extend({
 
-        $class: 'TabsBar',
+        $class: 'TabBar',
 
         initialize: function (options) {
 
@@ -22,18 +22,23 @@ define(function (require) {
             this.$parent(ctr);
 
             this.control = ctr;
-            ctr.helper.addPartClasses('plugin-tabsbar');
+            ctr.helper.addPartClasses('plugin-tabbar');
             ctr.on('afterrender', $.proxy(this.onAfterrender, this));
-            ctr.on('afterchange', $.proxy(this.onChange, this));
+            ctr.on('change', $.proxy(this.onChange, this));
 
         },
 
         /**
-         * Tabs切换时
+         * Tab切换时
          * @param  {event} e 输入事件
          */
         onChange: function (e) {
-            this.setBar(e.activeIndex);
+            var me = this;
+            setTimeout(function () {
+                if (!e.isDefaultPrevented()) {
+                    me.setBar(e.activeIndex);
+                }
+            }, 0);
         },
 
         /**
@@ -59,11 +64,12 @@ define(function (require) {
 
         inactivate: function () {
             var control = this.control;
-            control.off('afterchange');
+            control.off('change');
+            control.off('afterrender');
             this.control = null;
         }
 
     });
 
-    return TabsBar;
+    return TabBar;
 });
