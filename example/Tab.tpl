@@ -179,7 +179,7 @@ require(['ui/Tab', 'ui/plugin/TabBar'], function (Tab) {
     var tab = new Tab({
         main: document.getElementById('tab3'),
         plugins: ['TabBar'],
-        // mode: 'auto'
+        mode: 'auto'
     }).render();
 });
 </script>
