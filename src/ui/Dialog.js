@@ -12,7 +12,10 @@ define(function (require) {
     var $ = require('jquery');
     var lib = require('./lib');
     var Control = require('./Control');
+    var Panel = require('./Panel');
+    var Button = require('./Button');
     var Mask = require('./Mask');
+    var main = require('./main');
 
     /**
      * 对话框
@@ -108,27 +111,47 @@ define(function (require) {
         init: function (options) {
             this.$parent(options);
             this.visible = false;
-            // 这里先把窗口的`resize`事件处理函数给包裹一下, 做一个300毫秒的延迟
-            // this._onWindowResize = lib.delay($.proxy(this._onWindowResize, this), 300);
         },
 
         initStructure: function () {
 
             var helper = this.helper;
+            var main = this.main;
 
-            var html = [
-                this.close ? helper.getPartHTML('close', 'div', this.close) : '',
-                helper.getPartHTML('header', 'div'),
-                helper.getPartHTML('body', 'div'),
-                helper.getPartHTML('footer', 'div')
-            ];
+            lib.each(
+                [
+                    this.header !== false ? 'header' : '',
+                    'content',
+                    this.footer !== false ? 'footer' : ''
+                ],
+                function (part) {
+                    if (part) {
+                        var panel = this.createPanel(part).appendTo(main);
+                        this.addChild(panel, part);
+                        this.helper.addPartClasses(part, panel.main);
+                    }
+                },
+                this
+            );
 
             var level = this.level;
 
-            $(this.main)
-                .html(html.join(''))
+            main = $(main)
                 .css('zIndex', level)
                 .appendTo(document.body);
+
+            if (this.close !== false) {
+                main.append(
+                    helper.createPart(
+                        'close',
+                        'i',
+                        this.getCloseHTML(this.close),
+                        {
+                            'data-action': 'close'
+                        }
+                    )
+                );
+            }
 
             if (this.mask) {
                 this.mask = Mask.create({
@@ -139,10 +162,23 @@ define(function (require) {
 
         },
 
+        createPanel: function (part) {
+            var id = this.id + part;
+            return new Panel({
+                id: id
+            });
+        },
+
+        getCloseHTML: function (close) {
+            return close;
+        },
+
         initEvents: function () {
-            this.delegate(this.main, 'click', this._onMainClicked);
+
+            this.delegate(this.main, 'click', '[data-action]', this.onMainClicked);
+
             if (this.mask && this.maskClickClose) {
-                this.mask.on('click', $.proxy(this._onCloseClicked, this));
+                this.mask.on('click', $.proxy(this.onCloseClicked, this));
             }
         },
 
@@ -150,50 +186,24 @@ define(function (require) {
          * 当窗口主内容被点击时的处理
          * @param {Event} e 点击事件对象
          */
-        _onMainClicked: function (e) {
+        onMainClicked: function (e) {
 
-            var target = $(e.target);
+            var target = $(e.currentTarget);
             var helper = this.helper;
             var main = this.main;
+            var action = target.data('action');
 
-            this.fire(e);
-
-            var close = target.closest(
-                '.' + helper.getPrimaryClassName('close'),
-                main
-            )[0];
-
-            if (close) {
-                this._onCloseClicked();
+            // 内置的动作处理
+            if (action === 'close') {
+                this.onCloseClicked();
                 return;
             }
 
-            // 找部件呀找部件, 好恶心~!
-            var footerBotton = target.closest(
-                '.' + helper.getPrimaryClassName('button'),
-                main
-            )[0];
+            // 否则我们放一个NB的事件哟
+            this.fire(action, {
+                target: target[0]
+            });
 
-            if (footerBotton) {
-
-                e.preventDefault();
-
-                this.fire('buttonclick', {
-                    target: e.target,
-                    part: target.data('part')
-                });
-
-                return;
-            }
-
-        },
-
-        /**
-         * 当窗口大小改变时的处理
-         * @param {Event} e 窗口变化事件
-         */
-        _onWindowResize: function (e) {
-            this._position();
         },
 
         /**
@@ -202,22 +212,19 @@ define(function (require) {
          * @fires module:Dialog#beforehide
          * @private
          */
-        _onCloseClicked: function () {
+        onCloseClicked: function () {
 
             /**
-             * @event module:Dialog#beforehide
+             * @event module:Dialog#hide
              * @type {Object}
              * @property {DOMEvent} event 事件源对象
              */
-            var event = new $.Event('hide');
+            var event = this.fire('hide');
 
-            this.fire(event);
-
-            if (event.isDefaultPrevented()) {
-                return;
+            if (!event.isDefaultPrevented()) {
+                this.hide();
             }
 
-            this.hide();
         },
 
         repaint: require('./painter').createRepaint(
@@ -243,38 +250,69 @@ define(function (require) {
             {
                 name: ['title'],
                 paint: function (conf, title) {
-                    this.helper.getPart('header').innerHTML = title;
+                    var panel = this.getChild('header');
+                    if (panel) {
+                        panel.set('content', title);
+                    }
                 }
             },
             {
                 name: ['content'],
                 paint: function (conf, content) {
-                    this.helper.getPart('body').innerHTML = content;
+                    this.getChild('content').set('content', content);
                 }
             },
             {
-                // 这两个属性是有冲突的
-                // 如果有`footer`, 那么就抛弃`buttons`
-                name: ['buttons', 'footer'],
-                paint: function (conf, buttons, footerHTML) {
+                name: ['footer', 'buttons'],
+                paint: function (conf, footer, buttons) {
+                    var panel = this.getChild('footer');
 
-                    var footer = this.helper.getPart('footer');
-
-                    if (footerHTML) {
-                        footer.innerHTML = footerHTML;
-                        this.buttons = null;
+                    if (!panel) {
+                        return;
                     }
 
-                    if (buttons) {
-                        footer.innerHTML = lib
-                            .map(
-                                buttons,
-                                this.getFooterButtonHTML,
-                                this
-                            )
-                            .join('');
-                    }
+                    var html = '';
 
+                    if (footer) {
+                        html = footer;
+                    }
+                    else if (buttons && buttons.length) {
+                        html = lib.map(
+                            buttons,
+                            function (button) {
+                                var part = button.part;
+                                var id = this.helper.getPartId('button-' + button.part);
+                                return this.helper.getPartHTML(
+                                    'button-' + part,
+                                    'button',
+                                    button.text,
+                                    {
+                                        'data-action': part,
+                                        'data-ui-id': id
+                                    }
+                                );
+                            },
+                            this
+                        ).join('');
+                        var properties = lib.reduce(
+                            buttons,
+                            function (result, button) {
+                                var part = button.part;
+                                var id = this.helper.getPartId('button-' + part);
+                                result[id] = lib.extend(
+                                    {
+                                        type: 'Button'
+                                    },
+                                    button
+                                );
+                                return result;
+                            },
+                            {},
+                            this
+                        );
+                        this.context.fill(properties);
+                    }
+                    panel.set('content', html);
                 }
             },
             {
@@ -292,36 +330,14 @@ define(function (require) {
                         this.mask && this.mask.show();
                     }
                     else {
-                        this
-                            // 切换状态
-                            .removeState('visible')
-                            // 解除窗口`resize`事件的侦听
-                            .undelegate(window, 'resize', this._onWindowResize);
-
+                        // 切换状态
+                        this.removeState('visible')
                         // 隐藏遮罩
                         this.mask && this.mask.hide();
                     }
                 }
             }
         ),
-
-        getFooterButtonHTML: function (conf) {
-
-            var part = conf.part;
-            var helper = this.helper;
-            var className = ''
-                + helper.getPartClassName(part)
-                + ' '
-                + helper.getPartClassName('button');
-
-            return ''
-                + '<a id="' + helper.getPartId(part) + '" '
-                +     'data-part="' + part + '"'
-                +     'class="' + className + '" '
-                +     'href="#">'
-                +     conf.text
-                + '</a>';
-        },
 
         /**
          * 调整Dialog大小
@@ -468,7 +484,7 @@ define(function (require) {
              */
             this.$parent('dispose');
 
-            this.undelegate(this.main, 'click', this._onMainClicked);
+            this.undelegate(this.main, 'click', this.onMainClicked);
             $(this.main).remove();
 
             // 销毁遮罩
@@ -517,11 +533,9 @@ define(function (require) {
 
         dialog
             .render()
-            .on('buttonclick', function (e) {
-                if (e.part === 'confirm') {
-                    defer.resolve();
-                    this.hide();
-                }
+            .on('confirm', function (e) {
+                defer.resolve();
+                this.hide();
             })
             .show();
 
@@ -562,10 +576,12 @@ define(function (require) {
 
         dialog
             .render()
-            .on('buttonclick', function (e) {
-                var part = e.part;
-                var result = part === 'confirm' ? 'resolve' : 'reject';
-                defer[result](part);
+            .on('confirm', function (e) {
+                defer.resolve();
+                this.hide();
+            })
+            .on('cancel', function (e) {
+                defer.reject();
                 this.hide();
             })
             .show();

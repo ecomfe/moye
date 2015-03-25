@@ -6,10 +6,14 @@
  * @author leon <leonlu@outlook.com>
  */
 
-@import './variable.less';
 @import './dep.less';
-@import (reference) './Button.less';
+@import './variable.less';
+@import './mixin.less';
+
 @import './Mask.less';
+@import './Button.less';
+
+@moye-dialog-content-padding: 10px;
 
 .@{moye-prefix}-dialog {
 
@@ -32,16 +36,15 @@
     }
 
     &-header {
-        background: #eee;
         height: 20px;
         line-height: 20px;
         font: bold 14px inherit;
-        padding: 5px 10px;
+        padding: @moye-dialog-content-padding;
         border-bottom: 1px solid #eee;
     }
 
-    &-body {
-        padding: 10px;
+    &-content {
+        padding: @moye-dialog-content-padding;
     }
 
     &-close {
@@ -66,20 +69,8 @@
         padding: 5px;
     }
 
-    &-button {
-        .moye-button();
-        margin-left: 5px;
+    .ui-button {
+        margin: 0 5px;
     }
 
-    &-cancel {
-        @background-color: #bbb;
-        background-color: @background-color;
-
-        &:hover {
-            background-color: lighten(@background-color, 5%);
-        }
-        &:active {
-            background-color: darken(@background-color, 5%);
-        }
-    }
 }
