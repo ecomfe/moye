@@ -123,8 +123,8 @@ define(function (require) {
         init: function (options) {
             this.$parent(options);
             var main = $(this.main);
-            this.datasource = this.datasource || main.data('datasource') || [];
-            var option = this.getOption(this.value || main.data('value'));
+            this.datasource = this.datasource || [];
+            var option = this.getOption(this.value);
             this.value = option ? option.value : null;
         },
 
@@ -134,7 +134,7 @@ define(function (require) {
          * @return {Object}
          */
         getOption: function (value) {
-            for (var datasource = this.datasource, i = datasource.length - 1; i >= 0; i--) {
+            for (var i = 0, datasource = this.datasource, len = datasource.length; i < len; ++i) {
                 var option = this.adapter.toOption.call(this, datasource[i]);
                 if (option.value === value) {
                     return option;
@@ -202,7 +202,9 @@ define(function (require) {
 
                     var html = [];
                     var valueUseIndex = !!this.valueUseIndex;
-                    for (var i = 0; i < datasource.length; i++) {
+
+                    for (var i = 0, len = datasource.length; i < len; ++i) {
+
                         var item = datasource[i];
 
                         if (!lib.isObject(item)) {
@@ -215,11 +217,7 @@ define(function (require) {
                                 : (valueUseIndex ? i : data[0]);
                         }
 
-                        html.push(''
-                            + '<a href="#" data-value="' + item.value + '" data-index="' + i + '">'
-                            +   item.name
-                            + '</a>'
-                        );
+                        html.push(this.getOptionHTML(item, i));
                     }
 
                     this.popup.main.innerHTML = html.join('');
@@ -229,87 +227,82 @@ define(function (require) {
                 name: ['value'],
                 paint: function (conf, value) {
 
-                    if (value) {
-                        this.addState('selected');
-                    }
-
                     var helper = this.helper;
-                    var input = helper.getPart('input');
-                    var text;
                     var datasource = this.datasource || [];
                     var selectedClass = helper.getPartClassName('option-selected');
+                    var optionClass = helper.getPartClassName('option');
 
                     value = this.isNumber ? +value : value;
 
                     // 在子元素里遍历, 如果其值与value相等, 则选中, 不相等则清空选项的选中样式
                     // 如果没有任何选项与value相等, 此时要显示defalutLabel, 并去掉`已选择`状态
-                    lib.each(
-                        $(this.popup.main).children(),
-                        function (element, i) {
-
+                    var option = lib.reduce(
+                        $('.' + optionClass, this.popup.main),
+                        function (result, element, i) {
                             var item = $(element);
                             var option = this.adapter.toOption.call(this, datasource[i]);
 
                             // 否则移除它的选中样式
                             if (option.value !== value) {
                                 item.removeClass(selectedClass);
-                                return;
                             }
-
                             // 如果value与option相等(也就是找到了)
                             // 或者value是undefined(这里我们把第一个项作为选中值)
-                            if (option.value === value) {
-                                option = datasource[i] || {
-                                    index: i,
-                                    name: item.html(),
-                                    value: option.value
-                                };
-                                text = this.adapter.toLabel.call(this, option);
-                                item.addClass(selectedClass);
-                            }
-
                             else {
-
+                                item.addClass(selectedClass);
+                                result = option;
                             }
+                            return result;
                         },
+                        null,
                         this
                     );
 
-                    // 没找到结果
-                    if (!text) {
-                        text = this.emptyText;
-                        this.removeState('expanded');
-                        input.value = '';
-                    }
-                    else {
+                    var input = helper.getPart('input');
+
+                    // 找到了结果
+                    if (option) {
+                        text = this.adapter.toLabel.call(this, option);
                         input.value = value;
+                        this.addState('selected');
+                    }
+                    // 没找到结果
+                    else {
+                        text = this.emptyText;
+                        this.value = input.value = '';
+                        this.removeState('selected');
                     }
 
-                    helper.getPart('label').innerHTML = text + this.getIndicatorHTML();
-                }
-            },
-            {
-                name: ['emptyText'],
-                paint: function (conf, emptyText) {
-                    if (this.hasState('selected')) {
-                        return;
-                    }
-                    this.helper.getPart('label').innerHTML = ''
-                        + emptyText
-                        + this.getIndicatorHTML();
+                    helper.getPart('label').innerHTML = text;
                 }
             }
         ),
 
         getIndicatorHTML: function () {
             var indicator = this.indicator;
-            return lib.isBoolean(indicator) && indicator === false
+            return indicator === false
                 ? ''
                 : this.helper.getPartHTML(
                     'indicator',
                     'i',
                     indicator === true ? '' : indicator
                 );
+        },
+
+        /**
+         * 生成选项的HTML
+         * @param {Object} option 选项配置
+         * @param {number} index  当前选项的序号
+         * @return {string}
+         */
+        getOptionHTML: function (option, index) {
+            option = this.adapter.toOption.call(this, option, index);
+            return ''
+                + '<a href="#" class="' + this.helper.getPartClassName('option') + '" data-action="select" '
+                +     'data-value="' + option.value + '" '
+                +     'data-index="' + index + '">'
+                +     option.name
+                + '</a>';
         },
 
         /**
@@ -331,8 +324,8 @@ define(function (require) {
          */
         pick: function (target) {
             var value = $(target).data('value');
-            var changesIndex = this.set('value', value);
-            if (changesIndex) {
+            if (value !== this.value) {
+                this.set('value', value);
                 /**
                  * @event module:Select#change
                  * @type {Object}
@@ -380,7 +373,6 @@ define(function (require) {
                 e.preventDefault();
                 this.pick(target);
                 this.popup.hide();
-                this.removeState('expanded');
             }
         },
 
@@ -401,7 +393,6 @@ define(function (require) {
             // 如果没有被阻止, 那就执行默认动作.
             if (!e.isDefaultPrevented()) {
                 this.addState('expanded');
-                this.removeState('selected');
             }
         },
 
@@ -416,7 +407,6 @@ define(function (require) {
             // 如果没有被阻止, 那就执行默认动作.
             if (!e.isDefaultPrevented()) {
                 this.removeState('expanded');
-                this.getValue() && this.addState('selected');
             }
         },
 
