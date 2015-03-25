@@ -637,6 +637,9 @@ define(function (require) {
 
             this.fire('beforedispose');
 
+            // 销毁插件
+            this.helper.disposePlugins();
+
             // 销毁子控件
             // {@link Module:helper/children.disposeChildren()}
             this.helper.disposeChildren();
@@ -649,7 +652,7 @@ define(function (require) {
             this.helper.changeStage('DISPOSED');
 
             /**
-             * @event module:Control#dispose
+             * @event module:Control#afterdispose
              */
             this.fire('afterdispose');
         },

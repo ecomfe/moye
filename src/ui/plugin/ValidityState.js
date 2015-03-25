@@ -1,19 +1,21 @@
 /**
  * @file 校验合法性状态
  *       来自esui/ValidityState
-s * @author leon <lupengyu@baidu.com>
+ * @author leon <lupengyu@baidu.com>
  */
+
 define(function (require) {
 
     /**
      * 验证状态类
      *
      * 一个`ValidityState`表示一条规则的验证结果，其包含`state`和`message`两个属性
-     * 
-     * @class validator.ValidityState
+     *
+     * @module ValidityState
+     * @class ValidityState
      * @constructor
      * @param {boolean} state 验证状态
-     * @param {string} [message=""] 验证信息
+     * @param {string} message 验证信息
      */
     function ValidityState(state, message) {
         this.state = state;
@@ -23,7 +25,7 @@ define(function (require) {
     /**
      * 获取验证信息
      *
-     * @return {string} 
+     * @return {string}
      */
     ValidityState.prototype.getMessage = function () {
         return this.message;

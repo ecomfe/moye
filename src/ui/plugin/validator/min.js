@@ -1,18 +1,22 @@
 /**
- * @file 最大值校验规则
- * @author leon<lupengyu@baidu.com>
+ * @file 最小值校验规则
  * @author wuhuiyao(wuhuiyao@baidu.com)
  */
 
 define(function (require) {
 
+    var lib = require('../../lib');
     var ValidityState = require('../ValidityState');
     var ValidateRule = require('../ValidateRule');
 
-    ValidateRule.register('max', {
+    ValidateRule.register('min', {
 
         check: function (value, control) {
-            var result = !value || (!isNaN(value) && value <= this.value);
+            if (lib.isNumber(value)) {
+                value = '' + value;
+            }
+
+            var result = !value || (!isNaN(value) && value >= this.value);
             return new ValidityState(
                 result,
                 this.getMessage(control, result)
@@ -20,7 +24,7 @@ define(function (require) {
         },
 
         message: {
-            invalid: '!{title}不能超过!{value}'
+            invalid: '!{title}不能小于!{value}'
         }
 
     });

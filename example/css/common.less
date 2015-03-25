@@ -1,7 +1,7 @@
 @import 'est/src/all.less';
 @import (inline) './markdown.css';
 @import (inline) './highlight.tommorrow.eighties.css';
-@import '../../src/css/Tabs.less';
+@import '../../src/css/Tab.less';
 .global-reset();
 
 @navWidth: 160px;
@@ -188,7 +188,7 @@ body {
     width: 100%;
     z-index: 50;
     background-color: #222;
-    .ui-tabs {
+    .ui-tab {
         background-color: @darkBoxBackGroundColor;
         border-bottom-color: #222;
         &-item {
@@ -200,7 +200,7 @@ body {
                 display: none;
             }
         }
-        &-active {
+        &-item-active {
             background-color: @darkBoxBackGroundColor;
         }
     }

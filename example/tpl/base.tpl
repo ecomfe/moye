@@ -29,32 +29,32 @@ require.config({
     </div>
     <div id="dark-bg">
         <div id="top-nav">
-            <ul id="lang-nav" class="ui-tabs" data-ctrl-context="default" data-ctrl-id="moye-8">
-                <li class="ui-tabs-item ui-tabs-item-first ui-tabs-active" data-index="0">js</li>
-                <li class="ui-tabs-item" data-index="1">html</li>
+            <ul id="lang-nav" class="ui-tab" data-ctrl-context="default" data-ctrl-id="moye-8">
+                <li class="ui-tab-item ui-tab-item-first ui-tab-item-active" data-index="0">js</li>
+                <li class="ui-tab-item" data-index="1">html</li>
             </ul>
         </div>
     </div>
 </div>
 <script>
-require(['jquery', 'ui/lib', 'ui/Tabs'], function ($, lib, Tabs) {
+require(['jquery', 'ui/lib', 'ui/Tab'], function ($, lib, Tab) {
     lib.fixed($('.nav')[0], {
         top: 0,
         left: 0,
         bottom: 0
     });
 
-    var tabs = [{
+    var tab = [{
         title: 'js'
     }, {
         title: 'html'
     }];
 
-    new Tabs({
+    new Tab({
         main: document.getElementById('lang-nav'),
-        tabs: tabs
+        tab: tab
     }).render().on('change', function (e) {
-        switchCode(tabs[e.activeIndex].title);
+        switchCode(tab[e.activeIndex].title);
     });
 
     function switchCode(title) {

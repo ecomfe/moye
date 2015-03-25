@@ -4,19 +4,22 @@
  *       Validity.addState方法直接可以添加state和message。
  *       自动转化为ValidityState实例。
  * @author leon <lupengyu@baidu.com>
+ * @author wuhuiyao(wuhuiyao@baidu.com)
  */
+
 define(function (require) {
 
     /**
      * 验证结果类
      *
      * 一个`Validity`是对一个控件的验证结果的表达，
-     * 是一系列{@link validator.ValidityState}的组合
+     * 是一系列{@link module:ValidityState}的组合
      *
-     * 当有至少一个{@link validator.ValidityState}处于错误状态时，
+     * 当有至少一个{@link module:ValidityState}处于错误状态时，
      * 该`Validity`对象将处于错误状态
      *
-     * @class validator.Validity
+     * @module Validity
+     * @class Validity
      * @constructor
      */
     function Validity() {
@@ -30,29 +33,31 @@ define(function (require) {
      * 添加验证状态
      *
      * @param {string} name 状态名
-     * @param {ValidityState|boolean} state 验证状态
-     * @param {?string} [message=""] 验证信息
+     * @param {ValidityState} state 验证状态
      */
     Validity.prototype.addState = function (name, state) {
+        var stateList = this.states;
+        var existedState = this.stateIndex[name];
 
         // 如果状态名已存在
-        if (this.stateIndex[name]) {
+        if (existedState) {
+
             // 同样的状态对象，不处理
-            if (this.stateIndex[name] === state) {
+            if (existedState === state) {
                 return;
             }
 
             // 不一样，删除原list中元素
-            for (var i = 0; i < this.states.length; i++) {
-                if (this.states[i] === this.stateIndex[name]) {
-                    this.states.splice(i, 1);
+            for (var i = 0, len = stateList.length; i < len; i++) {
+                if (stateList[i] === existedState) {
+                    stateList.splice(i, 1);
                     break;
                 }
             }
         }
 
         // 更新数据
-        this.states.push(state);
+        stateList.push(state);
         this.stateIndex[name] = state;
     };
 
@@ -60,7 +65,7 @@ define(function (require) {
      * 获取验证状态
      *
      * @param {string} name 状态名
-     * @return {validator.ValidityState} 规则验证状态对象
+     * @return {?ValidityState} 规则验证状态对象
      */
     Validity.prototype.getState = function (name) {
         return this.stateIndex[name] || null;
@@ -69,7 +74,7 @@ define(function (require) {
     /**
      * 获取验证状态集合
      *
-     * @return {validator.ValidityState[]}
+     * @return {Array.<ValidityState>}
      */
     Validity.prototype.getStates = function () {
         return this.states.slice();
@@ -83,7 +88,6 @@ define(function (require) {
     Validity.prototype.getCustomMessage = function () {
         return this.customMessage;
     };
-
 
     /**
      * 设置自定义验证信息
@@ -107,7 +111,7 @@ define(function (require) {
     /**
      * 获取整体是否验证通过
      *
-     * @return {boolean} 
+     * @return {boolean}
      */
     Validity.prototype.isValid = function () {
 

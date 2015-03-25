@@ -587,8 +587,8 @@ define(function (require) {
             var middle       = top + (height / 2);
 
             // 提示层宽高
-            var mainWidth    = main.width();
-            var mainHeight   = main.height();
+            var mainWidth    = main.outerWidth();
+            var mainHeight   = main.outerHeight();
 
 
             var win          = $(window);

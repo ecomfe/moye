@@ -17,7 +17,7 @@ define(function (require) {
         },
 
         check: function (value, control) {
-            var state = regex.test(value);
+            var state = !value || regex.test(value);
             return new ValidityState(state, this.getMessage(control, state));
         }
 
