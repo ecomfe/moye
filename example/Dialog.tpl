@@ -55,7 +55,6 @@ require(['jquery', 'ui/Dialog'], function ($, Dialog) {
       + '夜闻南城汉使度，使我流泪忆长安！<br>',
     title: '普通青年有一个普通标题'
   }).render();
-
   $('#dialog').on('click', $.proxy(dialog.show, dialog));
 });
 </script>
@@ -128,16 +127,13 @@ require(['jquery', 'ui/Dialog'], function ($, Dialog) {
     content: '设定`buttons`参数来添加脚注中的按钮',
     title: '带按钮的窗口',
     buttons: [{
-      text: '嘿嘿, 我是一个按钮',
-      part: 'big-button'
-    }, {
-      text: 'ok',
-      part: 'ok'
+      text: '好',
+      part: 'big',
+      skin: 'mini'
     }]
   })
   .render()
-  .on('buttonclick', function (e) {
-    // e.part => big-button
+  .on('big', function (e) {
     this.hide();
   });
 
