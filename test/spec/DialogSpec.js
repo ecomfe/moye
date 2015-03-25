@@ -1,6 +1,7 @@
 define(function (require) {
     var $ = require('jquery');
     var Dialog = require('ui/Dialog');
+    var Mask = require('ui/Mask');
     var dialog;
 
     beforeEach(function () {
@@ -27,35 +28,23 @@ define(function (require) {
     });
 
     describe('MASK相关接口', function () {
-        var mask = Dialog.Mask.create({
-            className: 'ecl-ui-dialog-mask',
-            styles: {
-                zIndex: 9
-            }
+
+        var mask = Mask.create().render();
+
+        it('mask.show', function () {
+            mask.show();
+            expect($(mask.main).css('visibility')).toBe('visible');
         });
 
         it('mask.hide', function () {
             mask.hide();
-            expect($(mask.mask).css('display')).toBe('none');
-        });
-
-        it('mask.show', function () {
-            mask.show();
-            expect($(mask.mask).css('display')).toNotBe('none');
+            expect($(mask.main).css('visibility')).toBe('hidden');
         });
 
         it('mask.repaint', function () {
             mask.repaint();
-
             var width = $(window).width();
-
-            expect(mask.mask.style.width).toBe(width + 'px');
-        });
-
-        it('mask.dispose', function () {
-            mask.dispose();
-            expect(!!mask.mask).toBeTruthy();
-            mask = null;
+            expect(mask.main.offsetWidth).toBe(width);
         });
 
     });
@@ -91,24 +80,24 @@ define(function (require) {
         });
 
         it('title check', function () {
-            var header = dialog.query('ecl-ui-dialog-header')[0];
-            expect(header.innerHTML).toBe('标题');
+            var header = $('.ui-dialog-header', dialog.main);
+            expect(header.text()).toBe('标题');
             dialog.setTitle('标题1');
-            expect(header.innerHTML).toBe('标题1');
+            expect(header.text()).toBe('标题1');
         });
 
         it('content check', function () {
-            var body = dialog.query('ecl-ui-dialog-body')[0];
-            expect(body.innerHTML).toBe('内容');
+            var content = $('.ui-dialog-content', dialog.main);
+            expect(content.text()).toBe('内容');
             dialog.setContent('内容1');
-            expect(body.innerHTML).toBe('内容1');
+            expect(content.text()).toBe('内容1');
         });
 
         it('footer check', function () {
-            var footer = dialog.query('ecl-ui-dialog-footer')[0];
-            expect(footer.innerHTML).toBe('底部');
+            var content = $('.ui-dialog-footer', dialog.main);
+            expect(content.text()).toBe('底部');
             dialog.setFooter('底部1');
-            expect(footer.innerHTML).toBe('底部1');
+            expect(content.text()).toBe('底部1');
         });
 
         it('mask check', function () {
