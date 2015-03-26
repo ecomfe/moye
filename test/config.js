@@ -64,6 +64,46 @@ module.exports = function(config) {
             //     pattern: 'test/spec/CitySpec.js',
             //     included: false
             // },
+            {
+                pattern: 'test/spec/PanelSpec.js',
+                included: false
+            },
+            {
+                pattern: 'test/spec/FormSpec.js',
+                included: false
+            },
+            {
+                pattern: 'test/spec/plugin/ValiditySpec.js',
+                included: false
+            },
+            {
+                pattern: 'test/spec/plugin/ValidateRuleSpec.js',
+                included: false
+            },
+            {
+                pattern: 'test/spec/plugin/ValidateTipSpec.js',
+                included: false
+            },
+            {
+                pattern: 'test/spec/plugin/ValidatorSpec.js',
+                included: false
+            },
+            {
+                pattern: 'test/spec/plugin/FormSubmitSpec.js',
+                included: false
+            },
+            {
+                pattern: 'test/spec/plugin/FormFieldWatcherSpec.js',
+                included: false
+            },
+            {
+                pattern: 'test/spec/plugin/FormRelationSpec.js',
+                included: false
+            },
+            {
+                pattern: 'test/spec/plugin/validator/PredefineRuleSpec.js',
+                included: false
+            }
     ],
 
 
