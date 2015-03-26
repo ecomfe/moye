@@ -36,7 +36,7 @@ define(function (require) {
         $('#tipContainer').remove();
     });
 
-    describe('基本接口', function () {
+    describe('Tip基本接口', function () {
 
         it('点击模式', function () {
 
@@ -74,9 +74,6 @@ define(function (require) {
             expect(tip.isVisible()).toBeTruthy();
             expect(tip.elements.body.innerHTML).toBe('content');
 
-            // title待定
-            // tip.setTitle();
-            // expect(tip.elements.title.offsetWidth).toBe(0);
 
             // toggle了
             $(target).trigger('click');
@@ -121,7 +118,6 @@ define(function (require) {
             var onShow = function (e) {
                 expect(e.target).toBe(target);
 
-                // this.setTitle('title');
                 this.setContent('content2');
             };
 
@@ -144,11 +140,8 @@ define(function (require) {
             main.trigger('click');
 
             expect(tip.isVisible()).toBeFalsy();
-            // expect(tip.elements.title.innerHTML).toBe('title');
             expect(tip.elements.body.innerHTML).toBe('content');
 
-            // tip.setTitle();
-            // expect(tip.elements.title.offsetWidth).toBe(0);
 
             jasmine.Clock.tick(delay);
             expect(tip.isVisible()).toBeTruthy();
@@ -211,10 +204,10 @@ define(function (require) {
 
             // 位置计算(无offset，默认水平居中，垂直0.4)
             var win = $(window);
-            var offset = main.offset();
             expect(main.css('position')).toBe('fixed');
-            expect(parseInt(offset.left), 10).toBe(parseInt((win.width() - main.width()) / 2), 10);
-            expect(parseInt(offset.top), 10).toBe(parseInt((win.height() - main.height()) * 0.4), 10);
+
+            expect(parseInt(main.offset().left), 10).toBe(parseInt((win.width() - main.width()) / 2), 10);
+            expect(parseInt(main.css('top')), 10).toBe(parseInt((win.height() - main.height()) * 0.4), 10);
 
             tip.hide();
             expect(tip.isVisible()).toBeFalsy();

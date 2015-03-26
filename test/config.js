@@ -40,10 +40,10 @@ module.exports = function(config) {
             //     pattern: 'test/spec/CookieSpec.js',
             //     included: false
             // },
-            // {
-            //     pattern: 'test/spec/TipSpec.js',
-            //     included: false
-            // },
+            {
+                pattern: 'test/spec/TipSpec.js',
+                included: false
+            },
             // {
             //     pattern: 'test/spec/PagerSpec.js',
             //     included: false

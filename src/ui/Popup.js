@@ -315,8 +315,7 @@ define(function (require) {
                 this.undelegate(this.main, 'mouseleave', this.onMainMouseLeave);
             }
             else {
-                $(triggers)
-                    .off('click', this.showBound);
+                $(triggers).off('click', this.showBound);
             }
         },
 
@@ -552,7 +551,7 @@ define(function (require) {
          */
         onMainMouseLeave: function (e) {
             this.clear();
-            // TODO 是否state改变应该在timer之后处理？？
+
             this.addState('show');
             this.onHide(e);
         },

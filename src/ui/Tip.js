@@ -183,10 +183,8 @@ define(function (require) {
 
             var helper = me.helper;
             // 拼DOM
-            // TODO title到底还需不需要？
             var html = ''
                 + helper.getPartHTML('arrow', 'div', '<em></em><ins></ins>')
-                // + helper.getPartHTML('title', 'div', me.title || '')
                 + helper.getPartHTML('body', 'div', me.body || '');
 
             // 给样式, 弄到DOM树上
@@ -198,13 +196,8 @@ define(function (require) {
             // 把部件绑定到自己身上
             me.elements = {
                 arrow: helper.getPart('arrow'),
-                // title: helper.getPart('title'),
                 body: helper.getPart('body')
             };
-
-            // if (!this.title) {
-            //     $(helper.getPart('title')).hide();
-            // }
         },
 
         /**
