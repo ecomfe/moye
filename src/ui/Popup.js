@@ -327,7 +327,7 @@ define(function (require) {
          * @return {Popup}
          */
         show: function () {
-
+            console.log('show');
             var me = this;
 
             if (me.hasState('show')) {
@@ -385,6 +385,7 @@ define(function (require) {
          * @return {Popup}
          */
         hide: function () {
+            console.log('hide');
 
             var me = this;
 
@@ -444,14 +445,15 @@ define(function (require) {
          * @private
          */
         onShow: function (e) {
-
+            console.log('onShow');
             if (this.isDisabled()) {
                 return;
             }
 
             var target = e.target;
             var main = this.main;
-            var currentTrigger = target === main || $.contains(main, target)
+            var isTargetInMain = target === main || $.contains(main, target);
+            var currentTrigger = isTargetInMain
                 ? this.trigger
                 : $(e.target).closest(this.triggers)[0];
 
@@ -470,9 +472,9 @@ define(function (require) {
             // 如果不把钩子去掉，那会让接下来`显示`之后，事件冒泡上来到钩子上，又把它给隐藏了。
             if (previousTrigger) {
                 this.hide();
-                // 如果前trigger和现trigger是同一个元素, 那么我们把这种行为当作toggle;
+                // 如果前trigger和现trigger是同一个元素(并且target非main), 那么我们把这种行为当作toggle;
                 // 默认动作就是`hide`
-                if (currentTrigger === previousTrigger) {
+                if (!isTargetInMain && currentTrigger === previousTrigger) {
                     return;
                 }
             }
@@ -503,6 +505,7 @@ define(function (require) {
          * @param {Event} e 隐藏浮层事件
          */
         onHide: function (e) {
+            console.log('onHide');
             var target = $(e.target);
             var main   = $(this.main);
 
