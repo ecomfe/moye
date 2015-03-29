@@ -327,7 +327,6 @@ define(function (require) {
          * @return {Popup}
          */
         show: function () {
-            console.log('show');
             var me = this;
 
             if (me.hasState('show')) {
@@ -385,7 +384,6 @@ define(function (require) {
          * @return {Popup}
          */
         hide: function () {
-            console.log('hide');
 
             var me = this;
 
@@ -445,7 +443,6 @@ define(function (require) {
          * @private
          */
         onShow: function (e) {
-            console.log('onShow');
             if (this.isDisabled()) {
                 return;
             }
@@ -505,7 +502,6 @@ define(function (require) {
          * @param {Event} e 隐藏浮层事件
          */
         onHide: function (e) {
-            console.log('onHide');
             var target = $(e.target);
             var main   = $(this.main);
 
@@ -556,7 +552,7 @@ define(function (require) {
             this.clear();
 
             this.addState('show');
-            this.onHide(e);
+            this.hide();
         },
 
         /**
