@@ -37,7 +37,7 @@ define(function (require) {
 
                 img = $(img);
 
-                var el = img.parent().parent();
+                var el = img.parent();
                 var src = img.attr(_src);
 
                 if (!el.height() || !src) {
@@ -129,7 +129,7 @@ define(function (require) {
          * @private
          */
         initialize: function (options, main) {
-            options = this.setOptions(options);
+            this.setOptions(options);
             main = this.main = lib.g(options.main) || $('.' + options.main)[0];
             this.imgs = options.imgs || $('img', main).toArray();
 
@@ -158,6 +158,7 @@ define(function (require) {
         className = className || 'lazy-img';
 
         $('.' + className).each(function (i, el) {
+
             /* jshint -W031 */
             new LazyImg(
                 $.extend(
