@@ -2,99 +2,108 @@
 // Generated on Fri Dec 27 2013 15:11:09 GMT+0800 (CST)
 
 module.exports = function(config) {
-  config.set({
+    config.set({
 
-    // base path, that will be used to resolve files and exclude
-    basePath: '../',
+        // base path, that will be used to resolve files and exclude
+        basePath: '../',
 
-    requireConfig: {
-      baseUrl: '../'
-    },
-
-
-    // frameworks to use
-    frameworks: [
-      'jasmine',
-      'requirejs',
-      'http://s1.bdstatic.com/r/www/cache/static/jquery/jquery-1.10.2.min_f2fb5194.js'
-    ],
+        // frameworks to use
+        frameworks: [
+            'jasmine',
+            'requirejs',
+            'http://s1.bdstatic.com/r/www/cache/static/jquery/jquery-1.10.2.min_f2fb5194.js'
+        ],
 
 
-    // list of files / patterns to load in the browser
-    files: [
-      'src/css/*.less',
-      {
-        pattern: 'test/spec/FilterSpec.js',
-        included: false
-      },
-      {
-        pattern: 'test/spec/LunarSpec.js',
-        included: false
-      },
-      {
-        pattern: 'test/spec/CalendarSpec.js',
-        included: false
-      },
-      {
-        pattern: 'test/spec/CalendarExtensionSpec.js',
-        included: false
-      },
-      {
-        pattern: 'test/spec/CitySpec.js',
-        included: false
-      },
-      {
-        pattern: 'test/spec/logSpec.js',
-        included: false
-      },
-      {
-        pattern: 'test/spec/CookieSpec.js',
-        included: false
-      },
-      {
-        pattern: 'test/spec/TabsSpec.js',
-        included: false
-      },
-      {
-        pattern: 'test/spec/DialogSpec.js',
-        included: false
-      },
-      {
-        pattern: 'test/spec/DialogFactorySpec.js',
-        included: false
-      },
-      {
-        pattern: 'test/spec/FloatTipSpec.js',
-        included: false
-      },
-      {
-        pattern: 'test/spec/PagerSpec.js',
-        included: false
-      },
-      {
-        pattern: 'test/spec/RatingSpec.js',
-        included: false
-      },
-      {
-        pattern: 'test/spec/PicUploaderSpec.js',
-        included: false
-      },
-      {
-        pattern: 'test/spec/SelectSpec.js',
-        included: false
-      },
-      {
-        pattern: 'test/spec/ScrollBarSpec.js',
-        included: false
-      },
-      {
-        pattern: 'test/spec/TipSpec.js',
-        included: false
-      }
-    // , {
-    //   pattern: 'test/spec/SliderAnimSpec.js',
-    //   included: false
-    // }
+        // list of files / patterns to load in the browser
+        files: [
+            'src/css/Button.less',
+            {
+                pattern: 'test/spec/ButtonSpec.js',
+                included: false
+            },
+            'src/css/Dialog.less',
+            {
+                pattern: 'test/spec/DialogSpec.js',
+                included: false
+            },
+            'src/css/Select.less',
+            {
+                pattern: 'test/spec/SelectSpec.js',
+                included: false
+            },
+            {
+                pattern: 'test/spec/logSpec.js',
+                included: false
+            },
+            // {
+            //     pattern: 'test/spec/CookieSpec.js',
+            //     included: false
+            // },
+            {
+                pattern: 'test/spec/TipSpec.js',
+                included: false
+            },
+            // {
+            //     pattern: 'test/spec/PagerSpec.js',
+            //     included: false
+            // },
+            // {
+            //   pattern: 'test/spec/RatingSpec.js',
+            //     included: false
+            // },
+            // {
+            //     pattern: 'test/spec/TabsSpec.js',
+            //     included: false
+            // },
+            // {
+            //     pattern: 'test/spec/CalendarSpec.js',
+            //     included: false
+            // },
+            // {
+            //     pattern: 'test/spec/CitySpec.js',
+            //     included: false
+            // },
+            {
+                pattern: 'test/spec/PanelSpec.js',
+                included: false
+            },
+            {
+                pattern: 'test/spec/FormSpec.js',
+                included: false
+            },
+            {
+                pattern: 'test/spec/plugin/ValiditySpec.js',
+                included: false
+            },
+            {
+                pattern: 'test/spec/plugin/ValidateRuleSpec.js',
+                included: false
+            },
+            {
+                pattern: 'test/spec/plugin/ValidateTipSpec.js',
+                included: false
+            },
+            {
+                pattern: 'test/spec/plugin/ValidatorSpec.js',
+                included: false
+            },
+            {
+                pattern: 'test/spec/plugin/FormSubmitSpec.js',
+                included: false
+            },
+            {
+                pattern: 'test/spec/plugin/FormFieldWatcherSpec.js',
+                included: false
+            },
+            {
+                pattern: 'test/spec/plugin/FormRelationSpec.js',
+                included: false
+            },
+            {
+                pattern: 'test/spec/plugin/validator/PredefineRuleSpec.js',
+                included: false
+            }
     ],
 
 
@@ -118,7 +127,7 @@ module.exports = function(config) {
 
     lessPreprocessor: {
       options: {
-        paths: ['src/css']
+        paths: ['src/css', 'dep']
       }
     },
 

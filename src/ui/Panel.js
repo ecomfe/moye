@@ -1,13 +1,28 @@
 /**
  * @file Panel控件
  * @author Leon(lupengyu@baidu)
+ * @author wuhuiyao(wuhuiyao@baidu.com)
  */
+
 define(function (require) {
 
     var Control = require('./Control');
     var painter = require('./painter');
 
-    var Panel = Control.extend({
+    /**
+     * 面板控件
+     *
+     * @extends module:Control
+     * @exports Panel
+     */
+    var Panel = Control.extend(/** @lends module:Panel.prototype */{
+
+        /**
+         * 控件类型
+         *
+         * @readonly
+         * @type {string}
+         */
         type: 'Panel',
 
         /**
@@ -25,8 +40,8 @@ define(function (require) {
                  *
                  * 面板的内容，为一个HTML片段
                  *
-                 * 此属性中可包含ESUI相关的属性，在设置内容后，
-                 * 会使用{@link Helper#initChildren}进行内部控件的初始化
+                 * 此属性中可包含 Moye 相关的属性，在设置内容后，
+                 * 会使用{@link module:Helper#initChildren}进行内部控件的初始化
                  */
                 name: 'content',
                 paint: function (conf, content) {
@@ -43,14 +58,34 @@ define(function (require) {
             }
         ),
 
+        /**
+         * 启用面板
+         *
+         * @public
+         */
         enable: function () {
             this.$parent();
             this.helper.enableChildren();
         },
 
+        /**
+         * 禁用面板
+         *
+         * @public
+         */
         disable: function () {
             this.$parent();
             this.helper.disableChildren();
+        },
+
+        /**
+         * 设置面板内容
+         *
+         * @public
+         * @param {string} html 内容HTML，具体参考{@link module:Panel#content}属性的说明
+         */
+        setContent: function (html) {
+            this.set('content', html);
         }
 
     });

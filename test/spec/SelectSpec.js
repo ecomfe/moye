@@ -1,226 +1,260 @@
 define(function (require) {
 
     var $ = require('jquery');
-    var lib = require('ui/lib');        
+    var lib = require('ui/lib');
     var Select = require('ui/Select');
-    
+
     var select;
     var onPick;
 
     beforeEach(function () {
         document.body.insertAdjacentHTML(
-            'beforeEnd', ''
-                + '<div id="selectContainer">'
-                +   '<a href="#" class="ecl-ui-sel-target">'
-                +       '<b>商圈</b><i></i>'
-                +   '</a>'
-                +   '<p class="ecl-ui-sel">'
-                +       '<a href="#" data-value="0">不限</a>'
-                +       '<a href="#" data-value="1">中关村、上地</a>'
-                +       '<a href="#" data-value="2">亚运村</a>'
-                +       '<a href="#" data-value="3">公主坟商圈</a>'
-                +       '<a href="#" data-value="4">劲松潘家园</a>'
-                +       '<a href="#" data-value="5">北京南站商圈超长</a>'
-                +     '</p>'
-                + '</div>'
+            'beforeEnd',
+            '<div id="cycle" class="ui-select"></div></div>'
         );
 
         select = new Select({
-            prefix: 'ecl-ui-sel',
-            main: $('.ecl-ui-sel')[0],
-            target: $('.ecl-ui-sel-target')[0],
-            maxLength: 8,
-            cols: 2,
-            offset: {
-                y: -1
-            }
-        });
-        select.render();
+            main: lib.g('cycle'),
+            datasource: [{
+                value: 1,
+                name: 1
+            }, {
+                value: 2,
+                name: 2
+            }]
+        }).render();
 
         onPick = jasmine.createSpy('onPick');
-        
     });
 
 
     afterEach(function () {
-        document.body.removeChild(lib.g('selectContainer'));
+        document.body.removeChild(lib.g('cycle'));
         select.dispose();
         onPick = null;
     });
-  
+
     describe('基本接口', function () {
 
         it('控件类型', function () {
-
             expect(select.type).toBe('Select');
-
         });
 
-        it('显示/隐藏', function () {
-            var onShow = jasmine.createSpy('onShow');
-            select.once('show', onShow);
-            select.show();
-
-            expect(onShow).toHaveBeenCalled();
-
-            var onHide = jasmine.createSpy('onHide');
-            select.once('hide', onHide);
-            select.hide();
-
-            expect(onHide).toHaveBeenCalled();
+        it('Popup', function () {
+            expect(!!select.popup).toBeTruthy();
         });
 
-        it('beforeShow', function () {
-            var onBeforeShow = jasmine.createSpy('onBeforeShow');
-            select.once('beforeShow', onBeforeShow);
-            // lib.fire(select.target, 'click');
-            $(select.target).trigger('click');
-            expect(onBeforeShow).toHaveBeenCalled();
-        });
+        it('显示 / `show` 事件', function () {
 
-        it('选择：有事件', function () {
-            var target = select.main.getElementsByTagName('a')[1];
-            select.once('pick', onPick);
-            // lib.fire(target, 'click');
-            $(target).trigger('click');
+            var flag = false;
+            var spy = jasmine.createSpy();
 
-            expect(onPick).toHaveBeenCalledWith({
-                value: target.getAttribute('data-value') | 0,
-                text: target.innerHTML,
-                shortText: '中关...',
-                type: 'pick'
+            $('#cycle').trigger('click');
+
+            select.on('show', spy);
+
+            runs(function() {
+                setTimeout(function() {
+                    flag = true;
+                }, 100);
             });
+
+            waitsFor(
+                function () {
+                    return flag;
+                },
+                '浮层应该是被显示出来的',
+                200
+            );
+
+            runs(function() {
+                expect(spy).toHaveBeenCalled();
+            });
+
+        });
+
+        it('显示 / expanded状态', function () {
+
+            var flag = false;
+
+            $('#cycle').trigger('click');
+
+            runs(function() {
+                setTimeout(function() {
+                    flag = true;
+                }, 100);
+            });
+
+            waitsFor(
+                function () {
+                    return flag;
+                },
+                '浮层应该是被显示出来的',
+                200
+            );
+
+            runs(function() {
+                expect(select.hasState('expanded')).toBeTruthy();
+            });
+        });
+
+        it('隐藏 / `hide` 事件', function () {
+
+            var flag = false;
+            var spy = jasmine.createSpy();
+
+            select.on('show', spy);
+
+            $('#cycle').trigger('click');
+
+            setTimeout(function () {
+                $('body').trigger('click');
+            }, 100);
+
+            runs(function() {
+                setTimeout(function() {
+                    flag = true;
+                }, 200);
+            });
+
+            waitsFor(
+                function () {
+                    return flag;
+                },
+                '浮层应该是被隐藏起来的',
+                300
+            );
+
+            runs(function() {
+                expect(spy).toHaveBeenCalled();
+            });
+
+        });
+
+        it('隐藏 / expanded 状态', function () {
+
+            var flag = false;
+
+            $('#cycle').trigger('click');
+
+            setTimeout(function () {
+                $('body').trigger('click');
+            }, 100);
+
+            runs(function() {
+                setTimeout(function() {
+                    flag = true;
+                }, 200);
+            });
+
+            waitsFor(
+                function () {
+                    return flag;
+                },
+                '浮层应该是被隐藏起来的',
+                300
+            );
+
+            runs(function() {
+                expect(select.hasState('expanded')).toBeFalsy();
+            });
+
         });
 
         it('模拟点击', function () {
-            var target = select.main.getElementsByTagName('a')[2];
-            select.once('pick', onPick);
 
-            // lib.fire(target, 'click');
-            $(target).trigger('click');
-            expect(onPick).toHaveBeenCalledWith({
-                value: target.getAttribute('data-value') | 0,
-                text: target.innerHTML,
-                shortText: target.innerHTML,
-                type: 'pick'
+            var spy = jasmine.createSpy();
+            var target = $('.ui-select-option:eq(1)', select.popup.main);
+            var flag = false;
+
+            select.on('change', spy);
+            target.trigger('click');
+
+            runs(function () {
+                setTimeout(function () {
+                    flag = true;
+                }, 100);
             });
-        });
 
-        it('disable && enable', function () {
-            var target = select.main.getElementsByTagName('a')[2];
+            waitsFor(function () {
+                return flag;
+            }, '应该释放出`change`事件', 200);
 
-            select.disable();
-            expect(select.isDisabled()).toBeTruthy();
+            runs(function () {
+                expect(spy).toHaveBeenCalled();
+            });
 
-            select.once('pick', onPick);
-            // lib.fire(target, 'click');
-            // lib.fire(target, 'click');
-            $(target).trigger('click');
-            $(target).trigger('click');
-            expect(onPick).not.toHaveBeenCalled();
-
-            select.enable();
-            expect(select.isDisabled()).toBeFalsy();
-
-            // lib.fire(target, 'click');
-            $(target).trigger('click');
-            expect(onPick).toHaveBeenCalled();
-            select.un('pick', onPick);
-        });
-
-
-        it('模拟重复点击', function () {
-            var target = select.main.getElementsByTagName('a')[2];
-            select.on('pick', onPick);
-
-            // lib.fire(target, 'click');
-            $(target).trigger('click');
-            expect(onPick.calls.length).toBe(1);
-            // lib.fire(target, 'click');
-            $(target).trigger('click');
-            expect(onPick.calls.length).toBe(1);
-            // lib.fire(target, 'click');
-            $(target).trigger('click');
-            expect(onPick.calls.length).toBe(1);
-            select.un('pick', onPick);
         });
 
         it('模拟点击不触发onChange', function () {
-            var options = select.main.getElementsByTagName('a');
+            var options = $('.ui-select-option', select.popup.main);
+            var spy = jasmine.createSpy('onChange');
+            var flag = false;
 
-            var onChange = jasmine.createSpy('onChange');
+            select.on('change', spy);
 
-            select.on('pick', onPick);
-            select.on('change', onChange);
-            // lib.fire(options[2], 'click');
-            $(options[2]).trigger('click');
-            expect(onPick.calls.length).toBe(1);
-            expect(onChange.calls.length).toBe(1);
-            options[3].setAttribute(
-                'data-value',
-                options[2].getAttribute('data-value')
-            );
-            // lib.fire(options[3], 'click');
-            $(options[3]).trigger('click');
-            expect(onPick.calls.length).toBe(2);
-            expect(onChange.calls.length).toBe(1);
-            select.un('pick', onPick);
-            select.un('change', onChange);
-        });
+            select.setValue(1)
 
-        it('reset', function () {
-            var onChange = jasmine.createSpy('onChange');
-            select.on('pick', onPick);
-            select.on('change', onChange);
+            $(options[0]).trigger('click');
 
-            // lib.fire(select.main.getElementsByTagName('a')[2], 'click');
-            $(select.main.getElementsByTagName('a')[2]).trigger('click');
-            expect(onPick).toHaveBeenCalled();
-            expect(onChange).toHaveBeenCalled();
+            runs(function () {
+                setTimeout(function () {
+                    flag = true;
+                }, 100);
+            });
 
-            expect(select.getValue()).toBe(2);
-            expect(select.getValue(false)).toBe('2');
+            waitsFor(function () {
+                return flag;
+            }, '', 200);
 
-            select.reset();
-            expect(select.getValue()).toBe(0);
-            expect(select.getValue(false)).toBe('');
+            runs(function () {
+                expect(spy).not.toHaveBeenCalled();
+            });
+
         });
 
         it('datasource', function () {
-            select.dispose();
-            var container = lib.g('selectContainer');
-            container.innerHTML = ''
-                + '<input class="ecl-ui-sel-target" value="直辖市">';
 
-            var cities = '直辖市, 北京, 上海, 天津, 重庆'.split(/\s*,\s*/);
+            var datasource = [{
+                value: 3,
+                name: 'a3'
+            }, {
+                value: 4,
+                name: 'a4'
+            }, {
+                value: 5,
+                name: 'a5'
+            }];
 
-            select = new Select({
-                prefix: 'ecl-ui-sel',
-                target: $('.ecl-ui-sel-target')[0],
-                datasource: cities,
-                valueUseIndex: false,
-                maxLength: 8
-            }).render();
+            select.set('datasource', datasource);
 
-            var options = select.main.getElementsByTagName('a');
+            var options = $('.ui-select-option', select.popup.main);
 
-            expect(options.length).toBe(5);
+            expect(options.length).toBe(3);
 
-            for (var i = 0, len = options.length; i < len; i++) {
-                expect(
-                    options[i].getAttribute('data-value')
-                ).toBe(cities[i]);
-            }
+            options.each(function (i) {
+                expect($(this).data('value')).toBe(datasource[i].value);
+            });
 
-            select.once('pick', onPick);
-            // lib.fire(options[1], 'click');
-            $(options[1]).trigger('click');
+            var spy = jasmine.createSpy();
+            var flag = false;
 
-            expect(onPick).toHaveBeenCalledWith({
-                value: cities[1],
-                text: cities[1],
-                shortText: cities[1],
-                type: 'pick'
+            select.once('change', spy);
+
+            options.trigger('click');
+
+            runs(function () {
+                setTimeout(function () {
+                    flag = true;
+                }, 100);
+            });
+
+            waitsFor(function () {
+                return flag;
+            });
+
+            runs(function () {
+                expect(spy).toHaveBeenCalled();
             });
 
         });

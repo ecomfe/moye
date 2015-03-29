@@ -1,6 +1,7 @@
 /**
- * @file RequiredValidator
+ * @file 最大值校验规则
  * @author leon<lupengyu@baidu.com>
+ * @author wuhuiyao(wuhuiyao@baidu.com)
  */
 
 define(function (require) {
@@ -11,7 +12,7 @@ define(function (require) {
     ValidateRule.register('max', {
 
         check: function (value, control) {
-            var result = value < this.value;
+            var result = !value || (!isNaN(value) && value <= this.value);
             return new ValidityState(
                 result,
                 this.getMessage(control, result)

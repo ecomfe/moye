@@ -62,7 +62,7 @@ define(function (require) {
             {
                 name: ['name'],
                 paint: function (conf, name) {
-                    this.input.name = name;
+                    this.input.name = name || '';
                 }
             },
             {

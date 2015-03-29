@@ -1,6 +1,9 @@
 /**
  * @file 表单 - 字段关联插件
+ *       FIXME: 该插件不能使用 `use` 方式加载，其初始化依赖组件的`afterrender`事件
+ *       如果该组件已经渲染过了，再 `use` 将不会奏效
  * @author Leon(lupengyu@baidu)
+ * @author wuhuiyao(wuhuiyao@baidu.com)
  */
 
 define(function (require) {
@@ -52,42 +55,103 @@ define(function (require) {
         }
     };
 
-    var FormRelation = Plugin.extend({
+    /**
+     * 表单字段关联插件
+     *
+     * @extends module:Plugin
+     * @module FormRelation
+     */
+    var FormRelation = Plugin.extend(/** @lends module:FormRelation.prototype */{
 
         $class: 'FormRelation',
 
+        /**
+         * @typedef {Object} DependenceInfo
+         * @property {string} id 依赖的控件 id
+         * @property {string=} value 依赖控件使用内置的 `equal logic` 指定的要满足的值，可选
+         * @property {string|function(Dependence):boolean} 依赖组件要满足的逻辑规则定义，
+         *           可以使用内置的{@link module:FormRelation#logics}名称，或者自定义的
+         *           规则逻辑，执行上下文为该依赖的控件
+         */
+        /**
+         * @typedef {Object} Relation
+         * @property {Array.<DependenceInfo>} dependences 该关联组件的所有依赖信息
+         * @property {string|function(boolean):boolean} pattern 依赖关系要满足的规则定义
+         *           可以使用内置的{@link module:FormRelation#patterns}名称，或者自定义的
+         *           规则定义
+         * @property {Array.<string>} targets 依赖关系要触发执行的 `actions` 的目标控件 id
+         * @property {Array.<string|function(boolean)>} actions 要执行的 `action`,
+         *           可以使用内置的{@link module:FormRelation#actions}名称，或者自定义的
+         *           动作，注意该动作函数传入参数为 `patterns` 执行结果，执行上下文为 `targets`
+         *           指定的控件实例
+         */
+        /**
+         * 表单字段关联插件选项
+         *
+         * @property {Object} options 选项配置
+         * @property {Array.<Relation>} options.relations 表单字段关联信息定义
+         */
         options: {
             relations: []
         },
 
+        /**
+         * @override
+         */
         initialize: function (options) {
             this.$parent(options);
             this.onFieldChange = $.proxy(this.onFieldChange, this);
         },
 
+        /**
+         * @override
+         */
         activate: function (control) {
-            this.control = control;
-            control.once('afterrender', $.proxy(this.bind, this));
+            var me = this;
+            if (me.isActivated()) {
+                return;
+            }
+
+            me.control = control;
+            control.once('afterrender', $.proxy(me.bindEvents, me));
+            me.$parent();
         },
 
+        /**
+         * @override
+         */
         inactivate: function () {
-            this.control.off('fieldchange', this.onFieldChange);
+            if (!this.isActivated()) {
+                return;
+            }
+
+            this.control.un('fieldchange', this.onFieldChange);
+            this.$parent();
         },
 
-        bind: function () {
+        /**
+         * 初始化事件绑定
+         *
+         * @private
+         */
+        bindEvents: function () {
             var me = this;
             var control = me.control;
+
             // 上来就把所有的字段都给检查一遍~
             lib.each(control.getInputControls(), function (field) {
                 me.check(field);
             });
-            // 兰后, 监听字段变化
+
+            // 监听字段变化
             control.on('fieldchange', me.onFieldChange);
         },
 
         /**
          * 字段变化处理函数
-         * @param  {Event} e  字段变化事件
+         *
+         * @private
+         * @param {Event} e 字段变化事件对象
          */
         onFieldChange: function (e) {
             this.check(e.target);
@@ -95,7 +159,9 @@ define(function (require) {
 
         /**
          * 检查依赖关系
-         * @param  {Control} source 发生变化的字段控件
+         *
+         * @private
+         * @param {Control} source 发生变化的字段控件
          */
         check: function (source) {
 
@@ -125,7 +191,7 @@ define(function (require) {
                         state.then($.proxy(this.execute, this, targets, actions));
                     }
                     else {
-                        this.execute(targets, actions, state)
+                        this.execute(targets, actions, state);
                     }
 
                 },
@@ -136,12 +202,15 @@ define(function (require) {
 
         /**
          * 寻找依赖于指定字段source的字段
-         * @param  {Control} source 发生变化的控件
-         * @return {Array.Control}  依赖于此控件的控件们
+         *
+         * @private
+         * @param {Control} source 发生变化的控件
+         * @return {Array.<Control>} 依赖于此控件的控件们
          */
         findRelies: function (source) {
             var relations = this.relations;
             var dependences = [];
+
             for (var i = relations.length - 1; i >= 0; i--) {
                 var relation = relations[i];
                 for (var j = 0, len = relation.dependences.length; j < len; j++) {
@@ -152,11 +221,14 @@ define(function (require) {
                     }
                 }
             }
+
             return dependences;
         },
 
         /**
          * 计算执行条件是否成立
+         *
+         * @private
          * @param {Object} relation 关系
          * @return {boolean}
          */
@@ -169,7 +241,7 @@ define(function (require) {
             for (var i = 0, dependences = relation.dependences, len = dependences.length; i < len; i++) {
                 var dependence = dependences[i];
                 var state = states[i] = me.getLogicState(dependence);
-                if (lib.isPromise(state)) {
+                if (!defer && lib.isPromise(state)) {
                     defer = true;
                 }
             }
@@ -182,12 +254,14 @@ define(function (require) {
         },
 
         /**
-         * 计算某字段是否满足依赖关系设定
-         * @param  {Object} relation 依赖关系配置
+         * 计算给定的依赖是否满足依赖关系逻辑
+         *
+         * @private
+         * @param  {Object} dependence 依赖关系配置
          * @return {boolean}
          */
         getLogicState: function (dependence) {
-            var id  = dependence.childName || dependence.id;
+            var id  = dependence.id;
             var field = this.getField(id);
 
             // 如果字段丢了, 那可是大事啊...后边的操作也没办法做了啊...
@@ -210,15 +284,17 @@ define(function (require) {
 
         /**
          * 在表单中找一个字段
-         * @param  {string} childName 子控件名称
-         * @return {Control}
+         *
+         * @private
+         * @param  {string} controlId 子控件id
+         * @return {?Control}
          */
-        getField: function (childName) {
+        getField: function (controlId) {
             var fields = this.control.getInputControls();
             for (var i = fields.length - 1; i >= 0; i--) {
                 var field = fields[i];
-                var id = field.childName || field.id;
-                if (id === childName) {
+                var id = field.id;
+                if (id === controlId) {
                     return field;
                 }
             }
@@ -227,8 +303,10 @@ define(function (require) {
 
         /**
          * 合并单项依赖状态, 给出依赖状态结果
+         *
+         * @private
          * @param {Object} relation 关系
-         * @param  {Array.bool} states 状态
+         * @param  {Array.<boolean>} states 状态
          * @return {boolean}
          */
         getPatternState: function (relation, states) {
@@ -243,9 +321,11 @@ define(function (require) {
 
         /**
          * 执行动作
-         * @param  {Array.string}          targets 一组控件的id
-         * @param  {Array.Function|string} actions 一组动作
-         * @param  {bool|Promise}          state   关系状态
+         *
+         * @private
+         * @param  {Array.<string>}          targets 一组控件的id
+         * @param  {Array.<function|string>} actions 一组动作
+         * @param  {boolean|Promise}         state   关系状态
          */
         execute: function (targets, actions, state) {
 
@@ -275,12 +355,12 @@ define(function (require) {
                     action && action.call(target, state);
 
                 });
-
-
             });
-
         },
 
+        /**
+         * @override
+         */
         dispose: function () {
             this.control = null;
             this.$parent();
@@ -288,8 +368,28 @@ define(function (require) {
 
     });
 
+    /**
+     * 所有依赖组件 `dependences` 所决定的其关联组件的状态的内置规则定义
+     *
+     * @static
+     * @type {{all: Function, any: Function}}
+     */
     FormRelation.patterns = DEFAULT_PATTERNS;
+
+    /**
+     * 确定依赖组件状态的内置逻辑规则定义
+     *
+     * @static
+     * @type {{equal: Function, valid: Function}}
+     */
     FormRelation.logics = DEFAULT_LOGICS;
+
+    /**
+     * 一些内置的用于关联组件联动结束后要执行的 `action` 定义
+     *
+     * @static
+     * @type {{show: Function, hide: Function, disable: Function, enable: Function}}
+     */
     FormRelation.actions = DEFAULT_ACTIONS;
 
     return FormRelation;

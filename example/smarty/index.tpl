@@ -4,11 +4,19 @@
     <meta charset="UTF-8">
     <title>moye smarty develop demo</title>
     <link rel="stylesheet" href="./index.less">
+    <script src="../js/esl.js"></script>
+    <script src="../js/jquery-1.10.2.min.js"></script>
+    <script>
+    require.config({
+      baseUrl: '../../src'
+    });
+    </script>
 </head>
 <body>
 {%include file="../../src/tpl/smarty/base.tpl"%}
 {%include file="./ui.json.tpl" assign="ui"%}
 {%$ui = $ui|json_decode:true|escape:none%}
+
 
 <main>
 
@@ -40,6 +48,28 @@
         <div>
             {%call Select data=$ui.select%}
         </div>
+    </section>
+
+    <section>
+        {%include file="../../src/tpl/smarty/Tab.tpl"%}
+        <h3 class="demo-title">选项卡</h3>
+        <div>
+            {%call Tab data=$ui.tab%}
+        </div>
+        <div id="panel1" style="width: 100px;height: 100px; background-color: green; display: block"></div>
+        <div id="panel2" style="width: 100px;height: 100px; background-color: blue; display: none"></div>
+        <div id="panel3" style="width: 100px;height: 100px; background-color: red; display: none"></div>
+        <div id="panel4" style="width: 100px;height: 100px; background-color: yellow; display: none"></div>
+        <script>
+        require(['ui/Tab', 'ui/plugin/TabBar'], function (Tab) {
+
+            var tab = new Tab({
+                main: document.getElementById('tab'),
+                // mode: 'click',  // 默认为click
+                plugins: ['TabBar']
+            }).render();
+        });
+        </script>
     </section>
 
 </main>

@@ -125,6 +125,10 @@ define(function (require) {
             if (!this.hasState('disabled')) {
                 this.fire('click', e);
             }
+        },
+
+        dispose: function () {
+            this.undelegate(this.main, 'click', this.onClick);
         }
 
     });

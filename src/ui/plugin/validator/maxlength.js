@@ -1,6 +1,7 @@
 /**
- * @file 最大长度
+ * @file 最大长度校验规则
  * @author leon<lupengyu@baidu.com>
+ * @author wuhuiyao(wuhuiyao@baidu.com)
  */
 
 define(function (require) {
@@ -11,7 +12,7 @@ define(function (require) {
     ValidateRule.register('maxlength', {
 
         check: function (value, control) {
-            var maxLength = control.maxLength;
+            var maxLength = this.maxLength;
             var result = (value + '').length <= maxLength;
             return new ValidityState(
                 result,

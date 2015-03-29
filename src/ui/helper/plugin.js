@@ -103,8 +103,9 @@ define(function (require) {
          */
         disposePlugins: function () {
             var control = this.control;
-            var plugins = control.plugins;
+            var plugins = control.plugins || [];
             for (var i = plugins.length - 1; i >= 0; i--) {
+                plugins[i].inactivate();
                 plugins[i].dispose();
             }
             control.plugins = [];
