@@ -4,17 +4,27 @@
 <meta charset="utf-8" />
 <title>City</title>
 <link rel="stylesheet" href="common.css" />
-<link rel="stylesheet" href="css/City.css" />
+<link rel="stylesheet" href="../asset/css/City.css" />
 <script src="http://s1.bdstatic.com/r/www/cache/ecom/esl/1-6-8/esl.js"></script>
+<style>
+    .city-wrapper {
+        padding: 0 20px 0 0;
+        position: relative;
+        display: inline-block;
+    }
+</style>
 </head>
 <body>
 <div id='content_left'><!--左侧最外层div-->
   <div class="result-op" srcid="16873" id="1" mu="http://baike.baidu.com/view/1758.htm" data-op="{'y':'FD9FFD6B'}">
 
-<input type="text" class="city-trigger" /><input type="button" value="click" class="city-trigger" />
+<div class="city-wrapper">
+    <input type="text" class="city-trigger" /><i class="city-icon"></i>
+</div>
+<input type="button" value="click" class="city-trigger" />
 <input type="text" class="city-trigger" /><input type="button" value="click" class="city-trigger" />
 
-<input type="text" class="city-trigger1" />
+<input type="text" class="city-trigger1" value="东莞" />
 <input type="button" value="click" class="city-trigger1" />
 <input type="text" class="city-trigger1" /><input type="button" value="click" class="city-trigger1" />
 <div class="embed-city-holder"></div>
@@ -130,8 +140,18 @@
 
 
         city.render();
-
-
+        // city.on('pick', function (obj) {
+        //     console.log('pick,', obj.value)
+        // });
+        // city.on('change', function (obj) {
+        //     console.log('change,', obj.value)
+        // });
+        // city.on('beforeShow', function () {
+        //     console.log('show');
+        // });
+        // city.on('hide', function () {
+        //     console.log('hide')
+        // })
     });
 
 })();

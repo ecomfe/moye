@@ -28,10 +28,16 @@ define(function (require) {
          * @private
          */
         build: function () {
-            var options = this.options;
+            var c = this;
+            var options = c.options;
             var prefix  = options.prefix;
-            var index   = this.index;
-            var active  = ' class="' + prefix + '-active"';
+            var value = c.getValue();
+            var activeCity = ' class="' + options.prefix + '-' + options.activeCityClass + '"';
+            var activeGroup  = ' class="' + prefix + '-' + options.activeGroupClass + '"';
+            var cityListHtml = '';
+            var hasActiveCity = false;
+            var isActiveCity = false;
+            var isFirstActiveCity = true;
             var labels  = [];
             var panels  = [];
 
@@ -46,14 +52,24 @@ define(function (require) {
 
             var makeLinks = function (cities) {
                 var links = [];
+                hasActiveCity = false;
 
-                lib.each(cities.split(comma), function (city) {
+                lib.each(cities.split(comma), function (city, j) {
+                    isActiveCity = new RegExp(city).test(value);
+                    if (isActiveCity) {
+                        hasActiveCity = true;
+                    }
+                    if (isFirstActiveCity && isActiveCity) {
+                        c.cityIndex = j;
+                    }
                     if (
                         !hideCities
                         || !~hideCities.indexOf(comma + city + comma)
                     ) {
                         links.push(''
-                            + '<a href="#" title="' + city + '">'
+                            + '<a href="#" title="' + city + '"'
+                            + (isFirstActiveCity && isActiveCity ? activeCity : '')
+                            + '>'
                             + city
                             + '</a>'
                         );                        
@@ -63,14 +79,19 @@ define(function (require) {
                 return links.join('');
             };
 
-            lib.each(this.tabs, function (tab, i, start) {
+            lib.each(c.tabs, function (tab, i, start) {
                 tab = tab.split('|');
+                cityListHtml = makeLinks(tab[1]);
+                c.groupIndex = isFirstActiveCity && hasActiveCity ? i : c.groupIndex;
                 start = '<li data-idx="'
                     + i
                     + '"'
-                    + (i === index ? active : '');
+                    + (isFirstActiveCity && hasActiveCity ? activeGroup : '');
                 labels.push(start + '>' + tab[0] + '</li>');
-                panels.push(start + '>' + makeLinks(tab[1]) + '</li>');
+                panels.push(start + '>' + cityListHtml + '</li>');
+                if (hasActiveCity) {
+                    isFirstActiveCity = false;
+                }
             });
 
             labels.push('</ul>');
@@ -95,7 +116,7 @@ define(function (require) {
             var el     = lib.getTarget(e);
             var tag    = el.tagName;
             var target = this.target;
-            var index  = el.getAttribute('data-idx');
+            var groupIndex  = el.getAttribute('data-idx');
 
             switch (tag) {
 
@@ -113,8 +134,8 @@ define(function (require) {
 
                 case 'LI':
 
-                    if (index) {
-                        this.change(index);
+                    if (groupIndex) {
+                        this.change(groupIndex);
                     }
 
                     break;
@@ -150,17 +171,32 @@ define(function (require) {
              * @type {Object}
              * @property {Event} event 事件源对象
              */
-            this.fire('beforeShow', arg);
+            var c = this;
+            c.fire('beforeShow', arg);
 
-            if (!this.labels) {
-                var popup = this.popup;
-                popup.content = privates.build.call(this);
+            if (c.options.icon) {
+                lib.addClass(lib.q('city-icon')[0], 'city-icon-city-show');
+            }
+
+            var options = c.options;
+            var activeGroupClassName = options.prefix + '-' + options.activeGroupClass;
+            
+            if (!c.labels) {
+                var popup = c.popup;
+                popup.content = privates.build.call(c);
                 popup.render();
 
-                var main    = this.main;
+                var main    = c.main;
                 var list    = main.getElementsByTagName('ul');
-                this.labels = list[0].getElementsByTagName('li');
-                this.panels = list[1].getElementsByTagName('li');
+                c.labels = list[0].getElementsByTagName('li');
+                c.panels = list[1].getElementsByTagName('li');
+                if (!lib.q(activeGroupClassName, main).length) {
+                    lib.addClass(c.labels[0], activeGroupClassName);
+                    lib.addClass(c.panels[0], activeGroupClassName);
+                }
+                if (c.cityIndex) {
+                    c.activeCity = c.panels[c.groupIndex].getElementsByTagName('a')[c.cityIndex];
+                }
             }
         },
         /**
@@ -173,13 +209,24 @@ define(function (require) {
         pick: function (el) {
             var value = el.innerHTML;
             var target = this.target;
+            var options = this.options;
+            var activeCity = this.activeCity;
+            var activeCityClass = options.prefix + '-' + options.activeCityClass;
+            var oldValue;
 
+            if (activeCity) {
+                lib.removeClass(activeCity, activeCityClass);
+            }
+            lib.addClass(el, activeCityClass);
+            this.activeCity = el;
             if (target) {
                 if (target.type) {
+                    oldValue = target.value;
                     target.value = value;
                     target.focus();
                 }
                 else {
+                    oldValue = target.innerHTML;
                     target.innerHTML = value;
                 }
             }
@@ -189,7 +236,10 @@ define(function (require) {
              * @type {Object}
              * @property {string} value 选中的城市
              */
-            this.fire('pick', { value: value });
+            this.fire('pick', {value: value});
+            if (oldValue !== value) {
+                this.fire('change', {value: value});
+            }
             this.hide();
         }
     };
@@ -231,8 +281,8 @@ define(function (require) {
          * @property {(string | HTMLElement)} main 控件渲染容器
          * @property {(string | HTMLElement)} target 计算弹出层相对位置的目标对象
          * @property {string} prefix 控件class前缀，同时将作为main的class之一
-         * @property {number} index 默认激活的标签索引
-         * @property {string} activeClass 激活标签、内容的class
+         * @property {number} groupIndex 默认激活的标签索引
+         * @property {string} activeGroupClass 激活标签、内容的class
          * @property {boolean} autoFill 是否自动填充默认城市数据(机票可用城市数据)
          * @property {?string} hideCities 需要隐藏的城市
          * @private
@@ -245,6 +295,8 @@ define(function (require) {
             // 控件渲染主容器
             main: '',
 
+            // 是否有icon，默认不带icon，new控件时需按格式来写icon元素，将icon的class命名为city-icon
+            icon: true,
 
             // 计算弹出层相对位置的目标对象
             target: '',
@@ -253,10 +305,13 @@ define(function (require) {
             prefix: 'ecl-hotel-ui-city',
 
             // 默认激活的标签索引
-            index: 0,
+            groupIndex: 0,
 
             // 激活标签、内容的class
-            activeClass: 'active',
+            activeGroupClass: 'active-group',
+
+            // 激活标签、内容的class
+            activeCityClass: 'active-city',
 
             // 是否自动填充默认城市数据(机票可用城市数据)
             autoFill: true,
@@ -282,7 +337,7 @@ define(function (require) {
          */
         init: function (options) {
             this.disabled = options.disabled;
-            this.index    = options.index;
+            this.groupIndex    = options.groupIndex;
 
             var tabs = this.tabs = [];
 
@@ -373,6 +428,12 @@ define(function (require) {
                 }
             }
 
+            if (this.options.icon) {
+                this.popup.on('hide', function () {
+                    lib.removeClass(lib.q('city-icon')[0], 'city-icon-city-show');
+                });
+            }
+
             return this;
 
         },
@@ -407,20 +468,20 @@ define(function (require) {
             var options     = this.options;
             var labels      = this.labels;
             var panels      = this.panels;
-            var index       = this.index;
-            var activeClass = options.prefix + '-' + options.activeClass;
+            var groupIndex       = this.groupIndex;
+            var activeGroupClass = options.prefix + '-' + options.activeGroupClass;
 
             i |= 0;
 
-            if (i !== index) {
+            if (i !== groupIndex) {
 
-                lib.removeClass(labels[index], activeClass);
-                lib.removeClass(panels[index], activeClass);
+                lib.removeClass(labels[groupIndex], activeGroupClass);
+                lib.removeClass(panels[groupIndex], activeGroupClass);
 
-                index = this.index = i;
+                groupIndex = this.groupIndex = i;
 
-                lib.addClass(labels[index], activeClass);
-                lib.addClass(panels[index], activeClass);
+                lib.addClass(labels[groupIndex], activeGroupClass);
+                lib.addClass(panels[groupIndex], activeGroupClass);
             }
         },
 
@@ -440,7 +501,7 @@ define(function (require) {
              * @type {Object}
              * @property {?HTMLElement=} target 触发显示浮层的节点
              */
-            this.fire('show', { target: target });
+            this.fire('show', {target: target});
 
         },
 
@@ -458,10 +519,82 @@ define(function (require) {
              * @event module:City#hide
              */
             this.fire('hide');
+        },
+
+        /**
+         * 取得控件值
+         * 
+         * @return {string} 
+         */
+        getValue: function () {
+            var target = this.target;
+            var value = '';
+
+            if (target) {
+                if (target.type) {
+                    value = target.value;
+                }
+                else {
+                    value = target.innerHTML;
+                }
+            }
+            return value;
+        },
+
+        /**
+         * 设置控件值
+         *
+         * @param {string} value 新的值
+         */
+        setValue: function (value) {
+            if (!value) {
+                return;
+            }
+            var c = this;
+            var target = c.target;
+            var oldValue = c.getValue();
+            var options = c.options;
+            var isNewValueValid = false;
+            var cityPanels = lib.q(options.prefix + '-panels');
+            var activeCityClass = options.prefix + '-' + options.activeCityClass;
+            var activeGroupIndex = c.groupIndex;
+
+            if (cityPanels.length) {
+                var cityList = cityPanels[0].getElementsByTagName('a');
+                lib.each(cityList, function (city) {
+                    if (new RegExp(city.innerHTML).test(value)) {
+                        isNewValueValid = true;
+                        if (c.activeCity) {
+                            lib.removeClass(c.activeCity, activeCityClass);
+                        }
+                        lib.addClass(city, activeCityClass);
+                        c.activeCity = city;
+                        activeGroupIndex = city.parentNode.getAttribute('data-idx');
+                        c.change(activeGroupIndex);
+                    }
+                });
+                if (!isNewValueValid) {
+                    throw new Error('Invalid city name');
+                    return;
+                }
+            }
+            
+            if (target) {
+                if (target.type) {
+                    target.value = value;
+                    target.focus();
+                }
+                else {
+                    target.innerHTML = value;
+                }
+            }
+
+            if (oldValue !== value) {
+                c.fire('change', {value: value});
+            }
         }
 
     });
 
     return City;
 });
-        
