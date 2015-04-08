@@ -432,7 +432,8 @@ define(function (require) {
          * @private
          */
         onWindowResize: function () {
-            this.locate(this.target || this.trigger);
+            var target = this.target || this.trigger;
+            target && this.isVisible() && this.locate(target);
         },
 
         /**
