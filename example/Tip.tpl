@@ -96,6 +96,7 @@ var tip = new Tip({
 ```js
 var staticTip = new Tip({
     arrow: false,
+    target: $('#static-target'),
     hideDelay: 1,
     mode: 'static',
     content: '上传成功~',
