@@ -394,9 +394,15 @@ define(function (require) {
             me.removeState('show');
 
             var hideFunc = function () {
+                var mode = me.mode;
+
                 // 把自己飞走
                 $(me.main).css('left', '-2000px');
-                var mode = me.mode;
+                // 兼容ie6 static fixed模式
+                if (lib.browser.ie6 && mode === 'static' && me.fixed) {
+                    me.main.style.removeExpression('left');
+                }
+
                 // 取消全局事件的绑定
                 if (mode === 'click') {
                     me.undelegate(document, 'click', me.onHide);
