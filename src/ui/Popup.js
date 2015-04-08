@@ -566,16 +566,11 @@ define(function (require) {
          * 计算浮层显示位置
          *
          * @public
-         * @param {Element} target 挂靠目标元素
+         * @param {Element=} target 挂靠目标元素
          */
         locate: function (target) {
-            // static 模式计算
-            var mode = this.mode;
-            if (mode === 'static') {
-                return;
-            }
-
-            target           = $(target);
+            // 兼容处理，方便外部接口调用
+            target = $(target || this.target || this.trigger || document.body);
 
             var main         = $(this.main);
             var dir          = this.dir;
@@ -594,7 +589,6 @@ define(function (require) {
             // 提示层宽高
             var mainWidth    = main.outerWidth();
             var mainHeight   = main.outerHeight();
-
 
             var win          = $(window);
 

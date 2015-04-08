@@ -184,8 +184,10 @@ define(function (require) {
 
             expect(tip.main).toBeUndefined();
 
+            var target = $('#tipContainer a').get(0);
             tip = new Tip({
                 arrow: '1',
+                target: target,
                 hideDelay: 0,
                 showDelay: 0,
                 mode: 'static',
@@ -193,21 +195,8 @@ define(function (require) {
             })
             .render();
 
-            var main = $(tip.main);
-            main.css({
-                width: 100,
-                height: 100
-            });
-
             tip.show();
             expect(tip.isVisible()).toBeTruthy();
-
-            // 位置计算(无offset，默认水平居中，垂直0.4)
-            var win = $(window);
-            expect(main.css('position')).toBe('fixed');
-
-            expect(parseInt(main.offset().left), 10).toBe(parseInt((win.width() - main.width()) / 2), 10);
-            expect(parseInt(main.css('top')), 10).toBe(parseInt((win.height() - main.height()) * 0.4), 10);
 
             tip.hide();
             expect(tip.isVisible()).toBeFalsy();

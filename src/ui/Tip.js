@@ -10,7 +10,6 @@
 define(function (require) {
 
     var $       = require('jquery');
-    var lib     = require('./lib');
     var Control = require('./Control');
     var Popup   = require('./Popup');
 
@@ -129,9 +128,6 @@ define(function (require) {
              * @defaultvalue
              */
             dir: 'bl',
-
-            // static模式下是否固定，不随视窗滚动
-            fixed: 1,
 
             /**
              * 浮层显示的偏移量
@@ -275,44 +271,8 @@ define(function (require) {
         locate: function (target) {
             this.$parent(target);
 
-            // static模式位置计算
-            var main = $(this.main);
-            var offset = this.offset;
-            var offsetX = offset.x;
-            var offsetY = offset.y;
-
-            if (this.mode === 'static') {
-                var isFixed = this.fixed;
-
-                var cssOpt = {
-                    position: isFixed ? 'fixed' : 'absolute',
-                    left: offsetX,
-                    top: offsetY
-                };
-
-                if (!offsetX) {
-                    cssOpt.left = '50%';
-                    cssOpt.marginLeft = (-main.outerWidth() / 2) + 'px';
-                }
-
-                if (!offsetY) {
-                    // 这里固定为0.4的位置
-                    cssOpt.top = ($(window).height() - main.outerHeight()) * 0.4 + 'px';
-                }
-
-                main.css(cssOpt);
-
-                if (isFixed) {
-                    lib.fixed(this.main, {
-                        left: cssOpt.left,
-                        top: cssOpt.top
-                    });
-                }
-
-                return;
-            }
-
             // 定位箭头
+            var main = $(this.main);
             var arrow = this.elements.arrow;
             if (this.arrow === false) {
                 $(arrow).hide();
@@ -321,6 +281,9 @@ define(function (require) {
 
             target           = $(target);
             var lrtb         = {l: 'left', r: 'right', t: 'top', b: 'bottom'};
+            var offset       = this.offset;
+            var offsetX      = offset.x;
+            var offsetY      = offset.y;
             var position     = target.offset();
 
             var width        = target.outerWidth();
@@ -356,16 +319,16 @@ define(function (require) {
                 $(arrow).css({
                     left: {
                         c: (mainWidth - arrowWidth) / 2,
-                        l: middleX - offset.x,
-                        r: mainWidth - Math.max(arrowWidth, middleX) + offset.x
+                        l: middleX - offsetX,
+                        r: mainWidth - Math.max(arrowWidth, middleX) + offsetX
                     }[width > mainWidth ? 'c' : second] + 'px',
                     top: ''
                 });
 
                 // 修正main 的 top
                 top = {
-                    t: top - arrowHeight - mainHeight - offset.y,
-                    b: bottom + arrowHeight + offset.y
+                    t: top - arrowHeight - mainHeight - offsetY,
+                    b: bottom + arrowHeight + offsetY
                 }[first];
                 main.css('top', top + 'px');
             }
@@ -378,16 +341,16 @@ define(function (require) {
                 $(arrow).css({
                     top: {
                         c: (mainHeight - arrowHeight) / 2,
-                        t: middleY - offset.y,
-                        b: mainHeight - Math.max(arrowHeight, middleY) + offset.y
+                        t: middleY - offsetY,
+                        b: mainHeight - Math.max(arrowHeight, middleY) + offsetY
                     }[height > mainHeight ? 'c' : second] + 'px',
                     left: ''
                 });
 
                 // 修正main 的 left
                 left = {
-                    l: left - arrowWidth - mainWidth - offset.x,
-                    r: right + arrowWidth + offset.x
+                    l: left - arrowWidth - mainWidth - offsetX,
+                    r: right + arrowWidth + offsetX
                 }[first];
                 main.css('left', left + 'px');
             }

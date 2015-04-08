@@ -89,7 +89,9 @@ var tip = new Tip({
 
 <button id="static-show">显示</button>
 <button id="static-hide">隐藏</button>
-<button id="static-dispose">销毁</button>
+<button id="static-destroy">销毁</button>
+
+<input type="text" id="static-target" placeholder="I'm target">
 
 ```js
 var staticTip = new Tip({
@@ -109,8 +111,8 @@ $('#static-hide').click(function () {
     staticTip.hide();
 });
 
-$('#static-dispose').click(function () {
-    staticTip.dispose();
+$('#static-destroy').click(function () {
+    staticTip.destroy();
 });
 ```
 
@@ -168,6 +170,7 @@ require(['ui/Tip'], function (Tip) {
     // static tip
     var staticTip = new Tip({
         arrow: false,
+        target: $('#static-target'),
         hideDelay: 1,
         mode: 'static',
         content: '上传成功~'
@@ -182,7 +185,7 @@ require(['ui/Tip'], function (Tip) {
         staticTip.hide();
     });
 
-    $('#static-dispose').click(function () {
+    $('#static-destroy').click(function () {
         staticTip.destroy();
     });
 
