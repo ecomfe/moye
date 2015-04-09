@@ -37,5 +37,11 @@
             }
         ],
         "activeIndex": 1
+    },
+    "rating": {
+        "id": "rating",
+        "type": "Rating",
+        "max": 5,
+        "value": 2
     }
 }

@@ -90,7 +90,7 @@ require(['ui/Rating'], function (Rating) {
     level.innerHTML = levels[value - 1];
 
     var rating = new Rating({
-        main: document.getElementById('rating'),
+        main: g('rating'),
         value: value,
         onChange: function (e) {
             value = e.value;
