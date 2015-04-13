@@ -45,172 +45,58 @@ define(function (require) {
         });
 
         it('显示 / `show` 事件', function () {
-
-            var flag = false;
             var spy = jasmine.createSpy();
-
-            $('#cycle').trigger('click');
-
             select.on('show', spy);
-
-            runs(function() {
-                setTimeout(function() {
-                    flag = true;
-                }, 100);
-            });
-
-            waitsFor(
-                function () {
-                    return flag;
-                },
-                '浮层应该是被显示出来的',
-                200
-            );
-
-            runs(function() {
-                expect(spy).toHaveBeenCalled();
-            });
-
+            $('#cycle').trigger('click');
+            jasmine.Clock.tick(100);
+            expect(spy).toHaveBeenCalled();
         });
 
         it('显示 / expanded状态', function () {
-
-            var flag = false;
-
+            var spy = jasmine.createSpy();
+            select.on('show', spy);
             $('#cycle').trigger('click');
-
-            runs(function() {
-                setTimeout(function() {
-                    flag = true;
-                }, 100);
-            });
-
-            waitsFor(
-                function () {
-                    return flag;
-                },
-                '浮层应该是被显示出来的',
-                200
-            );
-
-            runs(function() {
-                expect(select.hasState('expanded')).toBeTruthy();
-            });
+            jasmine.Clock.tick(100);
+            expect(select.hasState('expanded')).toBeTruthy();
         });
 
         it('隐藏 / `hide` 事件', function () {
-
-            var flag = false;
             var spy = jasmine.createSpy();
-
             select.on('show', spy);
-
             $('#cycle').trigger('click');
-
-            setTimeout(function () {
-                $('body').trigger('click');
-            }, 100);
-
-            runs(function() {
-                setTimeout(function() {
-                    flag = true;
-                }, 200);
-            });
-
-            waitsFor(
-                function () {
-                    return flag;
-                },
-                '浮层应该是被隐藏起来的',
-                300
-            );
-
-            runs(function() {
-                expect(spy).toHaveBeenCalled();
-            });
-
+            jasmine.Clock.tick(100);
+            $('body').trigger('click');
+            jasmine.Clock.tick(100);
+            expect(spy).toHaveBeenCalled();
         });
 
         it('隐藏 / expanded 状态', function () {
-
-            var flag = false;
-
+            var spy = jasmine.createSpy();
+            select.on('show', spy);
             $('#cycle').trigger('click');
-
-            setTimeout(function () {
-                $('body').trigger('click');
-            }, 100);
-
-            runs(function() {
-                setTimeout(function() {
-                    flag = true;
-                }, 200);
-            });
-
-            waitsFor(
-                function () {
-                    return flag;
-                },
-                '浮层应该是被隐藏起来的',
-                300
-            );
-
-            runs(function() {
-                expect(select.hasState('expanded')).toBeFalsy();
-            });
-
+            jasmine.Clock.tick(100);
+            $('body').trigger('click');
+            jasmine.Clock.tick(100);
+            expect(select.hasState('expanded')).toBeFalsy();
         });
 
         it('模拟点击', function () {
-
             var spy = jasmine.createSpy();
             var target = $('.ui-select-option:eq(1)', select.popup.main);
-            var flag = false;
-
             select.on('change', spy);
             target.trigger('click');
-
-            runs(function () {
-                setTimeout(function () {
-                    flag = true;
-                }, 100);
-            });
-
-            waitsFor(function () {
-                return flag;
-            }, '应该释放出`change`事件', 200);
-
-            runs(function () {
-                expect(spy).toHaveBeenCalled();
-            });
-
+            jasmine.Clock.tick(100);
+            expect(spy).toHaveBeenCalled();
         });
 
         it('模拟点击不触发onChange', function () {
             var options = $('.ui-select-option', select.popup.main);
             var spy = jasmine.createSpy('onChange');
-            var flag = false;
-
             select.on('change', spy);
-
-            select.setValue(1)
-
+            select.setValue(1);
             $(options[0]).trigger('click');
-
-            runs(function () {
-                setTimeout(function () {
-                    flag = true;
-                }, 100);
-            });
-
-            waitsFor(function () {
-                return flag;
-            }, '', 200);
-
-            runs(function () {
-                expect(spy).not.toHaveBeenCalled();
-            });
-
+            jasmine.Clock.tick(100);
+            expect(spy).not.toHaveBeenCalled();
         });
 
         it('datasource', function () {
@@ -237,25 +123,12 @@ define(function (require) {
             });
 
             var spy = jasmine.createSpy();
-            var flag = false;
 
             select.once('change', spy);
 
             options.trigger('click');
-
-            runs(function () {
-                setTimeout(function () {
-                    flag = true;
-                }, 100);
-            });
-
-            waitsFor(function () {
-                return flag;
-            });
-
-            runs(function () {
-                expect(spy).toHaveBeenCalled();
-            });
+            jasmine.Clock.tick(100);
+            expect(spy).toHaveBeenCalled();
 
         });
 

@@ -394,9 +394,15 @@ define(function (require) {
             me.removeState('show');
 
             var hideFunc = function () {
+                var mode = me.mode;
+
                 // 把自己飞走
                 $(me.main).css('left', '-2000px');
-                var mode = me.mode;
+                // 兼容ie6 static fixed模式
+                if (lib.browser.ie6 && mode === 'static' && me.fixed) {
+                    me.main.style.removeExpression('left');
+                }
+
                 // 取消全局事件的绑定
                 if (mode === 'click') {
                     me.undelegate(document, 'click', me.onHide);
@@ -432,7 +438,8 @@ define(function (require) {
          * @private
          */
         onWindowResize: function () {
-            this.locate(this.target || this.trigger);
+            var target = this.target || this.trigger;
+            target && this.isVisible() && this.locate(target);
         },
 
         /**
@@ -559,16 +566,11 @@ define(function (require) {
          * 计算浮层显示位置
          *
          * @public
-         * @param {Element} target 挂靠目标元素
+         * @param {Element=} target 挂靠目标元素
          */
         locate: function (target) {
-            // static 模式计算
-            var mode = this.mode;
-            if (mode === 'static') {
-                return;
-            }
-
-            target           = $(target);
+            // 兼容处理，方便外部接口调用
+            target = $(target || this.target || this.trigger || document.body);
 
             var main         = $(this.main);
             var dir          = this.dir;
@@ -587,7 +589,6 @@ define(function (require) {
             // 提示层宽高
             var mainWidth    = main.outerWidth();
             var mainHeight   = main.outerHeight();
-
 
             var win          = $(window);
 

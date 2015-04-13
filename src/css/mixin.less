@@ -37,6 +37,38 @@
     @{prop}: unit(unit(@target) / unit(@root), rem);
 }
 
+/**********
+以moye-size开头的函数都是用来完成各种内置尺寸大小的
+********/
+
+/**
+ * 生成固定套路的高度
+ * @param  {rem} @size @moye-medium, @moye-tiny等等
+ */
+.moye-size-height(@size: @moye-medium) {
+    .moye-rem(height, @size * @moye-line-height);
+    .moye-rem(line-height, @moye-line-height * @size);
+}
+
+/**
+ * 生成固定套路的垂直内间距
+ * @param {rem} @size @moye-medium, @moye-tiny等等
+ */
+.moye-size-padding-vertical(@size: @moye-medium) {
+    @padding-vertical: @size - unit( 9/16, rem);
+    .moye-rem(padding-top, @padding-vertical);
+    .moye-rem(padding-bottom, @padding-vertical);
+}
+
+/**
+ * 生成固定套路的水平内间距
+ * @param  {rem} @size @moye-medium, @moye-tiny等等
+ */
+.moye-size-padding-horizontal(@size: @moye-medium) {
+    .moye-rem(padding-left, @size);
+    .moye-rem(padding-right, @size);
+}
+
 .moye-border-box-size-rem(@prop; @target; @padding: 0; @border: 0; @root: @moye-font-size) {
     // 先把大家转成数字噻
     // 这个亲一定是px的

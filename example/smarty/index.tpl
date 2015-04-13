@@ -72,6 +72,15 @@
         </script>
     </section>
 
+    <section>
+        {%include file="../../src/tpl/smarty/Rating.tpl"%}
+        <h3 class="demo-title">星号评级</h3>
+        <div id="rating">
+            {%call Rating data=$ui.rating%}
+        </div>
+        </section>
+    </section>
+
 </main>
 
 

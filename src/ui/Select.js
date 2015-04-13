@@ -77,12 +77,6 @@ define(function (require) {
             // 在没有选项被选中时的显示值
             emptyText: '请选择',
 
-            /**
-             * 自动在label结尾处添加一个小三角icon作为状态指示器
-             * @type {Boolean}
-             */
-            indicator: true,
-
             // 触发展开的交互动作
             mode: 'click',
 
@@ -112,6 +106,15 @@ define(function (require) {
                     return option.name;
                 }
 
+            },
+
+            /**
+             * 自动在label结尾处添加一个小三角icon作为状态指示器
+             * @type {Boolean}
+             */
+            indicator: {
+                normal: '&#xe604;',
+                expanded: '&#xe603;'
             }
 
         },
@@ -122,7 +125,6 @@ define(function (require) {
          */
         init: function (options) {
             this.$parent(options);
-            var main = $(this.main);
             this.datasource = this.datasource || [];
             var option = this.getOption(this.value);
             this.value = option ? option.value : null;
@@ -183,7 +185,8 @@ define(function (require) {
                     'a',
                     '',
                     {href: '#'}
-                );
+                )
+                + this.getIndicatorHTML();
         },
 
         initEvents: function () {
@@ -230,7 +233,7 @@ define(function (require) {
                     var helper = this.helper;
                     var datasource = this.datasource || [];
                     var selectedClass = helper.getPartClassName('option-selected');
-                    var optionClass = helper.getPartClassName('option');
+                    var optionClass = helper.getPrimaryClassName('option');
 
                     value = this.isNumber ? +value : value;
 
@@ -259,6 +262,7 @@ define(function (require) {
                     );
 
                     var input = helper.getPart('input');
+                    var text;
 
                     // 找到了结果
                     if (option) {
@@ -280,13 +284,14 @@ define(function (require) {
 
         getIndicatorHTML: function () {
             var indicator = this.indicator;
-            return indicator === false
-                ? ''
-                : this.helper.getPartHTML(
-                    'indicator',
-                    'i',
-                    indicator === true ? '' : indicator
-                );
+            if (indicator === false) {
+                return '';
+            }
+            return this.helper.getPartHTML(
+                'indicator',
+                'i',
+                this.hasState('expanded') ? this.indicator.expanded : this.indicator.normal
+            );
         },
 
         /**
@@ -393,6 +398,7 @@ define(function (require) {
             // 如果没有被阻止, 那就执行默认动作.
             if (!e.isDefaultPrevented()) {
                 this.addState('expanded');
+                this.helper.getPart('indicator').innerHTML = this.indicator.expanded;
             }
         },
 
@@ -407,6 +413,7 @@ define(function (require) {
             // 如果没有被阻止, 那就执行默认动作.
             if (!e.isDefaultPrevented()) {
                 this.removeState('expanded');
+                this.helper.getPart('indicator').innerHTML = this.indicator.normal;
             }
         },
 
