@@ -12,11 +12,12 @@ define(function (require) {
     var FormSubmit = require('ui/plugin/FormSubmit');
     var form;
     var tpl = ''
-        + '<form id="my-form" action="/test" target="_blank">'
+        + '<form id="my-form" action="/test">'
         +   '<label data-ui-id="nameTextBox">姓名：<input type="text"></label>'
         +   '<input id="save-btn" type="button" value="提交">'
         +   '<input id="submit-btn" type="submit" value="提交" data-ui-id="submitBtn">'
-        + '</form>';
+        + '</form>'
+        + '<iframe name="my-frame" src="about:blank"></iframe>';
 
     function createForm() {
         jasmine.Clock.useMock();
@@ -24,6 +25,7 @@ define(function (require) {
         var main = $(tpl).appendTo(document.body);
         form = new Form({
             main: main[0],
+            target: 'my-frame',
             plugins: [
                 {
                     type: 'FormSubmit',
