@@ -78,6 +78,7 @@ require(['ui/Lazyload'], function (Lazyload) {
             console.log(img);
         }
     });
+    // lazyload.dispose();
 });
 </script>
 

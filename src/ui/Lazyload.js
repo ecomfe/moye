@@ -41,6 +41,10 @@ define(function (require) {
 
             var me = this;
 
+            if (!this.imgs || !this.imgs.length) {
+                return;
+            }
+
             // 剔除已加载的未加载图片元素数组
             this.imgs = $.grep(this.imgs, function (img) {
 
@@ -111,6 +115,7 @@ define(function (require) {
             clearTimeout(this._timer);
             this._timer = setTimeout(this._bound.compute, this.delay);
             this.scrolled = true;
+            this._bound.compute();
         }
     };
 
@@ -202,7 +207,7 @@ define(function (require) {
         /**
          * 添加延迟操作的元素
          *
-         * @param {HTMLElement} imgs 用于判断是否在可视区域的的参考元素
+         * @param {HTMLElement|Array.<HTMLElement>} imgs 需要加的做延迟加载的图片
          * @return {module:Lazyload} 当前实例
          * @public
          */
@@ -210,8 +215,14 @@ define(function (require) {
 
             var me = this;
 
+            imgs = imgs || [];
+
+            if (!lib.isArray(imgs)) {
+                imgs = [imgs];
+            }
+
             // 过滤非图片元素或已经加载完成的元素
-            imgs = $.grep(imgs || [], function (img) {
+            imgs = $.grep(imgs, function (img) {
                 return img.tagName.toLowerCase() === 'img' && $(img).attr(me.src);
             });
 
@@ -232,23 +243,30 @@ define(function (require) {
         /**
          * 注销图片延迟加载
          *
-         * @param  {Array.<HTMLElement>} imgs 需要剔除的图片元素数组
+         * @param  {HTMLElement|Array.<HTMLElement>} imgs 需要剔除的图片元素数组
          * @return {module:Lazyload} 当前实例
          * @public
          */
         remove: function (imgs) {
+
+            var me = this;
+
+            if (!lib.isArray(imgs)) {
+                imgs = [imgs];
+            }
+
             lib.each(imgs, function (img) {
-                var index = $.inArray(img, this.imgs);
+                var index = $.inArray(img, me.imgs);
                 if (index !== -1) {
-                    this.imgs.splice(index, 1);
+                    me.imgs.splice(index, 1);
                 }
             });
 
-            if (!this.imgs.length) {
-                this.dispose();
+            if (!me.imgs.length) {
+                me.dispose();
             }
 
-            return this;
+            return me;
         },
 
         /**
@@ -259,10 +277,10 @@ define(function (require) {
          */
         dispose: function () {
 
-            delete this.imgs;
+            $(window).off('scroll', this._bound.onScroll);
+            $(window).off('resize', this._bound.onScroll);
 
-            $(window).off('scroll', this.onScroll);
-            $(window).off('resize', this.onScroll);
+            this.scrolled = false;
 
             return this;
         }
