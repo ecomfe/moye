@@ -14,11 +14,12 @@ define(function (require) {
 
     var form;
     var tpl = ''
-        + '<form id="my-form" action="/test" target="_blank">'
+        + '<form id="my-form" action="/test" target="my-frame">'
         +   '<label data-ui-id="uNameTextBox">姓名：<input type="text"></label>'
         +   '<label data-ui-id="disabledTextBox">不可用：<input type="text"></label>'
         +   '<input id="submit-btn" type="submit" value="提交" data-ui-id="submitBtn">'
-        + '</form>';
+        + '</form>'
+        + '<iframe name="my-frame" src="about:blank"></iframe>';
 
     function createForm() {
         var main = $(tpl).appendTo(document.body);
@@ -83,9 +84,9 @@ define(function (require) {
             }
 
             var onSubmitSpy = jasmine.createSpy('onSubmitSpy');
+            form.main.target = 'my-frame';
             form.on('submit', onSubmitSpy);
 
-            form.main.target = '_blank';
             form.submit();
             expect(fakeValidate).toHaveBeenCalled();
             expect(onSubmitSpy).toHaveBeenCalled();
@@ -121,10 +122,9 @@ define(function (require) {
                 return true;
             }
 
-            form.main.target = '_blank';
-
             var onSubmitSpy = jasmine.createSpy('onSubmitSpy');
             form.on('submit', onSubmitSpy);
+            form.main.target = 'my-frame';
             $('#submit-btn').click();
             expect(onSubmitSpy).toHaveBeenCalled();
             expect(fakeValidate).toHaveBeenCalled();
