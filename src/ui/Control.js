@@ -658,6 +658,17 @@ define(function (require) {
         },
 
         /**
+         * 销毁控件并移除main元素
+         */
+        destroy: function () {
+            this.dispose();
+            if (this.main) {
+                $(this.main).remove();
+                this.main = null;
+            }
+        },
+
+        /**
          * 使用插件
          *
          * @public

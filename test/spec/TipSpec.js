@@ -42,7 +42,7 @@ define(function (require) {
 
             tip.destroy();
 
-            expect(tip.main).toBeUndefined();
+            expect(tip.main).toBeFalsy();
 
             tip = new Tip({
                 mode: 'click',
@@ -94,7 +94,7 @@ define(function (require) {
         it('over 模式', function () {
             tip.destroy();
 
-            expect(tip.main).toBeUndefined();
+            expect(tip.main).toBeFalsy();
 
             var delay = 100;
             tip = new Tip({
@@ -182,7 +182,7 @@ define(function (require) {
         it('static 模式', function () {
             tip.destroy();
 
-            expect(tip.main).toBeUndefined();
+            expect(tip.main).toBeFalsy();
 
             var target = $('#tipContainer a').get(0);
             tip = new Tip({
@@ -211,7 +211,7 @@ define(function (require) {
 
             tip.destroy();
 
-            expect(tip.main).toBeUndefined();
+            expect(tip.main).toBeFalsy();
 
             var delay = 100;
             tip = new Tip({
@@ -287,7 +287,7 @@ define(function (require) {
         it('liveTriggers', function () {
             tip.destroy();
 
-            expect(tip.main).toBeUndefined();
+            expect(tip.main).toBeFalsy();
 
             var delay = 100;
             tip = new Tip({

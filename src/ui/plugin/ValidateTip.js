@@ -167,8 +167,8 @@ define(function (require) {
          * @override
          */
         dispose: function () {
-            this.message.dispose();
-            this.icon && this.icon.dispose();
+            this.message.destroy();
+            this.icon && this.icon.destroy();
             this.target = this.icon = this.message = null;
             this.$parent();
         }

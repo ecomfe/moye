@@ -735,14 +735,8 @@ define(function (require) {
         dispose: function () {
             this.clearTriggersEvents(this.triggers, this.liveTriggers);
             this.$parent();
-        },
-
-        // 待定
-        destroy: function () {
-            this.dispose();
-            $(this.main).remove();
-            delete this.main;
         }
+
     });
 
     return Popup;

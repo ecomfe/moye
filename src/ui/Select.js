@@ -423,6 +423,7 @@ define(function (require) {
 
         dispose: function () {
             this.undelegate(this.main, 'click', this.onMainClicked);
+            this.popup.destroy();
             this.$parent();
         }
 
