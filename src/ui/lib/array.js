@@ -48,6 +48,11 @@ define(function (require) {
         each: function (obj, iterator, context) {
 
             var i;
+
+            if (obj == null) {
+                return obj;
+            }
+
             var length = obj.length;
 
             if (length === +length) {
@@ -70,6 +75,11 @@ define(function (require) {
         map: function (obj, iterator, context) {
 
             var i;
+
+            if (obj == null) {
+                return [];
+            }
+
             var length = obj.length;
             var result = [];
 

@@ -109,7 +109,7 @@ module.exports = function(config) {
                 included: false
             },
             {
-                pattern: 'test/spec/lib/functionSpec.js',
+                pattern: 'test/spec/lib/*.js',
                 include: false
             }
     ],
