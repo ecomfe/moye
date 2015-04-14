@@ -76,7 +76,7 @@ define(function (require) {
             // 点击一个包含有input:checkbox的label,会触发两次click事件哟~
             // target分别是label和input.
             // 我们在这两个事件中只处理其中的一个, 因此此处做一个debounce
-            this.delegate(this.main, 'click', lib.debounce($.proxy(this._onClick, this), 5));
+            this.delegate(this.main, 'click', lib.throttle.call(this, this._onClick, 5));
         },
 
         /**

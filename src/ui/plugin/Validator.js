@@ -76,9 +76,9 @@ define(function (require) {
 
             var validate = control.validate = $.proxy(this.validate, this, control);
 
-            // 如果带有delay参数, 那么我们做一个延迟函数
+            // 如果带有delay参数, 那么我们做一个debounce函数
             if (this.delay) {
-                validate = lib.delay(validate, this.delay);
+                validate = lib.debounce.call(this, validate, this.delay);
             }
 
             // 把`listen`中设定的事件名绑定上validate方法

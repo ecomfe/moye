@@ -17,8 +17,9 @@ define(function (require) {
             this.$parent(options);
 
             // 生成一个带有阀值的加载函数
-            this.load = lib.delay(
-                $.proxy(this.load, this),
+            this.load = lib.debounce.call(
+                this,
+                this.load,
                 this.delay,
                 this
             );

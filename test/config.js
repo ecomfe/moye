@@ -107,6 +107,10 @@ module.exports = function(config) {
             {
                 pattern: 'test/spec/LazyloadSpec.js',
                 included: false
+            },
+            {
+                pattern: 'test/spec/lib/functionSpec.js',
+                include: false
             }
     ],
 

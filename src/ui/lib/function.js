@@ -37,49 +37,65 @@ define(function (require) {
 
         /**
          * 对指定的函数进行包装, 返回一个在指定的时间内一次的函数
-         * @param  {Function} fn   待包装函数
-         * @param  {number}   wait 时间范围
-         * @return {Function}      包装后的函数
+         * @param  {Function} fn      待包装函数
+         * @param  {number}   wait    时间范围
+         * @return {Function}         包装后的函数
          */
-        debounce: function (fn, wait) {
+        throttle: function (fn, wait) {
             var timer = null;
+            var me = this;
             return function () {
-
                 if (timer) {
                     return;
                 }
-
                 timer = setTimeout(function () {
                     timer = null;
                 }, wait);
-
-                return fn.apply(null, arguments);
+                return fn.apply(me, arguments);
             };
         },
 
         /**
          * 对指定的函数进行包装, 返回一个新的函数
-         * 新的函数在调用后delay毫秒后执行原函数
-         * 如果在delay的这段时间内新的函数再次被调用,
-         * 那么重置delay时长, 在下一次delay毫秒后执行原函数
+         * 新的函数在调用后wait毫秒后执行原函数
+         * 如果在wait的这段时间内新的函数再次被调用,
+         * 那么重置wait时长, 在下一次wait毫秒后执行原函数
          *
-         * @param  {Function} fn   待包装函数
-         * @param  {number}   delay 时间范围
-         * @return {Function}      包装后的函数
+         * @param  {Function} fn      待包装函数
+         * @param  {number}   wait    时间范围
+         * @return {Function}         包装后的函数
          */
-        delay: function (fn, delay) {
+        debounce: function (fn, wait) {
             var timer;
+            var me = this;
             return function () {
+                var args = arguments;
                 // 如果有计时器，那么先把它清了
                 if (timer) {
                     clearTimeout(timer);
                 }
-                var args = [].slice.call(arguments);
                 // 重新起动一个定时器
                 timer = setTimeout(function () {
                     timer = null;
-                    return fn.apply(null, args);
-                }, delay);
+                    return fn.apply(me, args);
+                }, wait);
+            };
+        },
+
+        /**
+         * 对指定函数进行包装，返回一个新函数
+         * 此函数在wait毫秒后执行
+         * @param  {Function} fn      待包装函数
+         * @param  {number}   wait    延迟时间
+         * @return {Function}
+         */
+        delay: function (fn, wait) {
+            var me = this;
+            return function () {
+                var args = slice(arguments);
+                setTimeout(function () {
+                    return fn.apply(me, args);
+                }, wait);
             };
         },
 

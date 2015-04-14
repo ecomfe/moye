@@ -186,7 +186,7 @@ define(function (require) {
          */
         initEvents: function () {
             // 窗口大小变化事件需要一个特殊的delay处理
-            this.onWindowResize = lib.delay($.proxy(this.onWindowResize, this), 100);
+            this.onWindowResize = lib.debounce.call(this, this.onWindowResize, 100);
             this.showBound = $.proxy(this.onShow, this);
             this.hideBound = $.proxy(this.onHide, this);
             this.bindTriggersEvents(this.triggers, this.liveTriggers);
