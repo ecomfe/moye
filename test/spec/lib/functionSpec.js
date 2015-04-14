@@ -5,11 +5,35 @@
 
 define(function (require) {
 
-    var $ = require('jquery');
     var lib = require('ui/lib');
-
-
     describe('lib/function', function () {
+
+        it('binds', function () {
+
+            function Test() {
+                this.name = 'world';
+            }
+
+            Test.prototype.hello = function () {
+                return 'hello' + this.name;
+            };
+
+            Test.prototype.hehe = function () {
+                return 'hehe' + this.name;
+            };
+
+            var test = new Test();
+
+
+            lib.binds(test, '');
+            lib.binds(test, []);
+            lib.binds(test, ['hello']);
+            lib.binds(test, 'hello, hehe');
+
+            expect(test.hello.call(null)).toBe('helloworld');
+            expect(test.hehe.call(null)).toBe('heheworld');
+
+        });
 
         it('delay', function () {
             var i = 0;
@@ -71,6 +95,18 @@ define(function (require) {
             jasmine.Clock.tick(60);
             throttled(args);
             expect(i).toBe(2);
+        });
+
+        it('curry', function () {
+
+            var add = function (a, b) {
+                return a + b;
+            };
+
+            var add5 = lib.curry(add, 5);
+
+            expect(add5(1)).toBe(6);
+
         });
 
     });

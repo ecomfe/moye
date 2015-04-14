@@ -5,7 +5,9 @@
 
 define(function (require) {
 
-    var slice = require('./array').slice;
+    var $     = require('jquery');
+    var array = require('./array');
+    var slice = array.slice;
 
     return {
 
@@ -17,7 +19,7 @@ define(function (require) {
          * @param {(Array.string | string)} methods 要绑定的方法名列表
          */
         binds: function (me, methods) {
-            if (typeof methods === 'string') {
+            if ($.type(methods) === 'string') {
                 methods = ~methods.indexOf(',')
                     ? methods.split(/\s*,\s*/)
                     : slice(arguments, 1);
@@ -25,12 +27,11 @@ define(function (require) {
             if (!methods || !methods.length) {
                 return;
             }
-            var name;
-            var fn;
-            while ((name = methods.pop())) {
-                fn = name && me[name];
-                if (fn) {
-                    me[name] = $.proxy(fn, me);
+            for (var i = 0, len = methods.length; i < len; ++i) {
+                var name = methods[i];
+                var method = me[name];
+                if (method) {
+                    me[name] = $.proxy(method, me);
                 }
             }
         },
