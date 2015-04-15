@@ -106,6 +106,8 @@ define(function (require) {
                             }
                         }
                     });
+
+                    this.activeIndex = activeIndex;
                 }
             }
         ),
