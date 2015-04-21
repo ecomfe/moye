@@ -27,8 +27,8 @@ new Slider({
 ```
 
 ```html
-<div id="slider-container-default" class="ui-slider">
-    <div class="ui-slider-stage">
+<div id="slider-container-default">
+    <div data-role="stage">
         <img src="http://pic.hefei.cc/newcms/2012/03/14/13316929284f6005808aa20.jpg">
         <img src="http://pic.hefei.cc/newcms/2012/03/14/13316929274f60057f72733.jpg">
         <img src="http://pic.hefei.cc/newcms/2012/03/14/13316929284f60058013da9.jpg">
@@ -37,8 +37,8 @@ new Slider({
 </div>
 ```
 <div class="content">
-  <div id="slider-container-default" class="ui-slider">
-    <div class="ui-slider-stage"><img src="http://pic.hefei.cc/newcms/2012/03/14/13316929284f6005808aa20.jpg"><img src="http://pic.hefei.cc/newcms/2012/03/14/13316929274f60057f72733.jpg"><img src="http://pic.hefei.cc/newcms/2012/03/14/13316929284f60058013da9.jpg"><img src="http://pic.hefei.cc/newcms/2012/03/14/13316929294f600581a07e5.jpg"></div>
+  <div id="slider-container-default">
+    <div data-role="stage"><img src="http://pic.hefei.cc/newcms/2012/03/14/13316929284f6005808aa20.jpg"><img src="http://pic.hefei.cc/newcms/2012/03/14/13316929274f60057f72733.jpg"><img src="http://pic.hefei.cc/newcms/2012/03/14/13316929284f60058013da9.jpg"><img src="http://pic.hefei.cc/newcms/2012/03/14/13316929294f600581a07e5.jpg"></div>
   </div>
 </div>
 
@@ -47,8 +47,7 @@ require(['ui/Slider'], function (Slider) {
     new Slider({
         main: document.getElementById('slider-container-default'),
         anim: 'slide',
-        auto: false,
-        capacity: 4
+        auto: false
     }).render();
 });
 </script>
@@ -56,8 +55,8 @@ require(['ui/Slider'], function (Slider) {
 #### 自动轮播
 
 ```html
-<div id="auto-play" class="ui-slider">
-    <div class="ui-slider-stage">
+<div id="auto-play">
+    <div data-role="stage">
         <img src="http://pic.hefei.cc/newcms/2012/03/14/13316929284f6005808aa20.jpg">
         <img src="http://pic.hefei.cc/newcms/2012/03/14/13316929274f60057f72733.jpg">
         <img src="http://pic.hefei.cc/newcms/2012/03/14/13316929284f60058013da9.jpg">
@@ -80,8 +79,8 @@ new Slider({
 或者调用`slider.play()`/`slider.stop()`来开始/暂停播放
 
 <div class="content">
-    <div id="auto-play" class="ui-slider">
-        <div class="ui-slider-stage">
+    <div id="auto-play">
+        <div data-role="stage">
             <img src="http://pic.hefei.cc/newcms/2012/03/14/13316929284f6005808aa20.jpg"><img src="http://pic.hefei.cc/newcms/2012/03/14/13316929274f60057f72733.jpg"><img src="http://pic.hefei.cc/newcms/2012/03/14/13316929284f60058013da9.jpg"><img src="http://pic.hefei.cc/newcms/2012/03/14/13316929294f600581a07e5.jpg"></div>
         </div>
 </div>
@@ -91,8 +90,7 @@ require(['ui/Slider'], function (Slider) {
     new Slider({
         main: document.getElementById('auto-play'),
         anim: 'slide',
-        auto: true,
-        capacity: 4
+        auto: true
     }).render();
 });
 </script>
@@ -102,8 +100,8 @@ require(['ui/Slider'], function (Slider) {
 ### 滑动(slide)垂直方向切换
 
 ```html
-<div id="vertical" class="ui-slider">
-    <div class="ui-slider-stage">
+<div id="vertical">
+    <div data-role="stage">
         <img src="http://pic.hefei.cc/newcms/2012/03/14/13316929284f6005808aa20.jpg">
         <img src="http://pic.hefei.cc/newcms/2012/03/14/13316929274f60057f72733.jpg">
         <img src="http://pic.hefei.cc/newcms/2012/03/14/13316929284f60058013da9.jpg">
@@ -119,14 +117,13 @@ new Slider({
   auto: true,
   animOptions: {
     direction: 'vertical'
-  },
-  capacity: 4
+  }
 }).render();
 ```
 
 <div class="content">
-    <div id="vertical" class="ui-slider">
-        <div class="ui-slider-stage">
+    <div id="vertical">
+        <div data-role="stage">
             <img src="http://pic.hefei.cc/newcms/2012/03/14/13316929284f6005808aa20.jpg"><img src="http://pic.hefei.cc/newcms/2012/03/14/13316929274f60057f72733.jpg"><img src="http://pic.hefei.cc/newcms/2012/03/14/13316929284f60058013da9.jpg"><img src="http://pic.hefei.cc/newcms/2012/03/14/13316929294f600581a07e5.jpg"></div>
     </div>
 </div>
@@ -139,8 +136,7 @@ require(['ui/Slider'], function (Slider) {
     auto: true,
     animOptions: {
       direction: 'vertical'
-    },
-    capacity: 4
+    }
   }).render();
 });
 </script>
@@ -148,8 +144,8 @@ require(['ui/Slider'], function (Slider) {
 ### 透明渐变
 
 ```html
-<div id="opacity" class="ui-slider">
-    <div class="ui-slider-stage">
+<div id="opacity">
+    <div data-role="stage">
         <img src="http://pic.hefei.cc/newcms/2012/03/14/13316929284f6005808aa20.jpg">
         <img src="http://pic.hefei.cc/newcms/2012/03/14/13316929274f60057f72733.jpg">
         <img src="http://pic.hefei.cc/newcms/2012/03/14/13316929284f60058013da9.jpg">
@@ -162,14 +158,13 @@ require(['ui/Slider'], function (Slider) {
 new Slider({
   main: document.getElementById('opacity'),
   anim: 'opacity',
-  auto: true,
-  capacity: 4
+  auto: true
 }).render();
 ```
 
 <div class="content">
-  <div id="opacity" class="ui-slider">
-    <div class="ui-slider-stage">
+  <div id="opacity">
+    <div data-role="stage">
       <img src="http://pic.hefei.cc/newcms/2012/03/14/13316929284f6005808aa20.jpg"><img src="http://pic.hefei.cc/newcms/2012/03/14/13316929274f60057f72733.jpg"><img src="http://pic.hefei.cc/newcms/2012/03/14/13316929284f60058013da9.jpg"><img src="http://pic.hefei.cc/newcms/2012/03/14/13316929294f600581a07e5.jpg"></div>
   </div>
 </div>
@@ -179,8 +174,7 @@ require(['ui/Slider'], function (Slider) {
   new Slider({
     main: document.getElementById('opacity'),
     anim: 'opacity',
-    auto: true,
-    capacity: 4
+    auto: true
   }).render();
 });
 </script>

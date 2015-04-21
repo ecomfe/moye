@@ -111,6 +111,15 @@ module.exports = function(config) {
             {
                 pattern: 'test/spec/lib/*.js',
                 include: false
+            },
+            'src/css/Slider.less',
+            {
+                pattern: 'test/spec/SliderSpec.js',
+                included: false
+            },
+            {
+                pattern: 'test/spec/SliderAnimSpec.js',
+                included: false
             }
     ],
 

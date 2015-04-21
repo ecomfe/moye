@@ -200,12 +200,12 @@ define(function (require) {
         },
 
         /**
-         * lineer
+         * linear
          *
          * @param {number} p 当前百分比
          * @return {number} 算子百分比
          */
-        lineer: function (p) {
+        linear: function (p) {
             return p;
         },
 
@@ -322,7 +322,7 @@ define(function (require) {
          * @return {boolean}
          */
         isBusy: function () {
-            return this.timer !== 0;
+            return !!this.timer;
         },
 
         /**
@@ -417,7 +417,7 @@ define(function (require) {
 
             var stageWidth = this.slider.stageWidth;
             var stageHeight = this.slider.stageHeight;
-            var maxIndex = this.slider.count - 1;
+            var maxIndex = this.slider.capacity - 1;
             var stage = $(this.slider.stage);
 
             // 如果使用循环滚模式
