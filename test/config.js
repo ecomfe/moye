@@ -48,10 +48,10 @@ module.exports = function(config) {
             //     pattern: 'test/spec/PagerSpec.js',
             //     included: false
             // },
-            // {
-            //   pattern: 'test/spec/RatingSpec.js',
-            //     included: false
-            // },
+            {
+              pattern: 'test/spec/RatingSpec.js',
+                included: false
+            },
             {
                 pattern: 'test/spec/TabSpec.js',
                 included: false
