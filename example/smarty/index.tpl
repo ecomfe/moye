@@ -79,6 +79,13 @@
             {%call Rating data=$ui.rating%}
         </div>
         </section>
+        <script>
+        require(['ui/Rating'], function (Rating) {
+            var rating = new Rating({
+                main: document.getElementById('rating')
+            }).render();
+        });
+        </script>
     </section>
 
 </main>

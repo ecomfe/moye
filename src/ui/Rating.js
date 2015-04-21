@@ -55,6 +55,14 @@ define(function (require) {
             var helper = this.helper;
             var options = this.options;
             var mainClass = helper.getPartClassName();
+            var $main = $(this.main);
+
+            // 如果dom结构已被smarty渲染，则跳过dom结构初始化
+            if ($main.find('.' + mainClass).data('dom-inited') === true) {
+                this.value = $main.find('.' + this.ratedClass).length;
+                this.max = $main.find('.' + this.itemClass).length;
+                return;
+            }
 
             var html = ['<ul class="' + mainClass + '">'];
 
