@@ -74,6 +74,14 @@ define(function (require) {
 
             options = options || {};
 
+            // 处理配置参数中, 以onXxx开头的事件绑定
+            // 这里会把这一类的事件绑定参数给清除掉, 后边init时不会有这些参数的干扰
+            // {@link Module:lib#configurable.bindEvents}
+            this.bindEvents(options);
+
+            // 调用init接口, 进行参数的初始化
+            this.init(options);
+
             /**
              * 控件的主元素
              *
@@ -81,33 +89,23 @@ define(function (require) {
              * @protected
              * @readonly
              */
-            this.main = options.main ? lib.g(options.main) : this.createMain();
-            this.id   = options.id || lib.guid();
+            this.main = this.main ? lib.g(this.main) : this.createMain();
+            this.id   = this.id || lib.guid();
 
-            if (options.hasOwnProperty('states')) {
-                var states = this.states = options.states;
+            if (this.hasOwnProperty('states')) {
+                var states = this.states;
                 if (lib.isString(states)) {
                     this.states = [states];
                 }
             }
 
-            if (options.hasOwnProperty('skin')) {
-                var skin = this.skin = options.skin;
+            if (this.hasOwnProperty('skin')) {
+                var skin = this.skin;
                 if (lib.isString(skin)) {
                     this.skin = [skin];
                 }
             }
 
-            delete options.id;
-            delete options.skin;
-            delete options.states;
-
-            // 处理配置参数中, 以onXxx开头的事件绑定
-            // 这里会把这一类的事件绑定参数给清除掉, 后边init时不会有这些参数的干扰
-            // {@link Module:lib#configurable.bindEvents}
-            this.bindEvents(options);
-            // 调用init接口, 进行参数的初始化
-            this.init(options);
             // 初始化上下文
             helper.initContext();
             // 子控件容器

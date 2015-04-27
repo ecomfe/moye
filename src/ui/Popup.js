@@ -162,10 +162,6 @@ define(function (require) {
             if (options.target) {
                 this.target = lib.g(options.target);
             }
-            if (!options.content) {
-                this.content = this.main.innerHTML;
-            }
-
             if (options.mode === 'over') {
                 this.showDelay = options.showDelay > 0 ? options.showDelay : 50;
                 this.hideDelay = options.hideDelay > 0 ? options.hideDelay : 50;
@@ -173,10 +169,14 @@ define(function (require) {
         },
 
         initStructure: function () {
+
+            var content = this.content = this.content || this.main.innerHTML;
+
             $(this.main)
                 .css('left', '-2000px')
                 .appendTo(document.body)
-                .html(this.content || this.main.innerHTML);
+                .html(content);
+
         },
 
         /**
