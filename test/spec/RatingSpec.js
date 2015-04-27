@@ -1,88 +1,147 @@
 /**
  * @file 农历组件测试用例
  * @author chris <wfsr@foxmail.com>
- * @author ludafa <leonlu@outlook.com>
+ * @author chenzhian <chenzhian@baidu.com>
  */
 
 define(function (require) {
     var $ = require('jquery');
     var Rating = require('ui/Rating');
     var rating;
+    var $stars;
+    var fns = null;
 
     beforeEach(function () {
         document.body.insertAdjacentHTML(
             'beforeEnd',
-            '<div class="ecl-ui-rating" id="rating"></div>'
+            '<div id="rating"></div>'
         );
 
         rating = new Rating({
-            main: 'rating',
+            main: document.getElementById('rating'),
             value: 1,
             max: 3
         }).render();
 
-        jasmine.Clock.useMock();
+        $stars = $('.ui-rating-star', rating.main);
+
     });
 
     afterEach(function () {
         rating.dispose();
         rating = null;
+        $('#rating').remove();
+        $stars = null;
     });
 
     describe('评分组件', function () {
         // 点亮第一颗星，其他都不亮
         it('init rating with a value', function () {
-            var result = $('.ecl-ui-rating-star-on', rating.main);
+            var result = $('.ui-rating-star-on', rating.main);
 
             expect(result.length).toBe(1);
 
-            expect(rating.stars[0].className).toContain('ecl-ui-rating-star-on');
+            expect($stars[0].className).toContain('ui-rating-star-on');
 
-            expect(rating.stars[1].className).not.toContain('ecl-ui-rating-star-on');
+            expect($stars[1].className).not.toContain('ui-rating-star-on');
 
-            expect(rating.stars[2].className).not.toContain('ecl-ui-rating-star-on');
+            expect($stars[2].className).not.toContain('ui-rating-star-on');
         });
 
         // 鼠标移进星星，预览星级
-        it('preview rating when mouseover', function () {
+        it('event: mouseover', function () {
             var rndIndex = 1;
 
-            $(rating.stars[rndIndex]).trigger('mouseover');
+            var onHoverSpy = jasmine.createSpy('onHoverSpy');
 
-            setTimeout(function () {
-                var result = $('.ecl-ui-rating-star-on', rating.main);
-                expect(result.length).toBe(rndIndex + 1);
-            }, 0);
+            rating.on('hover', onHoverSpy);
 
-            jasmine.Clock.tick(10);
+            $($stars[rndIndex]).trigger('mouseover');
+
+            expect(onHoverSpy).toHaveBeenCalled();
+
+            var result = $('.ui-rating-star-on', rating.main);
+            expect(result.length).toBe(rndIndex + 1);
 
         });
 
-        // // 鼠标移出星星，重置星级为value所指定的星级
-        it('reset rating when mouseout', function () {
+        // 鼠标移出星星，重置星级为value所指定的星级
+        it('event: mouseout', function () {
             var rndIndex = 1;
+            var onHoverSpy = jasmine.createSpy('onHoverSpy');
 
-            $(rating.stars[rndIndex]).trigger('mouseout');
+            rating.on('hover', onHoverSpy);
 
-            setTimeout(function () {
-                var result = rating.query('ecl-ui-rating-star-on');
-                expect(result.length).toBe(rating.options.value);
-            }, 0);
+            $($stars[rndIndex]).trigger('mouseout');
 
-            jasmine.Clock.tick(10);
+            expect(onHoverSpy).toHaveBeenCalled();
+
+            var result = $('.ui-rating-star-on', rating.main);
+            expect(result.length).toBe(rating.value);
+
         });
 
         // 单击星星
-        it('event:onRated', function () {
+        it('event: change', function () {
             var rndIndex = 1;
 
-            var onRated = function (e) {
+            var onChange = function (e) {
                 expect(e.value).toBe(rndIndex + 1);
             };
 
-            rating.on('rated', onRated);
-            $(rating.stars[rndIndex]).trigger('click');
-            rating.un('rated');
+            rating.on('change', onChange);
+
+            $($stars[rndIndex]).click();
+
+            rating.un('change');
+        });
+
+        // 设置点亮星星值
+        it('method: setValue', function () {
+            var value = 2;
+
+            rating.setValue(value);
+
+            expect(rating.value).toBe(value);
+            var $starsIsOn = $('.ui-rating-star-on', rating.main);
+            expect($starsIsOn.length).toBe(value);
+        });
+
+        // 设置点亮星星值
+        it('method: setValue with fireChange parameter', function () {
+            var value = 2;
+            var onChangeSpy = jasmine.createSpy('onChangeSpy');
+
+            rating.on('change', onChangeSpy);
+
+            rating.setValue(value, true);
+
+            expect(onChangeSpy).toHaveBeenCalled();
+
+            expect(rating.value).toBe(value);
+
+            var $starsIsOn = $('.ui-rating-star-on', rating.main);
+            expect($starsIsOn.length).toBe(value);
+            rating.un('change');
+        });
+
+        // getValue方法
+        it('method: getValue', function () {
+            expect(rating.getValue()).toBe(1);
+        });
+
+        // disable和enable方法
+        it('method: enable && disable', function () {
+            var rndIndex = 1;
+            var onChangeSpy = jasmine.createSpy('onChangeSpy');
+            rating.on('change', onChangeSpy);
+            rating.disable();
+            $($stars[rndIndex]).click();
+            expect(onChangeSpy).not.toHaveBeenCalled();
+            rating.enable();
+            $($stars[rndIndex]).click();
+            expect(onChangeSpy).toHaveBeenCalled();
+            rating.un('change');
         });
     });
 });

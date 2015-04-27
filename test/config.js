@@ -48,14 +48,14 @@ module.exports = function(config) {
             //     pattern: 'test/spec/PagerSpec.js',
             //     included: false
             // },
-            // {
-            //   pattern: 'test/spec/RatingSpec.js',
-            //     included: false
-            // },
-            // {
-            //     pattern: 'test/spec/TabsSpec.js',
-            //     included: false
-            // },
+            {
+              pattern: 'test/spec/RatingSpec.js',
+                included: false
+            },
+            {
+                pattern: 'test/spec/TabSpec.js',
+                included: false
+            },
             // {
             //     pattern: 'test/spec/CalendarSpec.js',
             //     included: false
@@ -111,6 +111,15 @@ module.exports = function(config) {
             {
                 pattern: 'test/spec/lib/*.js',
                 include: false
+            },
+            'src/css/Slider.less',
+            {
+                pattern: 'test/spec/SliderSpec.js',
+                included: false
+            },
+            {
+                pattern: 'test/spec/SliderAnimSpec.js',
+                included: false
             }
     ],
 
