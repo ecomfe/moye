@@ -43,5 +43,29 @@
         "type": "Rating",
         "max": 5,
         "value": 2
+    },
+    "boxGroup": {
+        "id": "boxGroup",
+        "type": "BoxGroup",
+        "styleClass": "checkbox-tick",
+        "datasource": [
+            {
+                "value": 0,
+                "name": "不限"
+            },
+            {
+                "value": 1,
+                "name": "中关村-上地"
+            },
+            {
+                "value": 2,
+                "name": "亚运村"
+            },
+            {
+                "value": 3,
+                "name": "北京南站商圈超长"
+            }
+        ],
+        "value": [1, 2]
     }
 }

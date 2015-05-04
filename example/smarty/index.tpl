@@ -78,11 +78,25 @@
         <div id="rating">
             {%call Rating data=$ui.rating%}
         </div>
-        </section>
         <script>
         require(['ui/Rating'], function (Rating) {
             var rating = new Rating({
                 main: document.getElementById('rating')
+            }).render();
+        });
+        </script>
+    </section>
+
+    <section>
+        {%include file="../../src/tpl/smarty/BoxGroup.tpl"%}
+        <h3 class="demo-title">单复选BoxGroup</h3>
+        <div>
+            {%call BoxGroup data=$ui.boxGroup%}
+        </div>
+        <script>
+        require(['ui/BoxGroup'], function (BoxGroup) {
+            var boxGroup = new BoxGroup({
+                main: document.getElementById('boxGroup')
             }).render();
         });
         </script>
