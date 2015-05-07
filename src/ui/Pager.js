@@ -101,20 +101,6 @@ define(function (require) {
              */
             mode: 'normal',
 
-            setTpl: {
-                /**
-                 * pager item字符串
-                 *
-                 * @param {number=} page 当前显示页码
-                 * @param {number=} total 总页码
-                 * @param {string=} className 该item的className
-                 * @return {string|null}
-                 */
-                setItemHTML: function (page, total, className) {
-                    return null;
-                }
-            },
-
             // 上下页显示文字
             lang: {
 
@@ -138,16 +124,15 @@ define(function (require) {
          */
         init: function (options) {
             this.$parent(options);
-            var main = $(this.main);
             this.showCount = +this.showCount;
-            this.total     = +this.total || main.data('total') || 0;
+            this.total     = +this.total || 0;
             this.padding   = +this.padding || 0;
-            this.page      = +this.page || main.data('page') || 0;
-            this.first     = this.anchor ? 1 : this.first & 1;
+            this.page      = +this.page || 0;
+            this.first     = this.first ? 1 : 0;
         },
 
         initEvents: function () {
-            this.delegate(this.main, 'click', this.onMainClicked);
+            this.delegate(this.main, 'click', 'a', this.onMainClicked);
         },
 
         repaint: painter.createRepaint(
@@ -188,7 +173,6 @@ define(function (require) {
          * @public
          */
         setPage: function (page) {
-            // 强行触发set生效
             this.page = null;
             this.set('page', page);
         },
@@ -200,7 +184,7 @@ define(function (require) {
          * @public
          */
         getPage: function () {
-            return this.page + this.first;
+            return this.page;
         },
 
         /**
@@ -211,7 +195,7 @@ define(function (require) {
          */
         setTotal: function (total) {
             this.set({
-                page: 0,
+                page: this.first,
                 total: +total
             });
         },
@@ -226,10 +210,6 @@ define(function (require) {
             return this.total;
         },
 
-        getItemText: function (index, part) {
-            return this.lang[part] || index;
-        },
-
         /**
          * 默认分页item
          * @param {number} index 当前渲染item的index
@@ -237,35 +217,35 @@ define(function (require) {
          * @return {string} item的html字符串
          */
         getItemHTML: function (index, part) {
-            var helper = this.helper;
-            var states = [].slice.call(arguments, 1).concat('item');
-            var className = lib.reduce(
-                states,
-                function (result, part) {
-                    if (part) {
-                        result.push(helper.getPartClassName(part));
-                    }
-                    return result;
-                },
-                []
-            );
-            var page = index + this.first;
-            var anchor = this.anchor
-                ? (~this.anchor.indexOf('?')
-                ? this.anchor + '&page=' + page
-                : this.anchor + '?page=' + page)
-                : '#';
+            var className = this.getItemClassName(lib.slice(arguments, 1).concat('item'));
+            var anchor = this.getItemAnchor(index, part);
 
-            if (part !== 'prev' && part !== 'next' && typeof this.setTpl.setItemHTML() === 'string') {
-                return this.setTpl.setItemHTML(page, this.total, className.join(' '));
-            }
+            // TODO page的set失效问题 还要再看看
+            var page = index + this.first;
 
             return ''
-                + '<a href="'
-                + anchor
-                + '" data-page="' + page + '" class="' + className.join(' ') + '">'
+                + '<a href="' + anchor + '" '
+                +    'data-page="' + page + '" '
+                +    'class="' + className + '">'
                 +     this.getItemText(index + 1, part || 'item')
                 + '</a>';
+        },
+
+        getItemText: function (index, part) {
+            return this.lang[part] || index;
+        },
+
+        getItemClassName: function (states) {
+            var helper = this.helper;
+            return lib.map(states, function (state) {
+                return state
+                    ? helper.getPartClassName(state)
+                    : '';
+            }).join(' ');
+        },
+
+        getItemAnchor: function (page, part) {
+            return '#';
         },
 
         /**
@@ -373,7 +353,7 @@ define(function (require) {
          */
         onMainClicked: function (e) {
 
-            var target = $(e.target).closest('a', this.main);
+            var target = $(e.currentTarget);
             var helper = this.helper;
 
             if (!target.length
@@ -390,24 +370,20 @@ define(function (require) {
              * @type {Object}
              * @property {number} page 新的页码
              */
-            var event = new $.Event('change', {
+            var event = this.fire('change', {
                 page: page
             });
-
-            this.fire(event);
 
             // 刷新页面
             if (this.anchor) {
                 return;
             }
 
-            e.preventDefault();
-
             if (event.isDefaultPrevented()) {
                 return;
             }
 
-            this.page = null;
+            e.preventDefault();
             this.set('page', page);
         }
     });
