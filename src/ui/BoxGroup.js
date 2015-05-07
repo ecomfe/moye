@@ -51,7 +51,7 @@ define(
                 // 被选中时的样式
                 activeClass: 'checked',
 
-                //  单复选是哪种样式(default |radio-circle |checkbox-tick)
+                //  单复选是哪种样式(default |radio-point |checkbox-tick)
                 styleClass: 'default',
 
                 // 数据源
@@ -94,16 +94,19 @@ define(
                             return;
                         }
                         value = this.value = value || [];
-
+                        if (this.boxType.toLowerCase() === 'radio') {
+                            value.length = 1;
+                        }
                         $('label', main).each(function () {
                             var me = $(this);
-                            var value = me.attr('value');
-
-                            var bool = $.inArray(value, this.value) > -1;
-                            var act = bool? 'addClass' : 'removeClass';
+                            var input = me.find('input');
+                            var inputValue = +input.prop('value');
+                            var bool = $.inArray(inputValue, value) > -1;
+                            var act = bool ? 'addClass' : 'removeClass';
 
                             // 操作元素添加或移除activeClass 并指定checked属性的值
-                            me[act](this.activeClass).find('input').attr(
+                            me[act](this.activeClass);
+                            input.prop(
                                 'checked', bool);
                         });
                     }
@@ -111,7 +114,7 @@ define(
             ),
 
             initEvents: function () {
-                this.delegate(this.main, 'click', this._onClick);
+                this.delegate(this.main, 'click', 'label', this.onClick);
             },
 
             /**
@@ -121,16 +124,9 @@ define(
              * @fires module:BoxGroup#click
              * @private
              */
-            _onClick: function (e) {
+            onClick: function (e) {
 
                 var me = this;
-
-                /**
-                 * @event module:BoxGroup#click
-                 * @type {object}
-                 * @property {Event} event 事件源对象
-                 */
-                me.fire('click', { event: e });
 
                 var $target = $(e.target);
 
@@ -139,19 +135,16 @@ define(
 
                 var tagName = $target.prop('tagName');
 
-               var isRadio = (me.boxType === 'radio');
+                var isRadio = (me.boxType.toLowerCase() === 'radio');
 
-                // 如果点击的不是INPUT、I、LABEL那就忽略
-                if (tagName !== 'LABEL' && tagName !== 'INPUT' && tagName !== 'I') {
-                    return;
-                }
 
                 // 如果直接点击了input, i,那么我们需要向上选择到它的父结点label
                 if (tagName === 'INPUT' || tagName === 'I') {
-                     e.preventDefault() || (e.returnValue = false);
+                    e.preventDefault() || (e.returnValue = false);
                     // 向上选择到label一层
                     $target = $target.parent();
-                } else {
+                }
+                else {
                     // 当点击的元素是LABEL，那么要阻止默认。。。
                     // 原理: 当label包含的for属性，或者label中包含中input时，
                     // 当label被点击时，浏览器会自动触发一次input完整真实的click事件
@@ -169,20 +162,22 @@ define(
                 if (isRadio && $input.prop('checked')) {
                     return;
                 }
+
                 // 此时点击的是未选中的单选或者复选框 所以则反选
+
                 var activeClass = me.activeClass;
                 var $checkedItems = $(me.main).find('.' + activeClass);
 
                 if (isRadio) {
-                    //单选保证选项中只有一个选项被选中
-                    $checkedItems.removeClass(activeClass)
+                    // 单选保证选项中只有一个选项被选中
+                    $checkedItems && $checkedItems.removeClass(activeClass)
                                  .find('input').prop('checked', false);
                 }
 
                 var checked = !$target.hasClass(activeClass);
                 $target.toggleClass(activeClass)
                        .find('input')
-                       .attr('checked', checked);
+                       .prop('checked', checked);
 
                 this.fire('change', {
                     target: this
@@ -195,20 +190,9 @@ define(
                     + '<label class="' + this.styleClass + checkedClass + '">'
                     +     '<i class="icon icon-un"></i>'
                     +     '<i class="icon icon-on"></i>'
-                    +     '<input type="' + this.boxType + '" name="'
-                    +         item.name + '" value="' + item.value + '">'
+                    +     '<input type="' + this.boxType + '" value="' + item.value + '">'
                     +      item.name
                     + '</label>';
-            },
-
-            /**
-             * 判断一个DOM是否为当前所选中的荐
-             * @param  {Element} item 某个DOM元素
-             * @return {Boolean}
-             */
-            isActiveItem: function (item) {
-                item = $(item);
-                return item.is('label') && item.hasClass(this.activeClass);
             },
 
             /**
@@ -219,8 +203,8 @@ define(
             getValue: function () {
                 var value = [];
                 var main = $(this.main);
-                $('.' + this.activeClass, main).each(function () {
-                    value.push($(this).find('input').attr('value'));
+                $('.' + this.activeClass + 'input', main).each(function () {
+                    value.push($(this).prop('value'));
                 });
                 return value;
             },
@@ -238,7 +222,7 @@ define(
             },
 
             dispose: function () {
-                this.undelegate(this.main, 'click', this._onClick);
+                this.undelegate(this.main, 'click', 'label', this.onClick);
                 Control.prototype.dispose.apply(this, arguments);
             }
         });
