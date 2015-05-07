@@ -374,7 +374,7 @@ define(function (require) {
             var textbox = this.textbox;
             $(textbox.input).off('keyup' + textbox.id);
             if (this.main) {
-                $(main).off('click');
+                $(this.main).off('click');
                 this.main = null;
             }
             this.textbox = null;
