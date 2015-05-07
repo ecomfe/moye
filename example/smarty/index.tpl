@@ -96,7 +96,9 @@
         <script>
         require(['ui/BoxGroup'], function (BoxGroup) {
             var boxGroup = new BoxGroup({
-                main: document.getElementById('boxGroup')
+                main: document.getElementById('boxGroup'),
+                boxType: 'radio',
+                styleClass: 'radio-point',
             }).render();
         });
         </script>

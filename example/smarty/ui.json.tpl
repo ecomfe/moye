@@ -47,7 +47,8 @@
     "boxGroup": {
         "id": "boxGroup",
         "type": "BoxGroup",
-        "styleClass": "checkbox-tick",
+        "boxType": "radio",
+        "styleClass": "radio-point",
         "datasource": [
             {
                 "value": 0,
@@ -66,6 +67,6 @@
                 "name": "北京南站商圈超长"
             }
         ],
-        "value": [1, 2]
+        "value": [1,2]
     }
 }
