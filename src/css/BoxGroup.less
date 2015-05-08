@@ -2,6 +2,7 @@
 @import (reference) "./dep.less";
 
 // 默认基本样式
+
 // 选框的宽度
 @moye-boxgroup-label-width: 100px;
 // 选框的高度 垂直居中 所以默认line-height等于height
@@ -46,7 +47,7 @@
 
 .@{moye-prefix}-boxgroup {
     input {
-        display: none;
+       display: none;
     }
     label {
         .inline-block();
@@ -67,6 +68,8 @@
         }
     }
     .checked {
+        background-color: @moye-boxgroup-label-default-bgcolor;
+        color: @moye-boxgroup-label-default-color;
         .icon-un{
             display: none;
         }
@@ -79,12 +82,10 @@
         .icon {
             display: none;
         }
-        &.checked {
-            background-color: @moye-boxgroup-label-default-bgcolor;
-            color: @moye-boxgroup-label-default-color;
-        }
     }
     .checkbox-tick {
+        background: none;
+        color: #000;
         .icon-un {
             background: url('../img/no-tick.jpg') center no-repeat;
         }
@@ -93,6 +94,8 @@
         }
     }
     .radio-point {
+        background: none;
+        color: #000;
         .icon-un {
             &:before {
                 content: "\e003";
