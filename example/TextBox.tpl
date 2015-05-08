@@ -1,6 +1,7 @@
 {% target: TextBox(master=base) %}
 {% content: style %}
 <link rel="stylesheet" href="../src/css/TextBox.less">
+<link rel="stylesheet" href="../src/css/plugin/TextBoxAutoComplete.less">
 {% content: content %}
 {% filter: markdown %}
 # TextBox 文本输入框
@@ -111,6 +112,70 @@ require(['ui/TextBox'], function (TextBox) {
 
 });
 </script>
+
+
+### 文本框 + autocomplete
+
+<div class="content">
+    <div id="textbox-autocomplete" class="ui-textbox">
+        <input type="text" value="">
+    </div>
+</div>
+
+
+
+
+<script>
+require(['ui/TextBox', 'ui/plugin/TextBoxAutoComplete'], function (TextBox, TextBoxAutoComplete) {
+
+    new TextBox({
+        main: document.getElementById('textbox-autocomplete'),
+        plugins: [{
+            type: 'TextBoxAutoComplete',
+            options: {
+                datasource: function () {
+                    return [{
+                        text: 'aaa',
+                        value: 'aaa'
+                    }, {
+                        text: 'bbb',
+                        value: 'bbb'
+                    }];
+                }
+            }
+        }]
+    })
+    .render()
+
+});
+</script>
+
+
+
+```js
+require(['ui/TextBox', 'ui/plugin/TextBoxAutoComplete'], function (TextBox, TextBoxAutoComplete) {
+
+    new TextBox({
+        main: document.getElementById('textbox-autocomplete'),
+        plugins: [{
+            type: 'TextBoxAutoComplete',
+            options: {
+                datasource: function () {
+                    return [{
+                        text: 'aaa',
+                        value: 'aaa'
+                    }, {
+                        text: 'bbb',
+                        value: 'bbb'
+                    }];
+                }
+            }
+        }]
+    })
+    .render()
+
+});
+```
 
 
 {%/filter%}

@@ -2,6 +2,7 @@
  * @file moye - TextBox - AutoComplete
  * @author Leon(lupengyu@baidu)
  */
+
 define(function (require) {
 
     var $ = require('jquery');
@@ -17,11 +18,10 @@ define(function (require) {
             this.$parent(options);
 
             // 生成一个带有阀值的加载函数
-            this.load = lib.debounce.call(
+            this.load = lib.delay.call(
                 this,
                 this.load,
-                this.delay,
-                this
+                this.delay
             );
             this.current = null;
         },
@@ -36,7 +36,8 @@ define(function (require) {
 
             $(textbox.input)
                 // 这里是特殊控制事件的处理
-                .on('keyup.' + id, $.proxy(this._onKeyup, this))
+                .on('keyup.' + id, $.proxy(this.onTextBoxKeyUp, this))
+                .on('blur.' + id, $.proxy(this.onTextBoxBlur, this))
                 .get(0)
                 .autocomplete = 'off';
 
@@ -44,7 +45,7 @@ define(function (require) {
             textbox.hideSuggestions = $.proxy(this.hide, this);
 
             // 输入框的输入事件处理
-            textbox.on('input', $.proxy(this._onInput, this));
+            textbox.on('change', $.proxy(this.onTextBoxChange, this));
         },
 
         /**
@@ -67,7 +68,7 @@ define(function (require) {
          * 准备加载推荐数据
          * @param  {event} e 输入事件
          */
-        _onInput: function (e) {
+        onTextBoxChange: function (e) {
             var value = this.textbox.getValue();
             value ? this.load(value) : this.hide();
         },
@@ -75,15 +76,15 @@ define(function (require) {
         /**
          * 当输入框失去焦点时, 隐藏推荐
          */
-        _onBlur: function () {
-            this.hide();
+        onTextBoxBlur: function () {
+            lib.delay.call(this, this.hide, 300)();
         },
 
         /**
          * 按下事件处理
          * @param  {Event} e 按键事件
          */
-        _onKeyup: function (e) {
+        onTextBoxKeyUp: function (e) {
 
             if (e.isDefaultPrevented()) {
                 return;
@@ -98,7 +99,7 @@ define(function (require) {
                     // 按`上`
                     this.prev();
                     return;
-                case 27:
+                case 27: case 13:
                     // 按`esc`
                     this.hide();
                     return;
@@ -110,7 +111,7 @@ define(function (require) {
 
         /**
          * 缓存输入值
-         * @param {string} value
+         * @param {string} value 当前输入框的值
          */
         setCache: function (value) {
             this._cache = value;
@@ -128,7 +129,8 @@ define(function (require) {
          * 全局点击事件处理
          * @param  {Event} e 点击事件
          */
-        _onBodyClick: function (e) {
+        onDocumentClick: function (e) {
+
             var target = e.target;
 
             // 如果点击的是在推荐DOM里, 那么这里要去选中
@@ -152,7 +154,7 @@ define(function (require) {
 
         /**
          * 点击某个推荐项目
-         * @param  {Event} e 点击事件
+         * @param {Element} item 选中某个推荐项
          */
         select: function (item) {
 
@@ -165,35 +167,41 @@ define(function (require) {
             var index      = +$(item).data('index');
             var textbox    = this.textbox;
             var suggestion = suggestions[index];
-            var value      = this.adapter.toInput(suggestion);
 
-            textbox.fire('autocomplete', {
+            var event = textbox.fire('autocomplete', {
                 suggestion: suggestion,
                 mode: 'pick'
             });
 
+            if (event.isDefaultPrevented()) {
+                return;
+            }
+
             textbox.input.focus();
+            textbox.set('value', this.adapter.toInput.call(this, suggestion));
             this.hide();
 
         },
 
         /**
          * 加载推荐数据
+         * @param {string} value 输入值
+         * @return {TextBox}
          */
         load: function (value) {
             var fetching = this.datasource(value);
             // 异步加载数据
             if (fetching && lib.isFunction(fetching.then)) {
-                fetching.then($.proxy(this._onSuggestionLoaded, this));
+                fetching.then($.proxy(this.onSuggestionLoaded, this));
             }
             // 同步返回数据
             else {
-                this._onSuggestionLoaded(fetching);
+                this.onSuggestionLoaded(fetching);
             }
-            return this;
+            return this.textbox;
         },
 
-        _onSuggestionLoaded: function (data) {
+        onSuggestionLoaded: function (data) {
             if (!data || !data.length) {
                 this.hide();
             }
@@ -218,15 +226,16 @@ define(function (require) {
 
         /**
          * 显示推荐浮层
-         * @param  {Array.string} suggestions
+         * @param  {Array.Object} suggestions 推荐数据
+         * @return {TextBox}
          */
         show: function (suggestions) {
 
             this.suggestions = suggestions || [];
             var count = this.count = suggestions.length;
 
-            if (!count) {
-                return this;
+            if (!count || this.state === 'show') {
+                return this.textbox;
             }
 
             var textbox = this.textbox;
@@ -238,12 +247,14 @@ define(function (require) {
 
             var html = [];
 
+            var itemClassName = helper.getPartClassName('autocomplete-item');
+
             for (var i = 0; i < count; i++) {
 
                 var suggestion = this.adapter.toList(suggestions[i]);
 
                 var item = ''
-                    + '<a class="' + helper.getPartClassName('autocomplete-item') + '" '
+                    + '<a class="' + itemClassName + '" '
                     +     'data-index="' + i + '" href="#">'
                     +     suggestion
                     + '</a>';
@@ -252,23 +263,33 @@ define(function (require) {
             }
 
             main.html(html.join('')).show();
+
+            this.state = 'show';
+
             // 开始侦听全局的点击事件
-            $(document.body).on('click.' + textbox.id, $.proxy(this._onBodyClick, this));
-            return this;
+            $(document.body).on(
+                'click.' + textbox.id + '.autocomplete',
+                $.proxy(this.onDocumentClick, this)
+            );
+
+            return this.textbox;
         },
 
-        /**
-         * 解析推荐数据项目, 解析过的数据用于展现
-         * @param  {object} suggestion 推荐项目
-         * @return {object}
-         */
         adapter: {
+            /**
+             * 解析推荐数据项目, 解析过的数据用于展现
+             * @param  {Object} suggestion 推荐项目
+             * @return {string}
+             */
             toList: function (suggestion) {
-                return {
-                    text: suggestion.text,
-                    value: suggestion.value
-                };
+                return suggestion.text || suggestion.name;
             },
+
+            /**
+             * 解析推荐数据项目, 解析过的数据用于赋值
+             * @param  {Object} suggestion 推荐项目
+             * @return {string}
+             */
             toInput: function (suggestion) {
                 return suggestion.value;
             }
@@ -279,25 +300,30 @@ define(function (require) {
          */
         hide: function () {
 
-            var event = new $.Event('autocompletebeforehide');
+            if (this.state === 'hide') {
+                return;
+            }
 
-            this.textbox.fire(event);
+            var event = this.textbox.fire('autocompletebeforehide');
 
             if (event.isDefaultPrevented()) {
                 return;
             }
 
             var main = this.main;
+
             if (main) {
                 $(main).hide();
                 // 停止侦听全局点击事件
-                $(document.body).off('click.' + this.textbox.id);
+                $(document.body).off('click.' + this.textbox.id + '.autocomplete');
             }
+
+            this.state = 'hide';
+
             this.suggestions = null;
             this.current = null;
             this.count = null;
             this._cache = null;
-            return this;
         },
 
         /**
@@ -309,7 +335,6 @@ define(function (require) {
 
         /**
          * 选中上一个备选项
-         * @return {[type]} [description]
          */
         prev: function () {
             this.move('up');
@@ -371,12 +396,16 @@ define(function (require) {
         },
 
         inactivate: function () {
+
             var textbox = this.textbox;
-            $(textbox.input).off('keyup' + textbox.id);
-            if (this.main) {
-                $(main).off('click');
-                this.main = null;
-            }
+            var id = textbox.id;
+
+            $(textbox.input)
+                .off('keyup.' + id)
+                .off('blur.' + id);
+
+            $(document.body).off('click.' + id);
+
             this.textbox = null;
         }
 
