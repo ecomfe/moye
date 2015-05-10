@@ -263,8 +263,8 @@ require(['ui/Pager'], function (Pager) {
             main: document.getElementById('pager-url'),
             page: 1,
             first: 1,
-            total: 5,
-            showCount: 10,
+            total: 10,
+            showCount: 5,
             anchor: '/example/Pager.tpl'
         })
         .render();

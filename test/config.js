@@ -44,10 +44,10 @@ module.exports = function(config) {
                 pattern: 'test/spec/TipSpec.js',
                 included: false
             },
-            // {
-            //     pattern: 'test/spec/PagerSpec.js',
-            //     included: false
-            // },
+            {
+                 pattern: 'test/spec/PagerSpec.js',
+                 included: false
+            },
             {
               pattern: 'test/spec/RatingSpec.js',
                 included: false

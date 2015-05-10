@@ -140,7 +140,7 @@ define(function (require) {
          * @private
          */
         initEvents: function () {
-            this.delegate($(this.main), 'click', 'a', this.onMainClicked);
+            this.delegate(this.main, 'click', 'a', this.onMainClicked);
         },
 
         /**
@@ -427,6 +427,15 @@ define(function (require) {
 
             e.preventDefault();
             this.set('page', page);
+        },
+
+        /**
+         * 控件销毁
+         */
+        dispose: function () {
+            this.undelegate(this.main, 'click', 'a', this.onMainClicked);
+            this.$parent();
+            $(this.main).html('');
         }
     });
 
