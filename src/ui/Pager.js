@@ -123,18 +123,31 @@ define(function (require) {
          * @private
          */
         init: function (options) {
+            var main = $(this.main);
+
             this.$parent(options);
             this.showCount = +this.showCount;
-            this.total     = +this.total || 0;
+            this.total     = +this.total || +main.data('total') || 0;
             this.padding   = +this.padding || 0;
-            this.page      = +this.page || 0;
-            this.first     = this.first ? 1 : 0;
+            this.first     = +this.first || +main.data('first') || 0;
+            this.page      = +this.page || +main.data('page') || +this.first;
+
         },
 
+        /**
+         * 事件绑定
+         *
+         * @private
+         */
         initEvents: function () {
-            this.delegate(this.main, 'click', 'a', this.onMainClicked);
+            this.delegate($(this.main), 'click', 'a', this.onMainClicked);
         },
 
+        /**
+         * 重绘
+         *
+         * @override
+         */
         repaint: painter.createRepaint(
             Control.prototype.repaint,
             {
@@ -142,16 +155,8 @@ define(function (require) {
                 paint: function (painter, page, total) {
                     var main = $(this.main);
 
-                    // page的可选区间在[0, total); 所以我们做这个规范化处理
-                    this.page = Math.max(Math.min(page - this.first, this.total - 1), 0);
-
-                    // 如果有锚点，需要根据当前url设置当前页码
-                    if (this.anchor && this.helper.isInStage('INITED')) {
-                        this.set(
-                            'page',
-                            (+getQuery(window.location.href).page || this.page + this.first) - this.first
-                        );
-                    }
+                    // page的可选区间在[first, total - 1 + first); 所以我们做这个规范化处理
+                    this.page = Math.max(Math.min(page, this.total - 1 + this.first), this.first);
 
                     // total的取值间是[1, total], 如果total为0或1,
                     // 那么我们认为没有必要显示pager;
@@ -218,23 +223,45 @@ define(function (require) {
          */
         getItemHTML: function (index, part) {
             var className = this.getItemClassName(lib.slice(arguments, 1).concat('item'));
-            var anchor = this.getItemAnchor(index, part);
+            var page = index;
+            var anchor = this.getItemAnchor(page);
 
-            // TODO page的set失效问题 还要再看看
-            var page = index + this.first;
+            if (!this.lang[part] && this.getPageItemHTML) {
+                return this.getPageItemHTML(page, part);
+            }
 
             return ''
                 + '<a href="' + anchor + '" '
                 +    'data-page="' + page + '" '
                 +    'class="' + className + '">'
-                +     this.getItemText(index + 1, part || 'item')
+                +     this.getItemText(index + 1 - this.first, part || 'item')
                 + '</a>';
+
         },
 
+        /**
+         * 默认分页item
+         * @param {number} index 当前渲染item的index
+         * @param {string} part 当前渲染item的状态
+         * @return {string} item的html字符串
+         */
+        getPageItemHTML: null,
+
+        /**
+         * 获取当前节点显示的文案
+         * @param {number} index 分页节点
+         * @param {string} part role
+         * @return {string|number}
+         */
         getItemText: function (index, part) {
             return this.lang[part] || index;
         },
 
+        /**
+         * 获取当前元素的class
+         * @param {Array} states 所有状态的集合
+         * @return {string}
+         */
         getItemClassName: function (states) {
             var helper = this.helper;
             return lib.map(states, function (state) {
@@ -244,8 +271,22 @@ define(function (require) {
             }).join(' ');
         },
 
-        getItemAnchor: function (page, part) {
-            return '#';
+        /**
+         * 当前锚点链接
+         * @param {number} page 当前节点的页码
+         * @return {string}
+         */
+        getItemAnchor: function (page) {
+
+            if (!this.anchor) {
+                return '#';
+            }
+
+            if (~this.anchor.indexOf('?')) {
+                return this.anchor + '&page=' + page;
+            }
+
+            return this.anchor + '?page=' + page;
         },
 
         /**
@@ -256,7 +297,8 @@ define(function (require) {
          */
         build: function () {
 
-            var page = this.page;
+            // page的计算从0开始
+            var page = this.page - this.first;
             var total = this.total;
             var padding = this.padding;
             var showCount = this.showCount;
@@ -299,9 +341,9 @@ define(function (require) {
                     function (index) {
                         return index < 0
                             // 哈哈, 这是ellipsis
-                            ? this.getItemHTML(-index, 'ellipsis')
+                            ? this.getItemHTML(-index + this.first, 'ellipsis')
                             // 这此进正常的孩子们
-                            : this.getItemHTML(index, index === page ? 'current' : '');
+                            : this.getItemHTML(index + this.first, index === page ? 'current' : '');
                     },
                     this
                 );
@@ -312,13 +354,13 @@ define(function (require) {
 
             return ''
                 + this.getItemHTML(
-                    Math.max(page - 1, 0),
+                    Math.max(page - 1, 0) + this.first,
                     'prev',
                     page > 0 ? '' : 'disabled'
                 )
                 + html.join('')
                 + this.getItemHTML(
-                    Math.min(page + 1, total - 1),
+                    Math.min(page + 1, total - 1) + this.first,
                     'next',
                     page < total - 1 ? '' : 'disabled'
                 );
@@ -387,31 +429,6 @@ define(function (require) {
             this.set('page', page);
         }
     });
-
-    /**
-     * 获取url参数
-     * @param {string} url url字符串
-     * @return {Object} result queryList对象
-     */
-    function getQuery(url) {
-        var result = {};
-        url = url.split('?');
-
-        if (!url[1]) {
-            return result;
-        }
-
-        var queryList = url[1].split('&');
-
-        $.each(queryList, function (i, item) {
-            var query = item.split('=');
-            result[query[0]] = query[1];
-        });
-
-        return result;
-    }
-
-
 
     return Pager;
 });

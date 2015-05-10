@@ -223,7 +223,7 @@ require(['ui/Pager', 'ui/Select'], function (Pager, Select) {
 require(['ui/Pager'], function (Pager) {
     new Pager({
         main: document.getElementById('pager1'),
-        page: 0,
+        page: 1,
         first: 1,
         total: 5,
         showCount: 10
@@ -238,7 +238,7 @@ require(['ui/Pager'], function (Pager) {
 require(['ui/Pager'], function (Pager) {
     new Pager({
         main: document.getElementById('pager-url'),
-        page: 0,
+        page: 1,
         first: 1,
         total: 5,
         showCount: 10,
@@ -261,7 +261,7 @@ require(['ui/Pager'], function (Pager) {
     require(['ui/Pager'], function (Pager) {
         new Pager({
             main: document.getElementById('pager-url'),
-            page: 0,
+            page: 1,
             first: 1,
             total: 5,
             showCount: 10,
@@ -278,7 +278,7 @@ require(['ui/Pager'], function (Pager) {
 require(['ui/Pager'], function (Pager) {
     new Pager({
         main: document.getElementById('pager-normal'),
-        page: 0,
+        page: 1,
         first: 1,
         total: 5,
         showCount: 10,
@@ -286,11 +286,15 @@ require(['ui/Pager'], function (Pager) {
             prev: '◀',
             next: '▶'
         },
-        setTpl: {
-            setItemHTML: function (page, total, className) {
-            return '<a href="#" data-page="'
-                + page + '" class="' + className + '">●</a>'
-            }
+        getItemHTML: function (page, part) {
+            var className = this.getItemClassName(Array.prototype.slice.call(arguments, 1).concat('item'));
+            var item = this.lang[part] != null ? this.lang[part] : '●';
+
+            return ''
+                + '<a href="#" data-page="' + page + '" '
+                +    'class="' + className + '">'
+                +    item
+                + '</a>';
         }
     })
     .render();
@@ -310,7 +314,7 @@ require(['ui/Pager'], function (Pager) {
     require(['ui/Pager'], function (Pager) {
         new Pager({
             main: document.getElementById('pager-normal'),
-            page: 0,
+            page: 1,
             first: 1,
             total: 5,
             showCount: 10,
@@ -318,11 +322,14 @@ require(['ui/Pager'], function (Pager) {
                 prev: '◀',
                 next: '▶'
             },
-            setTpl: {
-                setItemHTML: function (page, total, className) {
-                    return '<a href="#" data-page="'
-                        + page + '" class="' + className + '">●</a>'
-                }
+            getPageItemHTML: function (page, part) {
+                var className = this.getItemClassName(Array.prototype.slice.call(arguments, 1).concat('item'));
+
+                return ''
+                    + '<a href="#" data-page="' + page + '" '
+                    +    'class="' + className + '">'
+                    +    '●'
+                    + '</a>';
             }
         })
         .render();
@@ -336,15 +343,13 @@ require(['ui/Pager'], function (Pager) {
 require(['ui/Pager'], function (Pager) {
     new Pager({
         main: document.getElementById('pager-simple'),
-        page: 0,
+        page: 1,
         first: 1,
         total: 5,
         showCount: 10,
         mode: 'simple',
-        setTpl: {
-            setItemHTML: function (page, total) {
-                return page + '/' + total;
-            }
+        getPageItemHTML: function (page) {
+            return page + '/' + this.total;
         }
     })
     .render();
@@ -364,15 +369,13 @@ require(['ui/Pager'], function (Pager) {
     require(['ui/Pager'], function (Pager) {
         new Pager({
             main: document.getElementById('pager-simple'),
-            page: 0,
+            page: 1,
             first: 1,
             total: 5,
             showCount: 10,
             mode: 'simple',
-            setTpl: {
-                setItemHTML: function (page, total) {
-                    return page + '/' + total;
-                }
+            getPageItemHTML: function (page) {
+                return page + '/' + this.total;
             }
         })
         .render();
@@ -390,13 +393,11 @@ require(['ui/Pager'], function (Pager) {
         total: 5,
         showCount: 10,
         mode: 'simple',
-        setTpl: {
-            setItemHTML: function (page, total) {
-                return ' 当前第<input value="'
-                    + page
-                    + '" style="width: 20px;text-align:center" />'
-                    + '页，共' + total + '页 ';
-            }
+        getPageItemHTML: function (page) {
+            return ' 当前第<input value="'
+                + page
+                + '" style="width: 20px;text-align:center" />'
+                + '页，共' + this.total + '页 ';
         }
     })
     .render();
@@ -416,18 +417,16 @@ require(['ui/Pager'], function (Pager) {
     require(['ui/Pager'], function (Pager) {
         new Pager({
             main: document.getElementById('pager-simple-change'),
-            page: 0,
+            page: 1,
             first: 1,
             total: 5,
             showCount: 10,
             mode: 'simple',
-            setTpl: {
-                setItemHTML: function (page, total) {
-                    return ' 当前第<input value="'
-                            + page
-                            + '" style="width: 20px;text-align:center" />'
-                            + '页，共' + total + '页 ';
-                }
+            getPageItemHTML: function (page) {
+                return ' 当前第<input value="'
+                        + page
+                        + '" style="width: 20px;text-align:center" />'
+                        + '页，共' + this.total + '页 ';
             }
 
         })
@@ -453,27 +452,25 @@ require(['ui/Pager'], function (Pager) {
     require(['ui/Pager'], function (Pager) {
         var pagerTest = new Pager({
             main: document.getElementById('pager-set'),
-            page: 0,
+            page: 1,
             first: 1,
             total: 5,
             showCount: 10,
             mode: 'simple',
-            setTpl: {
-                setItemHTML: function (page, total) {
-                    return ' 当前第<input value="'
-                            + page
-                            + '" style="width: 20px;text-align:center" />'
-                            + '页，共' + total + '页 ';
-                }
+            getPageItemHTML: function (page) {
+                return ' 当前第<input value="'
+                        + page
+                        + '" style="width: 20px;text-align:center" />'
+                        + '页，共' + this.total + '页 ';
             }
-
         })
         .render();
 
         $('#pager-set-prev').click(function () {
             var page = pagerTest.getPage();
 
-            pagerTest.setPage(page - 1);
+            // pagerTest.setPage(page - 1);
+            pagerTest.set('page', page - 1);
         });
 
         $('#pager-set-next').click(function () {
@@ -501,8 +498,7 @@ require(['ui/Pager'], function (Pager) {
 | total        |number     |  总页数  |
 | anchor       |string     |  跳转链接  |
 | mode         |string     |  分页类型（normal/simple）  |
-| setTpl       |Object<string, function>|  设置模板html  |
-| setTpl.setItemHTML    |function|  itemHTML字符串  |
+| getPageItemHTML    |function|  分页item字符串  |
 | lang         |Object<string, string>|  用于显示上下页的文字  |
 | lang.prev    |string     |  上一页显示文字(支持HTML)  |
 | lang.next    |string     |  下一页显示文字(支持HTML)  |
