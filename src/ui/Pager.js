@@ -128,7 +128,7 @@ define(function (require) {
             this.$parent(options);
             this.showCount = +this.showCount;
             this.total     = +this.total || +main.data('total') || 0;
-            this.padding   = +this.padding || 0;
+            this.padding   = +this.padding || 1;
             this.first     = +this.first || +main.data('first') || 0;
             this.page      = +this.page || +main.data('page') || +this.first;
 
@@ -154,6 +154,11 @@ define(function (require) {
                 name: ['page', 'total'],
                 paint: function (painter, page, total) {
                     var main = $(this.main);
+
+                    // smarty进行初次渲染，不走build
+                    if (this.helper.isInStage('INITED') && main.data('click')) {
+                        return;
+                    }
 
                     // page的可选区间在[first, total - 1 + first); 所以我们做这个规范化处理
                     this.page = Math.max(Math.min(page, this.total - 1 + this.first), this.first);
@@ -226,17 +231,26 @@ define(function (require) {
             var page = index;
             var anchor = this.getItemAnchor(page);
 
-            if (!this.lang[part] && this.getPageItemHTML) {
-                return this.getPageItemHTML(page, part);
+            if (!this.lang[part]) {
+                if (this.getPageItemHTML) {
+                    return this.getPageItemHTML(page, part);
+                }
+                // 走精简版分支
+                else if (this.mode === 'simple') {
+                    return ''
+                        + '<span class="' + className + '">'
+                        + this.getItemText(index + 1 - this.first, 'item')
+                        + '/' + this.total
+                        + '</span>'
+                }
             }
 
             return ''
                 + '<a href="' + anchor + '" '
-                +    'data-page="' + page + '" '
-                +    'class="' + className + '">'
-                +     this.getItemText(index + 1 - this.first, part || 'item')
+                + 'data-page="' + page + '" '
+                + 'class="' + className + '">'
+                + this.getItemText(index + 1 - this.first, part || 'item')
                 + '</a>';
-
         },
 
         /**

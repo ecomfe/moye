@@ -14,3 +14,4 @@ example-dist
 .idea/
 example/smarty/lib/*
 example/smarty/templates_c
+example/templates_c

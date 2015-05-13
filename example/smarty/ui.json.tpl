@@ -68,5 +68,13 @@
             }
         ],
         "value": [1,2]
+    },
+    "pager": {
+        "id": "pager",
+        "type": "Pager",
+        "page": 5,
+        "first": 1,
+        "total": 10,
+        "showCount": 5
     }
 }

@@ -347,10 +347,7 @@ require(['ui/Pager'], function (Pager) {
         first: 1,
         total: 5,
         showCount: 10,
-        mode: 'simple',
-        getPageItemHTML: function (page) {
-            return page + '/' + this.total;
-        }
+        mode: 'simple'
     })
     .render();
 });
@@ -373,10 +370,7 @@ require(['ui/Pager'], function (Pager) {
             first: 1,
             total: 5,
             showCount: 10,
-            mode: 'simple',
-            getPageItemHTML: function (page) {
-                return page + '/' + this.total;
-            }
+            mode: 'simple'
         })
         .render();
     });
@@ -428,7 +422,6 @@ require(['ui/Pager'], function (Pager) {
                         + '" style="width: 20px;text-align:center" />'
                         + '页，共' + this.total + '页 ';
             }
-
         })
         .render();
     });
