@@ -104,10 +104,10 @@ module.exports = function(config) {
                 pattern: 'test/spec/plugin/validator/PredefineRuleSpec.js',
                 included: false
             },
-            {
-                pattern: 'test/spec/LazyloadSpec.js',
-                included: false
-            },
+            // {
+            //     pattern: 'test/spec/LazyloadSpec.js',
+            //     included: false
+            // },
             {
                 pattern: 'test/spec/lib/*.js',
                 include: false
