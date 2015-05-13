@@ -103,7 +103,24 @@
         });
         </script>
     </section>
-
+    <section>
+        {%include file="../../src/tpl/smarty/Pager.tpl"%}
+        <h3 class="demo-title">分页</h3>
+        <div>
+            {%call Pager data=$ui.pager%}
+        </div>
+        <script>
+            require(['ui/Pager'], function (Pager) {
+                var pager = new Pager({
+                    main: document.getElementById('pager'),
+                    page: 1,
+                    first: 1,
+                    total: 10,
+                    showCount: 5
+                }).render();
+            });
+        </script>
+    </section>
 </main>
 
 
