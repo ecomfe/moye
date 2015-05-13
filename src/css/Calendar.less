@@ -6,137 +6,155 @@
  * @author leon <leonlu@outlook.com>
  */
 
-@import "./variable.less";
+@import './variable.less';
 @import './dep.less';
+@import './Popup.less';
+@import './icon.less';
+@import './mixin.less';
 
-@calendar-pager-background: url(http://open.baidu.com/stat/ticket/cal.gif);
+
+@moye-calendar-title-background-color: #c40004;
+@moye-calendar-title-color: #fff;
+
+@moye-calendar-month-background-color: #fff;
+@moye-calendar-month-padding-horizontal: @moye-small;
+
+@moye-calendar-date-gap-horizontal: 6px;
+@moye-calendar-date-gap-vertical: 9px;
+@moye-calendar-date-width: 24px;
+@moye-calendar-date-height: 24px;
+@moye-calendar-date-font-size: @moye-small;
+@moye-calendar-date-color: #666;
+@moye-calendar-date-border-witdh: 1px;
+@moye-calendar-date-border-color: @moye-calendar-month-background-color;
+
+
+@moye-calendar-date-weekend-color: #c40004;
+
+@moye-calendar-date-hover-border-color: #ccc;
+@moye-calendar-date-hover-background-color: #f8f8f8;
+@moye-calendar-date-hover-color: #666;
+
+@moye-calendar-date-check-border-color: #c40004;
+@moye-calendar-date-check-background-color: #c40004;
+@moye-calendar-date-check-color: #fff;
+
+@moye-calendar-date-overflow-border-color: @moye-calendar-date-border-color;
+@moye-calendar-date-overflow-background-color: @moye-calendar-month-background-color;
+@moye-calendar-date-overflow-color: #999;
 
 .@{moye-prefix}-calendar {
 
     .inline-block();
 
-    input {
-
-    }
-
     &-popup {
-        position: absolute;
-        // @hack firefox需要给一个top, 否则会把body撑开
-        top: 0;
-        left: -2000px;
         text-align: center;
         background: #fff;
         border: 1px solid #b5b5b5;
-        z-index: 10;
+        padding-bottom: @moye-calendar-date-gap-vertical;
     }
 
 
-    ol {
+    &-content {
+        // 这里在处理ie6上，浮层被撑到全屏宽的问题。
+        *display: inline;
         .clearfix();
     }
 
-
     &-month {
         float: left;
-        margin: auto 2px;
-        width: 175px;
+        width: 250px;
 
-        ul {
-            color: #666;
+        ul,
+        p {
+            width: 7*(@moye-calendar-date-width + 2*@moye-calendar-date-border-witdh + @moye-calendar-date-gap-horizontal);
+            padding: 0 @moye-calendar-month-padding-horizontal;
+            margin-left: -@moye-calendar-date-gap-horizontal;
             .clearfix();
-        }
-
-        li,
-        p a {
-            float: left;
-            width: 25px;
-            font: 12px Arial;
         }
 
         h3 {
             margin: 0;
             padding: 0;
-            text-align: center;
-            line-height: 19px;
-            height: 19px;
-            font-size: 14px;
-            color: #41537b;
-            margin-bottom: 2px;
-            border-bottom: 1px solid #c6cede;
+            .moye-rem(line-height, @moye-small * 2);
+            .moye-rem(height, @moye-small * 2);
+            .moye-rem(font-size, @moye-small);
+            color: @moye-calendar-title-color;
+            background-color: @moye-calendar-title-background-color;
         }
-
-        p {
-            .clearfix();
-
-            a {
-                color: #000;
-                height: 18px;
-                line-height: 18px;
-                margin-top: 3px;
-                text-decoration: none;
-                outline: none;
-                overflow: hidden;
-
-                &:hover,
-                &.@{cal-prefix}-current {
-                    color: #fff;
-                    background: #eb4f03;
-                }
-
-                &.@{cal-prefix}-pre-month,
-                &.@{cal-prefix}-next-month {
-                    color: #999;
-                }
-
-                &.@{cal-prefix}-today {
-                    color: red;
-                    &:hover {
-                        color: #fff;
-                    }
-                }
-
-                &.@{cal-prefix}-disabled,
-                &.@{cal-prefix}-disabled:hover {
-                    color: #ddd;
-                    cursor: not-allowed;
-                    background: none;
-                }
-
-                &.@{cal-prefix}-checked {
-                    color: #fff;
-                    background: #3977d2;
-                }
-
-
-            }
-
-        }
-
 
     }
 
+    &-week,
+    &-date {
+        float: left;
+        *display: inline;
+        margin-left: @moye-calendar-date-gap-horizontal;
+        margin-top: @moye-calendar-date-gap-vertical;
+        width: @moye-calendar-date-width;
+        font-size: @moye-calendar-date-font-size;
+        color: @moye-calendar-date-color;
+        height: @moye-calendar-date-height;
+        line-height: @moye-calendar-date-height;
+        border: 1px solid @moye-calendar-month-background-color;
+        text-decoration: none;
+        outline: none;
+        overflow: hidden;
+    }
+
+    &-date:hover {
+        border-color: @moye-calendar-date-hover-border-color;
+        background-color: @moye-calendar-date-hover-background-color;
+        color: @moye-calendar-date-hover-color;
+    }
 
 
+    // NOTICE: 以下这些状态的顺序是有要求的哟
     &-weekend {
-        color: orange;
+        color: @moye-calendar-date-weekend-color;
+    }
+
+    &-today {
+        color: red;
+        &:hover {
+            color: #fff;
+        }
+    }
+
+    &-checked,
+    &-checked:hover {
+        color: @moye-calendar-date-check-color;
+        background-color: @moye-calendar-date-check-background-color;
+        border-color: @moye-calendar-date-check-border-color;
+    }
+
+    &-prev-month,
+    &-next-month {
+        color: @moye-calendar-date-overflow-color;
+        background-color: @moye-calendar-date-overflow-background-color;
+        border-color: @moye-calendar-date-overflow-border-color;
+    }
+
+    &-disabled,
+    &-disabled:hover {
+        color: #ddd;
+        cursor: not-allowed;
+        background: none;
     }
 
     &-pager {
-        width: 5px;
-        height: 9px;
-        font-size: 0;
         position: absolute;
-        overflow: hidden;
-        top: 6px;
-        background: @calendar-pager-background  0 -19px;
+        line-height: 30px;
+        color: #fff;
+        font-size: 12px;
+        text-decoration: none;
 
-        &-pre {
+        &-prev {
             left: 6px;
         }
 
         &-next {
             right: 6px;
-            background-position: 0 -28px;
         }
 
     }

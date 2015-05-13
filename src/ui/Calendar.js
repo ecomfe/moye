@@ -1,7 +1,7 @@
 /**
  * Moye (Zhixin UI)
  * Copyright 2014 Baidu Inc. All rights reserved.
- *
+ * @file 日历
  * @author chris(wfsr@foxmail.com)
  * @author Leon(leon@outlook.com)
  */
@@ -22,6 +22,21 @@ define(function (require) {
      */
     var DATE_FORMAT = 'yyyy-MM-dd';
     var RANGE = null;
+
+
+    function getMonthFirstDate(date) {
+        var first = new Date(date);
+        first.setDate(1);
+        return first;
+    }
+
+    function getMonthLastDate(date) {
+        var last = new Date(date);
+        last.setMonth(last.getMonth() + 1);
+        last.setDate(0);
+        return last;
+    }
+
 
     /**
      * 日历
@@ -105,6 +120,10 @@ define(function (require) {
                 // 每月显示的标题文字
                 title: '{year}年{month}月'
 
+            },
+            pager: {
+                next: '&#xe606;',
+                prev: '&#xe605;'
             }
         },
 
@@ -134,9 +153,9 @@ define(function (require) {
 
             // 初始化取值优先级, JS赋值 > DOM赋值
             var value = this.value || this.input && this.input.value;
-            var date = this.date = this.from(value);
+            var date = this.date = this.parse(value);
             this.days  = this.lang.days.split(',');
-            this.month = this._getMonthFirstDate(date);
+            this.month = getMonthFirstDate(date);
             this.value = this.format(date);
         },
 
@@ -146,32 +165,21 @@ define(function (require) {
          * @param  {string} part 翻页部件
          * @return {string}
          */
-        _buildPagerHtml: function (part) {
+        getPagerHTML: function (part) {
             var helper = this.helper;
             var id = helper.getPartId(part);
-            var className = ''
-                + helper.getPartClassName('pager')
-                + ' '
-                + helper.getPartClassName('pager-' + part);
+            var className = ['moye-icon']
+                .concat(helper.getPartClasses('pager'))
+                .concat(helper.getPartClasses('pager-' + part))
+                .join(' ');
+            var text = this.pager[part];
             return ''
                 + '<a href="#" '
                 +    'data-direction="' + part + '"'
                 +    'class="' + className + '" '
                 +    'id="' + id + '">'
+                +    text
                 + '</a>';
-        },
-
-        _getMonthFirstDate: function (date) {
-            var first = new Date(date);
-            first.setDate(1);
-            return first;
-        },
-
-        _getMonthLastDate: function (date) {
-            var last = new Date(date);
-            last.setMonth(last.getMonth() + 1);
-            last.setDate(0);
-            return last;
         },
 
         initStructure: function () {
@@ -187,30 +195,32 @@ define(function (require) {
             var helper = this.helper;
 
             var content = ''
-                + this._buildPagerHtml('pre')
-                + this._buildPagerHtml('next')
+                + this.getPagerHTML('prev')
+                + this.getPagerHTML('next')
                 + helper.getPartHTML('content', 'ol');
 
             var popup = this.popup = new Popup({
                 target: input,
                 triggers: [input],
-                content: content
+                content: content,
+                showDelay: 0,
+                hideDelay: 0
             });
 
             popup.render();
 
             helper.addPartClasses('popup', popup.main);
 
-            this.pre = helper.getPart('pre');
+            this.prev = helper.getPart('prev');
             this.next = helper.getPart('next');
             this.content = helper.getPart('content');
         },
 
         initEvents: function () {
-            var popup = this.popup;
-            popup.on('click', $.proxy(this._onPopupClick, this));
-            popup.on('hide', $.proxy(this._onPopupHide, this));
-            popup.on('show', $.proxy(this._onPopupBeforeShow, this));
+            this.popup
+                .on('click', $.proxy(this.onPopupClick, this))
+                .on('hide', $.proxy(this.onPopupHide, this))
+                .on('show', $.proxy(this.onPopupBeforeShow, this));
         },
 
         repaint: require('./painter').createRepaint(
@@ -219,8 +229,9 @@ define(function (require) {
             {
                 name: ['range', 'value'],
                 paint: function (conf, range, value) {
+
                     // value值与date值同步
-                    var date  = this.date = this.from(value);
+                    var date  = this.date = this.parse(value);
 
                     // 如果设定了范围, 而且值超出限定范围, 清空值
                     if (range) {
@@ -229,17 +240,17 @@ define(function (require) {
                         var end   = range.end;
 
                         if (begin) {
-                            begin = range.begin = this.from(begin);
+                            begin = range.begin = this.parse(begin);
                         }
 
                         if (end) {
-                            end = range.end = this.from(end);
+                            end = range.end = this.parse(end);
                         }
 
                         if (date < begin || date > end) {
                             value = this.value = this.date = '';
                             // 如果值被清空, 那么显示的月份要被重置, 取一个在可选范围内的值
-                            this.month = this._getMonthFirstDate(begin || end);
+                            this.month = getMonthFirstDate(begin || end);
                         }
 
                     }
@@ -255,11 +266,11 @@ define(function (require) {
                     var content = [];
 
                     months = this.months = months || 1;
-                    month  = this._getMonthFirstDate(month || this.month);
-                    this._updatePrevNextStatus(month);
+                    month  = getMonthFirstDate(month || this.month);
+                    this.updatePrevNextStatus(month);
 
                     for (var i = 0; i < months; i++) {
-                        content[i] = this._buildMonth(month);
+                        content[i] = this.getMonthHTML(month);
                         month.setMonth(month.getMonth() + 1);
                     }
 
@@ -276,7 +287,7 @@ define(function (require) {
          * @return {Date} 解释到的日期对象
          * @public
          */
-        from: function (value, format) {
+        parse: function (value, format) {
 
             if (!value) {
                 return new Date();
@@ -327,7 +338,7 @@ define(function (require) {
             format = (format || this.dateFormat).toLowerCase();
 
             if (lib.isString(date)) {
-                date = this.from(date);
+                date = this.parse(date);
             }
 
             var weekStart = this.weekStart;
@@ -431,10 +442,10 @@ define(function (require) {
          * @return {string} 按 yyyyMM格式化后的日期字符串
          * @private
          */
-        _getYYYYMM: function (date) {
+        getYYYYMM: function (date) {
             return lib.isString(date)
                 ? date
-                : this.format(this.from(date), 'yyyyMM');
+                : this.format(this.parse(date), 'yyyyMM');
         },
 
         /**
@@ -443,36 +454,36 @@ define(function (require) {
         * @return {string}
         * @protected
         */
-        _buildMonth: function (date) {
+        getMonthHTML: function (date) {
 
             var helper = this.helper;
             var html   = [
                 // 包裹
                 '<li class="' + helper.getPartClassName('month') + '">',
                 // 月份标题
-                this._buildMonthTitle(date),
+                this.getMontnTitleHTML(date),
                 // 星期标题
-                this._buildWeekTitle(),
+                this.getWeekTitleHTML(),
                 // 日期包裹
                 '<p>'
             ];
 
-            var first = this._getMonthFirstDate(date);
-            var last = this._getMonthLastDate(date);
+            var first = getMonthFirstDate(date);
+            var last = getMonthLastDate(date);
             var firstDay = first.getDay();
             var start = new Date(first);
-            start.setDate(1 - firstDay);
 
+            start.setDate(1 - firstDay);
 
             for (var i = 0; i < 42; i++) {
                 if (start < first) {
-                    html.push(this._buildDate(start, 'pre-month'));
+                    html.push(this.getDateHTML(start, 'prev-month'));
                 }
                 else if (start > last) {
-                    html.push(this._buildDate(start, 'next-month'));
+                    html.push(this.getDateHTML(start, 'next-month'));
                 }
                 else {
-                    html.push(this._buildDate(start));
+                    html.push(this.getDateHTML(start));
                 }
                 start.setDate(start.getDate() + 1);
             }
@@ -487,7 +498,7 @@ define(function (require) {
          * @param  {Date} date 日期
          * @return {string}
          */
-        _buildMonthTitle: function (date) {
+        getMontnTitleHTML: function (date) {
             date = {
                 year: date.getFullYear(),
                 month: date.getMonth() + 1
@@ -507,16 +518,21 @@ define(function (require) {
          * 构建星期标题HTML
          * @return {string}
          */
-        _buildWeekTitle: function () {
+        getWeekTitleHTML: function () {
             var html = ['<ul>'];
-            var weekendClass = this.helper.getPartClassName('weekend');
+            var helper = this.helper;
             var days = this.days;
             var weekStart = this.weekStart;
+            var weekClass = helper.getPartClassName('week');
+            var weekendClass = this.helper.getPartClassName('weekend');
 
             for (var i = 0; i < 7; i++) {
                 var day = (weekStart + i) % 7;
-                var klass = i === 0 || i === 6 ? weekendClass : '';
-                html.push('<li class="'  + klass + '">' + days[day] + '</li>');
+                var className = [
+                    weekClass,
+                    i === 0 || i === 6 ? weekendClass : ''
+                ];
+                html.push('<li class="'  + className.join(' ') + '">' + days[day] + '</li>');
             }
 
             html.push('</ul>');
@@ -529,7 +545,7 @@ define(function (require) {
          * @param  {string} state 日期状态
          * @return {string}
          */
-        _buildDate: function (date, state) {
+        getDateHTML: function (date, state) {
 
             var day = date.getDay();
             var value = this.format(date);
@@ -540,7 +556,7 @@ define(function (require) {
             var checked = this.value && this.value === value;
             var TODAY = this.format(new Date());
 
-            var classList = [];
+            var classList = helper.getPartClasses('date');
 
             if (day === 0 || day === 6) {
                 classList.push(helper.getPartClassName('weekend'));
@@ -583,10 +599,10 @@ define(function (require) {
 
         /**
          * 翻页
-         * @param {sting} direction 可选`pre`和`next`
+         * @param {sting} direction 可选`prev`和`next`
          * @protected
          */
-        _page: function (direction) {
+        page: function (direction) {
             var date = new Date(this.month);
             var delta = direction === 'next' ? 1 : -1;
             date.setMonth(date.getMonth() + delta);
@@ -600,14 +616,14 @@ define(function (require) {
          * @param {Date} month 当前选择的月份
          * @private
          */
-        _updatePrevNextStatus: function (month) {
+        updatePrevNextStatus: function (month) {
             var range = this.range;
             if (!range) {
                 return;
             }
-            var targetMonth = this._getYYYYMM(month);
-            $(this.pre)[range.begin && targetMonth <= this._getYYYYMM(range.begin) ? 'hide' : 'show']();
-            $(this.next)[range.end && targetMonth >= this._getYYYYMM(range.end) ? 'hide' : 'show']();
+            var targetMonth = this.getYYYYMM(month);
+            $(this.prev)[range.begin && targetMonth <= this.getYYYYMM(range.begin) ? 'hide' : 'show']();
+            $(this.next)[range.end && targetMonth >= this.getYYYYMM(range.end) ? 'hide' : 'show']();
         },
 
         /**
@@ -617,7 +633,7 @@ define(function (require) {
          * @fires module:Calendar#pick
          * @private
          */
-        _pick: function (element) {
+        pick: function (element) {
 
             element = $(element);
 
@@ -628,7 +644,7 @@ define(function (require) {
                 return;
             }
 
-            var date  = this.from(value, DATE_FORMAT);
+            var date  = this.parse(value, DATE_FORMAT);
 
             value = this.format(date);
 
@@ -639,10 +655,9 @@ define(function (require) {
              * @property {string} week 选中日期的格式化星期
              * @property {Date} date 选中的日期对象
              */
-            var event = new $.Event('change', {value: value});
-
-            // 释放`change`事件
-            this.fire(event);
+            var event = this.fire('change', {
+                value: value
+            });
 
             // 如果默认动作被阻止, 那么我们就停止
             if (event.isDefaultPrevented()) {
@@ -666,7 +681,7 @@ define(function (require) {
          * @param {Event} e `Popup`的`click`事件
          * @private
          */
-        _onPopupClick: function (e) {
+        onPopupClick: function (e) {
 
             var helper  = this.helper;
             var element = $(e.target).closest('a', this.popup.main);
@@ -679,13 +694,13 @@ define(function (require) {
 
             // 翻页
             if (element.hasClass(helper.getPrimaryClassName('pager'))) {
-                this._page(element.data('direction'));
+                this.page(element.data('direction'));
                 return;
             }
 
             // 选中
             if (!element.hasClass(helper.getPrimaryClassName('disabled'))) {
-                this._pick(element);
+                this.pick(element);
             }
 
         },
@@ -697,15 +712,13 @@ define(function (require) {
          * @fires module:Calendar#show
          * @protected
          */
-        _onPopupBeforeShow: function (e) {
-
-            var event = new $.Event('show');
+        onPopupBeforeShow: function (e) {
 
             /**
              * @event module:Calendar#show
              * @type {Event}
              */
-            this.fire(event);
+            var event = this.fire('show');
 
             if (event.isDefaultPrevented()) {
                 e.preventDefault();
@@ -715,7 +728,7 @@ define(function (require) {
             var date = this.date;
 
             if (date) {
-                this.set('month', this._getMonthFirstDate(date));
+                this.set('month', getMonthFirstDate(date));
             }
         },
 
@@ -727,64 +740,17 @@ define(function (require) {
          * @param {Event} e `Popup`的`hide`事件对象
          * @protected
          */
-        _onPopupHide: function (e) {
+        onPopupHide: function (e) {
             /**
              * @event module:Calendar#hide
              */
             this.fire(e);
         },
 
-        /**
-         * 验证控件输入状态
-         *
-         * @return {boolean} 是否为指定格式的日期值
-         * @public
-         */
-        checkValidity: function () {
-            return this.validate();
-        },
-
-        /**
-         * 验证控件
-         *
-         * @return {boolean} 验证结果
-         * @public
-         */
-        validate: function () {
-            var value = this.target.value;
-
-            if (value) {
-                var date = this.from(value);
-                if (this.format(date) === value) {
-
-                    var range = this.range;
-                    var min   = '';
-                    var max   = '9999-12-31';
-
-                    if (range) {
-                        min = range.begin
-                            && this.format(range.begin, DATE_FORMAT)
-                            || min;
-                        max = range.end
-                            && this.format(range.end, DATE_FORMAT)
-                            || max;
-
-                        value = this.format(date, DATE_FORMAT);
-
-                        return value >= min && value <= max;
-                    }
-                    return true;
-                }
-            }
-
-            return false;
-        },
-
         dispose: function () {
-            this.popup.dispose();
+            this.popup.destroy();
             this.popup = null;
         }
-
 
     });
 
