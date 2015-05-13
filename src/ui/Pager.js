@@ -408,7 +408,6 @@ define(function (require) {
          * @protected
          */
         onMainClicked: function (e) {
-
             var target = $(e.currentTarget);
             var helper = this.helper;
 

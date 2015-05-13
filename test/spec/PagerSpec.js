@@ -2,6 +2,7 @@
  * @file 分布组件测试用例
  * @author chris <wfsr@foxmail.com>
  * @author ludafa <leonlu@outlook.com>
+ * @author wuqi03 <wuqi03@baidu.com>
  */
 
 define(function (require) {
@@ -52,6 +53,15 @@ define(function (require) {
         });
 
         it('改变页码', function () {
+            pager = new Pager({
+                main: 'pagerContainer',
+                page: 0,
+                showAlways: false,
+                first: first,
+                total: 1
+            });
+            pager.render();
+
             pager.setTotal(10);
             pager.setPage(8);
             pager.render();
@@ -76,13 +86,13 @@ define(function (require) {
 
             var fireClick = false;
             var fireChange = false;
-            var el = pager.main.getElementsByTagName('a')[1];
+            var el = pager.main.getElementsByTagName('a')[2];
             var onClick = function () {
                 fireClick = true;
             };
             var onChange = function (json) {
                 fireChange = true;
-                expect(json.page).toBe(first);
+                expect(json.page).toBe(first + 1);
             };
 
             $(pager.main).on('click', onClick);
@@ -92,8 +102,7 @@ define(function (require) {
             pager.un('change', onChange);
 
             expect(fireClick).toBeTruthy();
-            // change事件不触发
-            // expect(fireChange).toBeTruthy();
+            expect(fireChange).toBeTruthy();
 
         });
 
