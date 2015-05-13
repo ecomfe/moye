@@ -320,6 +320,39 @@ define(function (require) {
         },
 
         /**
+         * 开始对全局对象的事件侦听
+         * @private
+         * @return {Popup}
+         */
+        startGlobalListener: function () {
+            var mode = this.mode;
+            if (mode === 'click') {
+                this.delegate(document, 'click', this.onHide);
+            }
+            if (mode !== 'static') {
+                this.delegate(window, 'resize', this.onWindowResize);
+            }
+            return this;
+        },
+
+        /**
+         * 停止对全局对象的事件侦听
+         * @private
+         * @return {Popup}
+         */
+        stopGlobalListener: function () {
+            // 取消全局事件的绑定
+            var mode = this.mode;
+            if (mode === 'click') {
+                this.undelegate(document, 'click', this.onHide);
+            }
+            if (mode !== 'static') {
+                this.undelegate(window, 'resize', this.onWindowResize);
+            }
+            return this;
+        },
+
+        /**
          * 显示浮层
          *
          * @public
@@ -345,16 +378,8 @@ define(function (require) {
                 // 重新定位置
                 // 如果有target, 那么定位到target上, 否则定位到当前的trigger上
                 me.locate(me.target || me.trigger);
-                var mode = me.mode;
-                if (mode === 'click') {
-                    me.delegate(document, 'click', me.onHide);
-                }
-                if (mode !== 'static') {
-                    me.delegate(window, 'resize', me.onWindowResize);
-                }
-
+                me.startGlobalListener();
                 me._isVisible = true;
-
                 /**
                  * @event module:Popup#show
                  * @type {Object}
@@ -394,22 +419,12 @@ define(function (require) {
             me.removeState('show');
 
             var hideFunc = function () {
-                var mode = me.mode;
 
                 // 把自己飞走
                 $(me.main).css('left', '-2000px');
-                // 兼容ie6 static fixed模式
-                if (lib.browser.ie6 && mode === 'static' && me.fixed) {
-                    me.main.style.removeExpression('left');
-                }
 
-                // 取消全局事件的绑定
-                if (mode === 'click') {
-                    me.undelegate(document, 'click', me.onHide);
-                }
-                if (mode !== 'static') {
-                    me.undelegate(window, 'resize', me.onWindowResize);
-                }
+                me.stopGlobalListener();
+
                 me.trigger = null;
                 me._isVisible = false;
 
@@ -509,15 +524,18 @@ define(function (require) {
          * @param {Event} e 隐藏浮层事件
          */
         onHide: function (e) {
-            var target = $(e.target);
-            var main   = $(this.main);
+
+            var target = e.target;
+            var main   = this.main;
 
             // 非over模式并且target不是浮层元素或不是trigger元素
             if (e.type !== 'mouseleave'
-                && (target.is(main)
-                    || ~$.inArray(target[0], $(this.triggers))
+                && (
+                    main === target
+                    || ~$.inArray(target, $(this.triggers))
+                    // NOTICE: $.contains只接受原生dom对象
                     || $.contains(main, target)
-                    )
+                )
             ) {
                 return;
             }
@@ -557,7 +575,6 @@ define(function (require) {
          */
         onMainMouseLeave: function (e) {
             this.clear();
-
             this.addState('show');
             this.hide();
         },
@@ -733,7 +750,12 @@ define(function (require) {
         },
 
         dispose: function () {
+            // 对于`show`出来的浮层，要取消对全局对象的事件侦听
+            this.stopGlobalListener();
+            // 取消对`triggers`和`liveTriggers`的事件侦听
             this.clearTriggersEvents(this.triggers, this.liveTriggers);
+            // 取消延迟的显示或隐藏动作
+            this.clear();
             this.$parent();
         }
 
