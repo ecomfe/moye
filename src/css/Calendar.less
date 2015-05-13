@@ -56,7 +56,11 @@
 
 
     &-content {
-        // 这里在处理ie6上，浮层被撑到全屏宽的问题。
+        // @hack
+        // @see https://msdn.microsoft.com/en-us/library/bb250481(v=vs.85).aspx
+        // 主要问题是这样，绝对定位中有一个`hasLayout`的元素，那么在ie6上，浮层被撑到全屏宽
+        // 原因当然是ie6傻啦：如果position:absolute内部元素获得了hasLayout那么它会忽略掉父元素的`shrink wrap`行为
+        // 所以这里搞成inline
         *display: inline;
         .clearfix();
     }
