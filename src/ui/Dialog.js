@@ -13,9 +13,7 @@ define(function (require) {
     var lib = require('./lib');
     var Control = require('./Control');
     var Panel = require('./Panel');
-    var Button = require('./Button');
     var Mask = require('./Mask');
-    var main = require('./main');
 
     /**
      * 对话框
@@ -189,8 +187,6 @@ define(function (require) {
         onMainClicked: function (e) {
 
             var target = $(e.currentTarget);
-            var helper = this.helper;
-            var main = this.main;
             var action = target.data('action');
 
             // 内置的动作处理
@@ -331,7 +327,7 @@ define(function (require) {
                     }
                     else {
                         // 切换状态
-                        this.removeState('visible')
+                        this.removeState('visible');
                         // 隐藏遮罩
                         this.mask && this.mask.hide();
                     }
