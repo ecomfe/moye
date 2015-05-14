@@ -329,9 +329,7 @@ define(function (require) {
             if (mode === 'click') {
                 this.delegate(document, 'click', this.onHide);
             }
-            if (mode !== 'static') {
-                this.delegate(window, 'resize', this.onWindowResize);
-            }
+            this.delegate(window, 'resize', this.onWindowResize);
             return this;
         },
 
@@ -346,9 +344,7 @@ define(function (require) {
             if (mode === 'click') {
                 this.undelegate(document, 'click', this.onHide);
             }
-            if (mode !== 'static') {
-                this.undelegate(window, 'resize', this.onWindowResize);
-            }
+            this.undelegate(window, 'resize', this.onWindowResize);
             return this;
         },
 
