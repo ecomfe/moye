@@ -6,6 +6,13 @@
 define(function (require) {
 
     var lib = require('ui/lib');
+
+
+    beforeEach(function () {
+        jasmine.Clock.useMock();
+    });
+
+
     describe('lib/function', function () {
 
         it('binds', function () {

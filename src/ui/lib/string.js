@@ -98,7 +98,15 @@ define(function (require) {
             return function (template, a, b, c, d, e) {
                 var args = arguments;
                 return template.replace(/(!|@|#|\$|%)\{([\w]+)\}/g, function (all, source, prop) {
-                    return args[map[source]][prop] || '';
+                    source = args[map[source]];
+                    if (source == null) {
+                        return '';
+                    }
+                    prop = source[prop];
+                    if (prop == null) {
+                        return '';
+                    }
+                    return prop;
                 });
             };
         })()
