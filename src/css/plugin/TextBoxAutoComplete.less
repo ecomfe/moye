@@ -13,13 +13,15 @@
 
         &-item {
             display: block;
-            height: 20px;
-            padding: 5px;
             line-height: 20px;
             text-decoration: none;
             color: #333;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
 
-            &:hover, &.hover {
+            &:hover,
+            &.hover {
                 background-color: #eaeaea;
             }
 
