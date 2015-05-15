@@ -134,7 +134,7 @@ define(function (require) {
                 .autocomplete = 'off';
 
             // export to textbox
-            textbox.getSuggestions = this.load;
+            textbox.getSuggestions = $.proxy(this.load, this);
             textbox.hideSuggestions = $.proxy(this.hide, this);
             textbox.showSuggestions = $.proxy(this.show, this);
             textbox.getPopup = $.proxy(this.getPopup, this);

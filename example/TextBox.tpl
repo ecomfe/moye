@@ -196,22 +196,47 @@ require(['ui/TextBox', 'ui/plugin/TextBoxAutoComplete'], function (TextBox, Text
         plugins: [{
             type: 'TextBoxAutoComplete',
             options: {
-                datasource: function () {
-                    return [
-                        {
-                            text: 'aaa',
-                            value: 'aaa'
+                datasource: function (query) {
+                    return $.ajax({
+                        url: 'https://sp0.baidu.com/5a1Fazu8AA54nxGko9WTAnF6hhy/su?json=1',
+                        data: {wd: query},
+                        dataType: 'jsonp',
+                        jsonp: 'cb'
+                    })
+                    .then(
+                        function (ret) {
+                            return $.map(ret.s, function (item) {
+                                return {
+                                    text: item,
+                                    value: item
+                                };
+                            });
                         },
-                        {
-                            text: 'bbb',
-                            value: 'bbb'
+                        function () {
+                            return [];
                         }
-                    ];
+                    );
+                },
+                // 定制dom
+                renderItem: function (data, index) {
+                    var cls = 'acitem ' + (index % 2 ? 'even' : 'odd');
+
+                    return '<div class="' + cls + '">' + data.text + '</div>';
                 }
             }
         }]
     })
     .render()
+    .on('autocomplete', function (e) {
+        var data = e.suggestion;
+        var text = e.suggestion.text;
+
+        if ($.isEmptyObject(data)) {
+            text = $.trim(this.getValue());
+        }
+
+        window.open('https://www.baidu.com/s?wd=' + text);
+    });
 
 });
 ```
