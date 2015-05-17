@@ -33,6 +33,19 @@ define(function (require) {
     };
 
     /**
+     * 默认的推荐项的部件名称
+     *
+     * @const
+     * @type {string}
+     */
+    var AUTOCOMPLETE_PART_NAME = 'autocomplete-item';
+
+    // keycode values
+    var codeValues = lib.map(KeyCodes, function (v) {
+        return v;
+    });
+
+    /**
      * 输入自动完成插件
      *
      * @extends module:Plugin
@@ -153,7 +166,7 @@ define(function (require) {
             var popup = this.popup = new Popup({
                 main: helper.createPart('autocomplete'),
                 target: input,
-                triggers: [input],
+                triggers: input,
                 mode: 'click',
                 hideDelay: 0,
                 showDelay: 0
@@ -211,10 +224,6 @@ define(function (require) {
         onTextBoxKeyDown: function (e) {
             var code = e.keyCode;
             // `上` `下` `ESC` `ENTER` 需要阻止默认事件
-            var codeValues = $.map(KeyCodes, function (v) {
-                return v;
-            });
-
             if (~$.inArray(code, codeValues)) {
                 e.preventDefault();
             }
@@ -247,8 +256,7 @@ define(function (require) {
          * @param {Event} e popup点击事件
          */
         onPopupClick: function (e) {
-            var textbox = this.textbox;
-            var className = textbox.helper.getPartClasses('autocomplete-item')[0];
+            var className = this.getPartClassName();
             var target = $(e.target).closest('.' + className);
             this.confirm(target[0]);
 
@@ -379,8 +387,8 @@ define(function (require) {
                 return;
             }
 
-            // 不要发事件啦~
-            this.pick(item, true);
+            // 还是发送下pick事件吧~
+            this.pick(item);
             this.hide();
         },
 
@@ -506,17 +514,28 @@ define(function (require) {
          * @return {HTMLCollection}
          */
         getChildren: function () {
-            return $(this.getMain()).children('ul').children();
+            return $('.' + this.getPartClassName(), this.getMain());
+        },
+
+        /**
+         * 获取推荐项部件className
+         *
+         * @private
+         * @return {string}
+         */
+        getPartClassName: function () {
+            return this.textbox.helper.getPrimaryClassName(AUTOCOMPLETE_PART_NAME);
         },
 
         /**
          * 获取被选中的项
          *
          * @private
-         * @return {jQuery}
+         * @return {?jQuery}
          */
         getActiveItem: function () {
-            return this.getChildren().eq(this.current);
+            // eq(null) will get eq(0)
+            return this.current !== null ? this.getChildren().eq(this.current) : null;
         },
 
         /**
@@ -558,14 +577,19 @@ define(function (require) {
             // build html
             var html = ['<ul>'];
 
-            var helper = this.textbox.helper;
-            var itemClassName = helper.getPartClassName('autocomplete-item');
+            var itemClassName = this.getPartClassName();
 
-            $.each(data, function (i, v) {
-                // wrap it
-                var item = ''
-                    + '<li class="' + itemClassName + '" data-index="' + i + '">'
-                    +  self.renderItem(v, i)
+            var text;
+            var title;
+            var item;
+            lib.each(data, function (v, i) {
+                // wrap it(默认string，加上title)
+                text = self.renderItem(v, i);
+                title = /<[^>]+>/g.test(text) ? '' : (' title="' + text + '"');
+
+                item = ''
+                    + '<li class="' + itemClassName + '" data-index="' + i + '"' + title + '>'
+                    +     text
                     + '</li>';
                 html.push(item);
             });

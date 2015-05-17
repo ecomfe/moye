@@ -1,3 +1,5 @@
+@import '../mixin.less';
+
 .ui-textbox {
     position: relative;
 
@@ -12,13 +14,13 @@
         border: 1px solid #999;
 
         &-item {
+            .ellipsis();
             display: block;
+            padding: 5px;
             line-height: 20px;
             text-decoration: none;
             color: #333;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            cursor: default;
 
             &:hover,
             &.hover {
