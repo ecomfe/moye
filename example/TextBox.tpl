@@ -171,10 +171,13 @@ require(['ui/TextBox', 'ui/plugin/TextBoxAutoComplete'], function (TextBox, Text
     .render()
     .on('autocomplete', function (e) {
         var data = e.suggestion;
-        var text = e.suggestion.text;
+        var text;
 
         if ($.isEmptyObject(data)) {
             text = $.trim(this.getValue());
+        }
+        else {
+            text = data.text;
         }
 
         window.open('https://www.baidu.com/s?wd=' + text);
@@ -225,10 +228,13 @@ require(['ui/TextBox', 'ui/plugin/TextBoxAutoComplete'], function (TextBox, Text
     .render()
     .on('autocomplete', function (e) {
         var data = e.suggestion;
-        var text = e.suggestion.text;
+        var text;
 
         if ($.isEmptyObject(data)) {
             text = $.trim(this.getValue());
+        }
+        else {
+            text = data.text;
         }
 
         window.open('https://www.baidu.com/s?wd=' + text);
