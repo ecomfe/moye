@@ -17,110 +17,114 @@ module.exports = function(config) {
 
         // list of files / patterns to load in the browser
         files: [
-            // 'src/css/Button.less',
+            'src/css/Button.less',
+            {
+                pattern: 'test/spec/ButtonSpec.js',
+                included: false
+            },
+            'src/css/Dialog.less',
+            {
+                pattern: 'test/spec/DialogSpec.js',
+                included: false
+            },
+            'src/css/Select.less',
+            {
+                pattern: 'test/spec/SelectSpec.js',
+                included: false
+            },
+            {
+                pattern: 'test/spec/logSpec.js',
+                included: false
+            },
             // {
-            //     pattern: 'test/spec/ButtonSpec.js',
+            //     pattern: 'test/spec/CookieSpec.js',
             //     included: false
             // },
-            // 'src/css/Dialog.less',
+            {
+                pattern: 'test/spec/TipSpec.js',
+                included: false
+            },
+            {
+                 pattern: 'test/spec/PagerSpec.js',
+                 included: false
+            },
+            {
+              pattern: 'test/spec/RatingSpec.js',
+                included: false
+            },
+            {
+                pattern: 'test/spec/TabSpec.js',
+                included: false
+            },
             // {
-            //     pattern: 'test/spec/DialogSpec.js',
-            //     included: false
-            // },
-            // 'src/css/Select.less',
-            // {
-            //     pattern: 'test/spec/SelectSpec.js',
-            //     included: false
-            // },
-            // {
-            //     pattern: 'test/spec/logSpec.js',
-            //     included: false
-            // },
-            // // {
-            // //     pattern: 'test/spec/CookieSpec.js',
-            // //     included: false
-            // // },
-            // {
-            //     pattern: 'test/spec/TipSpec.js',
-            //     included: false
-            // },
-            // {
-            //      pattern: 'test/spec/PagerSpec.js',
-            //      included: false
-            // },
-            // {
-            //   pattern: 'test/spec/RatingSpec.js',
-            //     included: false
-            // },
-            // {
-            //     pattern: 'test/spec/TabSpec.js',
-            //     included: false
-            // },
-            // // {
-            // //     pattern: 'test/spec/CalendarSpec.js',
-            // //     included: false
-            // // },
-            // // {
-            // //     pattern: 'test/spec/CitySpec.js',
-            // //     included: false
-            // // },
-            // {
-            //     pattern: 'test/spec/PanelSpec.js',
+            //     pattern: 'test/spec/CalendarSpec.js',
             //     included: false
             // },
             // {
-            //     pattern: 'test/spec/FormSpec.js',
+            //     pattern: 'test/spec/CitySpec.js',
             //     included: false
             // },
-            // {
-            //     pattern: 'test/spec/plugin/ValiditySpec.js',
-            //     included: false
-            // },
-            // {
-            //     pattern: 'test/spec/plugin/ValidateRuleSpec.js',
-            //     included: false
-            // },
-            // {
-            //     pattern: 'test/spec/plugin/ValidateTipSpec.js',
-            //     included: false
-            // },
-            // {
-            //     pattern: 'test/spec/plugin/ValidatorSpec.js',
-            //     included: false
-            // },
-            // {
-            //     pattern: 'test/spec/plugin/FormSubmitSpec.js',
-            //     included: false
-            // },
-            // {
-            //     pattern: 'test/spec/plugin/FormFieldWatcherSpec.js',
-            //     included: false
-            // },
-            // {
-            //     pattern: 'test/spec/plugin/FormRelationSpec.js',
-            //     included: false
-            // },
-            // {
-            //     pattern: 'test/spec/plugin/validator/PredefineRuleSpec.js',
-            //     included: false
-            // },
-            // {
-            //     pattern: 'test/spec/LazyloadSpec.js',
-            //     included: false
-            // },
+            {
+                pattern: 'test/spec/PanelSpec.js',
+                included: false
+            },
+            {
+                pattern: 'test/spec/FormSpec.js',
+                included: false
+            },
+            {
+                pattern: 'test/spec/plugin/ValiditySpec.js',
+                included: false
+            },
+            {
+                pattern: 'test/spec/plugin/ValidateRuleSpec.js',
+                included: false
+            },
+            {
+                pattern: 'test/spec/plugin/ValidateTipSpec.js',
+                included: false
+            },
+            {
+                pattern: 'test/spec/plugin/ValidatorSpec.js',
+                included: false
+            },
+            {
+                pattern: 'test/spec/plugin/FormSubmitSpec.js',
+                included: false
+            },
+            {
+                pattern: 'test/spec/plugin/FormFieldWatcherSpec.js',
+                included: false
+            },
+            {
+                pattern: 'test/spec/plugin/FormRelationSpec.js',
+                included: false
+            },
+            {
+                pattern: 'test/spec/plugin/validator/PredefineRuleSpec.js',
+                included: false
+            },
+            {
+                pattern: 'test/spec/plugin/TextBoxAutoCompleteSpec.js',
+                included: false
+            },
+            {
+                pattern: 'test/spec/LazyloadSpec.js',
+                included: false
+            },
             {
                 pattern: 'test/spec/lib/*.js',
                 include: false
             },
             'src/css/Slider.less',
-            // {
-            //     pattern: 'test/spec/SliderSpec.js',
-            //     included: false
-            // },
-            // {
-            //     pattern: 'test/spec/SliderAnimSpec.js',
-            //     included: false
-            // }
+            {
+                pattern: 'test/spec/SliderSpec.js',
+                included: false
+            },
+            {
+                pattern: 'test/spec/SliderAnimSpec.js',
+                included: false
+            }
     ],
 
 

@@ -3,10 +3,6 @@
 <link rel="stylesheet" href="../src/css/TextBox.less">
 <link rel="stylesheet" href="../src/css/plugin/TextBoxAutoComplete.less">
 <style>
-    .acitem {
-        padding: 5px;
-    }
-
     .acitem.even {
         color: #f00;
     }
