@@ -96,8 +96,16 @@ define(function (require) {
      */
     function parent() {
         var caller = this.$parent.caller;
-        var name = caller[METHOD_NAME_ATTR];
+
+        var CurrentClass = caller[METHOD_CLASS_ATTR];
+
+        if (!CurrentClass) {
+            throw new Error('this class has no Parent Class');
+        }
+
         var ParentClass = caller[METHOD_CLASS_ATTR].$parent;
+        var name = caller[METHOD_NAME_ATTR];
+
         while (ParentClass) {
             if (ParentClass.prototype.hasOwnProperty(name)) {
                 var parentMethod = ParentClass.prototype[name];

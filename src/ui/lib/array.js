@@ -144,7 +144,7 @@ define(function (require) {
                 return keys;
             },
 
-        range:  function(start, stop, step) {
+        range: function (start, stop, step) {
             if (arguments.length <= 1) {
                 stop = start || 0;
                 start = 0;
@@ -156,7 +156,7 @@ define(function (require) {
             var range = Array(length);
 
             for (var idx = 0; idx < length; idx++, start += step) {
-              range[idx] = start;
+                range[idx] = start;
             }
 
             return range;
