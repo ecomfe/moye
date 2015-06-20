@@ -120,14 +120,27 @@ define(function (require) {
         },
 
         keys: Object.keys
-            ? Object.keys
+            ? function (obj) {
+                return obj == null
+                    ? []
+                    : Object.keys(obj);
+            }
             : function (obj) {
                 var keys = [];
+
+                if (obj == null) {
+                    return keys;
+                }
+
                 for (var name in obj) {
-                    if (obj.hasOwnProperty(name)) {
+
+                    // 这里需要使用Object的hasOwnProperty来搞
+                    // 防止当obj.hasOwnProperty方法被修改
+                    if (Object.prototype.hasOwnProperty.call(obj, name)) {
                         keys.push(name);
                     }
                 }
+
                 return keys;
             },
 
