@@ -29,6 +29,7 @@ define(function (require) {
     };
 
     return {
+
         /**
          * 获取控件部件相关的class数组
          *
