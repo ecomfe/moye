@@ -13,6 +13,10 @@ define(function (require) {
     var main = require('./main');
     var Helper = require('./Helper');
 
+    var STATE_HIDDEN_NAME = 'hidden';
+    var STATE_DISABLED_NAME = 'disabled';
+    var STATE_READONLY_NAME = 'readOnly';
+
     /**
      * 控件基类
      *
@@ -219,21 +223,21 @@ define(function (require) {
 
                 // 常用几个与状态相关的属性，直接在这里给转化成状态
                 // 禁用状态
-                if (this.disabled) {
+                if (this[STATE_DISABLED_NAME]) {
                     this.disable();
-                    delete this.disabled;
+                    delete this[STATE_DISABLED_NAME];
                 }
 
                 // 隐藏状态
-                if (this.hidden) {
+                if (this[STATE_HIDDEN_NAME]) {
                     this.hide();
-                    delete this.hidden;
+                    delete this[STATE_HIDDEN_NAME];
                 }
 
                 // 只读状态(必须是输入控件才搞一下)
                 if (lib.isFunction(this.getValue)) {
-                    this.setReadOnly(!!this.readOnly);
-                    delete this.readOnly;
+                    this.setReadOnly(!!this[STATE_READONLY_NAME]);
+                    delete this[STATE_READONLY_NAME];
                 }
 
             }
@@ -434,15 +438,15 @@ define(function (require) {
         },
 
         show: function () {
-            return this.removeState('hidden');
+            return this.removeState(STATE_HIDDEN_NAME);
         },
 
         hide: function () {
-            return this.addState('hidden');
+            return this.addState(STATE_HIDDEN_NAME);
         },
 
         toggle: function () {
-            return this.toggleState('hidden');
+            return this.toggleState(STATE_HIDDEN_NAME);
         },
 
         /**
@@ -453,7 +457,7 @@ define(function (require) {
          */
         disable: function () {
 
-            this.addState('disabled');
+            this.addState(STATE_DISABLED_NAME);
 
             // 顺手把子控件也给禁用了
             this.helper.disableChildren();
@@ -472,7 +476,7 @@ define(function (require) {
          */
         enable: function () {
 
-            this.removeState('disabled');
+            this.removeState(STATE_DISABLED_NAME);
 
             // 顺手把子控件也给启用了
             this.helper.enableChildren();
@@ -489,7 +493,7 @@ define(function (require) {
          * @public
          */
         isDisabled: function () {
-            return this.hasState('disabled');
+            return this.hasState(STATE_DISABLED_NAME);
         },
 
         /**
@@ -497,15 +501,15 @@ define(function (require) {
          * @return {boolean}
          */
         isReadOnly: function () {
-            return this.hasState('readonly');
+            return this.hasState(STATE_READONLY_NAME);
         },
 
         setReadOnly: function (isReadOnly) {
             if (isReadOnly) {
-                this.addState('readOnly');
+                this.addState(STATE_READONLY_NAME);
             }
             else {
-                this.removeState('readOnly');
+                this.removeState(STATE_READONLY_NAME);
             }
         },
 
