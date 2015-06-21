@@ -72,6 +72,7 @@ define(function (require) {
          * 事件功能
          */
         observable: {
+
             /**
              * 添加事件绑定
              *

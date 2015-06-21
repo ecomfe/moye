@@ -6,9 +6,11 @@
 define(function (require) {
 
     var type = require('./type');
+    var object = require('./object');
     var browser = require('./browser').browser;
 
     return {
+
         /**
          * 从文档中获取指定的DOM元素
          *
@@ -138,7 +140,9 @@ define(function (require) {
                     options.top, options.bottom
                 );
                 for (var name in verticalStyle) {
-                    horizontalStyle[name] = verticalStyle[name];
+                    if (object.has(verticalStyle, name)) {
+                        horizontalStyle[name] = verticalStyle[name];
+                    }
                 }
                 return horizontalStyle;
             }
@@ -149,7 +153,9 @@ define(function (require) {
                     element.style.position = 'absolute';
                     var style = getStyle(element, options);
                     for (var name in style) {
-                        element.style.setExpression(name, style[name]);
+                        if (object.has(style, name)) {
+                            element.style.setExpression(name, style[name]);
+                        }
                     }
                 }
             };
