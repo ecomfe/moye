@@ -120,18 +120,31 @@ define(function (require) {
         },
 
         keys: Object.keys
-            ? Object.keys
+            ? function (obj) {
+                return obj == null
+                    ? []
+                    : Object.keys(obj);
+            }
             : function (obj) {
                 var keys = [];
+
+                if (obj == null) {
+                    return keys;
+                }
+
                 for (var name in obj) {
-                    if (obj.hasOwnProperty(name)) {
+
+                    // 这里需要使用Object的hasOwnProperty来搞
+                    // 防止当obj.hasOwnProperty方法被修改
+                    if (Object.prototype.hasOwnProperty.call(obj, name)) {
                         keys.push(name);
                     }
                 }
+
                 return keys;
             },
 
-        range:  function(start, stop, step) {
+        range: function (start, stop, step) {
             if (arguments.length <= 1) {
                 stop = start || 0;
                 start = 0;
@@ -143,7 +156,7 @@ define(function (require) {
             var range = Array(length);
 
             for (var idx = 0; idx < length; idx++, start += step) {
-              range[idx] = start;
+                range[idx] = start;
             }
 
             return range;
