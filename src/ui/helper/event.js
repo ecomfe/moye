@@ -7,8 +7,6 @@
 
 define(function (require) {
 
-    var lib = require('../lib');
-
     return {
 
         /**
@@ -43,7 +41,7 @@ define(function (require) {
                 data = null;
             }
 
-            handler = $.proxy(handler, control)
+            handler = $.proxy(handler, control);
 
             eventName += '.' + control.id + '.' + handler.guid;
 
