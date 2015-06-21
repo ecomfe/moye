@@ -22,7 +22,7 @@ define(function (require) {
          *
          * @return {string} 序列化后的字符串
          */
-    exports.stringify = !window.JSON && TYPE.isFunction(JSON.stringify)
+    exports.stringify = window.JSON && TYPE.isFunction(JSON.stringify)
         ? JSON.stringify
         : (function () {
             var special = {

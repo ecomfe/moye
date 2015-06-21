@@ -9,6 +9,39 @@ define(function (require) {
 
     describe('lib/string', function () {
 
+
+        it('guid', function () {
+            var a = lib.guid();
+            var b = lib.guid();
+            expect(a).not.toBe(b);
+        });
+
+        it('capitalize', function () {
+
+            var a = 'capitalize capitalize';
+
+            var b = lib.capitalize(a);
+
+            expect(b).toBe('Capitalize Capitalize');
+
+        });
+
+        it('contains', function () {
+            var a = 'a b c d e';
+            expect(lib.contains(a, a)).toBe(true);
+        });
+
+        it('pad', function () {
+
+            var a = 1234;
+            var b = -1234;
+            var width = 8;
+
+            expect(lib.pad(a, width)).toBe('00001234');
+            expect(lib.pad(b, width)).toBe('-00001234');
+
+        });
+
         it('format', function () {
             var data = {
                 a: 0,
