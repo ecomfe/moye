@@ -64,12 +64,16 @@ define(function (require) {
             var input = $(this.input);
             var me = this;
 
+            var zIndex = input.css('zIndex') || 1;
+            zIndex = zIndex + 1;
+
             var content = ''
                 + '<div style="'
                 +     'color:' + this.options.color + ';'
                 +     'font-size:' + input.css('fontSize') + ';'
                 +     'height:' + input.outerHeight() + 'px;'
-                +     'z-index: 1000;'
+                +     'width:' + input.outerWidth() + 'px;'
+                +     'z-index:' + zIndex + ';'
                 +     'line-height:' + input.outerHeight() + 'px'
                 + '">' + this.placeholder + '</div>';
 
