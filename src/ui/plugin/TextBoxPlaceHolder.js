@@ -33,7 +33,7 @@ define(function (require) {
                 return;
             }
 
-            textbox.getPopup = $.proxy(this.getPopup, this);
+            textbox.getPlaceHolder = $.proxy(this.getPlaceHolder, this);
 
             this.control     = textbox;
             this.input       = textbox.input;
@@ -108,7 +108,7 @@ define(function (require) {
          * @public
          * @return {Popup}
          */
-        getPopup: function () {
+        getPlaceHolder: function () {
             return this.main;
         },
 
@@ -161,7 +161,17 @@ define(function (require) {
                 .off('focus.' + id)
                 .off('blur.' + id);
 
-            this.textbox = null;
+            this.control = null;
+            this.input = null;
+            this.placeholder = null;
+        },
+
+        /**
+         * 销毁
+         */
+        dispose: function () {
+            this.main.destroy();
+            this.$parent();
         }
 
     });

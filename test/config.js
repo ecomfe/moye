@@ -124,6 +124,10 @@ module.exports = function(config) {
             {
                 pattern: 'test/spec/SliderAnimSpec.js',
                 included: false
+            },
+            {
+                pattern: 'test/spec/plugin/TextBoxPlaceHolderSpec.js',
+                included: false
             }
     ],
 

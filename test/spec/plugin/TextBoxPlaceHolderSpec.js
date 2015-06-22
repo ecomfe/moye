@@ -5,9 +5,21 @@
 
 define(function (require) {
 
+    var lib  = require('ui/lib');
     var TextBox = require('ui/TextBox');
     require('ui/plugin/TextBoxPlaceHolder');
 
+    var ie = lib.browser.ie;
+
+    // 非IE8以下没有
+    if (!ie || ie > 8) {
+        describe('TextBoxPlaceHolder 非IE8以下浏览器不使用', function () {
+            it('', function () {
+                expect(true).toBeTruthy();
+            });
+        });
+        return;
+    }
 
     var textbox;
     var placeholder;
@@ -40,16 +52,16 @@ define(function (require) {
         jasmine.Clock.useMock();
     });
 
-    // afterEach(function () {
-    //     textbox.destroy();
-    //     popup.destroy();
-    //     $('#text-container').remove();
+    afterEach(function () {
+        textbox.destroy();
+        popup.destroy();
+        $('#text-container').remove();
 
-    //     textbox = null;
-    //     placeholder = null;
-    //     popup = null;
-    //     input = null;
-    // });
+        textbox = null;
+        placeholder = null;
+        popup = null;
+        input = null;
+    });
 
     describe('TextBoxPlaceHolder 事件处理', function () {
         it('focus', function () {
