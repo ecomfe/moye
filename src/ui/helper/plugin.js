@@ -21,7 +21,6 @@ define(function (require) {
         createPluginInstance: function (conf) {
 
             var PluginClass;
-            var type;
             var options = {};
 
             // 如果conf是一个对象, 并且有activate的主接口
@@ -36,13 +35,11 @@ define(function (require) {
             }
             // 如果是一个字符串, 那么我们去尝试找一下这个类型
             else if (lib.isString(conf)) {
-                type = conf;
                 PluginClass = lib.getClass(conf);
             }
             // 如果是一个对象, 那么我们按这个格式来解析
             // {type: 'PluginClassName', options: { ... }}
             else if (lib.isObject(conf)) {
-                type = conf.type;
                 PluginClass = lib.getClass(conf.type);
                 options = conf.options || options;
             }

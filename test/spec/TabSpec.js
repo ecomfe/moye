@@ -12,21 +12,21 @@ define(function (require) {
     var tab;
 
     beforeEach(function () {
-        document.body.insertAdjacentHTML(
-            'beforeEnd',
-            ''
-            +    '<div id="tab1" class="ui-tab">'
-            +        '<ul class="ui-tab-wrapper">'
-            +            '<li class="ui-tab-item ui-tab-item-first ui-tab-item-active" data-index="0" data-panel="#panel1">CSS控件</li>'
-            +            '<li class="ui-tab-item" data-index="1" data-panel="#panel2">UI控件拆分</li>'
-            +            '<li class="ui-tab-item" data-index="2" data-panel="#panel3">UI栅格化设计</li>'
-            +            '<li class="ui-tab-item  ui-tab-item-last" data-index="3" data-panel="#panel4">新UI设计规范</li>'
-            +        '</ul>'
-            +    '</div>'
-            +    '<div id="panel1" style="width: 100px;height: 100px; background-color: green; display: block"></div>'
-            +    '<div id="panel2" style="width: 100px;height: 100px; background-color: blue; display: none"></div>'
-            +    '<div id="panel3" style="width: 100px;height: 100px; background-color: red; display: none"></div>'
-            +    '<div id="panel4" style="width: 100px;height: 100px; background-color: yellow; display: none"></div>'
+        document.body.insertAdjacentHTML('beforeEnd', ''
+            + '<div id="tab-test-container">'
+            +     '<div id="tab1" class="ui-tab">'
+            +         '<ul class="ui-tab-wrapper">'
+            +             '<li class="ui-tab-item ui-tab-item-first ui-tab-item-active" data-index="0" data-panel="#panel1">CSS控件</li>'
+            +             '<li class="ui-tab-item" data-index="1" data-panel="#panel2">UI控件拆分</li>'
+            +             '<li class="ui-tab-item" data-index="2" data-panel="#panel3">UI栅格化设计</li>'
+            +             '<li class="ui-tab-item  ui-tab-item-last" data-index="3" data-panel="#panel4">新UI设计规范</li>'
+            +         '</ul>'
+            +     '</div>'
+            +     '<div id="panel1" style="width: 100px;height: 100px; background-color: green; display: block"></div>'
+            +     '<div id="panel2" style="width: 100px;height: 100px; background-color: blue; display: none"></div>'
+            +     '<div id="panel3" style="width: 100px;height: 100px; background-color: red; display: none"></div>'
+            +     '<div id="panel4" style="width: 100px;height: 100px; background-color: yellow; display: none"></div>'
+            + '</div>'
         );
 
         tab = new Tab({
@@ -41,6 +41,7 @@ define(function (require) {
     afterEach(function () {
         tab.dispose();
         tab = null;
+        $('#tab-test-container').remove();
     });
 
     describe('Tab test', function () {

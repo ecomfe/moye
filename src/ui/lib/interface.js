@@ -40,13 +40,16 @@ define(function (require) {
              */
             bindEvents: function (options) {
                 options = options || {};
+
                 // 处理配置项中的事件
                 // 把参数中以on开始的属性做为待绑定事件处理
+
+                /*eslint-disable guard-for-in*/
                 for (var name in options) {
                     var value = options[name];
                     if (
                         // 自有
-                        Object.prototype.hasOwnProperty.call(options, name)
+                        object.has(options, name)
                         // 属性名以on开头
                         && name.indexOf('on') === 0
                         // 属性值为函数
@@ -69,6 +72,7 @@ define(function (require) {
          * 事件功能
          */
         observable: {
+
             /**
              * 添加事件绑定
              *
@@ -180,7 +184,7 @@ define(function (require) {
                 for (var i = 0; i < count; i++) {
                     allListeners[i].call(this, event);
                 }
-                
+
                 return event;
             },
 

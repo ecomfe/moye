@@ -19,7 +19,7 @@ define(function (require) {
         +   '<label data-ui-id="disabledTextBox">不可用：<input type="text"></label>'
         +   '<input id="submit-btn" type="submit" value="提交" data-ui-id="submitBtn">'
         + '</form>'
-        + '<iframe name="my-frame" src="about:blank"></iframe>';
+        + '<iframe id="my-frame" name="my-frame" src="about:blank"></iframe>';
 
     function createForm() {
         var main = $(tpl).appendTo(document.body);
@@ -46,6 +46,7 @@ define(function (require) {
     function disposeForm() {
         form.dispose();
         $('#my-form').remove();
+        $('#my-frame').remove();
     }
 
     describe('标准接口', function () {

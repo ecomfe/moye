@@ -46,8 +46,12 @@ define(function (require) {
         var SubClassProto = new Function();
         SubClassProto.prototype = ParentClass.prototype;
         var subClassProto = new SubClassProto();
+
+        proto = proto || {};
+
         // 将子类的原型链方法合并到链接对象
         object.extend(subClassProto, proto);
+
         // 新建出一个子类, 其proto是上边构造的链接对象
         var SubClass = newClass(subClassProto);
 

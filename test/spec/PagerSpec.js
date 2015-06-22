@@ -24,6 +24,7 @@ define(function (require) {
 
     afterEach(function () {
         pager && pager.dispose();
+        $('#pagerContainer').remove();
     });
 
     describe('Pager 基本接口', function () {

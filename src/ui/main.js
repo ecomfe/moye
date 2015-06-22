@@ -76,7 +76,7 @@ define(function (require) {
 
                 // 如果配置项中没有指定`type`, 跳过
                 if (!type) {
-                    return;
+                    throw new Error('you should specify a type to `' + id + '`');
                 }
 
                 // 生成参数
@@ -97,28 +97,9 @@ define(function (require) {
                 // 生成控件实例
                 var control = exports.create(type, options);
 
-                // 如果没有成功创建实例, 跳过
-                if (!control) {
-                    return;
-                }
-
                 // 渲染控件
-                try {
-                    control.render();
-                    controls[id] = control;
-                }
-                // 捕捉渲染异常, 处理后抛出
-                catch (ex) {
-                    var error = new Error(
-                        'Render control '
-                            + '"' + (control.id || 'anonymous') + '" '
-                            + 'of type ' + control.type + ' '
-                            + 'failed because: '
-                            + ex.message
-                    );
-                    error.actualError = ex;
-                    throw error;
-                }
+                control.render();
+                controls[id] = control;
 
             });
 
@@ -134,7 +115,7 @@ define(function (require) {
         create: function (type, options) {
             var Class = lib.getClass(type);
             if (!Class) {
-                return null;
+                throw new Error('Class ' + type + ' not found');
             }
             delete options.type;
             return new Class(options);
