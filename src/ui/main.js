@@ -1,6 +1,6 @@
 /**
  * @file MOYE主入口
- * @author Leon(lupengyu@baidu)
+ * @author Leon(ludafa@outlook.com)
  */
 
 define(function (require) {

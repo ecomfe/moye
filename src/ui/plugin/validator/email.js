@@ -1,6 +1,6 @@
 /**
  * @file 邮箱校验规则
- * @author leon<lupengyu@baidu.com>
+ * @author leon<ludafa@outlook.com>
  * @author wuhuiyao(wuhuiyao@baidu.com)
  */
 

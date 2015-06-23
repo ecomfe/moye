@@ -260,6 +260,7 @@ define(function (require) {
             );
 
             // keys that may be missed if the implementation isn't careful
+            /* eslint-disable fecs-camelcase */
             var trouble = {
                 'constructor': Object,
                 'valueOf': function () {},
@@ -273,6 +274,7 @@ define(function (require) {
                 '__lookupSetter__': false,
                 '__lookupGetter__': []
             };
+            /* eslint-enable fecs-camelcase */
             var troubleKeys = [
                 'constructor', 'valueOf', 'hasOwnProperty', 'toString',
                 'toLocaleString', 'propertyIsEnumerable',

@@ -1,6 +1,6 @@
 /**
  * @file moye - TextBox - AutoComplete
- * @author Leon(lupengyu@baidu)
+ * @author Leon(ludafa@outlook.com)
  *         liulangyu(liulangyu90316@gmail.com)
  * @date 2015-05-13
  */

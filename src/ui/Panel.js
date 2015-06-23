@@ -1,6 +1,6 @@
 /**
  * @file Panel控件
- * @author Leon(lupengyu@baidu)
+ * @author Leon(ludafa@outlook.com)
  * @author wuhuiyao(wuhuiyao@baidu.com)
  */
 

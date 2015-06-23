@@ -1,7 +1,8 @@
 /**
  * @file 标签组件
- * @author Leon(lupengyu@baidu)
+ * @author Leon(ludafa@outlook.com)
  */
+
 define(function (require) {
 
     var $       = require('jquery');

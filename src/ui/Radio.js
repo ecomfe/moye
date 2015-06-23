@@ -1,7 +1,8 @@
 /**
  * @file Radio
- * @author Leon(lupengyu@baidu)
+ * @author Leon(ludafa@outlook.com)
  */
+
 define(function (require) {
 
     var lib = require('./lib');

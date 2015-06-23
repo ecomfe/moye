@@ -1,6 +1,6 @@
 /**
  * @file 数组相关小工具
- * @author Leon(lupengyu@baidu)
+ * @author Leon(ludafa@outlook.com)
  */
 
 define(function (require) {

@@ -1,6 +1,6 @@
 /**
  * @file 类/继续/接口相关的小工具
- * @author Leon(lupengyu@baidu)
+ * @author Leon(ludafa@outlook.com)
  */
 
 define(function (require) {

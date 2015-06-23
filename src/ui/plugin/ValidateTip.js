@@ -1,6 +1,6 @@
 /**
  * @file moye TextBox校验插件
- * @author leon <lupengyu@baidu.com>
+ * @author leon <ludafa@outlook.com>
  * @author wuhuiyao(wuhuiyao@baidu.com)
  */
 

@@ -1,6 +1,6 @@
 /**
  * @file 必填项校验规则
- * @author leon<lupengyu@baidu.com>
+ * @author leon<ludafa@outlook.com>
  * @authro wuhuiyao(wuhuiyao@baidu.com)
  */
 

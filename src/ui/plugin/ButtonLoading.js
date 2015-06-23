@@ -1,6 +1,6 @@
 /**
  * @file 按钮菊花状态
- * @author leon<lupengyu@baidu.com>
+ * @author leon<ludafa@outlook.com>
  */
 
 define(function (require) {

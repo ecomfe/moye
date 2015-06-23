@@ -2,7 +2,7 @@
  * @file 表单 - 字段关联插件
  *       FIXME: 该插件不能使用 `use` 方式加载，其初始化依赖组件的`afterrender`事件
  *       如果该组件已经渲染过了，再 `use` 将不会奏效
- * @author Leon(lupengyu@baidu)
+ * @author Leon(ludafa@outlook.com)
  * @author wuhuiyao(wuhuiyao@baidu.com)
  */
 

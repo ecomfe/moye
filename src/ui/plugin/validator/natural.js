@@ -1,6 +1,6 @@
 /**
  * @file 自然数校验器
- * @author leon<lupengyu@baidu.com>
+ * @author leon<ludafa@outlook.com>
  */
 
 define(function (require) {

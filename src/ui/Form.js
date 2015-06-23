@@ -1,7 +1,7 @@
 /**
  * @file 表单控件
  *       注意： 当前Form组件的校验能力依赖于表单域使用插件Validator
- * @author Leon(lupengyu@baidu)
+ * @author Leon(ludafa@outlook.com)
  * @auhtor wuhuiyao(wuhuiyao@baidu.com)
  */
 

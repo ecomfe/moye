@@ -1,6 +1,6 @@
 /**
  * @file 手机号码校验规则
- * @author leon<lupengyu@baidu.com>
+ * @author leon<ludafa@outlook.com>
  */
 
 define(function (require) {

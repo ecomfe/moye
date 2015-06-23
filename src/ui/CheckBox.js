@@ -1,6 +1,6 @@
 /**
  * @file 复选框
- * @author Leon(lupengyu@baidu)
+ * @author Leon(ludafa@outlook.com)
  */
 define(function (require) {
 

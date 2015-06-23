@@ -1,7 +1,7 @@
 /**
  * @file 校验合法性状态
  *       来自esui/ValidityState
- * @author leon <lupengyu@baidu.com>
+ * @author leon <ludafa@outlook.com>
  */
 
 define(function (require) {
