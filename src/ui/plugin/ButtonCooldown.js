@@ -1,6 +1,6 @@
 /**
  * @file 按钮冷却插件
- * @author leon<lupengyu@baidu.com>
+ * @author leon<ludafa@outlook.com>
  */
 
 define(function (require) {

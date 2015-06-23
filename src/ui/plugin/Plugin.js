@@ -1,10 +1,10 @@
 /**
  * @file MOYE插件
- * @author Leon(lupengyu@baidu)
+ * @author Leon(leonlu@outlook.com)
  */
+
 define(function (require) {
 
-    var $ = require('jquery');
     var lib = require('../lib');
 
     var Plugin = lib.newClass({
@@ -34,7 +34,7 @@ define(function (require) {
 
         /**
          * 是否已经被激活
-         * @return {Boolean} [description]
+         * @return {boolean}
          */
         isActivated: function () {
             return !!this.active;

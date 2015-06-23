@@ -1,6 +1,6 @@
 /**
  * @file 文本输入框
- * @author leon <lupengyu@baidu.com>
+ * @author leon <ludafa@outlook.com>
  */
 
 define(function (require) {

@@ -49,11 +49,11 @@ function getConfig(config) {
                 included: false
             },
             {
-                 pattern: 'test/spec/PagerSpec.js',
-                 included: false
+                pattern: 'test/spec/PagerSpec.js',
+                included: false
             },
             {
-              pattern: 'test/spec/RatingSpec.js',
+                pattern: 'test/spec/RatingSpec.js',
                 included: false
             },
             {
@@ -185,7 +185,9 @@ function getConfig(config) {
 
 
         // level of logging
-        // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
+        // possible values:
+        // config.LOG_DISABLE, config.LOG_ERROR, config.LOG_WARN,
+        // config.LOG_INFO, config.LOG_DEBUG
         logLevel: config.LOG_INFO,
 
 
@@ -201,7 +203,7 @@ function getConfig(config) {
         // - Safari (only Mac; has to be installed with `npm install karma-safari-launcher`)
         // - PhantomJS
         // - IE (only Windows; has to be installed with `npm install karma-ie-launcher`)
-        browsers: ['Chrome', /*'Firefox', 'PhantomJS'*/],
+        browsers: ['Chrome'], /*, 'Firefox', 'PhantomJS'*/
 
 
         // If browser does not capture in given timeout [ms], kill it

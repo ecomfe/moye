@@ -1,6 +1,6 @@
 /**
  * @file 类型相关的小函数
- * @author Leon(lupengyu@baidu)
+ * @author Leon(ludafa@outlook.com)
  */
 
 define(function (require) {

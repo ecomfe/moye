@@ -1,6 +1,6 @@
 /**
  * @file 全屏幕遮罩层
- * @author Leon(lupengyu@baidu)
+ * @author Leon(ludafa@outlook.com)
  */
 
 define(function (require) {

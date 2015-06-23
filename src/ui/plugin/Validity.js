@@ -3,7 +3,7 @@
  *       来自esui/Validity
  *       Validity.addState方法直接可以添加state和message。
  *       自动转化为ValidityState实例。
- * @author leon <lupengyu@baidu.com>
+ * @author leon <ludafa@outlook.com>
  * @author wuhuiyao(wuhuiyao@baidu.com)
  */
 

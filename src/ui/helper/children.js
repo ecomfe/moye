@@ -1,6 +1,6 @@
 /**
  * @file 子控件相关的小工具
- * @author Leon(lupengyu@baidu)
+ * @author Leon(ludafa@outlook.com)
  */
 
 define(function (require) {

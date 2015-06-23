@@ -6,6 +6,7 @@
 define(function (require) {
 
     return {
+
         /**
          * 创建一组可以监听属性变化渲染器
          *

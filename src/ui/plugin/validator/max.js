@@ -1,6 +1,6 @@
 /**
  * @file 最大值校验规则
- * @author leon<lupengyu@baidu.com>
+ * @author leon<ludafa@outlook.com>
  * @author wuhuiyao(wuhuiyao@baidu.com)
  */
 
