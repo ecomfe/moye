@@ -2,6 +2,7 @@
  * @file MOYE - Button - 测试用例
  * @author Leon(leon@outlook.com)
  */
+
 define(function (require) {
 
     var $ = require('jquery');

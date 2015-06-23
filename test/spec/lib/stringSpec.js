@@ -54,17 +54,9 @@ define(function (require) {
             };
             var template = '!{a},!{b},!{c},!{d},!{e},!{f},!{g}';
 
-            expect(
-                lib.format(template, data)
-                ===
-                '0,,,1,a,1,2,[object Object]'
-            );
+            expect(lib.format(template, data)).toBe('0,,,1,a,1,2,[object Object]');
 
-            expect(
-                lib.format('!{a}, @{a}, #{a}, ${a}, %{a}', data)
-                ===
-                '0,,,,'
-            );
+            expect(lib.format('!{a},@{a},#{a},${a},%{a}', data)).toBe('0,,,,');
         });
 
     });

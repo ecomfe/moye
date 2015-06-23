@@ -261,17 +261,17 @@ define(function (require) {
 
             // keys that may be missed if the implementation isn't careful
             var trouble = {
-                constructor: Object,
-                valueOf: function () {},
-                hasOwnProperty: null,
-                toString: 5,
-                toLocaleString: void 0,
-                propertyIsEnumerable: /a/,
-                isPrototypeOf: this,
-                __defineGetter__: Boolean,
-                __defineSetter__: {},
-                __lookupSetter__: false,
-                __lookupGetter__: []
+                'constructor': Object,
+                'valueOf': function () {},
+                'hasOwnProperty': null,
+                'toString': 5,
+                'toLocaleString': void 0,
+                'propertyIsEnumerable': /a/,
+                'isPrototypeOf': this,
+                '__defineGetter__': Boolean,
+                '__defineSetter__': {},
+                '__lookupSetter__': false,
+                '__lookupGetter__': []
             };
             var troubleKeys = [
                 'constructor', 'valueOf', 'hasOwnProperty', 'toString',
