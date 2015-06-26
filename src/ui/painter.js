@@ -5,6 +5,8 @@
 
 define(function (require) {
 
+    var lib = require('./lib');
+
     return {
 
         /**
@@ -32,7 +34,7 @@ define(function (require) {
          * @return {Function} `repaint`方法的实现
          */
         createRepaint: function () {
-            var painters = [].concat.apply([], [].slice.call(arguments));
+            var painters = lib.slice(arguments);
 
             return function (changes, changesIndex) {
                 // 临时索引，不能直接修改`changesIndex`，会导致子类的逻辑错误

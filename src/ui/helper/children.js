@@ -1,12 +1,19 @@
 /**
  * @file 子控件相关的小工具
- * @author Leon(ludafa@outlook.com)
+ * @author Leon(lupengyu@baidu)
  */
 
 define(function (require) {
 
     var main = require('../main');
     var lib = require('../lib');
+
+    function traversalChildren(children, action) {
+        children = lib.slice(children);
+        for (var i = children.length - 1; i >= 0; i--) {
+            children[i][action]();
+        }
+    }
 
     return {
 
@@ -29,10 +36,7 @@ define(function (require) {
          */
         disposeChildren: function () {
             var control = this.control;
-            var children = [].slice.call(control.children);
-            for (var i = children.length - 1; i >= 0; i--) {
-                children[i].dispose();
-            }
+            traversalChildren(control.children, 'dispose');
             // 这里只是清空掉对子控件的引用, 不能将这两个属性设为null
             // 主控件可能后续还会继续存在
             control.children = [];
@@ -43,22 +47,14 @@ define(function (require) {
          * 禁用子控件
          */
         disableChildren: function () {
-            var control = this.control;
-            var children = [].slice.call(control.children);
-            for (var i = children.length - 1; i >= 0; i--) {
-                children[i].disable();
-            }
+            traversalChildren(this.control.children, 'disable');
         },
 
         /**
          * 启用子控件
          */
         enableChildren: function () {
-            var control = this.control;
-            var children = [].slice.call(control.children);
-            for (var i = children.length - 1; i >= 0; i--) {
-                children[i].enable();
-            }
+            traversalChildren(this.control.children, 'enable');
         }
 
     };
