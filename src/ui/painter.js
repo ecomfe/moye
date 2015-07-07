@@ -1,13 +1,18 @@
 /**
+ * @copyright 2014 Baidu Inc. All rights reserved.
+ *
  * @file 重绘工具
- * @author leon <leonlu@outlook.com>
+ * @author Leon(ludafa@outlook.com)
  */
 
 define(function (require) {
 
     var lib = require('./lib');
 
-    return {
+    /**
+     * @exports painter
+     */
+    var painter = {
 
         /**
          * 创建一组可以监听属性变化渲染器
@@ -30,7 +35,8 @@ define(function (require) {
          * - `{Object} painter`：当前的`渲染器`
          * - `{Mixed} args...`：根据`name`配置指定的属性，依次将属性的最新值作为参数
          *
-         * @param {Object|Function} args `painter`对象
+         * @method module:painter.createRepaint
+         * @param {(Object | Function)} args `painter`对象
          * @return {Function} `repaint`方法的实现
          */
         createRepaint: function () {
@@ -58,8 +64,11 @@ define(function (require) {
                     // - 第一次重绘（没有`changes`）
                     // - `name`所指定的一个或多个属性发生了变化
                     var shouldPaint = !changes;
+
+                    var propertyNamesLength = propertyNames.length;
+
                     if (!shouldPaint) {
-                        for (var j = 0; j < propertyNames.length; j++) {
+                        for (var j = 0; j < propertyNamesLength; j++) {
                             var name = propertyNames[j];
                             if (changesIndex.hasOwnProperty(name)) {
                                 shouldPaint = true;
@@ -74,12 +83,14 @@ define(function (require) {
 
                     // 收集所有属性`name`指定属性值
                     var properties = [painter];
-                    for (j = 0; j < propertyNames.length; j++) {
+                    for (j = 0; j < propertyNamesLength; j++) {
                         name = propertyNames[j];
                         properties.push(this[name]);
+
                         // 从索引中删除，为了后续构建`unpainted`数组
                         delete index[name];
                     }
+
                     // 绘制
                     painter.paint.apply(this, properties);
                 }
@@ -88,6 +99,8 @@ define(function (require) {
             };
         }
     };
+
+    return painter;
 
 });
 

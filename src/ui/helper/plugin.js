@@ -1,4 +1,6 @@
 /**
+ * @copyright 2014 Baidu Inc. All rights reserved.
+ *
  * @file 插件相关的小工具
  * @author Leon(ludafa@outlook.com)
  */
@@ -15,7 +17,8 @@ define(function (require) {
          *
          * 天的这边海的那边有一群蓝精灵...各种重载...
          *
-         * @param  {string|Function|Object} conf 配置
+         * @method module:Helper#createPluginInstance
+         * @param  {(string | Function | Object)} conf 配置
          * @return {Plugin}
          */
         createPluginInstance: function (conf) {
@@ -23,29 +26,30 @@ define(function (require) {
             var PluginClass;
             var options = {};
 
-            // 如果conf是一个对象, 并且有activate的主接口
-            // 那么我们认为它是一个Plugin实例, 那么就直接返回了...
+            // 如果conf是一个Plugin的实例，那么就直接返回了...
             if (conf instanceof Plugin) {
                 return conf;
             }
 
+            var type = lib.typeOf(conf);
+
             // 如果是一个函数, 那么我们把它成构造函数来耍
-            else if (lib.isFunction(conf)) {
+            if (type === 'function') {
                 PluginClass = conf;
             }
             // 如果是一个字符串, 那么我们去尝试找一下这个类型
-            else if (lib.isString(conf)) {
+            else if (type === 'string') {
                 PluginClass = lib.getClass(conf);
             }
             // 如果是一个对象, 那么我们按这个格式来解析
             // {type: 'PluginClassName', options: { ... }}
-            else if (lib.isObject(conf)) {
+            else if (type === 'object') {
                 PluginClass = lib.getClass(conf.type);
                 options = conf.options || options;
             }
 
             if (!PluginClass) {
-                throw new Error('Moye Plugin [' + conf + '] cannot found');
+                throw new Error('moye Plugin [' + conf + '] cannot found');
             }
 
             return new PluginClass(options);
@@ -53,6 +57,9 @@ define(function (require) {
 
         /**
          * 初始化插件
+         *
+         * @method module:Helper#initPlugins
+         * @return {module:Helper}
          */
         initPlugins: function () {
 
@@ -73,39 +80,69 @@ define(function (require) {
                 this
             );
 
+            return this;
+
+        },
+
+        /**
+         * 遍历插件，对其执行一定的操作
+         *
+         * @method module:Helper#traversalPlugins
+         * @param  {Function} handler 处理函数
+         * @return {module:Helper}
+         */
+        traversalPlugins: function (handler) {
+            var plugins = this.control.plugins;
+
+            if (plugins) {
+                for (var i = plugins.length - 1; i >= 0; i--) {
+                    handler.call(this, plugins[i]);
+                }
+            }
+
+            return this;
         },
 
         /**
          * 激活插件
+         *
+         * @method module:Helper#activatePlugins
+         * @return {module:Helper}
          */
         activatePlugins: function () {
-            var plugins = this.control.plugins;
-            for (var i = plugins.length - 1; i >= 0; i--) {
-                plugins[i].activate();
-            }
+            return this.traversalPlugins(function (plugin) {
+                plugin.activate();
+            });
         },
 
         /**
          * 禁用插件
+         *
+         * @method module:Helper#inactivatePlugins
+         * @return {module:Helper}
          */
         inactivatePlugins: function () {
-            var plugins = this.control.plugins;
-            for (var i = plugins.length - 1; i >= 0; i--) {
-                plugins[i].inactivate();
-            }
+            return this.traversalPlugins(function (plugin) {
+                plugin.inactivate();
+            });
         },
 
         /**
          * 销毁插件
+         *
+         * @method module:Helper#disposePlugins
+         * @return {module:Helper}
          */
         disposePlugins: function () {
-            var control = this.control;
-            var plugins = control.plugins || [];
-            for (var i = plugins.length - 1; i >= 0; i--) {
-                plugins[i].inactivate();
-                plugins[i].dispose();
-            }
-            control.plugins = [];
+
+            this.traversalPlugins(function (plugin) {
+                plugin.inactivate();
+                plugin.dispose();
+            });
+
+            this.control.plugins = [];
+
+            return this;
         }
 
     };

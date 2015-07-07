@@ -1,4 +1,6 @@
 /**
+ * @copyright 2014 Baidu Inc. All rights reserved.
+ *
  * @file 类/继续/接口相关的小工具
  * @author Leon(ludafa@outlook.com)
  */
@@ -17,7 +19,9 @@ define(function (require) {
 
     /**
      * 注册类
-     * @param  {Function} Class 类
+     *
+     * @inner
+     * @param {Function} Class 类
      */
     function register(Class) {
         var proto = Class.prototype;
@@ -36,12 +40,12 @@ define(function (require) {
     /**
      * 扩展生成子类
      *
-     * @inner
      * @param {Class}  ParentClass 父类
      * @param {Object} proto       扩展方法集合
      * @return {Class} 新的子类
      */
     function extend(ParentClass, proto) {
+
         // 构造连接prtotoype对象
         var SubClassProto = new Function();
         SubClassProto.prototype = ParentClass.prototype;
@@ -96,9 +100,11 @@ define(function (require) {
 
     /**
      * 执行祖先类原型链中的方法
+     *
      * @return {*} 祖先类接口的返回值
      */
     function parent() {
+
         var caller = this.$parent.caller;
 
         var CurrentClass = caller[METHOD_CLASS_ATTR];
@@ -122,13 +128,15 @@ define(function (require) {
                 ParentClass = ParentClass.$parent;
             }
         }
+
         throw new Error('no parent method');
     }
 
     /**
      * 获取Class的某个派生类
-     * @param  {Function} Class      类
-     * @param  {string} subClassType 派生类名
+     *
+     * @param  {Function} Class        类
+     * @param  {string}   subClassType 派生类名
      * @return {Function}
      */
     function getClass(Class, subClassType) {
@@ -138,6 +146,7 @@ define(function (require) {
 
     /**
      * 获取所有的派生类
+     *
      * @param  {Function} Class 某个类
      * @return {Object}
      */
@@ -148,10 +157,12 @@ define(function (require) {
     /**
      * 创建新类
      *
+     * @method module:lib.newClass
      * @param  {Object}   proto 类的原型对象
      * @return {Function}       新类构造函数
      */
     function newClass(proto) {
+
         var Class = function () {
             return this.initialize
                 ? this.initialize.apply(this, arguments)
@@ -193,8 +204,9 @@ define(function (require) {
 
         /**
          * 获取一个类
+         *
+         * @method module:lib.getClass
          * @param  {string} className 类名
-         * @param  {string} spaceName 命名空间
          * @return {Function}
          */
         getClass: function (className) {

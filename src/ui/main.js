@@ -1,6 +1,9 @@
 /**
- * @file MOYE主入口
+ * @copyright 2014 Baidu Inc. All rights reserved.
+ *
+ * @file moye主入口
  * @author Leon(ludafa@outlook.com)
+ * @module main
  */
 
 define(function (require) {
@@ -12,9 +15,10 @@ define(function (require) {
      * 控件库配置数据
      *
      * @type {Object}
-     * @ignore
+     * @inner
      */
     var config = {
+
         // 配置属性前缀
         uiPrefix: 'data-ui',
 
@@ -36,10 +40,12 @@ define(function (require) {
 
     var defaultContext = Context.create('default');
 
+
     var exports = {
 
         /**
-         * 依照配置, 初始化指定元素中的所有MOYE组件
+         * 依照配置, 初始化指定元素中的所有moye组件
+         *
          * @param  {Element} container  容器元素
          * @param  {Object}  properties 配置
          * @param  {Context} context    上下文
@@ -108,9 +114,10 @@ define(function (require) {
 
         /**
          * 新建一个控件实例
+         *
          * @param  {string} type    控件类型
          * @param  {Object} options 控件参数
-         * @return {Control}
+         * @return {module:Control}
          */
         create: function (type, options) {
             var Class = lib.getClass(type);
@@ -123,8 +130,9 @@ define(function (require) {
 
         /**
          * 获取指定Id的控件
+         *
          * @param  {string} instanceId 控件id
-         * @return {[type]}            [description]
+         * @return {module:Control}
          */
         get: function (instanceId) {
             return defaultContext.get(instanceId);
@@ -133,24 +141,29 @@ define(function (require) {
         /**
          * 通过一个DOM元素(通常是控件的主元素)来获取控件实例
          * @param {Element} dom 控件主元素
-         * @return {Control}
+         * @return {module:Control}
          */
         getControlByDOM: function (dom) {
             dom = $(dom);
             var instanceId = dom.attr(config.instanceAttr);
 
             if (!instanceId) {
-                return null;
+                return;
             }
 
             var contextId = dom.attr(config.contextAttr);
 
             if (!contextId) {
-                return null;
+                return;
             }
 
             var context = exports.getContext(contextId);
-            return context ? context.get(instanceId) : null;
+
+            if (!context) {
+                return;
+            }
+
+            return context.get(instanceId);
         },
 
         /**
@@ -167,6 +180,7 @@ define(function (require) {
 
         /**
          * 取配置
+         *
          * @param  {string} name 配置属性名
          * @return {*}
          */
@@ -176,9 +190,10 @@ define(function (require) {
 
         /**
          * 设定配置
+         *
          * @param {string} name  配置属性名
          * @param {*}      value 配置属性值
-         * @return {Control}
+         * @return {module:Control}
          */
         setConfig: function (name, value) {
             config[name] = value;

@@ -1,4 +1,6 @@
 /**
+ * @copyright 2014 Baidu Inc. All rights reserved.
+ *
  * @file 字符串相关的小工具
  * @author Leon(ludafa@outlook.com)
  */
@@ -61,9 +63,10 @@ define(function (require) {
         /**
          * 对目标数字进行 0 补齐处理
          *
-         * @param {number|string} source 需要补齐的数字或字符串
-         * @param {number} width 补齐后的固定宽度（必须小于32）
-         * @return {string} 补齐后的字符串
+         * @method module:lib.pad
+         * @param  {(number | string)} source 需要补齐的数字或字符串
+         * @param  {number}            width  补齐后的固定宽度（必须小于32）
+         * @return {string}                   补齐后的字符串
          */
         pad: function (source, width) {
 
@@ -87,6 +90,14 @@ define(function (require) {
             return sign + str;
         },
 
+        /**
+         * 格式化字符串
+         *
+         * @method module:lib.format
+         * @param  {string}    format 字符串格式化模板
+         * @param  {...Object} args   最多不超过5个数据源
+         * @return {string}
+         */
         format: (function () {
             var map = {
                 '!': 1,

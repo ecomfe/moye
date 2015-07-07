@@ -1,8 +1,8 @@
 /**
-* Copyright 2014 Baidu Inc. All rights reserved.
+* @copyright 2014 Baidu Inc. All rights reserved.
 *
 * @file 事件处理相关的小工具
-* @author leon <leonlu@outlook.com>
+* @author Leon(ludafa@outlook.com)
 */
 
 define(function (require) {
@@ -21,12 +21,13 @@ define(function (require) {
          *   > e.target：事件根源
          *   > e.currentTarget：符合selector要求的元素
          *
+         * @method module:Helper#delegate
          * @param  {Element}  element   目标元素
          * @param  {string}   eventName 事件名称
-         * @param  {string}   selector  代理元素的选择器(jquery标准)
-         * @param  {*}        data      附加数据，参见jquery的on函数所支持的data参数
+         * @param  {?string}  selector  代理元素的选择器(jquery标准)
+         * @param  {?*}       data      附加数据，参见jquery的on函数所支持的data参数
          * @param  {Function} handler   处理函数
-         * @return {Helper}
+         * @return {module:Helper}
          */
         delegate: function (element, eventName, selector, data, handler) {
 
@@ -52,11 +53,13 @@ define(function (require) {
 
         /**
          * 取消事件代理
-         * @param  {Element}  element   目标元素
-         * @param  {string}   eventName 事件名称
-         * @param  {string}   selector  代理元素的选择器(jquery标准)
-         * @param  {Function} handler   处理函数
-         * @return {Helper}
+         *
+         * @method module:Helper#undelegate
+         * @param  {Element}   element   目标元素
+         * @param  {?string}   eventName 事件名称
+         * @param  {?string}   selector  代理元素的选择器(jquery标准)
+         * @param  {?Function} handler   处理函数
+         * @return {module:Helper}
          */
         undelegate: function (element, eventName, selector, handler) {
 
