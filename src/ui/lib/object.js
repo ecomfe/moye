@@ -1,4 +1,6 @@
 /**
+ * @copyright 2014 Baidu Inc. All rights reserved.
+ *
  * @file 对象相关小工具
  * @author Leon(ludafa@outlook.com)
  */
@@ -14,14 +16,13 @@ define(function (require) {
 
     var exports = {};
 
-        /**
-         * 序列化 JSON 对象
-         *
-         * @method module:lib.stringify
-         * @param {JSON} value 需要序列化的json对象
-         *
-         * @return {string} 序列化后的字符串
-         */
+    /**
+     * 序列化 JSON 对象
+     *
+     * @method module:lib.stringify
+     * @param {Object} value 需要序列化的json对象
+     * @return {string} 序列化后的字符串
+     */
     exports.stringify = window.JSON && TYPE.isFunction(JSON.stringify)
         ? JSON.stringify
         : (function () {
@@ -110,6 +111,8 @@ define(function (require) {
 
     /**
      * 判断obj是否自拥有指定属性
+     *
+     * @method module:lib.has
      * @param  {*}       obj      目标
      * @param  {name}    property 属性名
      * @return {boolean}
@@ -123,6 +126,7 @@ define(function (require) {
      *
      * 将source的自有属性合并到target对象上
      *
+     * @method module:lib.extend
      * @param  {Object} target 目标对象
      * @return {Object}
      */
@@ -192,11 +196,12 @@ define(function (require) {
      * 将对象解析成 query 字符串
      *
      * @method module:lib.toQueryString
-     * @param {Object} object 需要解析的 JSON 对象
-     * @param {string} base   属性前缀...
-     * @return {string} 解析结果字符串，其中值将被URI编码
+     * @param {Object}  object 需要解析的 JSON 对象
+     * @param {string}  base   属性前缀...
+     * @return {string}        解析结果字符串，其中值将被URI编码
      */
     exports.toQueryString = function (object, base) {
+
         var queryString = array.reduce(
             object,
             function (queryString, value, key) {
@@ -229,6 +234,7 @@ define(function (require) {
             },
             []
         );
+
         return queryString.join('&');
     };
 

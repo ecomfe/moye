@@ -1,7 +1,8 @@
 /**
+ * @copyright 2014 Baidu Inc. All rights reserved.
+ *
  * @file 辅助类 DOM相关
- * @author leonlu <leonlu@outlook.com>
- * @date 2014-07-24
+ * @author Leon(ludafa@outlook.com)
  */
 
 define(function (require) {
@@ -12,12 +13,12 @@ define(function (require) {
     /**
      * 将参数用`-`连接成字符串
      *
-     * @param {string} args 需要连接的串
+     * @param {...string} args 需要连接的串
      * @return {string}
-     * @ignore
+     * @inner
      */
     function joinByStrike() {
-        return [].slice.call(arguments, 0).join('-');
+        return lib.slice(arguments).join('-');
     }
 
     // 自闭合的标签列表
@@ -25,7 +26,7 @@ define(function (require) {
         area: true, base: true, br: true, col: true,
         embed: true, hr: true, img: true, input: true,
         keygen: true, link: true, meta: true, param: true,
-        source: true, track: true, wbr: true
+        source: true, track: true, wbr: true, command: true
     };
 
     return {
@@ -46,7 +47,8 @@ define(function (require) {
          * - `ui-{type}-{part}`
          * - `skin-{skin}-{type}-{part}`
          *
-         * @param {string?} part 部件名称
+         * @method module:Helper#getPartClasses
+         * @param {?string} part 部件名称
          * @return {string[]}
          */
         getPartClasses: function (part) {
@@ -84,9 +86,10 @@ define(function (require) {
         },
 
         /**
-         * 获取控件部件相关的class字符串，具体可参考{@link lib#getPartClasses}方法
+         * 获取控件部件相关的class字符串
          *
-         * @param {string} [part] 部件名称
+         * @method module:Helper#getPartClassName
+         * @param  {string}  part 部件名称
          * @return {string}
          */
         getPartClassName: function (part) {
@@ -104,7 +107,8 @@ define(function (require) {
          *
          * - `ui-{styleType}-{part}`
          *
-         * @param {string} [part] 部件名称
+         * @method module:Helper#getPrimaryClassName
+         * @param {string} part 部件名称
          * @return {string}
          */
         getPrimaryClassName: function (part) {
@@ -117,8 +121,9 @@ define(function (require) {
         /**
          * 添加控件部件相关的class，具体可参考{@link lib#getPartClasses}方法
          *
-         * @param {string} [part] 部件名称
-         * @param {HTMLElement | string} [element] 部件元素或部件名称，默认为主元素
+         * @method module:Helper#addPartClasses
+         * @param {string} part 部件名称
+         * @param {(Element | string)} element 部件元素或部件名称，默认为主元素
          */
         addPartClasses: function (part, element) {
 
@@ -141,8 +146,9 @@ define(function (require) {
         /**
          * 移除控件部件相关的class，具体可参考{@link lib#getPartClasses}方法
          *
-         * @param {string} [part] 部件名称
-         * @param {HTMLElement | string} [element] 部件元素或部件名称，默认为主元素
+         * @method module:Helper#removePartClasses
+         * @param {string} part 部件名称
+         * @param {(Element | string)} element 部件元素或部件名称，默认为主元素
          */
         removePartClasses: function (part, element) {
 
@@ -173,6 +179,7 @@ define(function (require) {
          * - `skin-{skin}-{state}`
          * - `skin-{skin}-{type}-{state}`
          *
+         * @method module:Helper#getStateClasses
          * @param {string} state 状态名称
          * @return {string[]}
          */
@@ -200,6 +207,7 @@ define(function (require) {
         /**
          * 获取控件的状态样式字符串，具体可参考{@link lib#getStateClasses}方法
          *
+         * @method module:Helper#getStateClassName
          * @param {string} part 部件名称
          * @return {string}
          */
@@ -210,6 +218,7 @@ define(function (require) {
         /**
          * 添加控件状态相关的class，具体可参考{@link lib#getStateClasses}方法
          *
+         * @method module:Helper#addStateClasses
          * @param {string} state 状态名称
          */
         addStateClasses: function (state) {
@@ -224,6 +233,7 @@ define(function (require) {
         /**
          * 移除控件状态相关的class，具体可参考{@link lib#getStateClasses}方法
          *
+         * @method module:Helper#removeStateClasses
          * @param {string} state 状态名称
          */
         removeStateClasses: function (state) {
@@ -239,8 +249,9 @@ define(function (require) {
         /**
          * 获取指定部件的DOM元素
          *
+         * @method module:Helper#getPart
          * @param {string} part 部件名称
-         * @return {HTMLElement}
+         * @return {Element}
          */
         getPart: function (part) {
             return lib.g(this.getPartId(part));
@@ -251,7 +262,9 @@ define(function (require) {
          *
          * 控件ID: ctrl-{type}-{id}
          * 控件部件ID: ctrl-{type}-{id}-{part}
-         * @param {string} [part] 部件名称，如不提供则生成控件主元素的id
+         *
+         * @method module:Helper#getPartId
+         * @param {string} part 部件名称，如不提供则生成控件主元素的id
          * @return {string}
          */
         getPartId: function (part) {
@@ -266,6 +279,7 @@ define(function (require) {
         /**
          * 获取部件的起始标签
          *
+         * @method module:Helper#getPartBeginTag
          * @param {string} part 部件名称
          * @param {string} nodeName 部件使用的元素类型
          * @param {Object} attributes 属性值们
@@ -300,9 +314,9 @@ define(function (require) {
         /**
          * 获取部件的结束标签
          *
+         * @method module:Helper#getPartEndTag
          * @param {string} part 部件名称
          * @param {string} nodeName 部件使用的元素类型
-         * @param {Object} attributes 属性值们
          * @return {string}
          */
         getPartEndTag: function (part, nodeName) {
@@ -315,6 +329,7 @@ define(function (require) {
         /**
          * 获取部件的HTML模板
          *
+         * @method module:Helper#getPartHTML
          * @param {string} part 部件名称
          * @param {string} nodeName 部件使用的元素类型
          * @param {string} content innerHTML
@@ -331,10 +346,11 @@ define(function (require) {
         /**
          * 创建一个部件元素
          *
+         * @method module:Helper#createPart
          * @param {string} part 部件名称
-         * @param {string} [nodeName="div"] 使用的元素类型
-         * @param {string} content innerHTML
-         * @param {Object} attributes 属性值们
+         * @param {string=} nodeName 使用的元素类型
+         * @param {string=} content innerHTML
+         * @param {Object=} attributes 属性值们
          * @return {Element}
          */
         createPart: function (part, nodeName, content, attributes) {
@@ -343,7 +359,7 @@ define(function (require) {
                 .attr('id', this.getPartId(part))
                 .data('part', part)
                 .addClass(this.getPartClassName(part))
-                .html(content)
+                .html(content || '')
                 .get(0);
         }
 

@@ -1,25 +1,44 @@
 /**
- * @file MOYE插件
- * @author Leon(leonlu@outlook.com)
+ * @copyright 2014 Baidu Inc. All rights reserved.
+ *
+ *
+ * @file moye插件
+ * @author Leon(ludafa@outlook.com)
  */
 
 define(function (require) {
 
     var lib = require('../lib');
 
+    /**
+     * Plugin
+     *
+     * @class Plugin
+     * @requires lib
+     * @exports Plugin
+     */
     var Plugin = lib.newClass({
 
         $class: 'Plugin',
 
         options: {},
 
+        /**
+         * 初始化
+         *
+         * @private
+         * @param  {Object} options 参数
+         */
         initialize: function (options) {
             lib.extend(this, this.options, options);
         },
 
         /**
          * 激活插件
-         * @param  {Control} control 控件
+         *
+         * @public
+         * @method module:Plugin#activate
+         * @param  {module:Control} control 控件
          */
         activate: function (control) {
             this.active = true;
@@ -27,13 +46,19 @@ define(function (require) {
 
         /**
          * 禁用插件
+         *
+         * @public
+         * @method module:Plugin#inactivate
          */
         inactivate: function () {
             this.active = false;
         },
 
         /**
-         * 是否已经被激活
+         * 是否已经
+         * 被激活
+         * @public
+         * @method module:Plugin#isActivated
          * @return {boolean}
          */
         isActivated: function () {
@@ -42,6 +67,9 @@ define(function (require) {
 
         /**
          * 销毁
+         *
+         * @public
+         * @method module:Plugin#dispose
          */
         dispose: function () {
         }

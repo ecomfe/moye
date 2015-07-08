@@ -1,12 +1,13 @@
 /**
+ * @copyright 2014 Baidu Inc. All rights reserved.
+ *
  * @file 浏览器相关小工具
  * @author Leon(ludafa@outlook.com)
  */
 
 define(function (require) {
 
-    /* jshint -W101 */
-    var reg = /(opera|ie|firefox|chrome|version)[\s\/:]([\w\d\.]+)?.*?(safari|version[\s\/:]([\w\d\.]+)|$)/;
+    var reg = /(opera|ie|firefox|chrome|version|edge)[\s\/:]([\w\d\.]+)?.*?(safari|version[\s\/:]([\w\d\.]+)|$)/;
     var UA = navigator.userAgent.toLowerCase().match(reg)
         || [null, 'unknown', 0];
     var mode = UA[1] === 'ie' && document.documentMode;
@@ -31,6 +32,7 @@ define(function (require) {
 
     browser[browser.name] = browser.version | 0;
     browser[browser.name + (browser.version | 0)] = true;
+
 
     return {
         browser: browser

@@ -1,4 +1,6 @@
 /**
+ * @copyright 2014 Baidu Inc. All rights reserved.
+ *
  * @file 各种接口小工具
  * @author Leon(ludafa@outlook.com)
  */
@@ -6,6 +8,7 @@
 define(function (require) {
 
     var $ = require('jquery');
+    var array = require('./array');
     var object = require('./object');
     var TYPE = require('./type');
 
@@ -69,7 +72,9 @@ define(function (require) {
         },
 
         /**
-         * 事件功能
+         * 观察者
+         *
+         * @interface
          */
         observable: {
 
@@ -77,7 +82,7 @@ define(function (require) {
              * 添加事件绑定
              *
              * @public
-             * @param {string} type 事件类型
+             * @param {string=} type 事件类型
              * @param {Function} listener 要添加绑定的监听器
              * @return {Observable}
              */
@@ -88,11 +93,14 @@ define(function (require) {
                 }
                 this._listeners = this._listeners || {};
                 var listeners = this._listeners[type] || [];
+
                 if ($.inArray(listener, listeners) < 0) {
                     listener.$type = type;
                     listeners.push(listener);
                 }
+
                 this._listeners[type] = listeners;
+
                 return this;
             },
 
@@ -105,12 +113,16 @@ define(function (require) {
              * @return {Observable}
              */
             un: function (type, listener) {
+
                 if (TYPE.isFunction(type)) {
                     listener = type;
                     type = '*';
                 }
+
                 this._listeners = this._listeners || {};
+
                 var listeners = this._listeners[type];
+
                 if (listeners) {
                     if (listener) {
                         var index = $.inArray(listener, listeners);
@@ -123,6 +135,7 @@ define(function (require) {
                         delete this._listeners[type];
                     }
                 }
+
                 return this;
             },
 
@@ -192,7 +205,27 @@ define(function (require) {
              * 销毁事件侦听池
              */
             destroyEvents: function () {
-                delete this._listeners;
+
+                var pool = this._listeners;
+
+                if (!pool) {
+                    return;
+                }
+
+                // 为了保险，把pool中的所有事件类型的所有callback数组清空掉。。。
+                array.each(pool, function (_, type, pool) {
+
+                    var listeners = pool[type];
+
+                    array.each(listeners, function (_, index, listeners) {
+                        listeners[index] = null;
+                    });
+
+                    pool[type] = null;
+
+                });
+
+                this._listeners = null;
             }
 
         }

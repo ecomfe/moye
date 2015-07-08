@@ -1,12 +1,11 @@
 /**
- * Moye (Zhixin UI)
- * Copyright 2014 Baidu Inc. All rights reserved.
+ * @copyright 2014 Baidu Inc. All rights reserved.
  *
  * @file  UI基础库
  * @author chris(wfsr@foxmail.com)
- * @author leon(leonlu@outlook.com)
+ * @author Leon(ludafa@outlook.com)
  */
-/* jshint boss: true, unused: false */
+
 define(function (require) {
 
     var $ = require('jquery');
