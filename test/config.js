@@ -36,6 +36,11 @@ function getConfig(config) {
                 pattern: 'test/spec/SelectSpec.js',
                 included: false
             },
+            'src/css/Marquee.less',
+            {
+                pattern: 'test/spec/MarqueeSpec.js',
+                included: false
+            },
             {
                 pattern: 'test/spec/logSpec.js',
                 included: false

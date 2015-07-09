@@ -1,0 +1,23 @@
+/**
+ * @file MOYE - 走马灯 - 样式
+ * @author cxtom(cxtom2010@gmail.com)
+ */
+
+@import './dep.less';
+@import './variable.less';
+@import './mixin.less';
+
+.@{moye-prefix}-marquee {
+    .inline-block();
+    width: 200px;
+    line-height: 20px;
+    padding: 0;
+    height: 20px;
+    overflow: hidden;
+    white-space: nowrap;
+    position: relative;
+
+    span {
+        position: relative;
+    }
+}
