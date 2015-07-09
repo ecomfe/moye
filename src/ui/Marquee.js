@@ -23,14 +23,15 @@ define(function (require) {
     var behaviors = {
 
         /**
-         * 连续动画（首尾相连的）
-         *
+         * 连续滚动（首尾相连的）
          */
         continus: function () {
             this.timeoutID = setTimeout($.proxy(arguments.callee, this), this.speed);
             var text = this.item;
             text.css(this.getDirection(), this.pos);
             this.pos--;
+
+            // 内容长度大于容器长度
             if (this.pos < -this.max) {
                 // 马上在后面添加一个副本
                 text.append(this.itemHtml);
@@ -43,6 +44,48 @@ define(function (require) {
 
                 $(eles[0]).remove();
                 this.pos += this.width;
+            }
+        },
+
+        /**
+         * 循环滚动
+         */
+        scroll: function () {
+            this.timeoutID = setTimeout($.proxy(arguments.callee, this), this.speed);
+            var text = this.item;
+            text.css(this.getDirection(), this.pos);
+            this.pos--;
+
+            if (this.pos < -this.max) {
+                this.pos = this.direction === 'left' ? this.main.outerWidth() : this.width;
+            }
+
+        }
+    };
+
+    /**
+     * 获取不同滚动方式的限制值
+     * @type {Object}
+     */
+    var initMax = {
+        continus: function () {
+            switch (this.direction) {
+                case 'left':
+                    this.max = this.width - this.main.width();
+                    break;
+                case 'right':
+                    this.max = 0;
+                    break;
+            }
+        },
+        scroll: function () {
+            switch (this.direction) {
+                case 'left':
+                    this.max = this.width;
+                    break;
+                case 'right':
+                    this.max = this.main.outerWidth();
+                    break;
             }
         }
     };
@@ -123,8 +166,8 @@ define(function (require) {
 
             /**
              * 动画类型
-             * 可选值: continus
-             * TODO: alternate | scroll | slide
+             * 可选值: continus | scroll
+             * TODO: alternate | slide
              *
              * @type {number}
              * @defaultvalue
@@ -142,6 +185,10 @@ define(function (require) {
         init: function (options) {
             this.$parent(options);
             this.timeoutID = null;
+
+            if ($.inArray(this.direction, ['left', 'right', 'up', 'down']) < 0) {
+                this.direction = 'left';
+            }
         },
 
         initStructure: function () {
@@ -156,8 +203,14 @@ define(function (require) {
             this.height = span.outerHeight();
             this.initPosition();
 
+            this.item.css(this.getDirection(), this.pos);
 
-            this.start = this.max < 0 ? $.noop : $.proxy(behaviors[this.behavior], this);
+            // 内容长度小于容器长度，自动把滚动方式置为scroll
+            if (this.behavior === 'continus' && this.width < this.main.width()) {
+                this.behavior = 'scroll';
+            }
+            $.proxy(initMax[this.behavior], this)();
+            this.start = $.proxy(behaviors[this.behavior], this);
             this.stop = $.proxy(clear, this);
 
             if (this.auto) {
@@ -187,9 +240,6 @@ define(function (require) {
                 // case 'down':
                 //     dir = 'bottom';
                 //     break;
-                default:
-                    dir = 'left';
-                    break;
             }
 
             return dir;
@@ -197,8 +247,8 @@ define(function (require) {
 
         getGapStr: function () {
 
-            if ($.inArray(this.direction, ['left', 'right', 'up', 'down']) < 0) {
-                this.direction = 'left';
+            if (this.behavior !== 'continus') {
+                return '';
             }
 
             return MAP_GAP[this.direction] + ':' + this.gap + 'px';
@@ -208,7 +258,6 @@ define(function (require) {
             switch (this.direction) {
                 case 'right':
                     this.pos = this.item.outerWidth();
-                    this.max = 0;
                     break;
                 // case 'up':
                 //     this.pos = this.main.height();
@@ -221,10 +270,8 @@ define(function (require) {
                 case 'left':
                 default:
                     this.pos = this.main.width();
-                    this.max = this.width - this.main.width();
                     break;
             }
-            this.item.css(this.getDirection(), this.pos);
         },
 
         /**

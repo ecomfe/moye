@@ -90,7 +90,19 @@ define(function (require) {
             expect(marquee.max).toBe(0);
         });
 
-        it('behaviors continus', function () {
+        it('hoverable 事件', function () {
+            $(marquee.main).trigger('mouseenter');
+            expect(marquee.timeoutID).toBe(null);
+
+            $(marquee.main).trigger('mouseleave');
+            expect(marquee.timeoutID).not.toBe(null);
+        });
+
+    });
+
+
+    describe('Marquee behaviors', function () {
+        it('continus', function () {
             marquee.dispose();
             marquee = new Marquee({
                 main: $('#marquee'),
@@ -131,13 +143,31 @@ define(function (require) {
             expect(marquee.pos).toBe(pos + marquee.width);
         });
 
-        it('hoverable 事件', function () {
-            $(marquee.main).trigger('mouseenter');
-            expect(marquee.timeoutID).toBe(null);
+        it('scroll', function () {
+            marquee.dispose();
+            marquee = new Marquee({
+                main: $('#marquee'),
+                content: '这是一句话，句话，话。这话，句话，话。这是一句话，句话，话。',
+                auto: false,
+                behavior: 'scroll'
+            });
+            marquee.render();
+            marquee.pos = -marquee.max;
+            marquee.start();
+            expect(marquee.pos).toBe(marquee.main.outerWidth());
 
-            $(marquee.main).trigger('mouseleave');
-            expect(marquee.timeoutID).not.toBe(null);
+            marquee.dispose();
+            marquee = new Marquee({
+                main: $('#marquee'),
+                content: '这是一句话，句话，话。这话，句话，话。这是一句话，句话，话。',
+                auto: false,
+                direction: 'right',
+                behavior: 'scroll'
+            });
+            marquee.render();
+            marquee.pos = -marquee.max;
+            marquee.start();
+            expect(marquee.pos).toBe(marquee.width);
         });
-
     });
 });
