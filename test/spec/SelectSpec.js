@@ -44,6 +44,34 @@ define(function (require) {
             expect(!!select.popup).toBeTruthy();
         });
 
+        it('设置一个datasource里不存在的值会得到空值', function () {
+
+            select.setValue(100);
+
+            expect(select.getValue()).toBe('');
+
+        });
+
+        it('不管你设置啥，getValue返回都是string', function () {
+
+            select.setValue(1);
+
+            expect(select.getValue()).toBe('1');
+
+            select.setValue(null);
+
+            expect(select.getValue()).toBe('');
+
+            select.setValue(void 0);
+
+            expect(select.getValue()).toBe('');
+
+            select.setValue(false);
+
+            expect(select.getValue()).toBe('');
+
+        });
+
         it('显示 / `show` 事件', function () {
             var spy = jasmine.createSpy();
             select.on('show', spy);

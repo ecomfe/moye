@@ -46,7 +46,6 @@ define(function (require) {
          * 相对位置的目标对象
          * @property {number} options.columns 选项显示的列数，默认为 1 列
          * @property {string} options.prefix 控件class前缀，同时将作为main的class之一
-         * @property {string} options.isNumber 控件值的类型是否限制为数字
          * @property {?Array=} options.datasource 填充下拉项的数据源
          * 推荐格式 { text: '', value: '' }, 未指定 value 时会根据 valueUseIndex 的
          * 设置使用 text 或自动索引值，可简写成字符串 '北京, 上海, 广州' 或
@@ -124,24 +123,45 @@ define(function (require) {
          * @param  {Object} options 参数
          */
         init: function (options) {
+
             this.$parent(options);
+
             this.datasource = this.datasource || [];
-            var option = this.getOption(this.value);
-            this.value = option ? option.value : null;
+
+            var value = this.handleValue(this.value);
+
+            var option = this.getOption(value);
+
+            this.value = option ? this.handleValue(option.value) : null;
+
+        },
+
+        /**
+         * 处理各种value的值
+         *
+         * @private
+         * @return {string}
+         */
+        handleValue: function (value) {
+            return value == null ? '' : value + '';
         },
 
         /**
          * 在datasource中查找value为value的项
+         *
+         * @protected
          * @param  {string} value 值
-         * @return {Object}
+         * @return {?Object}
          */
         getOption: function (value) {
+
             for (var i = 0, datasource = this.datasource, len = datasource.length; i < len; ++i) {
                 var option = this.adapter.toOption.call(this, datasource[i]);
                 if (option.value === value) {
                     return option;
                 }
             }
+
             return null;
         },
 
@@ -235,18 +255,19 @@ define(function (require) {
                     var selectedClass = helper.getPartClassName('option-selected');
                     var optionClass = helper.getPrimaryClassName('option');
 
-                    value = this.isNumber ? +value : value;
+                    value = this.handleValue(value);
 
                     // 在子元素里遍历, 如果其值与value相等, 则选中, 不相等则清空选项的选中样式
                     // 如果没有任何选项与value相等, 此时要显示defalutLabel, 并去掉`已选择`状态
                     var option = lib.reduce(
                         $('.' + optionClass, this.popup.main),
                         function (result, element, i) {
+
                             var item = $(element);
                             var option = this.adapter.toOption.call(this, datasource[i]);
 
                             // 否则移除它的选中样式
-                            if (option.value !== value) {
+                            if (this.handleValue(option.value) !== value) {
                                 item.removeClass(selectedClass);
                             }
                             // 如果value与option相等(也就是找到了)
@@ -255,7 +276,9 @@ define(function (require) {
                                 item.addClass(selectedClass);
                                 result = option;
                             }
+
                             return result;
+
                         },
                         null,
                         this
@@ -267,7 +290,7 @@ define(function (require) {
                     // 找到了结果
                     if (option) {
                         text = this.adapter.toLabel.call(this, option);
-                        input.value = value;
+                        input.value = this.handleValue(value);
                         this.addState('selected');
                     }
                     // 没找到结果
@@ -296,12 +319,16 @@ define(function (require) {
 
         /**
          * 生成选项的HTML
+         *
+         * @protected
          * @param {Object} option 选项配置
          * @param {number} index  当前选项的序号
          * @return {string}
          */
         getOptionHTML: function (option, index) {
+
             option = this.adapter.toOption.call(this, option, index);
+
             return ''
                 + '<a href="#" class="' + this.helper.getPartClassName('option') + '" data-action="select" '
                 +     'data-value="' + option.value + '" '
@@ -328,9 +355,16 @@ define(function (require) {
          * @protected
          */
         pick: function (target) {
-            var value = $(target).data('value');
-            if (value !== this.value) {
+
+            // 这里不使用$(target).data('value')的原因是:
+            // 如果选项值是numberic，jQuery会自动贱贱地把它从字符串转到数字
+            // 我们想要的是字符串
+            var value = target.getAttribute('data-value');
+
+            if (value !== this.handleValue(this.value)) {
+
                 this.set('value', value);
+
                 /**
                  * @event module:Select#change
                  * @type {Object}
@@ -342,6 +376,7 @@ define(function (require) {
                     value: value
                 });
             }
+
         },
 
         /**
