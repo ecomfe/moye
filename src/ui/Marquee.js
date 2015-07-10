@@ -12,7 +12,6 @@ define(function (require) {
     var lib = require('./lib');
     var Control = require('./Control');
 
-
     var MAP_GAP = {
         left: 'padding-right',
         right: 'padding-left',
@@ -23,27 +22,33 @@ define(function (require) {
     var behaviors = {
 
         /**
-         * 连续滚动（首尾相连的）
+         * 内容长度大于容器长度，连续滚动（首尾相连的）
          */
-        continus: function () {
+        continous: function () {
             this.timeoutID = setTimeout($.proxy(arguments.callee, this), this.speed);
             var text = this.item;
-            text.css(this.getDirection(), this.pos);
+            text.css(this.getDirection(), this.pos + 'px');
             this.pos--;
 
-            // 内容长度大于容器长度
             if (this.pos < -this.max) {
                 // 马上在后面添加一个副本
                 text.append(this.itemHtml);
                 var eles = text.find('span');
-                if (eles.length <= 2) {
+                var len = eles.length;
+
+                if (len <= 2 && !this.vertical) {
                     this.max = this.direction === 'left' ? (this.max + this.width) : this.max;
                     this.pos = this.direction === 'left' ? this.pos : (this.pos + this.width);
                     return;
                 }
+                else if (len <= 2 && this.vertical) {
+                    this.max = this.direction === 'up' ? (this.max + this.height) : this.max;
+                    this.pos = this.direction === 'up' ? this.pos : (this.pos + this.height);
+                    return;
+                }
 
-                $(eles[0]).remove();
-                this.pos += this.width;
+                eles.eq(0).remove();
+                this.pos += this.vertical ? this.height : this.width;
             }
         },
 
@@ -53,11 +58,11 @@ define(function (require) {
         scroll: function () {
             this.timeoutID = setTimeout($.proxy(arguments.callee, this), this.speed);
             var text = this.item;
-            text.css(this.getDirection(), this.pos);
+            text.css(this.getDirection(), this.pos + 'px');
             this.pos--;
 
             if (this.pos < -this.max) {
-                this.pos = this.direction === 'left' ? this.main.outerWidth() : this.width;
+                this.initPosition();
             }
 
         }
@@ -68,13 +73,17 @@ define(function (require) {
      * @type {Object}
      */
     var initMax = {
-        continus: function () {
+        continous: function () {
             switch (this.direction) {
                 case 'left':
                     this.max = this.width - this.main.width();
                     break;
+                case 'down':
                 case 'right':
                     this.max = 0;
+                    break;
+                case 'up':
+                    this.max = this.height - this.main.height();
                     break;
             }
         },
@@ -85,6 +94,12 @@ define(function (require) {
                     break;
                 case 'right':
                     this.max = this.main.outerWidth();
+                    break;
+                case 'up':
+                    this.max = this.height;
+                    break;
+                case 'down':
+                    this.max = this.main.outerHeight();
                     break;
             }
         }
@@ -102,6 +117,12 @@ define(function (require) {
      * @requires lib
      * @requires Control
      * @exports Marquee
+     * @example
+     * &lt;div id="example" class="ui-marquee" /&gt;
+     * new Marquee({
+     *     main: $('#example'),
+     *     content: 'XXXXXXXXXX'
+     *  }).render();
      */
     var Marquee = Control.extend(/** @lends module:Marquee.prototype */{
 
@@ -166,13 +187,13 @@ define(function (require) {
 
             /**
              * 动画类型
-             * 可选值: continus | scroll
+             * 可选值: continous | scroll
              * TODO: alternate | slide
              *
              * @type {number}
              * @defaultvalue
              */
-            behavior: 'continus'
+            behavior: 'continous'
         },
 
         /**
@@ -185,30 +206,53 @@ define(function (require) {
         init: function (options) {
             this.$parent(options);
             this.timeoutID = null;
+            this.main = $(this.main);
 
             if ($.inArray(this.direction, ['left', 'right', 'up', 'down']) < 0) {
                 this.direction = 'left';
             }
+
+            /**
+             * 是否是垂直方向上的运动
+             * @type {bool}
+             */
+            this.vertical = $.inArray(this.direction, ['up', 'down']) >= 0;
+
+            if (this.vertical) {
+                this.helper.addPartClasses('vertical');
+            }
+
+            this.helper.addPartClasses(this.behavior);
         },
 
         initStructure: function () {
-            this.content = this.content || $(this.main).data('content') || '';
+            this.content = this.content || this.main.data('content') || '';
 
             this.itemHtml = '<span style="' + this.getGapStr() + '">' + this.content + '</span>';
             this.main.html('<span>' + this.itemHtml + '</span>');
 
             var span = this.main.children('span');
             this.item = span;
-            this.width = span.outerWidth();
-            this.height = span.outerHeight();
+            this.width = this.width || span.outerWidth();
+            this.height = this.height || span.outerHeight();
             this.initPosition();
 
+            // 初始化位置
             this.item.css(this.getDirection(), this.pos);
 
-            // 内容长度小于容器长度，自动把滚动方式置为scroll
-            if (this.behavior === 'continus' && this.width < this.main.width()) {
+            // continous特殊处理，内容长度小于容器长度，自动把滚动方式置为scroll
+            if (this.behavior === 'continous'
+                && (!this.vertical && this.width < this.main.width()
+                || this.vertical && this.height < this.main.height())) {
+
+                this.vertical ? this.height -= this.gap : this.width -= this.gap;
+
                 this.behavior = 'scroll';
+                this.helper.removePartClasses('continus');
+                this.helper.addPartClasses('scroll');
+                this.item.children('span').css('padding', '0');
             }
+
             $.proxy(initMax[this.behavior], this)();
             this.start = $.proxy(behaviors[this.behavior], this);
             this.stop = $.proxy(clear, this);
@@ -234,12 +278,12 @@ define(function (require) {
                 case 'right':
                     dir = this.direction;
                     break;
-                // case 'up':
-                //     dir = 'top';
-                //     break;
-                // case 'down':
-                //     dir = 'bottom';
-                //     break;
+                case 'up':
+                    dir = 'top';
+                    break;
+                case 'down':
+                    dir = 'bottom';
+                    break;
             }
 
             return dir;
@@ -247,7 +291,7 @@ define(function (require) {
 
         getGapStr: function () {
 
-            if (this.behavior !== 'continus') {
+            if (this.behavior !== 'continous') {
                 return '';
             }
 
@@ -257,19 +301,16 @@ define(function (require) {
         initPosition: function () {
             switch (this.direction) {
                 case 'right':
-                    this.pos = this.item.outerWidth();
+                    this.pos = this.width;
                     break;
-                // case 'up':
-                //     this.pos = this.main.height();
-                //     this.max = this.height - this.main.height();
-                //     break;
-                // case 'down':
-                //     this.pos = this.item.outerHeight();
-                //     this.max = 0;
-                //     break;
+                case 'up':
+                    this.pos = this.main.outerHeight();
+                    break;
+                case 'down':
+                    this.pos = this.height;
+                    break;
                 case 'left':
-                default:
-                    this.pos = this.main.width();
+                    this.pos = this.main.outerWidth();
                     break;
             }
         },

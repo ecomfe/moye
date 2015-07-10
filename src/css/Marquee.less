@@ -10,14 +10,24 @@
 .@{moye-prefix}-marquee {
     .inline-block();
     width: 200px;
-    line-height: 20px;
     padding: 0;
-    height: 20px;
     overflow: hidden;
-    white-space: nowrap;
     position: relative;
 
     span {
+        white-space: nowrap;
         position: relative;
+    }
+}
+
+.@{moye-prefix}-marquee-vertical {
+    span {
+        white-space: normal;
+    }
+}
+
+.@{moye-prefix}-marquee-continous {
+    span {
+        .inline-block();
     }
 }
