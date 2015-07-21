@@ -89,6 +89,9 @@ new Slider({
 require(['ui/Slider'], function (Slider) {
     new Slider({
         main: document.getElementById('auto-play'),
+        pagerOptions: {
+            trigger: 'hover'
+        },
         anim: 'slide',
         auto: true
     }).render();
