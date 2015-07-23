@@ -12,6 +12,13 @@ define(function (require) {
     var lib = require('./lib');
     var Control = require('./Control');
 
+
+    /**
+     * 方向 - css padding
+     *
+     * @const
+     * @type {string}
+     */
     var MAP_GAP = {
         left: 'padding-right',
         right: 'padding-left',
@@ -24,8 +31,8 @@ define(function (require) {
         /**
          * 内容长度大于容器长度，连续滚动（首尾相连的）
          */
-        continous: function () {
-            this.timeoutID = setTimeout($.proxy(arguments.callee, this), this.speed);
+        continous: function bContinus() {
+            this.timeoutID = setTimeout($.proxy(bContinus, this), this.speed);
             var text = this.item;
             text.css(this.getDirection(), this.pos + 'px');
             this.pos--;
@@ -55,8 +62,8 @@ define(function (require) {
         /**
          * 循环滚动
          */
-        scroll: function () {
-            this.timeoutID = setTimeout($.proxy(arguments.callee, this), this.speed);
+        scroll: function bScroll() {
+            this.timeoutID = setTimeout($.proxy(bScroll, this), this.speed);
             var text = this.item;
             text.css(this.getDirection(), this.pos + 'px');
             this.pos--;
@@ -111,7 +118,7 @@ define(function (require) {
     }
 
     /**
-     * 弹出层控件
+     * 走马灯控件
      *
      * @extends module:Control
      * @requires lib
@@ -134,7 +141,24 @@ define(function (require) {
          */
         type: 'Marquee',
 
+
+        /**
+         * 控件配置项
+         *
+         * @name module:Marquee#options
+         * @type {Object}
+         * @property {number} speed 动画速度
+         * @property {(string | HTMLElement)} main 控件渲染容器
+         * @property {string} direction 滚动方向 可选值（默认为 left）：left | right | up | down
+         * @property {string} content 提示的内容信息，可以是html
+         * @property {boolean} hoverable 是否鼠标悬停
+         * @property {boolean} auto 是否自动开始动画
+         * @property {number} continus类型时，循环滚动的间距
+         * @property {string} behavior 滚动方式 可选值（默认为 continous）: continous | scroll
+         * @private
+         */
         options: {
+
             /**
              * 动画速度
              *
@@ -243,7 +267,8 @@ define(function (require) {
             // continous特殊处理，内容长度小于容器长度，自动把滚动方式置为scroll
             if (this.behavior === 'continous'
                 && (!this.vertical && this.width < this.main.width()
-                || this.vertical && this.height < this.main.height())) {
+                || this.vertical && this.height < this.main.height())
+            ) {
 
                 this.vertical ? this.height -= this.gap : this.width -= this.gap;
 
@@ -253,7 +278,8 @@ define(function (require) {
                 this.item.children('span').css('padding', '0');
             }
 
-            $.proxy(initMax[this.behavior], this)();
+            initMax[this.behavior].call(this);
+
             this.start = $.proxy(behaviors[this.behavior], this);
             this.stop = $.proxy(clear, this);
 
@@ -264,6 +290,11 @@ define(function (require) {
             this.timeoutID = null;
         },
 
+        /**
+         * 初始化事件绑定
+         *
+         * @protected
+         */
         initEvents: function () {
             if (this.hoverable) {
                 $(this.main).on('mouseenter', this.stop);
@@ -271,24 +302,27 @@ define(function (require) {
             }
         },
 
+        /**
+         * 根据direction，返回position对应的属性
+         *
+         * @return {string}
+         * @protected
+         */
         getDirection: function () {
-            var dir;
-            switch (this.direction) {
-                case 'left':
-                case 'right':
-                    dir = this.direction;
-                    break;
-                case 'up':
-                    dir = 'top';
-                    break;
-                case 'down':
-                    dir = 'bottom';
-                    break;
-            }
+            var MAP_DIRECTION = {
+                up: 'top',
+                down: 'bottom'
+            };
 
-            return dir;
+            return MAP_DIRECTION[this.direction] || this.direction;
         },
 
+        /**
+         * 根据direction，返回设置间距的css字符串
+         *
+         * @return {string}
+         * @protected
+         */
         getGapStr: function () {
 
             if (this.behavior !== 'continous') {
@@ -298,6 +332,12 @@ define(function (require) {
             return MAP_GAP[this.direction] + ':' + this.gap + 'px';
         },
 
+
+        /**
+         * 设置初始位置
+         *
+         * @protected
+         */
         initPosition: function () {
             switch (this.direction) {
                 case 'right':

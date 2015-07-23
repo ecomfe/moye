@@ -130,6 +130,7 @@ function getConfig(config) {
                 pattern: 'test/spec/SliderAnimSpec.js',
                 included: false
             },
+            'src/css/Popup.less',
             {
                 pattern: 'test/spec/plugin/TextBoxPlaceHolderSpec.js',
                 included: false
