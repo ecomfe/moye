@@ -4,7 +4,7 @@
  *
  * @file 延迟按需加载
  * @author chris(wfsr@foxmail.com)
- * @author ludafa <leonlu@outlook.com>
+ *         ludafa(leonlu@outlook.com)
  */
 
 define(function (require) {

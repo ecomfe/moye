@@ -3,7 +3,7 @@
  * Copyright 2014 Baidu Inc. All rights reserved.
  * @file 日历
  * @author chris(wfsr@foxmail.com)
- * @author Leon(leon@outlook.com)
+ *         Leon(leon@outlook.com)
  */
 
 define(function (require) {
@@ -161,6 +161,7 @@ define(function (require) {
 
         /**
          * 生成月份翻页
+         *
          * @private
          * @param  {string} part 翻页部件
          * @return {string}
@@ -449,11 +450,12 @@ define(function (require) {
         },
 
         /**
-        * 构建指定日期所在月的HTML
-        * @param {Date} date 需要构建月份日期
-        * @return {string}
-        * @protected
-        */
+         * 构建指定日期所在月的HTML
+         *
+         * @param {Date} date 需要构建月份日期
+         * @return {string}
+         * @protected
+         */
         getMonthHTML: function (date) {
 
             var helper = this.helper;
@@ -495,6 +497,7 @@ define(function (require) {
 
         /**
          * 构建月份标题HTML
+         *
          * @param  {Date} date 日期
          * @return {string}
          */
@@ -516,6 +519,7 @@ define(function (require) {
 
         /**
          * 构建星期标题HTML
+         *
          * @return {string}
          */
         getWeekTitleHTML: function () {
@@ -541,6 +545,7 @@ define(function (require) {
 
         /**
          * 构建日期HTML
+         *
          * @param  {Date} date 日期
          * @param  {string} state 日期状态
          * @return {string}
@@ -599,6 +604,7 @@ define(function (require) {
 
         /**
          * 翻页
+         *
          * @param {sting} direction 可选`prev`和`next`
          * @protected
          */
