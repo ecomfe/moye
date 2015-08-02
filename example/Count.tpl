@@ -1,6 +1,7 @@
 {% target: Button(master=base) %}
 
-
+{% content: style %}
+<link rel="stylesheet" href="../src/css/Count.less">
 {% content: content %}
 
 {% filter: markdown %}
@@ -16,7 +17,7 @@
 require(['ui/Count'], function (Count) {
     new Count({
         target: '.content',
-        start: '2015-07-09-12-00-00',
+        // start: '2015-07-09-12-00-00',
         end: '2015-08-31-00-00-00'
     })
     .render();
@@ -35,7 +36,7 @@ require(['ui/Count'], function (Count) {
 require(['ui/Count'], function (Count) {
     new Count({
         target: '.content',
-        start: '2015-07-09-12-00-00',
+        // start: '2015-07-09-12-00-00',
         end: '2015-08-31-00-00-00'
     })
     .render();

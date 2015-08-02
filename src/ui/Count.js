@@ -56,7 +56,7 @@ define(function (require) {
              *
              * 格式：'YY-MM-DD-HH-MM-SS'
              *
-             * 如果不指定, 那么会以当前时间作为开始时间
+             * 如果不指定, 那么会以当前时间作为开始计算时间
              *
              * @type {string}
              */
@@ -162,19 +162,19 @@ define(function (require) {
         initStructure: function () {
 
         	if (this.isDay) {
-        		this.dayElem = $('<div id="days"></div>');
+        		this.dayElem = $('<div class="ui-count-days"></div>');
         		this.dayElem.appendTo(this.main);
         	}
         	if (this.isHour) {
-        	    this.hourElem = $('<div id="hours"></div>');
+        	    this.hourElem = $('<div class="ui-count-hours"></div>');
         	    this.hourElem.appendTo(this.main);
         	}
         	if (this.isminute) {
-        	    this.minuteElem = $('<div id="minutes"></div>');
+        	    this.minuteElem = $('<div class="ui-count-minutes"></div>');
         	    this.minuteElem.appendTo(this.main);
         	}
         	if (this.isSecond) {
-        	    this.secondElem = $('<div id="seconds"></div>');
+        	    this.secondElem = $('<div class="ui-count-seconds"></div>');
         	    this.secondElem.appendTo(this.main);
         	}
 
@@ -187,12 +187,16 @@ define(function (require) {
          */
         initEvents: function () {
 
-            var _this = this;
+            var that = this;
+
+            that.getDif();
+            that.calculate();
+            that.showCount();               
 
             setInterval (function () {
-        	    _this.getDif();
-                _this.calculate();
-                _this.showCount();              
+        	    that.getDif();
+                that.calculate();
+                that.showCount();              
             }, 1000);
 
         },
@@ -267,16 +271,16 @@ define(function (require) {
          */
         showCount: function () {
             if (this.dayElem) {
-                $(this.dayElem).html(this.days); 
+                $(this.dayElem).html('<span class="ui-count-number">' + this.days + '</span> 天'); 
             }
             if (this.hourElem) {
-                $(this.hourElem).html(this.hours); 
+                $(this.hourElem).html('<span class="ui-count-number">' + this.hours + '</span> 时'); 
             }
             if (this.minuteElem) {
-                $(this.minuteElem).html(this.minutes); 
+                $(this.minuteElem).html('<span class="ui-count-number">' + this.minutes + '</span> 分'); 
             }
             if (this.secondElem) {
-                $(this.secondElem).html(this.seconds); 
+                $(this.secondElem).html('<span class="ui-count-number">' + this.seconds + '</span> 秒'); 
             }        	
         },
 

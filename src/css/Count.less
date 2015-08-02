@@ -1,0 +1,31 @@
+/**
+ * @file MOYE - 倒计时 - 样式
+ * @author liuxiaqi(liuxiaqi@baidu.com)
+ */
+
+@import './dep.less';
+@import './variable.less';
+@import './mixin.less';
+
+.@{moye-prefix}-count {
+    background: #aaa;
+    color: #fff;
+    max-width: 306px;
+    font-size: 1.5em;
+    padding: 3px;
+
+	div {
+        display: inline-block;
+        margin: 0 10px;
+        width: 80px;
+        text-align: center;
+	}
+
+	&-number {
+	    font-size: 2em;	
+	}
+
+	.@{moye-prefix}-count-seconds {
+		width: 94%;
+	}
+}
