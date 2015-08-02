@@ -10,15 +10,20 @@
 .@{moye-prefix}-count {
     background: #aaa;
     color: #fff;
-    max-width: 306px;
+    width: 396px;
     font-size: 1.5em;
     padding: 3px;
 
 	div {
         display: inline-block;
         margin: 0 10px;
-        width: 80px;
+        width: 110px;
         text-align: center;
+
+        span {
+            display: inline-block;
+            width: 80px;
+        }
 	}
 
 	&-number {
@@ -28,4 +33,10 @@
 	.@{moye-prefix}-count-seconds {
 		width: 94%;
 	}
+}
+
+.content-noday {
+    .@{moye-prefix}-count-seconds {
+        width: 110px;
+    }
 }

@@ -229,13 +229,6 @@ define(function (require) {
          * @protected
          */
         calculate: function () {
-        	if (!this.difTime) {
-        	    this.difTime = this.end - this.start;	
-        	}
-        	else {
-                // 每隔1s自减
-                this.difTime = this.difTime - 1000;        		
-        	}
 
             // 天
             this.days = Math.floor(this.difTime / (24 * 3600 * 1000));
@@ -243,7 +236,7 @@ define(function (require) {
             // 小时
             var leave1 = this.difTime % (24 * 3600 * 1000);
 
-            if (this.hourElem) {
+            if (this.dayElem) {
                 this.hours = Math.floor(leave1 / (3600 * 1000));  
             }
             else {
@@ -252,7 +245,7 @@ define(function (require) {
 
             // 分钟
             var leave2 = leave1 % (3600 * 1000);
-            if (this.minuteElem) {
+            if (this.hourElem) {
                 this.minutes = Math.floor(leave2 / (60 * 1000)); 
             }
             else {
