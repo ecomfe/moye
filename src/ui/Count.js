@@ -131,12 +131,13 @@ define(function (require) {
         	this.$parent(options);
 
         	var main = this.main;
+            this.main = $('<div class="ui-count-container"></div>');
 
         	if (options.target) {
-                this.main = $(options.target);
+                this.main.appendTo($(options.target));
         	}
         	else {
-        		this.main = $('body');
+        		this.main.appendTo($('body'));
         	}
 
         	if (options.start && typeof options.start === 'string') {
@@ -165,18 +166,27 @@ define(function (require) {
         		this.dayElem = $('<div class="ui-count-days"></div>');
         		this.dayElem.appendTo(this.main);
         	}
+            else {
+                this.main.addClass('ui-count-nodays');
+            }
+
         	if (this.isHour) {
         	    this.hourElem = $('<div class="ui-count-hours"></div>');
         	    this.hourElem.appendTo(this.main);
         	}
+
         	if (this.isminute) {
         	    this.minuteElem = $('<div class="ui-count-minutes"></div>');
         	    this.minuteElem.appendTo(this.main);
         	}
+            
         	if (this.isSecond) {
         	    this.secondElem = $('<div class="ui-count-seconds"></div>');
         	    this.secondElem.appendTo(this.main);
         	}
+            else {
+                this.main.addClass('ui-count-noseconds');               
+            }
 
         },
 
