@@ -16,9 +16,9 @@
 ```js
 require(['ui/Count'], function (Count) {
     new Count({
-        target: '#Count1',
-        start: '2015-07-09-12-00-00',
-        end: '2015-08-31-00-00-00'
+        main: '#Count1',
+        start: new Date(2015,7,9,12,0,0),
+        end: new Date(2015,8,31,0,0,0)
     })
     .render();
 });
@@ -27,17 +27,18 @@ require(['ui/Count'], function (Count) {
 `Count`是一个工具控件, 用来完成倒计时的功能.
 
 `Count`的主要参数是`end`, 用以指定`Count`结束的时间. `start`用以指定`Count`开始计算的时间，是可选项.
+`start`和`end`是Date类型的参数，格式为new Date([arguments list]).
 
-使用`target`属性来指定`Count`的显示位置.`target`是一个`jQuery`可以接受的`css selector`.
+使用`main`属性来指定`Count`的显示位置.`main`是一个`jQuery`可以接受的`css selector`.
 
 <div id="Count1"></div>
 
 <script>
 require(['ui/Count'], function (Count) {
     new Count({
-        target: '#Count1',
-        start: '2015-07-09-12-00-00',
-        end: '2015-08-31-00-00-00'
+        main: '#Count1',
+        start: new Date(2015,7,9,12,0,0),
+        end: new Date(2015,8,31,0,0,0)
     })
     .render();
 });
@@ -52,9 +53,8 @@ require(['ui/Count'], function (Count) {
 ```js
 require(['ui/Count'], function (Count) {
     new Count({
-        target: '#Count2',
-        start: '2015-07-09-12-00-00',
-        end: '2015-08-31-00-00-00'
+        main: '#Count2',
+        end: new Date(2015,8,31,0,0,0)
     })
     .render();
 });
@@ -71,8 +71,8 @@ require(['ui/Count'], function (Count) {
 <script>
 require(['ui/Count'], function (Count) {
     new Count({
-        target: '#Count2',
-        end: '2015-08-31-00-00-00'
+        main: '#Count2',
+        end: new Date(2015,8,31,0,0,0)
     })
     .render();
 });
@@ -81,6 +81,14 @@ require(['ui/Count'], function (Count) {
 
 
 
+
+
+
+
+`Count`的其他可选参数有`isWeek`, 用以指定`Count`是否计算星期, `isDay`, 用以指定`Count`是否计算天. `isSecond`用以指定`Count`是否计算秒.
+
+时和分是必计算项，不可自定义.
+
 ```html
 <div id="Count3"></div>
 ```
@@ -88,35 +96,27 @@ require(['ui/Count'], function (Count) {
 ```js
 require(['ui/Count'], function (Count) {
     new Count({
-        target: '#Count3',
-        // start: '2015-07-09-12-00-00',
-        end: '2015-08-31-00-00-00',
-        isDay: false,
+        main: '#Count3',
+        end: new Date(2015,8,31,0,0,0),
+        isWeek: false,
+        isDay: true,
         isSecond: true
     })
     .render();
 });
 ```
 
-
-
-
-
-`Count`的其他可选参数有`isDay`, 用以指定`Count`是否计算天. `isSecond`用以指定`Count`是否计算秒.
-
-时和分是必计算项，不可自定义.
-
-示例：不计算天
+示例：不计算星期
 
 <div id="Count3"></div>
 
 <script>
 require(['ui/Count'], function (Count) {
     new Count({
-        target: '#Count3',
-        // start: '2015-07-09-12-00-00',
-        end: '2015-08-31-00-00-00',
-        isDay: false,
+        main: '#Count3',
+        end: new Date(2015,8,31,0,0,0),
+        isWeek: false,
+        isDay: true,
         isSecond: true
     })
     .render();
@@ -133,9 +133,8 @@ require(['ui/Count'], function (Count) {
 ```js
 require(['ui/Count'], function (Count) {
     new Count({
-        target: '#Count4',
-        // start: '2015-07-09-12-00-00',
-        end: '2015-08-31-00-00-00',
+        main: '#Count4',
+        end: new Date(2015,8,31,0,0,0),
         isDay: true,
         isSecond: false
     })
@@ -150,9 +149,8 @@ require(['ui/Count'], function (Count) {
 <script>
 require(['ui/Count'], function (Count) {
     new Count({
-        target: '#Count4',
-        // start: '2015-07-09-12-00-00',
-        end: '2015-08-31-00-00-00',
+        main: '#Count4',
+        end: new Date(2015,8,31,0,0,0),
         isDay: true,
         isSecond: false
     })

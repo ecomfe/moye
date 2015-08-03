@@ -48,15 +48,15 @@ define(function (require) {
              *
              * @type {(string | HTMLElement)}
              */
-            target: '',
+            main: '',
             
 
             /**
              * 倒计时开始时间
              *
-             * 格式：'YY-MM-DD-HH-MM-SS'
+             * 格式：'new Date([arguments list])'
              *
-             * 如果不指定, 那么会以当前时间作为开始计算时间
+             * 如果不指定或格式不正确, 那么会以当前时间作为开始计算时间
              *
              * @type {string}
              */
@@ -65,14 +65,28 @@ define(function (require) {
             /**
              * 倒计时结束时间
              *
-             * 格式：'YY-MM-DD-HH-MM-SS'
+             * 格式：'new Date([arguments list])'
              *
-             * 必填，如果不指定将会报错
+             * 必填，如果不指定或格式不正确将会报错
              *
              * @type {string}
              */
         	end: '',
 
+            /**
+             * 是否计算星期
+             *
+             * 可选值: true | false
+             *
+             * true: 计算天
+             * false: 不计算天
+             *
+             * 如果不指定，默认值为true，即默认计算天
+             *
+             * @type {bollen}
+             */
+            isWeek: true,
+            
             /**
              * 是否计算天
              *
@@ -133,34 +147,37 @@ define(function (require) {
         	var main = this.main;
             this.main = $('<div class="ui-count-container"></div>');
 
-        	if (options.target) {
-                this.main.appendTo($(options.target));
+        	if (options.main) {
+                this.main.appendTo($(options.main));
         	}
         	else {
         		this.main.appendTo($('body'));
         	}
 
-        	if (options.start && typeof options.start === 'string') {
-        	    var startArr = options.start.split('-');
-                var startTime = new Date(startArr[0], startArr[1] - 1, startArr[2], startArr[3], startArr[4], startArr[5]);
-                this.start = startTime.getTime();
+        	if (options.start && (options.start instanceof Date)) {
+                this.start = options.start.getTime();
         	}
         	else {
         		this.start = new Date();
         	}
 
-        	if (options.end && typeof options.end === 'string') {
-        	    var endArr = options.end.split('-');
-                var endTime = new Date(endArr[0], endArr[1] - 1, endArr[2], endArr[3], endArr[4], endArr[5]);
-                this.end = endTime.getTime();
+        	if (options.end && (options.end instanceof Date)) {
+                this.end = options.end.getTime();
         	}
         	else {
-        		throw '"end" is required';
+        		throw 'Date "end" is required';
         	}
 
         },
 
         initStructure: function () {
+            if (this.isWeek) {
+                this.weekElem = $('<div class="ui-count-weeks"></div>');
+                this.weekElem.appendTo(this.main);
+            }
+            else {
+                this.main.addClass('ui-count-nodays');
+            }
 
         	if (this.isDay) {
         		this.dayElem = $('<div class="ui-count-days"></div>');
@@ -201,13 +218,17 @@ define(function (require) {
 
             that.getDif();
             that.calculate();
+            that.format();
+            // that.sliderAnimate();
             that.showCount();               
 
-            setInterval (function () {
+/*            setInterval (function () {
         	    that.getDif();
                 that.calculate();
+                that.format();
+                that.sliderAnimate();
                 that.showCount();              
-            }, 1000);
+            }, 1000);*/
 
         },
 
@@ -239,9 +260,17 @@ define(function (require) {
          * @protected
          */
         calculate: function () {
+            // 星期
+            this.weeks = Math.floor(this.difTime / (7 *24 * 3600 * 1000));
 
             // 天
-            this.days = Math.floor(this.difTime / (24 * 3600 * 1000));
+            var leave0 = this.difTime % (7 * 24 * 3600 * 1000);
+            if (this.weekElem) {
+                this.days = Math.floor(leave0 / (24 * 3600 * 1000));  
+            }
+            else {
+                this.days = Math.floor(this.difTime / (24 * 3600 * 1000)); 
+            }
             
             // 小时
             var leave1 = this.difTime % (24 * 3600 * 1000);
@@ -268,22 +297,80 @@ define(function (require) {
         },
 
         /**
+         * 格式化倒计时数据
+         *
+         * @protected
+         */
+        format: function () {
+            if (this.weeks < 10)
+            {
+                this.weeks = parseInt('0' + this.weeks);
+            }
+
+            if (this.days < 10)
+            {
+                this.days = parseInt('0' + this.days);
+            }
+
+            if (this.hours < 10)
+            {
+                this.hours = parseInt('0' + this.hours);
+            }
+
+            if (this.minutes < 10)
+            {
+                this.minutes = parseInt('0' + this.minutes);
+            }
+
+            this.secbit = this.seconds % 10;
+            this.secten = parseInt(this.seconds / 10);
+
+            console.log(this.secbit);
+            console.log(this.secten);
+            if (this.seconds.ten === 0)
+            {
+                this.seconds = parseInt('0' + this.seconds);
+            }
+
+        },
+
+        /**
+         * 倒计时动画
+         *
+         * @protected
+         */
+        sliderAnimate: function () {
+
+            var lastdigital = $('.ui-count-seconds .ui-count-digital-top').html();
+
+            if (this.seconds !== lastdigital) {
+                $('.ui-count-seconds .ui-count-digital-top').animate({top: "-94px"}, 1500);
+                $('.ui-count-seconds .ui-count-digital-bottom').animate({top: "0"}, 1500);
+            }
+         
+        },
+
+
+        /**
          * 显示倒计时
          *
          * @protected
          */
         showCount: function () {
+            if (this.weekElem) {
+                $(this.weekElem).html('<div class="ui-count-digital"><span class="ui-count-digital-top">' + this.days + '</span><span class="ui-count-digital-bottom"></span></div><lable class="ui-count-unit"> WEEKS</lable>'); 
+            }
             if (this.dayElem) {
-                $(this.dayElem).html('<span class="ui-count-number">' + this.days + '</span> 天'); 
+                $(this.dayElem).html('<div class="ui-count-digital"><span class="ui-count-digital-top">' + this.days + '</span><span class="ui-count-digital-bottom"></span></div><lable class="ui-count-unit"> DAYS</lable>'); 
             }
             if (this.hourElem) {
-                $(this.hourElem).html('<span class="ui-count-number">' + this.hours + '</span> 时'); 
+                $(this.hourElem).html('<div class="ui-count-digital"><span class="ui-count-digital-top">' + this.hours + '</span><span class="ui-count-digital-bottom"></span></div><lable class="ui-count-unit"> HOURS</lable>'); 
             }
             if (this.minuteElem) {
-                $(this.minuteElem).html('<span class="ui-count-number">' + this.minutes + '</span> 分'); 
+                $(this.minuteElem).html('<div class="ui-count-digital"><span class="ui-count-digital-top">' + this.minutes + '</span><span class="ui-count-digital-bottom"></span></div><lable class="ui-count-unit"> MINUTES</lable>'); 
             }
             if (this.secondElem) {
-                $(this.secondElem).html('<span class="ui-count-number">' + this.seconds + '</span> 秒'); 
+                $(this.secondElem).html('<div class="ui-count-digital"><span class="ui-count-digital-top"><span class="ui-count-digital-top-ten">' + this.secten + '</span><span class="ui-count-digital-top-bit">' + this.secbit + '</span></span><span class="ui-count-digital-bottom">' + (this.seconds - 1) + '</span></div><lable class="ui-count-unit"> SECONDS</lable>'); 
             }        	
         },
 
