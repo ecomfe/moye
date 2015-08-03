@@ -155,7 +155,7 @@ define(function (require) {
                 this.end = endTime.getTime();
         	}
         	else {
-        		throw 'end必填';
+        		throw '"end" is required';
         	}
 
         },
@@ -259,7 +259,7 @@ define(function (require) {
                 this.minutes = Math.floor(leave2 / (60 * 1000)); 
             }
             else {
-                throw '时与分必选';
+                throw '"isHour" and "isSecond" are forced to be true';
             }
 
             // 秒

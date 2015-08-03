@@ -7,21 +7,29 @@
 @import './variable.less';
 @import './mixin.less';
 
+
+.inline-block() {
+    display: inline-block;
+    *display: inline;
+    *zoom: 1;
+}
+
+
 .@{moye-prefix}-count {
-    background: #aaa;
+    background: #ccc;
     color: #fff;
     width: 396px;
     font-size: 1.5em;
     padding: 3px;
 
 	div {
-        display: inline-block;
+        .inline-block();
         margin: 0 10px;
         width: 110px;
         text-align: center;
 
         span {
-            display: inline-block;
+            .inline-block();
             width: 80px;
         }
 	}
