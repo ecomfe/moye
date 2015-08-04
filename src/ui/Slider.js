@@ -58,6 +58,9 @@ define(function (require) {
          * @property {string=} options.next 下一个按钮内容，可选，默认 `>`，同上，依赖 `arrow` 选项
          * @property {boolean|HTMLElement=} options.pager 是否显示翻页按钮，可选，默认 true
          *                                  也可以指定某个DOM元素为自定义的分页元素
+         * @property {Object=} options.pagerOptions 翻页选项，可选
+         * @property {string=} options.pagerOptions.trigger 触发切换分页方式，可选，默认点击
+         *                     有效值：`click`, `hover`
          * @property {boolean=} options.auto 是否自动轮播，可选，默认 true
          * @property {boolean=} options.circle 是否播放到结尾时回到起始，可选，默认 true
          *                      在自动轮播下，该选项始终为true，忽略该设置项
@@ -91,6 +94,12 @@ define(function (require) {
 
             // 是否使用翻页器
             pager: true,
+
+            // 翻页器属性
+            pagerOptions: {
+                // 触发切换分页的方式：'click' || 'hover'
+                trigger: 'click'
+            },
 
             // 是否自动轮播
             auto: true,
@@ -250,7 +259,17 @@ define(function (require) {
                 this.delegate(this.nextArrow, 'click', this.onNextClick);
             }
             if (this.pager) {
-                this.delegate(this.pager, 'click', this.onPagerClick);
+                switch (this.pagerOptions.trigger) {
+                    case 'click':
+                        this.delegate(this.pager, 'click', this.onPagerClick);
+                        break;
+                    case 'hover':
+                        this.delegate(
+                            this.pager, 'mouseenter',
+                            '[data-index]', this.onPagerClick
+                        );
+                        break;
+                }
             }
 
             if (this.auto) {

@@ -36,6 +36,11 @@ function getConfig(config) {
                 pattern: 'test/spec/SelectSpec.js',
                 included: false
             },
+            'src/css/Marquee.less',
+            {
+                pattern: 'test/spec/MarqueeSpec.js',
+                included: false
+            },
             {
                 pattern: 'test/spec/logSpec.js',
                 included: false
@@ -123,6 +128,11 @@ function getConfig(config) {
             },
             {
                 pattern: 'test/spec/SliderAnimSpec.js',
+                included: false
+            },
+            'src/css/Popup.less',
+            {
+                pattern: 'test/spec/plugin/TextBoxPlaceHolderSpec.js',
                 included: false
             },
             {
