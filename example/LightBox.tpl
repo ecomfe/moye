@@ -45,8 +45,8 @@ require(['jquery', 'ui/LightBox'], function ($, LightBox) {
 require(['jquery', 'ui/LightBox'], function ($, LightBox) {
 
   var lightbox = new LightBox({
-    title: '普通青年有一个普通标题',
-    cyclic: true
+    cyclic: false,
+    autoScale: true
   }).render();
 });
 </script>

@@ -40,31 +40,48 @@ define(function (require) {
         getSize: function (dom, index) {
 
             var obj = {};
+            var fixed = {};
             var limit = {};
 
             lib.each(
                 ['width', 'height'],
                 function (name) {
                     obj[name] = dom[name];
-                    limit[name] = this.elements[index].context.data(name) || obj[name];
 
-                    if (this.autoScale) {
-                        var body = $('body')[name]() * 0.9;
-                        limit[name] = Math.min(body, limit[name]);
-                    }
+                    var body = $(window)[name]() * 0.9;
+                    limit[name] = Math.min(body, obj[name]);
+
+                    fixed[name] = this.elements && this.elements[index][name];
                 },
                 this
             );
 
-            // 按比例缩放
-            if (limit.width && obj.width !== limit.width) {
-                obj.height *= limit.width / obj.width;
-                obj.width = limit.width;
+            if (fixed.width && fixed.height) {
+                return fixed;
             }
 
-            if (limit.height && obj.height !== limit.height) {
-                obj.width *= limit.height / obj.height;
-                obj.height = limit.height;
+            if (fixed.width) {
+                obj.height *= fixed.width / obj.width;
+                obj.width = fixed.width;
+            }
+            else if (fixed.height) {
+                obj.width *= fixed.height / obj.height;
+                obj.height = fixed.height;
+            }
+
+            // 按比例缩放
+            if (this.autoScale) {
+                var wProp = limit.width / obj.width;
+                var hProp = limit.height / obj.height;
+
+                if (wProp < hProp) {
+                    obj.height *= wProp;
+                    obj.width = limit.width;
+                }
+                else {
+                    obj.width *= hProp;
+                    obj.height = limit.height;
+                }
             }
 
             return obj;
@@ -98,17 +115,8 @@ define(function (require) {
                     content = dom.prop('outerHTML');
                     me.setContent(content);
 
-                    var image = $('#' + me.helper.getPartId('image') + index);
-
-                    if (me.autoScale) {
-                        image.css({
-                            width: '100%',
-                            height: '100%'
-                        });
-                    }
-
                     var showImage = function () {
-                        element = lib.extend(element, privates.getSize.call(me, dom.get(0), index));
+                        element = $.extend(element, privates.getSize.call(me, dom.get(0), index));
                         me.current = index;
 
                         me.setTitle(element.title);
@@ -119,11 +127,11 @@ define(function (require) {
                         dtd.resolve();
                     };
 
-                    element.width ? showImage() :
-                            dom.load(showImage),
-                            dom.error(function () {
-                                dtd.reject();
-                            });
+                    dom.load(showImage);
+
+                    dom.error(function () {
+                        dtd.reject();
+                    });
 
                     break;
 
@@ -241,22 +249,23 @@ define(function (require) {
          * @private
          */
         showIcons: function () {
-            var count = this.elements.length;
 
-            var prev = this.helper.getPart('prev');
-            var next = this.helper.getPart('next');
+            var prev = $(this.helper.getPart('prev')).css('display', 'block');
+            var next = $(this.helper.getPart('next')).css('display', 'block');
 
-            if (this.cyclic || this.current + 1 < count) {
-                prev.style.display = 'block';
-                next.style.display = 'block';
+
+            if (this.cyclic) {
+                return;
             }
-            else if (this.current === 0) {
-                prev.style.display = 'none';
-                next.style.display = 'block';
+
+            var count = this.elements.length - 1;
+
+            if (this.current <= 0) {
+                prev.css('display', 'none');
             }
-            else {
-                prev.style.display = 'block';
-                next.style.display = 'none';
+
+            if (this.current >= count) {
+                next.css('display', 'none');
             }
         }
 
@@ -434,10 +443,9 @@ define(function (require) {
 
                 me.elements.push({
                     src: href,
-                    width: 0,
-                    height: 0,
+                    width: element.data('width') || 0,
+                    height: element.data('height') || 0,
                     type: type,
-                    context: element,
                     title: element.attr('title')
                         || element.data('title')
                         || ((index + 1) + ' / ' + count)

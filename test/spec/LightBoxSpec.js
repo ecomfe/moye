@@ -11,8 +11,8 @@ define(function (require) {
 
     var images = [
         '<a class="lightbox" href="http://www.baidu.com/img/bdlogo.png" data-title="123"></a>',
-        '<a class="lightbox" href="http://getuikit.com/docs/images/placeholder_800x600_2.jpg" data-width="123"></a>',
-        '<div class="lightbox" data-url="http://getuikit.com/docs/images/placeholder_800x600_2.jpg"></div>',
+        '<a class="lightbox" href="http://www.baidu.com/img/bdlogo.png" data-width="123"></a>',
+        '<div class="lightbox" data-url="http://www.baidu.com/img/bdlogo.png"></div>',
         '<a class="lightbox" href="#"></a>',
         '<div class="lightbox"></div>'
     ];
@@ -60,7 +60,7 @@ define(function (require) {
             lightbox.autoScale = false;
             lightbox.select(1);
             expect($('.ui-lightbox-image', lightbox.main).prop('outerHTML'))
-                .toContain('http://getuikit.com/docs/images/placeholder_800x600_2.jpg');
+                .toContain('//www.baidu.com/img/bdlogo.png');
 
             lightbox.on('change', function (e) {
                 expect(lightbox.getCurrent()).toBe(1);
@@ -72,7 +72,9 @@ define(function (require) {
             lightbox.onMainClicked.call(lightbox, {currentTarget: $('.ui-lightbox-close')[0]});
         });
 
-        it('check next', function () {
+        it('check prev next', function () {
+            lightbox.onMainClicked.call(lightbox, {currentTarget: $('.ui-lightbox-prev')[0]});
+            lightbox.onMainClicked.call(lightbox, {currentTarget: $('.ui-lightbox-next')[0]});
             lightbox.onMainClicked.call(lightbox, {currentTarget: $('.ui-lightbox-next')[0]});
             lightbox.on('change', function (e) {
                 expect(e.activeIndex).toBe(1);
@@ -99,7 +101,6 @@ define(function (require) {
                     .toContain('//www.baidu.com/img/bdlogo.png');
             });
 
-            jasmine.Clock.tick(1000);
         });
 
         it('check set', function () {
