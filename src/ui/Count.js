@@ -219,16 +219,14 @@ define(function (require) {
             that.getDif();
             that.calculate();
             that.format();
-            // that.sliderAnimate();
             that.showCount();               
 
-/*            setInterval (function () {
+            setInterval (function () {
         	    that.getDif();
                 that.calculate();
                 that.format();
-                that.sliderAnimate();
                 that.showCount();              
-            }, 1000);*/
+            }, 1000);
 
         },
 
@@ -304,50 +302,29 @@ define(function (require) {
         format: function () {
             if (this.weeks < 10)
             {
-                this.weeks = parseInt('0' + this.weeks);
+                this.weeks = '0' + this.weeks;
             }
 
             if (this.days < 10)
             {
-                this.days = parseInt('0' + this.days);
+                this.days = '0' + this.days;
             }
 
             if (this.hours < 10)
             {
-                this.hours = parseInt('0' + this.hours);
+                this.hours = '0' + this.hours;
             }
 
             if (this.minutes < 10)
             {
-                this.minutes = parseInt('0' + this.minutes);
+                this.minutes = '0' + this.minutes;
             }
 
-            this.secbit = this.seconds % 10;
-            this.secten = parseInt(this.seconds / 10);
-
-            console.log(this.secbit);
-            console.log(this.secten);
-            if (this.seconds.ten === 0)
+            if (this.seconds < 10)
             {
-                this.seconds = parseInt('0' + this.seconds);
+                this.seconds = '0' + this.minutes;
             }
 
-        },
-
-        /**
-         * 倒计时动画
-         *
-         * @protected
-         */
-        sliderAnimate: function () {
-
-            var lastdigital = $('.ui-count-seconds .ui-count-digital-top').html();
-
-            if (this.seconds !== lastdigital) {
-                $('.ui-count-seconds .ui-count-digital-top').animate({top: "-94px"}, 1500);
-                $('.ui-count-seconds .ui-count-digital-bottom').animate({top: "0"}, 1500);
-            }
-         
         },
 
 
@@ -370,7 +347,7 @@ define(function (require) {
                 $(this.minuteElem).html('<div class="ui-count-digital"><span class="ui-count-digital-top">' + this.minutes + '</span><span class="ui-count-digital-bottom"></span></div><lable class="ui-count-unit"> MINUTES</lable>'); 
             }
             if (this.secondElem) {
-                $(this.secondElem).html('<div class="ui-count-digital"><span class="ui-count-digital-top"><span class="ui-count-digital-top-ten">' + this.secten + '</span><span class="ui-count-digital-top-bit">' + this.secbit + '</span></span><span class="ui-count-digital-bottom">' + (this.seconds - 1) + '</span></div><lable class="ui-count-unit"> SECONDS</lable>'); 
+                $(this.secondElem).html('<div class="ui-count-digital"><span class="ui-count-digital-top">' + this.seconds + '</span><span class="ui-count-digital-bottom"></span></div><lable class="ui-count-unit"> SECONDS</lable>'); 
             }        	
         },
 
