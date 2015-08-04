@@ -74,6 +74,24 @@ define(function (require) {
         	end: '',
 
             /**
+             * 皮肤
+             *
+             * 可选值: 'default' | 'custom'
+             *
+             * @type {string}
+             */
+            skin: 'default',
+
+            /**
+             * 输出格式
+             *
+             * 可选值: 'WEEK-DAY-HOUT-MINUTE-SECOND' | 'WEEK-DAY HOUT:MINUTE:SECOND'
+             *
+             * @type {string}
+             */
+            output: 'WEEK-DAY-HOUT-MINUTE-SECOND',
+
+            /**
              * 是否计算星期
              *
              * 可选值: true | false
@@ -86,7 +104,7 @@ define(function (require) {
              * @type {bollen}
              */
             isWeek: true,
-            
+
             /**
              * 是否计算天
              *
@@ -99,15 +117,16 @@ define(function (require) {
              *
              * @type {bollen}
              */
-        	isDay: true,
+            isDay: true,
 
-            /**
+            /*
              * 是否计算小时
              *
              * 为true, 不可修改，否则会报错。即一定计算小时
              *
              * @type {bollen}
              */
+             
         	isHour: true,
 
             /**
@@ -145,7 +164,8 @@ define(function (require) {
         	this.$parent(options);
 
         	var main = this.main;
-            this.main = $('<div class="ui-count-container"></div>');
+
+            this.main = $('<div class="ui-count-container ui-count-' + options.skin + '"></div>');
 
         	if (options.main) {
                 this.main.appendTo($(options.main));
@@ -286,7 +306,7 @@ define(function (require) {
                 this.minutes = Math.floor(leave2 / (60 * 1000)); 
             }
             else {
-                throw '"isHour" and "isSecond" are forced to be true';
+                throw '"isHour" and "isMinute" are forced to be true';
             }
 
             // 秒
@@ -335,13 +355,13 @@ define(function (require) {
          */
         showCount: function () {
             if (this.weekElem) {
-                $(this.weekElem).html('<div class="ui-count-digital"><span class="ui-count-digital-top">' + this.days + '</span><span class="ui-count-digital-bottom"></span></div><lable class="ui-count-unit"> WEEKS</lable>'); 
+                $(this.weekElem).html('<span class="ui-count-digital">' + this.weeks + '</span><lable class="ui-count-unit"> WEEKS</lable>'); 
             }
             if (this.dayElem) {
-                $(this.dayElem).html('<div class="ui-count-digital"><span class="ui-count-digital-top">' + this.days + '</span><span class="ui-count-digital-bottom"></span></div><lable class="ui-count-unit"> DAYS</lable>'); 
+                $(this.dayElem).html('<span class="ui-count-digital">' + this.days + '</span><lable class="ui-count-unit"> DAYS</lable>'); 
             }
             if (this.hourElem) {
-                $(this.hourElem).html('<div class="ui-count-digital"><span class="ui-count-digital-top">' + this.hours + '</span><span class="ui-count-digital-bottom"></span></div><lable class="ui-count-unit"> HOURS</lable>'); 
+                $(this.hourElem).html('<span class="ui-count-digital">' + this.hours + '</span><lable class="ui-count-unit"> HOURS</lable>'); 
             }
             if (this.minuteElem) {
                 $(this.minuteElem).html('<div class="ui-count-digital"><span class="ui-count-digital-top">' + this.minutes + '</span><span class="ui-count-digital-bottom"></span></div><lable class="ui-count-unit"> MINUTES</lable>'); 

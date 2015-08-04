@@ -18,7 +18,9 @@ require(['ui/Count'], function (Count) {
     new Count({
         main: '#Count1',
         start: new Date(2015,7,9,12,0,0),
-        end: new Date(2015,8,31,0,0,0)
+        end: new Date(2015,8,31,0,0,0),
+        skin: 'default',
+        output: 'WEEK-DAY-HOUT-MINUTE-SECOND' 
     })
     .render();
 });
@@ -38,7 +40,9 @@ require(['ui/Count'], function (Count) {
     new Count({
         main: '#Count1',
         start: new Date(2015,7,9,12,0,0),
-        end: new Date(2015,8,31,0,0,0)
+        end: new Date(2015,8,31,0,0,0),
+        skin: 'default',
+        output: 'WEEK-DAY-HOUT-MINUTE-SECOND' 
     })
     .render();
 });
@@ -54,7 +58,9 @@ require(['ui/Count'], function (Count) {
 require(['ui/Count'], function (Count) {
     new Count({
         main: '#Count2',
-        end: new Date(2015,8,31,0,0,0)
+        end: new Date(2015,8,31,0,0,0),
+        skin: 'default',
+        output: 'WEEK-DAY-HOUT-MINUTE-SECOND' 
     })
     .render();
 });
@@ -72,7 +78,9 @@ require(['ui/Count'], function (Count) {
 require(['ui/Count'], function (Count) {
     new Count({
         main: '#Count2',
-        end: new Date(2015,8,31,0,0,0)
+        end: new Date(2015,8,31,0,0,0),
+        skin: 'default',
+        output: 'WEEK-DAY-HOUT-MINUTE-SECOND' 
     })
     .render();
 });
@@ -100,7 +108,9 @@ require(['ui/Count'], function (Count) {
         end: new Date(2015,8,31,0,0,0),
         isWeek: false,
         isDay: true,
-        isSecond: true
+        isSecond: true,
+        skin: 'default',
+        output: 'WEEK-DAY-HOUT-MINUTE-SECOND' 
     })
     .render();
 });
@@ -117,7 +127,9 @@ require(['ui/Count'], function (Count) {
         end: new Date(2015,8,31,0,0,0),
         isWeek: false,
         isDay: true,
-        isSecond: true
+        isSecond: true,
+        skin: 'default',
+        output: 'WEEK-DAY-HOUT-MINUTE-SECOND' 
     })
     .render();
 });
@@ -136,7 +148,9 @@ require(['ui/Count'], function (Count) {
         main: '#Count4',
         end: new Date(2015,8,31,0,0,0),
         isDay: true,
-        isSecond: false
+        isSecond: false,
+        skin: 'default',
+        output: 'WEEK-DAY-HOUT-MINUTE-SECOND' 
     })
     .render();
 });
@@ -152,7 +166,9 @@ require(['ui/Count'], function (Count) {
         main: '#Count4',
         end: new Date(2015,8,31,0,0,0),
         isDay: true,
-        isSecond: false
+        isSecond: false,
+        skin: 'default',
+        output: 'WEEK-DAY-HOUT-MINUTE-SECOND' 
     })
     .render();
 });
