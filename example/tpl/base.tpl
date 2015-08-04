@@ -9,7 +9,10 @@
 <script src="./js/jquery-1.10.2.min.js"></script>
 <script>
 require.config({
-  baseUrl: '../src'
+  baseUrl: '../src',
+  paths: {
+    jquery: '../example/js/jquery-1.10.2.min'
+  }
 });
 </script>
 {% contentplaceholder: style %}
