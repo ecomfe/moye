@@ -615,7 +615,7 @@ define(function (require) {
             var dirFromAttr = target.attr('data-popup') || target.attr('data-tooltips');
 
             if (dirFromAttr) {
-                dir = /[trbl]{2}/.test(dirFromAttr) ? dirFromAttr : '1';
+                dir = /[trblc]{2}/.test(dirFromAttr) ? dirFromAttr : '1';
             }
 
             var second;
