@@ -6,7 +6,7 @@
     <header class="article-header">
       {{ partial('post/title', {class_name: 'article-title'}) }}
     </header>
-    <div class="article-entry" itemprop="articleBody">
+    <div class="article-entry markdown-body" itemprop="articleBody">
       {{ post.content }}
     </div>
 

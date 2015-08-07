@@ -21,7 +21,7 @@
 <body>
     
     <div id="container">
-    <article id="post-Pager" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-skin" class="article article-type-post" itemscope itemprop="blogPost">
 
   <nav class="article-nav">
 
@@ -78,7 +78,7 @@
           走马灯 / Marquee 
         </a>
       
-        <a class="article-nav-category-link current"
+        <a class="article-nav-category-link "
           href="/moye/component/Pager.html">
           翻页器 / Pager 
         </a>
@@ -163,7 +163,7 @@
           生命周期 / life cycle 
         </a>
       
-        <a class="article-nav-category-link "
+        <a class="article-nav-category-link current"
           href="/moye/introduction/skin.html">
           皮肤 / skin 
         </a>
@@ -184,7 +184,7 @@
       
   
     <h1 class="article-title" itemprop="name">
-      翻页器 / Pager
+      皮肤 / skin
       <!-- Place this tag where you want the button to render. -->
       <a class="github-button" href="https://github.com/ecomfe/moye" data-icon="octicon-star" data-style="mega" data-count-href="/ecomfe/moye/stargazers" data-count-api="/repos/ecomfe/moye#stargazers_count" data-count-aria-label="# stargazers on GitHub" aria-label="Star ecomfe/moye on GitHub">Star</a>
     </h1>
@@ -193,108 +193,20 @@
 
     </header>
     <div class="article-entry markdown-body" itemprop="articleBody">
-      <h1 id="Pager">Pager</h1><h2 id="简单版本">简单版本</h2><iframe height="121" scrolling="no" src="//codepen.io/jinzhubaofu/embed/qdgoMz/?height=121&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/qdgoMz/" target="_blank" rel="external">qdgoMz</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
-
-<h2 id="设置总页面">设置总页面</h2><p>与下拉框组合使用，设置总页码</p>
-<iframe height="228" scrolling="no" src="//codepen.io/jinzhubaofu/embed/zGeWmy/?height=228&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;">See the Pen <a href="http://codepen.io/jinzhubaofu/pen/zGeWmy/" target="_blank" rel="external">zGeWmy</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
-
-
-<h2 id="自定义页码展现">自定义页码展现</h2><iframe height="256" scrolling="no" src="//codepen.io/jinzhubaofu/embed/zGeWmy/?height=256&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;">See the Pen <a href="http://codepen.io/jinzhubaofu/pen/zGeWmy/" target="_blank" rel="external">zGeWmy</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
-
-<h2 id="精简版分页">精简版分页</h2><iframe height="266" scrolling="no" src="//codepen.io/jinzhubaofu/embed/oXmdqY/?height=266&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;">See the Pen <a href="http://codepen.io/jinzhubaofu/pen/oXmdqY/" target="_blank" rel="external">oXmdqY</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
-
-<h2 id="精简版分页灵活运用">精简版分页灵活运用</h2><iframe height="266" scrolling="no" src="//codepen.io/jinzhubaofu/embed/PqVeRQ/?height=266&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;">See the Pen <a href="http://codepen.io/jinzhubaofu/pen/PqVeRQ/" target="_blank" rel="external">PqVeRQ</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
-
-<h2 id="分页getPage和setPage使用">分页getPage和setPage使用</h2><iframe height="266" scrolling="no" src="//codepen.io/jinzhubaofu/embed/KpJRoJ/?height=266&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;">See the Pen <a href="http://codepen.io/jinzhubaofu/pen/KpJRoJ/" target="_blank" rel="external">KpJRoJ</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
-
-<h3 id="全部配置参数">全部配置参数</h3><hr>
-<table>
-<thead>
-<tr>
-<th style="text-align:left">属性名</th>
-<th style="text-align:left">类型</th>
-<th style="text-align:left">说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">disabled</td>
-<td style="text-align:left">boolean</td>
-<td style="text-align:left">控件的不可用状态</td>
-</tr>
-<tr>
-<td style="text-align:left">main</td>
-<td style="text-align:left">HTMLElement</td>
-<td style="text-align:left">控件渲染容器</td>
-</tr>
-<tr>
-<td style="text-align:left">page</td>
-<td style="text-align:left">number</td>
-<td style="text-align:left">当前页（第一页从0开始）</td>
-</tr>
-<tr>
-<td style="text-align:left">first</td>
-<td style="text-align:left">number</td>
-<td style="text-align:left">起始页码，默认为0</td>
-</tr>
-<tr>
-<td style="text-align:left">padding</td>
-<td style="text-align:left">number</td>
-<td style="text-align:left">当页数较多时，首尾显示页码的个数</td>
-</tr>
-<tr>
-<td style="text-align:left">showAlways</td>
-<td style="text-align:left">boolean</td>
-<td style="text-align:left">是否一直显示分页控件</td>
-</tr>
-<tr>
-<td style="text-align:left">showCount</td>
-<td style="text-align:left">number</td>
-<td style="text-align:left">当页数较多时，中间显示页码的个数</td>
-</tr>
-<tr>
-<td style="text-align:left">total</td>
-<td style="text-align:left">number</td>
-<td style="text-align:left">总页数</td>
-</tr>
-<tr>
-<td style="text-align:left">anchor</td>
-<td style="text-align:left">string</td>
-<td style="text-align:left">跳转链接</td>
-</tr>
-<tr>
-<td style="text-align:left">mode</td>
-<td style="text-align:left">string</td>
-<td style="text-align:left">分页类型（normal/simple）</td>
-</tr>
-<tr>
-<td style="text-align:left">getPageItemHTML</td>
-<td style="text-align:left">function</td>
-<td style="text-align:left">分页item字符串</td>
-</tr>
-<tr>
-<td style="text-align:left">lang</td>
-<td style="text-align:left">Object<string, string=""></string,></td>
-<td style="text-align:left">用于显示上下页的文字</td>
-</tr>
-<tr>
-<td style="text-align:left">lang.prev</td>
-<td style="text-align:left">string</td>
-<td style="text-align:left">上一页显示文字(支持HTML)</td>
-</tr>
-<tr>
-<td style="text-align:left">lang.next</td>
-<td style="text-align:left">string</td>
-<td style="text-align:left">下一页显示文字(支持HTML)</td>
-</tr>
-<tr>
-<td style="text-align:left">lang.ellipsis</td>
-<td style="text-align:left">string</td>
-<td style="text-align:left">省略处显示文字(支持HTML)</td>
-</tr>
-</tbody>
-</table>
-<p>在页面切换的时候可以绑定回调事件<code>onChange</code>。</p>
+      <h2 id="皮肤">皮肤</h2><p>皮肤机制为 <code>moye</code> 控件提供强大的样式自定义能力，可以支持 <code>自定义样式</code> 与 <code>换肤</code> / <code>风格主题</code> 。</p>
+<h3 id="功能特点：">功能特点：</h3><ol>
+<li>首先，每个控件都有一个基础样式类型: <code>ui-{type}</code>，其中<code>{type}</code>表示控件的主类型；</li>
+<li>其次，控件可以设定皮肤参数，并可以指定多个皮肤。每个皮肤设定都会添加两个样式类型: <code>skin-{skin}</code> 与 <code>skin-{skin}-{type}</code>， 其中 <code>{skin}</code> 表示设定的皮肤。</li>
+</ol>
+<h3 id="生效时机：">生效时机：</h3><p>皮肤是由 <code>Control</code> 的 <code>render</code> 方法统一处理的，在调用 <code>Control.prototype.render()</code> 时会自动按照上述规则生成样式，并添加到主元素。</p>
+<h3 id="示例">示例</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> Button = <span class="built_in">require</span>(<span class="string">'moye/Button'</span>);</span><br><span class="line"><span class="keyword">var</span> button = <span class="keyword">new</span> Button(&#123;</span><br><span class="line">  main: <span class="built_in">document</span>.getElementById(<span class="string">'button'</span>),</span><br><span class="line">  skin: [<span class="string">'jinrong'</span>, <span class="string">'small'</span>]</span><br><span class="line">&#125;);</span><br><span class="line">button.render();</span><br></pre></td></tr></table></figure>
+<p>使用以上代码 <code>moye</code> 会为元素button添加以下样式类型：</p>
+<ol>
+<li><code>ui-button</code> 类型样式</li>
+<li><code>skin-jinrong</code> 与 <code>skin-jinrong-button</code> 金融皮肤样式</li>
+<li><code>skin-small</code> 与 <code>skin-small-button</code> 小体积皮肤样式</li>
+</ol>
+<h3 id="特别说明：">特别说明：</h3><p>目前， 皮肤是只读属性，不能通过<code>repaint</code>来重绘。</p>
 
     </div>
 
@@ -303,7 +215,7 @@
       <div class="duoshuo">
 
         <!-- 多说评论框 start -->
-        <div class="ds-thread" data-thread-key="Pager" data-title="翻页器 / Pager" data-url="http://ecomfe.github.io/moye/component/Pager.html"></div>
+        <div class="ds-thread" data-thread-key="skin" data-title="皮肤 / skin" data-url="http://ecomfe.github.io/moye/introduction/skin.html"></div>
 
         <!-- 多说评论框 end -->
         <!-- 多说公共JS代码 start (一个网页只需插入一次) -->

@@ -21,7 +21,7 @@
 <body>
     
     <div id="container">
-    <article id="post-Pager" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-life-cycle" class="article article-type-post" itemscope itemprop="blogPost">
 
   <nav class="article-nav">
 
@@ -78,7 +78,7 @@
           走马灯 / Marquee 
         </a>
       
-        <a class="article-nav-category-link current"
+        <a class="article-nav-category-link "
           href="/moye/component/Pager.html">
           翻页器 / Pager 
         </a>
@@ -158,7 +158,7 @@
           插件 / Plugin 
         </a>
       
-        <a class="article-nav-category-link "
+        <a class="article-nav-category-link current"
           href="/moye/introduction/life-cycle.html">
           生命周期 / life cycle 
         </a>
@@ -184,7 +184,7 @@
       
   
     <h1 class="article-title" itemprop="name">
-      翻页器 / Pager
+      生命周期 / life cycle
       <!-- Place this tag where you want the button to render. -->
       <a class="github-button" href="https://github.com/ecomfe/moye" data-icon="octicon-star" data-style="mega" data-count-href="/ecomfe/moye/stargazers" data-count-api="/repos/ecomfe/moye#stargazers_count" data-count-aria-label="# stargazers on GitHub" aria-label="Star ecomfe/moye on GitHub">Star</a>
     </h1>
@@ -193,108 +193,26 @@
 
     </header>
     <div class="article-entry markdown-body" itemprop="articleBody">
-      <h1 id="Pager">Pager</h1><h2 id="简单版本">简单版本</h2><iframe height="121" scrolling="no" src="//codepen.io/jinzhubaofu/embed/qdgoMz/?height=121&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/qdgoMz/" target="_blank" rel="external">qdgoMz</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
-
-<h2 id="设置总页面">设置总页面</h2><p>与下拉框组合使用，设置总页码</p>
-<iframe height="228" scrolling="no" src="//codepen.io/jinzhubaofu/embed/zGeWmy/?height=228&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;">See the Pen <a href="http://codepen.io/jinzhubaofu/pen/zGeWmy/" target="_blank" rel="external">zGeWmy</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
-
-
-<h2 id="自定义页码展现">自定义页码展现</h2><iframe height="256" scrolling="no" src="//codepen.io/jinzhubaofu/embed/zGeWmy/?height=256&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;">See the Pen <a href="http://codepen.io/jinzhubaofu/pen/zGeWmy/" target="_blank" rel="external">zGeWmy</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
-
-<h2 id="精简版分页">精简版分页</h2><iframe height="266" scrolling="no" src="//codepen.io/jinzhubaofu/embed/oXmdqY/?height=266&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;">See the Pen <a href="http://codepen.io/jinzhubaofu/pen/oXmdqY/" target="_blank" rel="external">oXmdqY</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
-
-<h2 id="精简版分页灵活运用">精简版分页灵活运用</h2><iframe height="266" scrolling="no" src="//codepen.io/jinzhubaofu/embed/PqVeRQ/?height=266&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;">See the Pen <a href="http://codepen.io/jinzhubaofu/pen/PqVeRQ/" target="_blank" rel="external">PqVeRQ</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
-
-<h2 id="分页getPage和setPage使用">分页getPage和setPage使用</h2><iframe height="266" scrolling="no" src="//codepen.io/jinzhubaofu/embed/KpJRoJ/?height=266&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;">See the Pen <a href="http://codepen.io/jinzhubaofu/pen/KpJRoJ/" target="_blank" rel="external">KpJRoJ</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
-
-<h3 id="全部配置参数">全部配置参数</h3><hr>
-<table>
-<thead>
-<tr>
-<th style="text-align:left">属性名</th>
-<th style="text-align:left">类型</th>
-<th style="text-align:left">说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">disabled</td>
-<td style="text-align:left">boolean</td>
-<td style="text-align:left">控件的不可用状态</td>
-</tr>
-<tr>
-<td style="text-align:left">main</td>
-<td style="text-align:left">HTMLElement</td>
-<td style="text-align:left">控件渲染容器</td>
-</tr>
-<tr>
-<td style="text-align:left">page</td>
-<td style="text-align:left">number</td>
-<td style="text-align:left">当前页（第一页从0开始）</td>
-</tr>
-<tr>
-<td style="text-align:left">first</td>
-<td style="text-align:left">number</td>
-<td style="text-align:left">起始页码，默认为0</td>
-</tr>
-<tr>
-<td style="text-align:left">padding</td>
-<td style="text-align:left">number</td>
-<td style="text-align:left">当页数较多时，首尾显示页码的个数</td>
-</tr>
-<tr>
-<td style="text-align:left">showAlways</td>
-<td style="text-align:left">boolean</td>
-<td style="text-align:left">是否一直显示分页控件</td>
-</tr>
-<tr>
-<td style="text-align:left">showCount</td>
-<td style="text-align:left">number</td>
-<td style="text-align:left">当页数较多时，中间显示页码的个数</td>
-</tr>
-<tr>
-<td style="text-align:left">total</td>
-<td style="text-align:left">number</td>
-<td style="text-align:left">总页数</td>
-</tr>
-<tr>
-<td style="text-align:left">anchor</td>
-<td style="text-align:left">string</td>
-<td style="text-align:left">跳转链接</td>
-</tr>
-<tr>
-<td style="text-align:left">mode</td>
-<td style="text-align:left">string</td>
-<td style="text-align:left">分页类型（normal/simple）</td>
-</tr>
-<tr>
-<td style="text-align:left">getPageItemHTML</td>
-<td style="text-align:left">function</td>
-<td style="text-align:left">分页item字符串</td>
-</tr>
-<tr>
-<td style="text-align:left">lang</td>
-<td style="text-align:left">Object<string, string=""></string,></td>
-<td style="text-align:left">用于显示上下页的文字</td>
-</tr>
-<tr>
-<td style="text-align:left">lang.prev</td>
-<td style="text-align:left">string</td>
-<td style="text-align:left">上一页显示文字(支持HTML)</td>
-</tr>
-<tr>
-<td style="text-align:left">lang.next</td>
-<td style="text-align:left">string</td>
-<td style="text-align:left">下一页显示文字(支持HTML)</td>
-</tr>
-<tr>
-<td style="text-align:left">lang.ellipsis</td>
-<td style="text-align:left">string</td>
-<td style="text-align:left">省略处显示文字(支持HTML)</td>
-</tr>
-</tbody>
-</table>
-<p>在页面切换的时候可以绑定回调事件<code>onChange</code>。</p>
+      <h1 id="moye_生命周期机制">moye 生命周期机制</h1><p>控件从被创意到被销毁，有一个完整的生命周期。目前<code>moye</code>控件的生命周期机制是这样的：</p>
+<ol>
+<li><code>NEW</code> 实例刚刚被创建</li>
+<li><code>INITED</code> 实例参数已完成初始化</li>
+<li><code>RENDERED</code> 实例已完成渲染</li>
+<li><code>DISPOSED</code> 实例已经被销毁</li>
+</ol>
+<p>控件生命周期状态的流转是在<code>Control</code>基类中完成以下方法中完成的</p>
+<ol>
+<li><code>Control.prototype.initialize</code>: <code>NEW</code> -&gt; <code>INITED</code></li>
+<li><code>Control.prototype.render</code>: <code>INITED</code> -&gt; <code>RENDERED</code></li>
+<li><code>Control.prototype.dispose</code>: <code>RENDERED</code> -&gt; <code>DISPOSED</code></li>
+</ol>
+<p>因此，我们可以总结出，以下接口的调用时机：</p>
+<ol>
+<li><code>Control.prototype.init</code> 在<code>NEW</code>状态下被调用，只应该被调用一次；</li>
+<li><code>Control.prototype.initStructure</code>与<code>Control.prototype.initEvents</code> 在<code>INITED</code>状态下被调用，只应该被调用一次；</li>
+<li><code>Control.prototype.repaint</code> 在<code>RENDERED</code>状态下被调用，可以被重复调用多次；</li>
+<li><code>Control.prototype.dispose</code> 在<code>RENDERED</code>状态下被调用，只应该被调用一次；</li>
+</ol>
 
     </div>
 
@@ -303,7 +221,7 @@
       <div class="duoshuo">
 
         <!-- 多说评论框 start -->
-        <div class="ds-thread" data-thread-key="Pager" data-title="翻页器 / Pager" data-url="http://ecomfe.github.io/moye/component/Pager.html"></div>
+        <div class="ds-thread" data-thread-key="life-cycle" data-title="生命周期 / life cycle" data-url="http://ecomfe.github.io/moye/introduction/life-cycle.html"></div>
 
         <!-- 多说评论框 end -->
         <!-- 多说公共JS代码 start (一个网页只需插入一次) -->

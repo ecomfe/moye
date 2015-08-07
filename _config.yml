@@ -85,9 +85,3 @@ yasr:
       - '> 5%'
 
 Plugins:
-  - hexo-generator-feed
-
-feed:
-  type: atom
-  path: atom.xml
-  limit: 20

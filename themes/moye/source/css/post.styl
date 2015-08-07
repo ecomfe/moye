@@ -14,6 +14,7 @@ body
     top 0
     left 0
     height 100%
+    overflow-y auto
     background-color $nav-background-color
 
     &-logo
@@ -46,6 +47,10 @@ body
             color #ddd
             font-size: 1.2em
 
+            a
+                padding: 0
+                color #eee
+
         &-link
 
             display block
@@ -57,8 +62,9 @@ body
             &.current
                 color #eee
 
-            &hover
+            &:hover
                 color #fff
+
 
 
 .article-header
@@ -93,87 +99,177 @@ body
 
     line-height 1.6
 
-    color-border = #ccc
+    @require './_partial/markdown.css'
 
-    h1 {
-        font-size: 2.15 * 12px
-    }
-    h2 {
-        font-size: 2 * 12px
-    }
-    h3 {
-        font-size: 1.8 * 12px
-    }
-    h4 {
-        font-size: 1.7 * 12px
-    }
-    h5 {
-        font-size: 1.6 * 12px
-    }
-    h6 {
-        font-size: 1.5 * 12px
-    }
+    &.markdown-body
+        ol
+            list-style decimal
 
-    dl,
-    ol,
-    p,
-    ul {
-        margin: 0 0 1.75em
-    }
-    a,
-    a:active,
-    a:hover,
-    a:visited {
-        cursor: pointer;
-        color: #64b5f6;
-        text-decoration: none
-    }
-    a:hover {
-        color: #64b5f6;
-        text-decoration: underline
-    }
-    table {
-        background: 0 0;
-        border-collapse: collapse;
-        border-spacing: 0;
-        text-align: left
-    }
-    table th {
-        padding-bottom: .5em;
-        border-bottom: 2px solid #e3eaf4
-    }
-    table td {
-        border-bottom: 1px solid #e3eaf4;
-        padding: 1rem 0
-    }
-    hr {
-        border: 1px solid #eef2f8
-    }
-    dl dd {
-        margin-left: 0
-    }
-    code {
-        font-family: 'Open Sans';
-        font-weight: 400;
-        border-radius: 3px;
-        background: #f5f5f5;
-        padding: 0 10px
-    }
-    abbr,
-    acronym {
-        border-bottom: 1px dotted #5d686f
-    }
+        ul
+            list-style initial
 
-    blockquote {
-        border-left: 2px solid #d1dced;
-        padding: 10px 20px
-    }
-    blockquote cite:before {
-        content: ' — ';
-        padding: 0 .3em
-    }
+    figure.highlight
 
-    @require './_partial/highlight.styl'
+        color-border = #ddd
+        color-meta = #aaa
+
+        margin: 0
+        margin-bottom: 20px
+        background #eee
+        border 1px solid color-border
+        margin-top 15px
+        padding 7px 15px
+        border-radius 2px
+        text-shadow 0 0 1px #fff
+        line-height 1.6
+        overflow auto
+        position relative
+        font-size 0.9em
+
+        table
+
+            margin-bottom: 0
+
+            tr
+                border-top 0
+
+            td,
+            th
+                background-color #eee
+
+            .code
+
+                color: #999;
+                padding-right: 15px;
+                text-align: left
+                border-right: 1px solid #ddd;
+                color #666
+                border 0
+
+                pre
+                    background-color #eee
+
+            .gutter
+                padding: 0 15px 0 0
+                text-align: right;
+                background-color #eee
+                border 0
+                border-right: 1px solid #ddd;
+
+                pre
+                    background-color #eee
+
+
+
+
+        figcaption
+            color color-meta
+            margin-bottom 5px
+            text-shadow 0 0 1px #fff
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+            padding-bottom: 3px;
+
+            a
+                position absolute
+                right 15px
+
+            pre
+                border none
+                padding 0
+                margin 0
+
+            table
+                margin-top 0
+                border-spacing 0
+
+            .gutter
+                color color-meta
+                padding-right 15px
+                border-right 1px solid color-border
+                text-align right
+                background-color #eee
+
+            .code
+                padding-left 15px
+                border-left 1px solid #fff
+                color #666
+
+            .line
+                height: 20px
+
+        pre
+
+            padding: 0
+
+            // Theme: Solarized - Light
+            // More theme here: http://softwaremaniacs.org/media/soft/highlight/test.html
+            .comment
+            .template_comment
+            .diff .header
+            .doctype
+            .pi
+            .lisp .string
+            .javadoc
+                color #93a1a1
+                font-style italic
+
+            .keyword
+            .winutils
+            .method
+            .addition
+            .css .tag
+            .request
+            .status
+            .nginx .title
+                color #859900
+
+            .number
+            .command
+            .string
+            .tag .value
+            .phpdoc
+            .tex .formula
+            .regexp
+            .hexcolor
+                color #2aa198
+
+            .title
+            .localvars
+            .chunk
+            .decorator
+            .built_in
+            .identifier
+            .vhdl
+            .literal
+            .id
+                color #268bd2
+
+            .attribute
+            .variable
+            .lisp .body
+            .smalltalk .number
+            .constant
+            .class .title
+            .parent
+            .haskell .type
+                color #b58900
+
+            .preprocessor
+            .preprocessor .keyword
+            .shebang
+            .symbol
+            .symbol .string
+            .diff .change
+            .special
+            .attr_selector
+            .important
+            .subst
+            .cdata
+            .clojure .title
+                color #cb4b16
+
+            .deletion
+                color #dc322f
 
 .article-footer
     width: 980px;

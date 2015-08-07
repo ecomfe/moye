@@ -1,5 +1,9 @@
 ---
   -
+    text: "开始"
+    title: "get-started"
+    link: introduction/get-started.html
+  -
     text: "组件"
     title: "component"
     data:
@@ -71,12 +75,44 @@
 
       -
         text: "提示 / Tip"
-        title: "Tip"
+        title: "提示 / Tip"
         link: component/Tip.html
   -
     text: "简介"
-    title: "introduction"
     data:
       -
-        text: "开始"
-        title: "get-started"
+        text: "开始 / get started"
+        title: "开始 / get started"
+        link: introduction/get-started.html
+      -
+        text: "最佳实践 / best practice"
+        title: "最佳实践 / best practice"
+        link: introduction/best-practice.html
+  -
+    text: "开发 moye"
+    data:
+      -
+        text: '开发指南 / introduction'
+        title: '开发指南 / introduction'
+        link: 'introduction/develop.html'
+      -
+        text: '插件 / Plugin'
+        title: '插件 / Plugin'
+        link: 'introduction/plugin.html'
+
+      -
+        text: '生命周期 / life cycle'
+        title: '生命周期 / life cycle'
+        link: 'introduction/life-cycle.html'
+
+      -
+        text: '皮肤 / skin'
+        title: '皮肤 / skin'
+        link: 'introduction/skin.html'
+
+      -
+        text: '继承 / inherits'
+        title: '继承 / inherits'
+        link: 'introduction/inherits.html'
+
+

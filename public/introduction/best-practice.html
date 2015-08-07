@@ -21,7 +21,7 @@
 <body>
     
     <div id="container">
-    <article id="post-Pager" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-best-practice" class="article article-type-post" itemscope itemprop="blogPost">
 
   <nav class="article-nav">
 
@@ -78,7 +78,7 @@
           走马灯 / Marquee 
         </a>
       
-        <a class="article-nav-category-link current"
+        <a class="article-nav-category-link "
           href="/moye/component/Pager.html">
           翻页器 / Pager 
         </a>
@@ -133,7 +133,7 @@
           开始 / get started 
         </a>
       
-        <a class="article-nav-category-link "
+        <a class="article-nav-category-link current"
           href="/moye/introduction/best-practice.html">
           最佳实践 / best practice 
         </a>
@@ -184,7 +184,7 @@
       
   
     <h1 class="article-title" itemprop="name">
-      翻页器 / Pager
+      最佳实践 / best practice
       <!-- Place this tag where you want the button to render. -->
       <a class="github-button" href="https://github.com/ecomfe/moye" data-icon="octicon-star" data-style="mega" data-count-href="/ecomfe/moye/stargazers" data-count-api="/repos/ecomfe/moye#stargazers_count" data-count-aria-label="# stargazers on GitHub" aria-label="Star ecomfe/moye on GitHub">Star</a>
     </h1>
@@ -193,108 +193,16 @@
 
     </header>
     <div class="article-entry markdown-body" itemprop="articleBody">
-      <h1 id="Pager">Pager</h1><h2 id="简单版本">简单版本</h2><iframe height="121" scrolling="no" src="//codepen.io/jinzhubaofu/embed/qdgoMz/?height=121&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/qdgoMz/" target="_blank" rel="external">qdgoMz</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
-
-<h2 id="设置总页面">设置总页面</h2><p>与下拉框组合使用，设置总页码</p>
-<iframe height="228" scrolling="no" src="//codepen.io/jinzhubaofu/embed/zGeWmy/?height=228&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;">See the Pen <a href="http://codepen.io/jinzhubaofu/pen/zGeWmy/" target="_blank" rel="external">zGeWmy</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
-
-
-<h2 id="自定义页码展现">自定义页码展现</h2><iframe height="256" scrolling="no" src="//codepen.io/jinzhubaofu/embed/zGeWmy/?height=256&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;">See the Pen <a href="http://codepen.io/jinzhubaofu/pen/zGeWmy/" target="_blank" rel="external">zGeWmy</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
-
-<h2 id="精简版分页">精简版分页</h2><iframe height="266" scrolling="no" src="//codepen.io/jinzhubaofu/embed/oXmdqY/?height=266&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;">See the Pen <a href="http://codepen.io/jinzhubaofu/pen/oXmdqY/" target="_blank" rel="external">oXmdqY</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
-
-<h2 id="精简版分页灵活运用">精简版分页灵活运用</h2><iframe height="266" scrolling="no" src="//codepen.io/jinzhubaofu/embed/PqVeRQ/?height=266&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;">See the Pen <a href="http://codepen.io/jinzhubaofu/pen/PqVeRQ/" target="_blank" rel="external">PqVeRQ</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
-
-<h2 id="分页getPage和setPage使用">分页getPage和setPage使用</h2><iframe height="266" scrolling="no" src="//codepen.io/jinzhubaofu/embed/KpJRoJ/?height=266&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;">See the Pen <a href="http://codepen.io/jinzhubaofu/pen/KpJRoJ/" target="_blank" rel="external">KpJRoJ</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
-
-<h3 id="全部配置参数">全部配置参数</h3><hr>
-<table>
-<thead>
-<tr>
-<th style="text-align:left">属性名</th>
-<th style="text-align:left">类型</th>
-<th style="text-align:left">说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">disabled</td>
-<td style="text-align:left">boolean</td>
-<td style="text-align:left">控件的不可用状态</td>
-</tr>
-<tr>
-<td style="text-align:left">main</td>
-<td style="text-align:left">HTMLElement</td>
-<td style="text-align:left">控件渲染容器</td>
-</tr>
-<tr>
-<td style="text-align:left">page</td>
-<td style="text-align:left">number</td>
-<td style="text-align:left">当前页（第一页从0开始）</td>
-</tr>
-<tr>
-<td style="text-align:left">first</td>
-<td style="text-align:left">number</td>
-<td style="text-align:left">起始页码，默认为0</td>
-</tr>
-<tr>
-<td style="text-align:left">padding</td>
-<td style="text-align:left">number</td>
-<td style="text-align:left">当页数较多时，首尾显示页码的个数</td>
-</tr>
-<tr>
-<td style="text-align:left">showAlways</td>
-<td style="text-align:left">boolean</td>
-<td style="text-align:left">是否一直显示分页控件</td>
-</tr>
-<tr>
-<td style="text-align:left">showCount</td>
-<td style="text-align:left">number</td>
-<td style="text-align:left">当页数较多时，中间显示页码的个数</td>
-</tr>
-<tr>
-<td style="text-align:left">total</td>
-<td style="text-align:left">number</td>
-<td style="text-align:left">总页数</td>
-</tr>
-<tr>
-<td style="text-align:left">anchor</td>
-<td style="text-align:left">string</td>
-<td style="text-align:left">跳转链接</td>
-</tr>
-<tr>
-<td style="text-align:left">mode</td>
-<td style="text-align:left">string</td>
-<td style="text-align:left">分页类型（normal/simple）</td>
-</tr>
-<tr>
-<td style="text-align:left">getPageItemHTML</td>
-<td style="text-align:left">function</td>
-<td style="text-align:left">分页item字符串</td>
-</tr>
-<tr>
-<td style="text-align:left">lang</td>
-<td style="text-align:left">Object<string, string=""></string,></td>
-<td style="text-align:left">用于显示上下页的文字</td>
-</tr>
-<tr>
-<td style="text-align:left">lang.prev</td>
-<td style="text-align:left">string</td>
-<td style="text-align:left">上一页显示文字(支持HTML)</td>
-</tr>
-<tr>
-<td style="text-align:left">lang.next</td>
-<td style="text-align:left">string</td>
-<td style="text-align:left">下一页显示文字(支持HTML)</td>
-</tr>
-<tr>
-<td style="text-align:left">lang.ellipsis</td>
-<td style="text-align:left">string</td>
-<td style="text-align:left">省略处显示文字(支持HTML)</td>
-</tr>
-</tbody>
-</table>
-<p>在页面切换的时候可以绑定回调事件<code>onChange</code>。</p>
+      <h2 id="初始化组件">初始化组件</h2><p>一般我们会这样来初始化组件：</p>
+<figure class="highlight html"><figcaption><span>DOM结构</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="title">div</span> <span class="attribute">id</span>=<span class="value">"container"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">div</span> <span class="attribute">data-ui-id</span>=<span class="value">"submitButton"</span>&gt;</span><span class="tag">&lt;/<span class="title">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="title">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight js"><figcaption><span>初始化组件</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 需要哪些组件，需要在这里事先把它们加载回来，比如我们这里用到了 `Button`</span></span><br><span class="line"><span class="built_in">require</span>([<span class="string">'moye'</span>, <span class="string">'moye/Button'</span>], <span class="function"><span class="keyword">function</span> (<span class="params">moye</span>) </span>&#123;</span><br><span class="line"></span><br><span class="line">    moye.init(</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 这里指定了组件所在的容器 DOM</span></span><br><span class="line">        <span class="built_in">document</span>.body,</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 这里是初始化组件所需要的参数们</span></span><br><span class="line">        &#123;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 这个属性名与 DOM 结构上的 data-ui-id 相对应</span></span><br><span class="line">            submitButton: &#123;</span><br><span class="line"></span><br><span class="line">                <span class="comment">// 这是一个必须的参数，用来指定这个控件的类型</span></span><br><span class="line">                type: <span class="string">'Button'</span>,</span><br><span class="line">                text: <span class="string">'submit'</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    );</span><br><span class="line"></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<h2 id="给组件绑定事件">给组件绑定事件</h2><p>一般我们会这样给组件绑定事件：</p>
+<figure class="highlight js"><figcaption><span>绑定组件事件处理</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 通过 moye.get() 来获取到指定 id 的控件实例，然后你就可以对它为所欲为啦</span></span><br><span class="line">moye.get(<span class="string">'sumbitButton'</span>).on(<span class="string">'click'</span>, <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    alert(<span class="string">'submit'</span>);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<h2 id="创建新的组件实例">创建新的组件实例</h2><p>除了获取到组件模块后，通过<code>new Control()</code>的方式之外，我们还提供了一个简单的方法来创建实例：</p>
+<figure class="highlight js"><figcaption><span>通过 moye.create() 创建实例</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> submitButton = moye.create(<span class="string">'Button'</span>, &#123;</span><br><span class="line">    text: <span class="string">'submit'</span></span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 但这个时候，submitButton 还没有被挂载到 DOM 树上，是没有生效的。</span></span><br><span class="line"><span class="comment">// 你可以调用它的`appendTo()`方法来将它装载到 DOM 树上。</span></span><br><span class="line"><span class="comment">// `appendTo()`方法会自动判断组件当前是否已经渲染，如果没有渲染，那么它会先渲染，再挂载。</span></span><br><span class="line">submitButton.appendTo(<span class="built_in">document</span>.body);</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>使用这个办法创建实例同样需要<code>Button</code>模块已经被加载到页面中，否则会抛出异常哟</p>
+</blockquote>
 
     </div>
 
@@ -303,7 +211,7 @@
       <div class="duoshuo">
 
         <!-- 多说评论框 start -->
-        <div class="ds-thread" data-thread-key="Pager" data-title="翻页器 / Pager" data-url="http://ecomfe.github.io/moye/component/Pager.html"></div>
+        <div class="ds-thread" data-thread-key="best-practice" data-title="最佳实践 / best practice" data-url="http://ecomfe.github.io/moye/introduction/best-practice.html"></div>
 
         <!-- 多说评论框 end -->
         <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
