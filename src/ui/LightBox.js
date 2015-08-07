@@ -40,7 +40,6 @@ define(function (require) {
         getSize: function (dom, index) {
 
             var obj = {};
-            var fixed = {};
             var limit = {};
 
             lib.each(
@@ -50,12 +49,11 @@ define(function (require) {
 
                     var body = $(window)[name]() * 0.9;
                     limit[name] = Math.min(body, obj[name]);
-
-                    var element = this.elements[index];
-                    fixed[name] = element[name];
                 },
                 this
             );
+
+            var fixed = this.elements[index];
 
             if (fixed.width && fixed.height) {
                 return fixed;

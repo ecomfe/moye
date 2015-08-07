@@ -56,18 +56,6 @@ define(function (require) {
             lightbox.hide();
         });
 
-        it('check select', function () {
-            lightbox.autoScale = false;
-            lightbox.select(1);
-            expect($('.ui-lightbox-image', lightbox.main).prop('outerHTML'))
-                .toContain('//www.baidu.com/img/bdlogo.png');
-
-            lightbox.on('change', function (e) {
-                expect(lightbox.getCurrent()).toBe(1);
-                expect(e.activeIndex).toBe(1);
-            });
-        });
-
         it('check close', function () {
             lightbox.onMainClicked.call(lightbox, {currentTarget: $('.ui-lightbox-close')[0]});
         });
