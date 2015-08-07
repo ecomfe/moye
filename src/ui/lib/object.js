@@ -19,6 +19,7 @@ define(function (require) {
     /**
      * 序列化 JSON 对象
      *
+     * @public
      * @method module:lib.stringify
      * @param {Object} value 需要序列化的json对象
      * @return {string} 序列化后的字符串
@@ -70,9 +71,9 @@ define(function (require) {
     /**
      * 深层复制
      *
+     * @public
      * @method module:lib.clone
      * @param {*} source 被复制的源
-     *
      * @return {*} 复制后的新对象
      */
     exports.clone = function clone(source) {
@@ -112,6 +113,7 @@ define(function (require) {
     /**
      * 判断obj是否自拥有指定属性
      *
+     * @public
      * @method module:lib.has
      * @param  {*}       obj      目标
      * @param  {name}    property 属性名
@@ -126,6 +128,7 @@ define(function (require) {
      *
      * 将source的自有属性合并到target对象上
      *
+     * @public
      * @method module:lib.extend
      * @param  {Object} target 目标对象
      * @return {Object}
@@ -195,6 +198,7 @@ define(function (require) {
     /**
      * 将对象解析成 query 字符串
      *
+     * @public
      * @method module:lib.toQueryString
      * @param {Object}  object 需要解析的 JSON 对象
      * @param {string}  base   属性前缀...

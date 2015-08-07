@@ -1,23 +1,18 @@
 /**
  * @copyright 2014 Baidu Inc. All rights reserved.
- *
- *
  * @file moye插件
  * @author Leon(ludafa@outlook.com)
+ * @requires lib
+ * @module Plugin
  */
 
 define(function (require) {
 
     var lib = require('../lib');
 
-    /**
-     * Plugin
-     *
-     * @class Plugin
-     * @requires lib
-     * @exports Plugin
-     */
     var Plugin = lib.newClass({
+
+        /** @lends Plugin.prototype */
 
         $class: 'Plugin',
 

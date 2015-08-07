@@ -91,7 +91,12 @@ define(function (require) {
         it('show', function () {
             var validateTipPlugin = getValidateTip();
             var messageTip = validateTipPlugin.message;
-            validateTipPlugin.show(new Validity());
+
+            var validity = new Validity();
+
+            validity.addState('test', new ValidityState(false, '12321'));
+            validateTipPlugin.show(validity);
+
             expect(messageTip.isVisible()).toBeTruthy();
         });
 
