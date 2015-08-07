@@ -13,6 +13,12 @@ define(function (require) {
     var Control = require('./Control');
     var Popup = require('./Popup');
 
+    /**
+     * 城市列表
+     *
+     * @const
+     * @type {Array}
+     */
     var CITIES = [
         '热门|'
         + '上海,北京,广州,昆明,西安,成都,深圳,厦门,乌鲁木齐,南京,'
@@ -76,14 +82,14 @@ define(function (require) {
          * @name module:City#options
          * @see module:Popup#options
          * @type {Object}
-         * @property {boolean} disabled 控件的不可用状态
-         * @property {(string | HTMLElement)} main 控件渲染容器
-         * @property {(string | HTMLElement)} target 计算弹出层相对位置的目标对象
-         * @property {string} prefix 控件class前缀，同时将作为main的class之一
-         * @property {number} index 默认激活的标签索引
-         * @property {string} activeClass 激活标签、内容的class
-         * @property {boolean} autoFill 是否自动填充默认城市数据(机票可用城市数据)
-         * @property {?string} hideCities 需要隐藏的城市
+         * @property {boolean} options.disabled 控件的不可用状态
+         * @property {(string | HTMLElement)} options.main 控件渲染容器
+         * @property {(string | HTMLElement)} options.target 计算弹出层相对位置的目标对象
+         * @property {string} options.prefix 控件class前缀，同时将作为main的class之一
+         * @property {number} options.index 默认激活的标签索引
+         * @property {string} options.activeClass 激活标签、内容的class
+         * @property {boolean} options.autoFill 是否自动填充默认城市数据(机票可用城市数据)
+         * @property {?string} options.hideCities 需要隐藏的城市
          * @protected
          */
         options: {
@@ -106,6 +112,7 @@ define(function (require) {
          *
          * @param {Object} options 控件配置项
          * @see module:City#options
+         * @override
          * @protected
          */
         init: function (options) {
@@ -132,6 +139,11 @@ define(function (require) {
 
         },
 
+        /**
+         * 初始化城市选择控件的 DOM 结构
+         *
+         * @override
+         */
         initStructure: function () {
 
             var main = $(this.main);
@@ -157,17 +169,33 @@ define(function (require) {
             this.helper.addPartClasses('popup', popup.main);
         },
 
+        /**
+         * 初始化城市选择控件的事件绑定
+         *
+         * @override
+         */
         initEvents: function () {
             this.popup
                 .on('click', $.proxy(this._onPopupClick, this))
                 .on('show', $.proxy(this._onPopupShow, this));
         },
 
+        /**
+         * 设置元素只读
+         *
+         * @param {boolean} isReadOnly 是否只读
+         * @public
+         */
         setReadOnly: function (isReadOnly) {
             this.$parent(isReadOnly);
             this.input.readOnly = !!isReadOnly;
         },
 
+        /**
+         * 重绘City控件
+         *
+         * @override
+         */
         repaint: require('./painter').createRepaint(
             Control.prototype.repaint,
             {
@@ -204,7 +232,7 @@ define(function (require) {
          *
          * @param {HTMLElement} el 点击的当前事件源对象
          * @fires module:City#pick
-         * @protected
+         * @private
          */
         _pick: function (el) {
             var value = el.innerHTML;
@@ -238,7 +266,7 @@ define(function (require) {
          * 切换标签
          *
          * @param {number} i 要切换到的目标标签索引
-         * @public
+         * @private
          */
         _changeTab: function (i) {
             var labels      = this.labels;
@@ -283,7 +311,7 @@ define(function (require) {
         /**
          * 设定值
          * @param {string} value 值
-         * @return {City}
+         * @return {module:City} 当前 City 实例
          */
         setValue: function (value) {
             this.input.value = value || '';
@@ -303,7 +331,7 @@ define(function (require) {
          *
          * @param {Object} e Popup的`click`事件对象
          * @fires module:City#click 点击事件
-         * @protected
+         * @private
          */
         _onPopupClick: function (e) {
 
@@ -334,7 +362,7 @@ define(function (require) {
          *
          * @param {Object} e `Popup`的`show`事件
          * @fires module:City#show
-         * @protected
+         * @private
          */
         _onPopupShow: function (e) {
 
@@ -368,7 +396,7 @@ define(function (require) {
         /**
          * 构建选单HTML
          *
-         * @protected
+         * @private
          * @param {Array.Object} tabs 标签配置
          * @return {string}
          */

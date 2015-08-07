@@ -21,8 +21,11 @@ define(function (require) {
      * @extends module:Control
      * @requires lib
      * @requires Control
+     * @requires Panel
+     * @requires Mask
      * @exports Dialog
      * @example
+     * <button id="newDialog">普通青年(呃，普通窗口)</button>
      * new Dialog({
      *     main: '',
      *     content: '内容',
@@ -37,7 +40,7 @@ define(function (require) {
      *
      *  }).render();
      */
-    var Dialog = Control.extend({
+    var Dialog = Control.extend(/** @lends module:Dialog.prototype */{
 
         /**
          * 控件类型标识
@@ -56,15 +59,19 @@ define(function (require) {
          * @property {(string | HTMLElement)} options.main 控件渲染容器
          * @property {string} options.title 控件标题
          * @property {string} options.content 控件内容
+         * @property {boolean|HTMLElement} options.close 是否有关闭按钮,无的话传false值
+         * @property {string} options.footer 控件脚注
          * @property {number} options.width 控件的默认宽度. 这个是必填的. 我们也提供了默认宽度, 400px;
          * @property {number} options.height 控件的默认高度, 这个参数是可选的.
          *                                   在不设定此高度时, 我们会根据对话框的实际高度来做视窗居中定位.
-         * @property {string} options.mask 是否显示覆盖层
-         * @property {string} options.level 当前dialog的z-index
-         * @property {string} options.footer 控件脚注
+         * @property {boolean} options.mask 是否显示覆盖层
+         * @property {boolean} options.maskClickClose 当遮罩被点击时是否关闭覆盖层
+         * @property {boolean} options.hideDispose 隐藏时自动销毁
+         * @property {number} options.level 当前dialog的z-index
          * @property {Array.Object} options.buttons 控件脚注中的按钮
          * @property {Array.Object} options.buttons.text 脚注按钮的文字
          * @property {Array.Object} options.buttons.part 控件按钮的标识
+         * @protected
          */
         options: {
 
@@ -104,6 +111,7 @@ define(function (require) {
          *
          * @param {Object} options 控件配置项
          * @see module:Control#options
+         * @override
          * @private
          */
         init: function (options) {
@@ -111,6 +119,11 @@ define(function (require) {
             this.visible = false;
         },
 
+        /**
+         * 初始化对话框控件的 DOM 结构
+         *
+         * @override
+         */
         initStructure: function () {
 
             var helper = this.helper;
@@ -160,6 +173,13 @@ define(function (require) {
 
         },
 
+        /**
+         * 创建一个panel
+         *
+         * @param {string} part 唯一标识id名
+         * @return {module:Panel} Panel 实例
+         * @protected
+         */
         createPanel: function (part) {
             var id = this.id + part;
             return new Panel({
@@ -167,10 +187,22 @@ define(function (require) {
             });
         },
 
+        /**
+         * 获得关闭按钮的DOM结构
+         *
+         * @param {(string|HTMLElement)} close 关闭按钮的内容
+         * @return {(string|HTMLElement)} close
+         * @protected
+         */
         getCloseHTML: function (close) {
             return close;
         },
 
+        /**
+         * 初始化对话框事件绑定
+         *
+         * @override
+         */
         initEvents: function () {
 
             this.delegate(this.main, 'click', '[data-action]', this.onMainClicked);
@@ -182,7 +214,9 @@ define(function (require) {
 
         /**
          * 当窗口主内容被点击时的处理
+         *
          * @param {Event} e 点击事件对象
+         * @private
          */
         onMainClicked: function (e) {
 
@@ -223,6 +257,11 @@ define(function (require) {
 
         },
 
+        /**
+         * 重绘BoxGroup控件
+         *
+         * @override
+         */
         repaint: require('./painter').createRepaint(
             Control.prototype.repaint,
             {
@@ -339,7 +378,8 @@ define(function (require) {
          * 调整Dialog大小
          *
          * @param {number} width 宽度
-         * @return {Dialog}
+         * @return {module:Dialog} 当前 Dialog 实例
+         * @public
          */
         setWidth: function (width) {
             this.set('width', width);
@@ -348,8 +388,10 @@ define(function (require) {
 
         /**
          * 设定高度
+         *
          * @param {number} height 高度
-         * @return {Dialog}
+         * @return {module:Dialog} 当前 Dialog 实例
+         * @public
          */
         setHeight: function (height) {
             this.set('height', height);
@@ -360,7 +402,7 @@ define(function (require) {
          * 设置dialog的标题
          *
          * @param {string} title 对话框的标题
-         * @return {Dialog}
+         * @return {module:Dialog} 当前 Dialog 实例
          * @public
          */
         setTitle: function (title) {
@@ -370,7 +412,9 @@ define(function (require) {
 
         /**
          * 返回当前窗口的title部分
+         *
          * @return {Element}
+         * @public
          */
         getTitle: function () {
             return this.helper.getPart('title');
@@ -380,7 +424,7 @@ define(function (require) {
          * 设置dialog的主体内容，可以是HTML内容
          *
          * @param {string} content 内容字符串
-         * @return {Dialog}
+         * @return {module:Dialog} 当前 Dialog 实例
          * @public
          */
         setContent: function (content) {
@@ -390,7 +434,9 @@ define(function (require) {
 
         /**
          * 返回当前窗口的内容部分
+         *
          * @return {Element}
+         * @public
          */
         getContent: function () {
             return this.helper.getPart('body');
@@ -400,7 +446,7 @@ define(function (require) {
          * 设置dialog的页脚内容
          *
          * @param {string} footer 内容字符串
-         * @return {Dialog}
+         * @return {module:Dialog} 当前 Dialog 实例
          * @public
          */
         setFooter: function (footer) {
@@ -410,7 +456,9 @@ define(function (require) {
 
         /**
          * 返回当前窗口的footer部分
+         *
          * @return {Element}
+         * @public
          */
         getFooter: function () {
             return this.helper.getPart('footer');
@@ -418,8 +466,9 @@ define(function (require) {
 
         /**
          * 显示窗口
+         *
+         * @return {module:Dialog} 当前 Dialog 实例
          * @public
-         * @return {Dialog}
          */
         show: function () {
             this.set('visible', true);
@@ -428,8 +477,8 @@ define(function (require) {
 
         /**
          * 隐藏窗口
+         * @return {module:Dialog} 当前 Dialog 实例
          * @public
-         * @return {Dialog}
          */
         hide: function () {
             this.set('visible', false);
@@ -441,9 +490,11 @@ define(function (require) {
 
         /**
          * 添加一个按钮
+         *
          * @param {string} part 按钮标识, 例如: confirm/cancel
          * @param {string} text 按钮文字
          * @return {Element}
+         * @public
          */
         addFooterButton: function (part, text) {
             var buttons = this.buttons || [];
@@ -459,8 +510,10 @@ define(function (require) {
 
         /**
          * 获取一个按钮
+         *
          * @param  {string} part 按钮标识
          * @return {Element}
+         * @public
          */
         getFooterButton: function (part) {
             return this.helper.getPart(part);
@@ -469,9 +522,9 @@ define(function (require) {
         /**
          * 销毁，注销事件，解除引用
          *
-         * @public
          * @fires module:Dialog#dispose
          * @fires module:Dialog#beforedispose
+         * @private
          */
         dispose: function () {
 
@@ -498,6 +551,12 @@ define(function (require) {
      */
     Dialog.Mask = Mask;
 
+    /**
+     * 默认alert选项值
+     *
+     * @const
+     * @type {Object}
+     */
     Dialog.DEFAULT_ALERT_OPTIONS = {
         title: '警告',
         close: false,
@@ -512,6 +571,7 @@ define(function (require) {
 
     /**
      * 警告窗口
+     *
      * @param  {Ojbect} options 参数
      * @return {Promise} 当用户点击了ok时, 此promise会被`resolve`
      */
@@ -538,6 +598,12 @@ define(function (require) {
         return defer.promise();
     };
 
+    /**
+     * 默认confirm选项值
+     *
+     * @const
+     * @type {Object}
+     */
     Dialog.DEFAULT_CONFIRM_OPTIONS = {
         title: '请确认',
         close: false,
@@ -555,6 +621,7 @@ define(function (require) {
 
     /**
      * 确认窗口
+     *
      * @param  {Object} options 窗口参数
      * @return {Promise}
      */

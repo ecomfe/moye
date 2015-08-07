@@ -7,6 +7,7 @@
 
 define(function (require) {
 
+    var $ = require('jquery');
     var lib = require('../lib');
     var main = require('../main');
 

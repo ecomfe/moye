@@ -44,7 +44,7 @@ define(function (require) {
 
             return function (changes, changesIndex) {
                 // 临时索引，不能直接修改`changesIndex`，会导致子类的逻辑错误
-                var index = $.extend({}, changesIndex);
+                var index = lib.extend({}, changesIndex);
 
                 // 按顺序执行repianter
                 for (var i = 0; i < painters.length; i++) {

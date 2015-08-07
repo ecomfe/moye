@@ -20,7 +20,26 @@ define(function (require) {
      * @extends module:Control
      * @requires lib
      * @requires Control
+     * @requires Popup
      * @exports Select
+     * @example
+     * <div class="content">
+     *   <div id='content_left'>
+     *       <div>筛选：<div id="hover" class="ui-select"></div></div>
+     *   </div>
+     * </div>
+     * new Select({
+     *   main: document.getElementById('hover'),
+     *   mode: 'over',
+     *   datasource: [
+     *     {value: 0, name: '不限'},
+     *     {value: 1, name: '中关村、上地'},
+     *     {value: 2, name: '公主坟商圈'},
+     *     {value: 3, name: '劲松潘家园'},
+     *     {value: 4, name: '亚运村'},
+     *     {value: 5, name: '北京南站商圈超长'}
+     *   ]
+     * }).render();
      */
     var Select = Control.extend(/** @lends module:Select.prototype */{
 
@@ -35,24 +54,24 @@ define(function (require) {
         /**
          * 控件配置项
          *
-         * @private
          * @name module:Select#options
          * @type {Object}
-         * @property {boolean} options.disabled 控件的不可用状态
-         * @property {(string | HTMLElement)} options.main 控件渲染容器
          * @property {number} options.maxLength 显示选中值时的限度字节长度
          * @property {string} options.ellipsis maxLength 限制后的附加的后缀字符
-         * @property {(string | HTMLElement)} options.target 计算选单显示时
-         * 相对位置的目标对象
          * @property {number} options.columns 选项显示的列数，默认为 1 列
+         * @property {string} options.ellipsis selectedClass 选中项的 class
+         * @property {boolean} options.disabled 控件的不可用状态
+         * @property {(string | HTMLElement)} options.main 控件渲染容器
+         * @property {(string | HTMLElement)} options.target 计算选单显示时
+         *           相对位置的目标对象
          * @property {string} options.prefix 控件class前缀，同时将作为main的class之一
-         * @property {string} options.isNumber 控件值的类型是否限制为数字
          * @property {?Array=} options.datasource 填充下拉项的数据源
-         * 推荐格式 { text: '', value: '' }, 未指定 value 时会根据 valueUseIndex 的
-         * 设置使用 text 或自动索引值，可简写成字符串 '北京, 上海, 广州' 或
-         * '北京:010, 上海:021, 广州:020'
+         *           推荐格式 { text: '', value: '' }, 未指定 value 时会根据 valueUseIndex 的
+         *           设置使用 text 或自动索引值，可简写成字符串 '北京, 上海, 广州' 或
+         *           '北京:010, 上海:021, 广州:020'
          * @property {bool} options.valueUseIndex datasource 未指定 value 时是否
-         * 使用自动索引值
+         *           使用自动索引值
+         * @private
          */
         options: {
 
@@ -83,12 +102,14 @@ define(function (require) {
             /**
              * 数据适配器
              * 在生成控件时重写此参数, 可以灵活适配各种数据格式
+             *
              * @type {Object}
              */
             adapter: {
 
                 /**
                  * 适配下拉选项数据, 数据流动方向: 用户数据 => 控件数据
+                 *
                  * @param {Object} option datasource中的一项
                  * @return {Object} 返回一个选项数据对象, 格式为 {name: 'name', value: 'value'}
                  */
@@ -99,6 +120,7 @@ define(function (require) {
                 /**
                  * 适配提示文本
                  * 当某个选项被选中时, 会调用此方法来适配显示的文本
+                 *
                  * @param  {Object} option datasource中的一茂
                  * @return {string} 适合显示的文本
                  */
@@ -110,6 +132,7 @@ define(function (require) {
 
             /**
              * 自动在label结尾处添加一个小三角icon作为状态指示器
+             *
              * @type {Boolean}
              */
             indicator: {
@@ -121,30 +144,59 @@ define(function (require) {
 
         /**
          * 初始化参数
+         *
          * @param  {Object} options 参数
+         * @see module:Select#options
          */
         init: function (options) {
+
             this.$parent(options);
+
             this.datasource = this.datasource || [];
-            var option = this.getOption(this.value);
-            this.value = option ? option.value : null;
+
+            var value = this.handleValue(this.value);
+
+            var option = this.getOption(value);
+
+            this.value = option ? this.handleValue(option.value) : null;
+
+        },
+
+        /**
+         * 处理各种value的值
+         *
+         * @param  {string} value 值
+         * @return {string}
+         * @private
+         */
+        handleValue: function (value) {
+            return value == null ? '' : value + '';
         },
 
         /**
          * 在datasource中查找value为value的项
+         *
          * @param  {string} value 值
-         * @return {Object}
+         * @return {Object} null
+         * @protected
          */
         getOption: function (value) {
+
             for (var i = 0, datasource = this.datasource, len = datasource.length; i < len; ++i) {
                 var option = this.adapter.toOption.call(this, datasource[i]);
                 if (option.value === value) {
                     return option;
                 }
             }
+
             return null;
         },
 
+        /**
+         * 初始化Select控件的 DOM 结构
+         *
+         * @override
+         */
         initStructure: function () {
 
             var skins = ['select'];
@@ -189,10 +241,20 @@ define(function (require) {
                 + this.getIndicatorHTML();
         },
 
+        /**
+         * 初始化Select控件的事件绑定
+         *
+         * @override
+         */
         initEvents: function () {
             this.delegate(this.main, 'click', this.onMainClicked);
         },
 
+        /**
+         * 重绘Select控件
+         *
+         * @override
+         */
         repaint: require('./painter').createRepaint(
             Control.prototype.repaint,
             {
@@ -235,18 +297,19 @@ define(function (require) {
                     var selectedClass = helper.getPartClassName('option-selected');
                     var optionClass = helper.getPrimaryClassName('option');
 
-                    value = this.isNumber ? +value : value;
+                    value = this.handleValue(value);
 
                     // 在子元素里遍历, 如果其值与value相等, 则选中, 不相等则清空选项的选中样式
                     // 如果没有任何选项与value相等, 此时要显示defalutLabel, 并去掉`已选择`状态
                     var option = lib.reduce(
                         $('.' + optionClass, this.popup.main),
                         function (result, element, i) {
+
                             var item = $(element);
                             var option = this.adapter.toOption.call(this, datasource[i]);
 
                             // 否则移除它的选中样式
-                            if (option.value !== value) {
+                            if (this.handleValue(option.value) !== value) {
                                 item.removeClass(selectedClass);
                             }
                             // 如果value与option相等(也就是找到了)
@@ -255,7 +318,9 @@ define(function (require) {
                                 item.addClass(selectedClass);
                                 result = option;
                             }
+
                             return result;
+
                         },
                         null,
                         this
@@ -267,7 +332,7 @@ define(function (require) {
                     // 找到了结果
                     if (option) {
                         text = this.adapter.toLabel.call(this, option);
-                        input.value = value;
+                        input.value = this.handleValue(value);
                         this.addState('selected');
                     }
                     // 没找到结果
@@ -282,6 +347,12 @@ define(function (require) {
             }
         ),
 
+        /**
+         * 生成选项指示器的HTML
+         *
+         * @return {string}
+         * @protected
+         */
         getIndicatorHTML: function () {
             var indicator = this.indicator;
             if (indicator === false) {
@@ -296,12 +367,16 @@ define(function (require) {
 
         /**
          * 生成选项的HTML
+         *
          * @param {Object} option 选项配置
          * @param {number} index  当前选项的序号
          * @return {string}
+         * @protected
          */
         getOptionHTML: function (option, index) {
+
             option = this.adapter.toOption.call(this, option, index);
+
             return ''
                 + '<a href="#" class="' + this.helper.getPartClassName('option') + '" data-action="select" '
                 +     'data-value="' + option.value + '" '
@@ -328,9 +403,16 @@ define(function (require) {
          * @protected
          */
         pick: function (target) {
-            var value = $(target).data('value');
-            if (value !== this.value) {
+
+            // 这里不使用$(target).data('value')的原因是:
+            // 如果选项值是numberic，jQuery会自动贱贱地把它从字符串转到数字
+            // 我们想要的是字符串
+            var value = target.getAttribute('data-value');
+
+            if (value !== this.handleValue(this.value)) {
+
                 this.set('value', value);
+
                 /**
                  * @event module:Select#change
                  * @type {Object}
@@ -342,6 +424,7 @@ define(function (require) {
                     value: value
                 });
             }
+
         },
 
         /**
@@ -358,6 +441,7 @@ define(function (require) {
 
         /**
          * 设置值
+         *
          * @param {string} value 值
          * @return {Select}
          */
@@ -404,6 +488,7 @@ define(function (require) {
 
         /**
          * 隐藏浮层后的处理，主要是为了去掉高亮样式
+         *
          * @param {Event} e 浮层隐藏事件对象
          * @protected
          */
@@ -417,10 +502,21 @@ define(function (require) {
             }
         },
 
+        /**
+         * main点击时阻止默认行为
+         *
+         * @param {Event} e 浮层隐藏事件对象
+         * @protected
+         */
         onMainClicked: function (e) {
             e.preventDefault();
         },
 
+        /**
+         * 销毁单复选框控件实例
+         *
+         * @override
+         */
         dispose: function () {
             this.undelegate(this.main, 'click', this.onMainClicked);
             this.popup.destroy();

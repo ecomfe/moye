@@ -36,6 +36,7 @@ define(function (require) {
             message: {
                 skin: 'validate-tip',
                 arrow: 'rc',
+                mode: 'static',
                 offset: {
                     x: 5
                 }
@@ -43,6 +44,7 @@ define(function (require) {
             icon: {
                 content: '校验中...',
                 skin: 'validate-tip-icon',
+                mode: 'static',
                 arrow: 'rc',
                 offset: {
                     x: 5
@@ -57,6 +59,7 @@ define(function (require) {
             var main = target.main;
 
             var msg = this.message;
+
             if (msg) {
                 this.message = new Tip(
                     lib.extend({target: main}, lib.clone(msg))
@@ -64,6 +67,7 @@ define(function (require) {
             }
 
             var icon = this.icon;
+
             if (icon) {
                 this.icon = new Tip(
                     lib.extend({target: main}, lib.clone(icon))
@@ -71,6 +75,7 @@ define(function (require) {
             }
 
             var bound = $.proxy(this.onValidityChange, this);
+
             lib.each(this.listen, function (eventName) {
                 target.on(eventName, bound);
             });
@@ -85,9 +90,21 @@ define(function (require) {
          * @param {Validity} validity 合法性
          */
         show: function (validity) {
-            var popup = this.message;
-            popup.set('content', this.getMessage(validity));
-            popup.show();
+
+            var message = this.message;
+
+            // fix
+            // 由于我们把提示的组件从 popup 改成了 tip，而 tip 是有背景框和小箭头的
+            // 所以它就只能用来显示错误信息了。
+            // 那么在校验正确的时候呢，要把它隐藏起来
+            if (validity.isValid()) {
+                message.hide();
+            }
+            else {
+                message.set('content', this.getMessage(validity));
+                message.show();
+            }
+
         },
 
         /**

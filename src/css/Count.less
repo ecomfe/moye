@@ -1,0 +1,226 @@
+/**
+ * @file MOYE - 倒计时 - 样式
+ * @author liuxiaqi(liuxiaqi@baidu.com)
+ */
+
+@import './dep.less';
+@import './variable.less';
+@import './mixin.less';
+
+
+.inline-block() {
+    display: inline-block;
+    *display: inline;
+    *zoom: 1;
+}
+
+.@{moye-prefix}-count-default {
+    background-color: #ccc;
+    .digital-box() {
+        .inline-block();
+        width: 110px;
+        height: 115px;
+        padding: 0;
+        margin: 5px;
+        font-size: 1em;
+        position: relative;
+        overflow: hidden;    
+    }
+
+    .digital-span() {
+        position: absolute;
+        .inline-block();
+        width: 110px;
+        height: 94px;
+        line-height: 94px;
+        font-size: 4.5em;
+        letter-spacing: 10px;
+        text-align: center;
+        padding-left: 5px;    
+    }
+
+    .@{moye-prefix}-count {
+        color: #000;
+        padding: 5px;
+
+        &-weeks {
+            .digital-box();
+    
+            .@{moye-prefix}-count {
+                height: 94px;
+            }
+
+            span {
+                .digital-span();
+            }
+        }
+
+        &-days {
+            .digital-box();
+
+            .@{moye-prefix}-count {
+                height: 94px;
+            }
+
+            span {
+                .digital-span();
+            }
+        }
+
+        &-hours {
+            .digital-box();
+
+            .@{moye-prefix}-count {
+                height: 94px;
+            }
+
+            span {
+                .digital-span();
+            }
+        }
+
+        &-minutes {
+            .digital-box();
+
+            .@{moye-prefix}-count {
+                height: 94px;
+            }
+
+            span {
+                .digital-span();
+            }
+        }
+
+        &-seconds {
+            .digital-box();
+
+            .@{moye-prefix}-count {
+                height: 94px;
+            }
+
+            span {
+                .digital-span();
+            }
+        }
+
+        lable {
+            margin-top: 94px;
+        }
+
+        .@{moye-prefix}-count-digital-bottom {
+            top: 94px;
+        }
+
+        .@{moye-prefix}-count-unit {
+            .inline-block();
+            width: 95%;
+            text-align: right;
+        }
+    }    
+}
+
+.@{moye-prefix}-count-custom {
+    .digital-box() {
+        .inline-block();
+        width: 110px;
+        height: 115px;
+        padding: 0;
+        margin: 5px;
+        font-size: 1em;
+        position: relative;
+        background: url(../img/dash.png) no-repeat;
+        overflow: hidden;    
+    }
+
+    .digital-span() {
+        position: absolute;
+        .inline-block();
+        width: 110px;
+        height: 94px;
+        line-height: 94px;
+        font-size: 4.5em;
+        letter-spacing: 10px;
+        text-align: center;
+        padding-left: 5px;    
+    }
+
+    .@{moye-prefix}-count {
+        color: #000;
+        padding: 5px;
+
+        &-weeks {
+            .digital-box();
+    
+            .@{moye-prefix}-count {
+                height: 94px;
+            }
+
+            span {
+                .digital-span();
+            }
+        }
+
+        &-days {
+            .digital-box();
+
+            .@{moye-prefix}-count {
+                height: 94px;
+            }
+
+            span {
+                .digital-span();
+            }
+        }
+
+        &-hours {
+            .digital-box();
+
+            .@{moye-prefix}-count {
+                height: 94px;
+            }
+
+            span {
+                .digital-span();
+            }
+        }
+
+        &-minutes {
+            .digital-box();
+
+            .@{moye-prefix}-count {
+                height: 94px;
+            }
+
+            span {
+                .digital-span();
+            }
+        }
+
+        &-seconds {
+            .digital-box();
+
+            .@{moye-prefix}-count {
+                height: 94px;
+            }
+
+            span {
+                .digital-span();
+            }
+        }
+
+        lable {
+            margin-top: 94px;
+        }
+
+        .@{moye-prefix}-count-digital-bottom {
+            top: 94px;
+        }
+
+        .@{moye-prefix}-count-unit {
+            .inline-block();
+            width: 95%;
+            text-align: right;
+        }
+    }    
+
+}

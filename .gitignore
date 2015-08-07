@@ -1,4 +1,5 @@
 node_modules
+output
 .grunt
 .DS_Store
 dep

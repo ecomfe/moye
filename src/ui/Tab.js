@@ -3,9 +3,9 @@
  * Copyright 2014 Baidu Inc. All rights reserved.
 
  * @file 选项卡组件
- * @author chris(wfsr@foxmail.com)
- * @author Leon(leon@outlook.com)
- * @author kaivean(kaisey2012@163.com)
+ * @author chris (wfsr@foxmail.com)
+ * @author Leon (leon@outlook.com)
+ * @author kaivean (kaisey2012@163.com)
  */
 
 define(function (require) {
@@ -69,7 +69,7 @@ define(function (require) {
 
         },
 
-        initEvents: function () {
+        initEvents: function () {           
             // 先给选项卡父容器添加事件监听
             switch (this.mode) {
                 case 'click':

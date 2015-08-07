@@ -17,10 +17,20 @@ define(function (require) {
      *
      * @extends module:Control
      * @requires Control
+     * @requires painter
      * @exports Rating
      */
-    var Rating = Control.extend({
+    var Rating = Control.extend(/** @lends module:Rating.prototype */{
 
+        /**
+         * 控件配置项
+         *
+         * @name module:City#options
+         * @type {Object}
+         * @property {string} options.max 最多星星数
+         * @property {string} options.value 星级
+         * @protected
+         */
         options: {
             // 最多星星数
             max: 5,
@@ -42,6 +52,7 @@ define(function (require) {
          *
          * @param {Object} options 控件配置项
          * @see module:Rating#options
+         * @override
          * @private
          */
         init: function (options) {
@@ -51,6 +62,11 @@ define(function (require) {
             this.itemClass = helper.getPartClassName('star');
         },
 
+        /**
+         * 初始化星号评级控件的 DOM 结构
+         *
+         * @override
+         */
         initStructure: function () {
             var helper = this.helper;
             var options = this.options;
@@ -82,6 +98,11 @@ define(function (require) {
             this.main.innerHTML = html.join('');
         },
 
+        /**
+         * 初始化星号评级控件的事件绑定
+         *
+         * @override
+         */
         initEvents: function () {
             this.$stars = $(this.main).find('.' + this.itemClass);
 
@@ -95,6 +116,7 @@ define(function (require) {
         /**
          * 重绘
          *
+         * @override
          * @protected
          */
         repaint: painter.createRepaint(
