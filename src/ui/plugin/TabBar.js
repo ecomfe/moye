@@ -1,6 +1,8 @@
 /**
  * @file moye - Tab - Bar
  * @author kaivean(kaisey2012@163.com)
+ * @module TabBar
+ * @extends module:Plugin
  */
 
 define(function (require) {
@@ -8,15 +10,16 @@ define(function (require) {
     var $ = require('jquery');
     var Plugin = require('./Plugin');
 
-    var TabBar = Plugin.extend({
+    var TabBar = Plugin.extend(/** @lends module:TabBar.prototype */{
 
         $class: 'TabBar',
 
-        initialize: function (options) {
-
-            this.$parent(options);
-        },
-
+        /**
+         * 激活
+         *
+         * @public
+         * @param {module:Tab} ctr 标签控件
+         */
         activate: function (ctr) {
 
             this.$parent(ctr);
@@ -30,6 +33,8 @@ define(function (require) {
 
         /**
          * Tab切换时
+         *
+         * @private
          * @param  {event} e 输入事件
          */
         onChange: function (e) {
@@ -43,6 +48,8 @@ define(function (require) {
 
         /**
          * 控件渲染后
+         *
+         * @private
          */
         onAfterrender: function () {
             var items = $(this.control.itemClass, this.control.main);
@@ -53,6 +60,12 @@ define(function (require) {
             this.setBar(this.control.activeIndex);
         },
 
+        /**
+         * 设定当前 bar 的位置
+         *
+         * @private
+         * @param {number} i 位置
+         */
         setBar: function (i) {
             var items = $(this.control.itemClass, this.control.main);
             var barClass = '.' + this.control.helper.getPartClassName('bar');
@@ -62,6 +75,12 @@ define(function (require) {
             }, 500);
         },
 
+        /**
+         * 去激活
+         *
+         * @public
+         * @override
+         */
         inactivate: function () {
             var control = this.control;
             control.off('change');

@@ -9,16 +9,38 @@ define(function (require) {
     var Plugin = require('./Plugin');
     var lib = require('../lib');
 
-    var ButtonCooldown = Plugin.extend({
+    /**
+     * 按钮冷却插件
+     *
+     * @extends module:Plugin
+     * @requires module:Plugin
+     * @exports ButtonCountdown
+     */
+    var ButtonCooldown = Plugin.extend(/** @lends module:ButtonCountdown.prototype */{
 
         $class: 'ButtonCooldown',
 
+        /**
+         * 默认参数
+         *
+         * @type {Object}
+         * @param {string} options.message  提示消息模板
+         * @param {number} options.cooldown 冷却时长
+         * @param {number} options.interval 时间间隔
+         */
         options: {
             message: '!{count}秒',
             cooldown: 60000,
             interval: 1000
         },
 
+        /**
+         * 激活
+         *
+         * @public
+         * @override
+         * @param {module:Button} target 目标控件
+         */
         activate: function (target) {
             this.target = target;
             target.startCooldown  = $.proxy(this.startCooldown, this);
@@ -27,12 +49,19 @@ define(function (require) {
             this.updateButtonText = $.proxy(this.updateButtonText, this);
         },
 
+        /**
+         * 销毁插件
+         *
+         * @public
+         */
         dispose: function () {
             this.target = null;
         },
 
         /**
          * 开始一个冷却计时器
+         *
+         * @public
          * @param  {number} cooldown 冷却总时长
          * @param  {number} interval 更新间隔
          * @param  {string} message 冷却提示文字
@@ -52,6 +81,8 @@ define(function (require) {
 
         /**
          * 停止冷却
+         *
+         * @public
          * @return {Control}
          */
         stopCooldown: function () {
@@ -63,12 +94,19 @@ define(function (require) {
             return this.target;
         },
 
+        /**
+         * 是否正在冷却
+         *
+         * @public
+         * @return {boolean}
+         */
         isCooling: function () {
             return !!this.cooldownTimer;
         },
 
         /**
          * 更新按钮的文字
+         *
          * @private
          */
         updateButtonText: function () {
@@ -83,6 +121,7 @@ define(function (require) {
 
         /**
          * 恢复按钮开始冷却前的文本
+         *
          * @private
          */
         restore: function () {

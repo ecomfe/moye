@@ -16,10 +16,8 @@ define(function (require) {
      * 私有函数或方法
      *
      * @type {Object}
-     * @namespace
-     * @name module:LazyImg~privates
      */
-    var privates = /** @lends module:LazyImg~privates */ {
+    var privates = {
 
         /**
          * 加载在可视区域的图片
@@ -29,7 +27,7 @@ define(function (require) {
          * @private
          */
         load: function (scroll, size) {
-            var _src   = this.options.src;
+            var attr   = this.options.src;
             var offset = this.options.offset;
 
             // 剔除已加载的未加载图片元素数组
@@ -38,7 +36,7 @@ define(function (require) {
                 img = $(img);
 
                 var el = img.parent();
-                var src = img.attr(_src);
+                var src = img.attr(attr);
 
                 if (!el.height() || !src) {
                     return false;
@@ -58,7 +56,7 @@ define(function (require) {
                 // 如果在可视区域之内
                 if (!(isOverRight || isOverBottom) && !(isLessLeft || isLessTop)) {
                     img.attr('src', src);
-                    img.removeAttr(_src);
+                    img.removeAttr(attr);
                     return false;
                 }
 
@@ -74,6 +72,7 @@ define(function (require) {
             }
         }
     };
+
     /**
      * 图片延迟加载
      *
@@ -128,12 +127,16 @@ define(function (require) {
          * @see module:LazyImg#options
          * @private
          */
-        initialize: function (options, main) {
+        initialize: function (options) {
+
             this.setOptions(options);
-            main = this.main = lib.g(options.main) || $('.' + options.main)[0];
+
+            var main = this.main = lib.g(options.main) || $('.' + options.main)[0];
+
             this.imgs = options.imgs || $('img', main).toArray();
 
             Lazy.add(main, $.proxy(privates.load, this), options.offset);
+
         }
 
     }).implement(lib.configurable);
