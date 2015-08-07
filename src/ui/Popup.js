@@ -44,7 +44,7 @@ define(function (require) {
          * @property {(string | HTMLElement)} target 计算弹出层相对位置的目标对象
          * @property {string | Array.<HTMLElement>} triggers 触发显示弹出层的节点
          * 当指定了 liveTriggers 时只能用 string 类型指定 class
-         * @property {string | HTMLElement} liveTriggers 动态 triggers 的父元素节点
+         * @property {(string | HTMLElement)} liveTriggers 动态 triggers 的父元素节点
          * @property {string} content 提示的内容信息
          * @property {string} dir 弹出层相对 target 的位置，支持8个方向
          * 可选值（默认为 bl）：
@@ -66,7 +66,7 @@ define(function (require) {
              *
              * 触发显示的元素设定请参看triggers和liveTriggers
              *
-             * @type {string | HTMLElement}
+             * @type {(string | HTMLElement)}
              */
             target: '',
 
@@ -77,14 +77,14 @@ define(function (require) {
              *
              * 当指定了 liveTriggers 时只能用 string 类型指定 class
              *
-             * @type {string | Array.<HTMLElement>}
+             * @type {(string | Array.<HTMLElement>)}
              */
             triggers: '',
 
             /**
              * 动态 triggers 的父元素节点
              *
-             * @type {string | HTMLElement}
+             * @type {(string | HTMLElement)}
              */
             liveTriggers: '',
 
@@ -229,6 +229,7 @@ define(function (require) {
 
         /**
          * 设定挂靠的Element
+         * 
          * @param {Element} target 挂靠元素
          * @return {Popup}
          */
@@ -246,8 +247,8 @@ define(function (require) {
          * 如果不指定liveTriggers, 那么直接对triggers进行事件绑定
          *
          * @private
-         * @param {Array.<Element> | string} triggers 触发popup显示的元素们
-         * @param {Array.<Element> | string} liveTriggers 动态触发容器
+         * @param {(Array.<Element> | string)} triggers 触发popup显示的元素们
+         * @param {(Array.<Element> | string)} liveTriggers 动态触发容器
          */
         bindTriggersEvents: function (triggers, liveTriggers) {
             var mode = this.mode;
@@ -286,7 +287,7 @@ define(function (require) {
          * 清除triggers的各种事件绑定
          *
          * @param {Array.<Element>} triggers 触发popup显示的元素们
-         * @param {Arra.<Element> | string} liveTriggers 动态触发显示元素们
+         * @param {(Arra.<Element> | string)} liveTriggers 动态触发显示元素们
          * @private
          */
         clearTriggersEvents: function (triggers, liveTriggers) {
@@ -541,6 +542,7 @@ define(function (require) {
 
         /**
          * 浮层哟, 被点击了呢~
+         * 
          * @fires module:Popup#click 浮层点击事件
          * @param {Event} e 点击事件
          */

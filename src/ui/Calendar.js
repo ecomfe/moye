@@ -1,9 +1,10 @@
 /**
  * Moye (Zhixin UI)
  * Copyright 2014 Baidu Inc. All rights reserved.
+ *
  * @file 日历
  * @author chris(wfsr@foxmail.com)
- *         Leon(leon@outlook.com)
+ * @author Leon(leon@outlook.com)
  */
 
 define(function (require) {
@@ -46,8 +47,8 @@ define(function (require) {
      * @requires Popup
      * @exports Calendar
      * @example
-     * &lt;input type="text" class="input triggers" /&gt;
-     * &lt;input type="button" value="click" class="triggers" /&gt;
+     * <input type="text" class="input triggers" >;
+     * <input type="button" value="click" class="triggers" >;
      * new Calendar({
      *     dateFormat: 'yyyy-MM-dd(WW)',    // W为星期几，WW带周作前缀
      *     triggers: '.triggers',
