@@ -10,7 +10,7 @@
     <div class="main-content">
         <p class="main-title">MOYE</p>
         <p class="main-text">一个轻便的UI组件库</p>
-        <div class="main-btn"><a href="/api">开始体验</a></div>
+        <div class="main-btn"><a href="{{ url_for('introduction/get-started.html') }}">开始体验</a></div>
     </div>
 </div>
 
