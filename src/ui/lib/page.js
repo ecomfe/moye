@@ -28,6 +28,7 @@ define(function (require) {
         /**
          * 获取横向滚动量
          *
+         * @public
          * @method module:lib.getScrollLeft
          * @return {number} 横向滚动偏移量
          */
@@ -38,6 +39,7 @@ define(function (require) {
         /**
          * 获取纵向滚动量
          *
+         * @public
          * @method module:lib.getScrollLeft
          * @return {number} 纵向滚动偏移量
          */
@@ -48,6 +50,7 @@ define(function (require) {
         /**
          * 获取页面视觉区域宽度
          *
+         * @public
          * @method module:lib.getViewWidth
          * @return {number} 页面视觉区域宽度
          */
@@ -58,6 +61,7 @@ define(function (require) {
         /**
          * 获取页面视觉区域高度
          *
+         * @public
          * @method module:lib.getViewHeight
          * @return {number} 页面视觉区域高度
          */

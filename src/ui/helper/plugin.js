@@ -19,7 +19,7 @@ define(function (require) {
          *
          * @method module:Helper#createPluginInstance
          * @param  {(string | Function | Object)} conf 配置
-         * @return {Plugin}
+         * @return {module:Plugin}
          */
         createPluginInstance: function (conf) {
 

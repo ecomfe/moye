@@ -460,6 +460,17 @@ define(function (require) {
     };
 
     /**
+     * 暴露一个全局变量
+     * 目的是： 使用商业知心中间页展现点击查看工具（浏览器插件）
+     * 工具详情的具体链接 http://wiki.baidu.com/pages/viewpage.action?pageId=40195676
+     * 根据工具要求，需要暴露一个和options一样的全局变量__logInfo__
+     * 方便使用浏览器插件工具查看点击日志统计
+     * 
+     * @type {Object}
+     */
+    window.__logInfo__ = options;
+
+    /**
      * 绑定 P1 参数索引值
      *
      * @memberof module:log

@@ -44,6 +44,7 @@ define(function (require) {
         /**
          * 判断是否字符串
          *
+         * @public
          * @method module:lib.isString
          * @param {*} obj 待判断的输入
          * @return {boolean} 类型判断结果
@@ -51,6 +52,7 @@ define(function (require) {
         /**
          * 判断是否数组
          *
+         * @public
          * @method module:lib.isArray
          * @param {*} obj 待判断的输入
          * @return {boolean} 类型判断结果
@@ -58,6 +60,7 @@ define(function (require) {
         /**
          * 判断是否函数
          *
+         * @public
          * @method module:lib.isFunction
          * @param {*} obj 待判断的输入
          * @return {boolean} 类型判断结果
@@ -65,6 +68,7 @@ define(function (require) {
         /**
          * 判断是否日期对象
          *
+         * @public
          * @method module:lib.isDate
          * @param {*} obj 待判断的输入
          * @return {boolean} 类型判断结果
@@ -72,6 +76,7 @@ define(function (require) {
         /**
          * 判断是否对象
          *
+         * @public
          * @method module:lib.isObject
          * @param {*} obj 待判断的输入
          * @return {boolean} 类型判断结果
@@ -79,6 +84,7 @@ define(function (require) {
         /**
          * 判断是否为null
          *
+         * @public
          * @method module:lib.isNull
          * @param {*} obj 待判断的输入
          * @return {boolean}
@@ -86,6 +92,7 @@ define(function (require) {
         /**
          * 判断是否为undefined
          *
+         * @public
          * @method module:lib.isUndefined
          * @param {*} obj 待判断的输入
          * @return {boolean}
@@ -93,6 +100,7 @@ define(function (require) {
         /**
          * 判断是否为数字
          *
+         * @public
          * @method module:lib.isNumber
          * @param {*} obj 待判断的输入
          * @return {boolean}
@@ -100,6 +108,7 @@ define(function (require) {
         /**
          * 判断是否为布尔类型
          *
+         * @public
          * @method module:lib.isBoolean
          * @param {*} obj 待判断的输入
          * @return {boolean}
@@ -107,6 +116,7 @@ define(function (require) {
         /**
          * 判断是否为正则表达式
          *
+         * @public
          * @method module:lib.isRegExp
          * @param {*} obj 待判断的输入
          * @return {boolean}
@@ -117,6 +127,7 @@ define(function (require) {
     /**
      * 判断一个对象是不是NaN
      *
+     * @public
      * @method module:lib.isNaN
      * @param  {*}       obj 判断的目标
      * @return {boolean}
@@ -128,6 +139,7 @@ define(function (require) {
     /**
      * 判断一个对象是不是HTML元素
      *
+     * @public
      * @method module:lib.isElement
      *
      * @param  {*}       obj 判断的目标
@@ -140,6 +152,7 @@ define(function (require) {
     /**
      * 判断一个对象是一个promise
      *
+     * @public
      * @method module:lib.isPromise
      * @param  {*}       obj 判断的对象
      * @return {boolean}
@@ -151,6 +164,7 @@ define(function (require) {
     /**
      * 返回一个对象的真实类型
      *
+     * @public
      * @method module:lib.typeOf
      *
      * @param  {*}      obj 处理的对象

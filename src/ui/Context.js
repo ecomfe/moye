@@ -70,7 +70,7 @@ define(function (require) {
      *
      * @public
      * @param {module:Control} control 控件
-     * @return {Context}
+     * @return {module:Context}
      */
     Context.prototype.add = function (control) {
         var id = control.id;
@@ -87,7 +87,7 @@ define(function (require) {
      *
      * @public
      * @param  {module:Control} control 控件
-     * @return {Context}
+     * @return {module:Context}
      */
     Context.prototype.remove = function (control) {
         delete this.controls[control.id];
@@ -99,7 +99,7 @@ define(function (require) {
      *
      * @public
      * @param {Object} properties 属性名和属性值
-     * @return {Context}
+     * @return {module:Context}
      */
     Context.prototype.fill = function (properties) {
         lib.extend(this.properties, properties || {});
@@ -111,6 +111,7 @@ define(function (require) {
         /**
          * 指定的对象是否为一个Context实例
          *
+         * @public
          * @method module:Context.isContext
          * @param  {*}      context 待检测对象
          * @return {boolean}
@@ -122,6 +123,7 @@ define(function (require) {
         /**
          * 获取指定id的上下文
          *
+         * @public
          * @method module:Context.get
          * @param  {string}  id 上下文id
          * @return {module:Context}
@@ -133,6 +135,7 @@ define(function (require) {
         /**
          * 生成一个上下文
          *
+         * @public
          * @method module:Context.create
          * @param  {string}  id 上下文id
          * @return {module:Context}

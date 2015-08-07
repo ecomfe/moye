@@ -16,10 +16,9 @@ define(function (require) {
      * 私有函数或方法
      *
      * @type {Object}
-     * @namespace
-     * @name module:Lazyload~privates
      */
     var privates = /** @lends module:Lazyload~privates */ {
+
         /**
          * 计算在可视区域内的延迟加载元素
          *
@@ -117,6 +116,7 @@ define(function (require) {
             this.scrolled = true;
             this._bound.compute();
         }
+
     };
 
     /**

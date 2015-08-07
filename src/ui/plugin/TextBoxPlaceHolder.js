@@ -1,6 +1,8 @@
 /**
  * @file moye - TextBox - placeholder
  * @author cxtom (cxtom2010@gamil.com)
+ * @module TextBoxPlaceHolder
+ * @extends module:Plugin
  */
 
 define(function (require) {
@@ -9,7 +11,7 @@ define(function (require) {
     var Plugin = require('./Plugin');
     var Popup = require('../Popup');
 
-    var TextBoxPlaceHolder = Plugin.extend({
+    var TextBoxPlaceHolder = Plugin.extend(/** @lends module:TextBoxPlaceHolder.prototype */{
 
         $class: 'TextBoxPlaceHolder',
 
@@ -24,6 +26,13 @@ define(function (require) {
 
         },
 
+        /**
+         * 激活
+         *
+         * @public
+         * @override
+         * @param {module:TextBox} textbox 输入框
+         */
         activate: function (textbox) {
 
             var ie = lib.browser.ie;

@@ -28,6 +28,7 @@ define(function (require) {
              *
              * 直接合并到Control对象上去, 不再搞srcOptions
              *
+             * @public
              * @param {Object} options 参数
              */
             setOptions: function (options) {
@@ -39,6 +40,7 @@ define(function (require) {
              *
              * 同时, 我们会把这些参数从option清除掉, 还你一片晴朗的天空~!
              *
+             * @public
              * @param {Object} options 参数
              */
             bindEvents: function (options) {
@@ -203,6 +205,8 @@ define(function (require) {
 
             /**
              * 销毁事件侦听池
+             *
+             * @public
              */
             destroyEvents: function () {
 
@@ -215,11 +219,8 @@ define(function (require) {
                 // 为了保险，把pool中的所有事件类型的所有callback数组清空掉。。。
                 array.each(pool, function (_, type, pool) {
 
-                    var listeners = pool[type];
-
-                    array.each(listeners, function (_, index, listeners) {
-                        listeners[index] = null;
-                    });
+                    // 很神奇有没有
+                    pool[type].length = 0;
 
                     pool[type] = null;
 

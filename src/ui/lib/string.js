@@ -14,6 +14,7 @@ define(function (require) {
         /**
          * 生成全局唯一标识
          *
+         * @public
          * @method module:lib.guid
          * @return {string} 新的全局唯一标识
          */
@@ -29,9 +30,9 @@ define(function (require) {
         /**
          * 将字符串转换成单词首字母大写
          *
+         * @public
          * @method module:lib.capitalize
          * @param {string} source 源字符串
-         *
          * @return {string}
          */
         capitalize: function (source) {
@@ -46,6 +47,7 @@ define(function (require) {
         /**
          * 测试是否包含指定字符
          *
+         * @public
          * @method module:lib.contains
          * @param {string} source 源字符串
          * @param {string} target 包含的字符串
@@ -63,6 +65,7 @@ define(function (require) {
         /**
          * 对目标数字进行 0 补齐处理
          *
+         * @public
          * @method module:lib.pad
          * @param  {(number | string)} source 需要补齐的数字或字符串
          * @param  {number}            width  补齐后的固定宽度（必须小于32）
@@ -93,6 +96,7 @@ define(function (require) {
         /**
          * 格式化字符串
          *
+         * @public
          * @method module:lib.format
          * @param  {string}    format 字符串格式化模板
          * @param  {...Object} args   最多不超过5个数据源

@@ -26,10 +26,9 @@ define(function (require) {
         /**
          * 校验插件的选项定义
          *
-         * @property {Object} options 验证规则选项配置
-         * @property {Array.<string>} options.listener 要自动触发校验的事件名称
-         * @property {boolean} options.failEarly 是否配置的校验规则出现失败时候，是否立刻停止校验
-         * @property {number} options.delay 校验规则延迟执行的时间
+         * @property {Array.<string>} listener 要自动触发校验的事件名称
+         * @property {boolean} failEarly 是否配置的校验规则出现失败时候，是否立刻停止校验
+         * @property {number} delay 校验规则延迟执行的时间
          */
         options: {
 
@@ -62,6 +61,9 @@ define(function (require) {
         },
 
         /**
+         * 激活插件
+         *
+         * @public
          * @override
          */
         activate: function (control) {
@@ -92,7 +94,7 @@ define(function (require) {
          * 以 `安静` 模式校验控件，即不抛出各种校验事件，也不更新对应的校验结果控件状态
          *
          * @param {Control} control 要校验的控件实例
-         * @return {Promise|boolean}
+         * @return {(Promise | boolean)}
          */
         checkValidity: function (control) {
             return this.check(control, true);
@@ -102,7 +104,7 @@ define(function (require) {
          * 校验控件
          *
          * @param {Control} control 要校验的控件实例
-         * @return {Promise|boolean}
+         * @return {(Promise | boolean)}
          */
         validate: function (control) {
             return this.check(control, false);
@@ -116,7 +118,7 @@ define(function (require) {
          * @fires module:Validator#validating
          * @param {Control} control 控件
          * @param {boolean} silent  是否释放校验事件+更新控件校验状态
-         * @return {Promise|bool} 如果校验规则中存在异步校验, 那么会返回一个promise; 否则会返回一个bool;
+         * @return {(Promise | boolean)} 如果校验规则中存在异步校验, 那么会返回一个promise; 否则会返回一个bool;
          */
         check: function (control, silent) {
             var me = this;
