@@ -11,41 +11,61 @@ define(
 
         var $ = require('jquery');
         var Control = require('./Control');
+        var painter = require('./painter');
 
         /**
          * 单复选框组件
          *
          * @extends module:Control
-         * @requires lib
          * @requires Control
+         * @requires painter
          * @exports BoxGroup
+         * @example
+         * <div class="content">复选框1：<div id="checkbox1"></div></div>
+         * new BoxGroup({
+         *     main: document.getElementById('checkbox1'),
+         *     styleClass: 'checkbox-tick',
+         *     datasource: [
+         *         {value: 0, name: '不限'},
+         *         {value: 1, name: '中关村-上地'},
+         *         {value: 2, name: '亚运村'},
+         *         {value: 3, name: '北京南站商圈超长'}
+         *      ],
+         *      value: [1, 2]
+         * }).render();
          */
-        var BoxGroup = Control.extend(/** @lends module:Select.prototype */{
+        var BoxGroup = Control.extend(/** @lends module:BoxGroup.prototype */{
+
             /**
              * 控件类型标识
              *
              * @type {string}
-             * @override
-             * @private
+             * @readonly
+             * @public
              */
             type: 'BoxGroup',
 
             /**
-             * 控件配置项
+             * 控件默认选项配置
              *
-             * @private
              * @name module:BoxGroup#options
              * @type {Object}
-             * @property {boolean} options.disabled 控件的不可用状态
+             *
+             * @property {Object} options 控件选项配置
              * @property {(string | HTMLElement)} options.main 控件渲染容器
-             * @property {string} options.prefix 控件class前缀，同时将作为main的class之一
+             * @property {string} options.boxType 选框类型：单选还是复选，默认复选(checkbox|radio)
+             * @property {string} options.activeClass 元素选中样式的class
+             * @property {string} options.styleClass 选框基本样式的class：默认有几种可供选择(default|radio-point|checkbox-tick)
+             * @property {Array} options.datasource 展示的数据源
+             * @property {Array} options.value 默认选中的元素：单选时取第一个
+             * @public
              */
             options: {
 
                 // 控件渲染主容器
                 main: '',
 
-                // 是单选还是复选(checkbox| radio)
+                // 是单选还是复选，默认复选(checkbox| radio)
                 boxType: 'checkbox',
 
                 // 被选中时的样式
@@ -61,11 +81,32 @@ define(
                 value: []
             },
 
+            /**
+             * 控件初始化
+             *
+             * @param {Object} options 控件配置项
+             * @see module:Boxgroup#options
+             * @override
+             */
             init: function (options) {
                 this.$parent(options);
             },
 
-            repaint: require('./painter').createRepaint(
+            /**
+             * 初始化BoxGroup事件绑定
+             *
+             * @override
+             */
+            initEvents: function () {
+                this.delegate(this.main, 'click', 'label', this.onClick);
+            },
+
+            /**
+             * 重绘BoxGroup控件
+             *
+             * @override
+             */
+            repaint: painter.createRepaint(
                 Control.prototype.repaint,
                 {
                     name: 'datasource',
@@ -113,15 +154,11 @@ define(
                 }
             ),
 
-            initEvents: function () {
-                this.delegate(this.main, 'click', 'label', this.onClick);
-            },
-
             /**
              * 主元素被点击时的处理函数
-             * @param {Event} e 事件源对象
-             * @fires module:BoxGroup#change
+             *
              * @fires module:BoxGroup#click
+             * @param {Event} e 点击事件
              * @private
              */
             onClick: function (e) {
@@ -184,6 +221,15 @@ define(
                 });
 
             },
+
+            /**
+             * 生成选项的HTML
+             *
+             * @param {boolean} state 元素是否被选中
+             * @param {Object} item  需显示项的数据元素
+             * @return {string} 返回生成的html
+             * @public
+             */
             getItemHTML: function (state, item) {
                 var checkedClass = state ? (' ' + this.activeClass) : '';
                 return ''
@@ -196,9 +242,10 @@ define(
             },
 
             /**
-             * 获得值
+             * 获得当前被选中的值
              *
-             * @return {Array}
+             * @return {Array} 返回当前被选中的值
+             * @public
              */
             getValue: function () {
                 var value = [];
@@ -210,9 +257,11 @@ define(
             },
 
             /**
-             * 设定值
-             * @param {Array} value 值
-             * @return {BoxGroup}
+             * 设定当前被选中的值
+             *
+             * @param {Array} value 需被选中的元素
+             * @return {module:BoxGroup} 当前 BoxGroup 实例
+             * @public
              */
             setValue: function (value) {
 
@@ -221,6 +270,11 @@ define(
                 return this.set('value', value);
             },
 
+            /**
+             * 销毁单复选框控件实例
+             *
+             * @override
+             */
             dispose: function () {
                 this.undelegate(this.main, 'click', 'label', this.onClick);
                 Control.prototype.dispose.apply(this, arguments);
