@@ -2,28 +2,49 @@
  * @file MOYE 按钮
  * @author leon(leonlu@outlook.com)
  */
+
 define(function (require) {
 
     var $       = require('jquery');
     var Control = require('./Control');
     var painter = require('./painter');
 
-    var Button = Control.extend({
+    /**
+     * 按钮组件
+     *
+     * @extends module:Control
+     * @requires Control
+     * @requires painter
+     * @exports Button
+     * @example
+     * <div class="content">
+     *   <button id="button1">ok</button>
+     * </div>
+     * new Button({
+     *     main: document.getElementById('button1')
+     *  }).render();
+     */
+
+    var Button = Control.extend(/** @lends module:Button.prototype */{
 
         /**
          * 控件类型标识
          *
+         * @readonly
          * @type {string}
-         * @private
+         * @public
          */
         type: 'Button',
 
 
         /**
-         * 控件配置项
+         * 控件默认选项配置
          *
-         * @name module:Button#optioins
-         * @type {Object}
+         * @name module:BoxGroup#options
+         * @type {Object}text
+         * @property {Object} options 控件选项配置
+         * @property {string} options.text button的值
+         * @publc
          */
         options: {
             text: ''
@@ -33,8 +54,8 @@ define(function (require) {
          * 控件初始化
          *
          * @param {Object} options 控件配置项
-         * @see module:Pager#options
-         * @private
+         * @see module:Button#options
+         * @override
          */
         init: function (options) {
             this.$parent(options);
@@ -42,18 +63,18 @@ define(function (require) {
         },
 
         /**
-         * 初始化事件绑定
+         * 初始化Button事件绑定
          *
-         * @return {Control} self
+         * @override
          */
         initEvents: function () {
             this.delegate(this.main, 'click', this.onClick);
         },
 
         /**
-         * 重绘
+         * 重绘Button控件
          *
-         * @protected
+         * @override
          */
         repaint: painter.createRepaint(
             Control.prototype.repaint,
@@ -66,9 +87,10 @@ define(function (require) {
         ),
 
         /**
-         * 禁用
-         * @override
-         * @return {Button}
+         * 禁用Button
+         *
+         * @return {module:Button} 当前 Button 实例
+         * @public
          */
         disable: function () {
             if (!this.hasState('disabled')) {
@@ -79,9 +101,10 @@ define(function (require) {
         },
 
         /**
-         * 启用
-         * @override
+         * 启用Button
+         *
          * @return {Button}
+         * @public
          */
         enable: function () {
             if (this.hasState('disabled')) {
@@ -95,7 +118,8 @@ define(function (require) {
          * 设定按钮文本
          *
          * @param {string} text 文本
-         * @return {Button} SELF
+         * @return {module:Button} 当前 Button 实例
+         * @public
          */
         setText: function (text) {
             this.main.innerHTML = text;
@@ -106,6 +130,7 @@ define(function (require) {
          * 获取按钮文本
          *
          * @return {string}
+         * @public
          */
         getText: function () {
             return this.main.innerHTML;
@@ -114,6 +139,7 @@ define(function (require) {
         /**
          * 点击事件处理函数
          *
+         * @fires module:Button#click
          * @param {Event} e 点击事件
          * @private
          */
@@ -127,6 +153,11 @@ define(function (require) {
             }
         },
 
+        /**
+         * 销毁单复选框控件实例
+         *
+         * @override
+         */
         dispose: function () {
             this.undelegate(this.main, 'click', this.onClick);
         }

@@ -22,6 +22,7 @@ define(function (require) {
      * @extends module:Control
      * @requires lib
      * @requires Control
+     * @requires Anim
      * @exports Slider
      * @example
      * HTML：
@@ -43,6 +44,7 @@ define(function (require) {
          * 控件类型标识
          *
          * @type {string}
+         * @readonly
          * @private
          */
         type: 'Slider',
@@ -53,9 +55,9 @@ define(function (require) {
          * @name module:Slider#optioins
          * @type {Object}
          * @property {(string | HTMLElement)=} options.main 控件渲染容器，可选
-         * @property {boolean=} options.arrow 是否显示上一个/下一个按钮，可选，默认 true
          * @property {string=} options.prev 上一个按钮内容，可选，默认 `<`，`arrow` 选项 为 true 该配置才有效
          * @property {string=} options.next 下一个按钮内容，可选，默认 `>`，同上，依赖 `arrow` 选项
+         * @property {boolean=} options.arrow 是否显示上一个/下一个按钮，可选，默认 true
          * @property {boolean|HTMLElement=} options.pager 是否显示翻页按钮，可选，默认 true
          *                                  也可以指定某个DOM元素为自定义的分页元素
          * @property {Object=} options.pagerOptions 翻页选项，可选
@@ -76,7 +78,7 @@ define(function (require) {
          * @property {boolean=} options.animOptions.rollCycle 是否用循环滚模式
          *                     默认滚动到头会直接滚回去，循环滚会平滑一点，默认 false
          *
-         * @private
+         * @public
          */
         options: {
 
@@ -200,6 +202,7 @@ define(function (require) {
          *
          * @param {string} part    方向
          * @param {string} content 箭头内容
+         * @private
          */
         addArrow: function (part, content) {
             var arrow = $(this.helper.createPart(part, 'i', content));
@@ -213,6 +216,7 @@ define(function (require) {
          * 添加分页器
          *
          * @param {number} capacity 容量
+         * @private
          */
         addPager: function (capacity) {
 
@@ -399,6 +403,7 @@ define(function (require) {
          * 是否自动轮播中
          *
          * @return {boolean}
+         * @public
          */
         isPlaying: function () {
             return !!this.timer;
@@ -406,6 +411,7 @@ define(function (require) {
 
         /**
          * 如果是自动播放，则激活轮播
+         *
          * @public
          */
         play: function () {
@@ -425,6 +431,7 @@ define(function (require) {
 
         /**
          * 停止播放
+         *
          * @public
          */
         stop: function () {
@@ -498,6 +505,7 @@ define(function (require) {
 
         /**
          * 更新当前组件中的各个控制部件
+         *
          * @param {number} from 从指定的页码
          * @param {number} to   到指定的页面
          * @private
