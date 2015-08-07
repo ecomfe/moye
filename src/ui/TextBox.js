@@ -1,6 +1,9 @@
 /**
+ * Moye (Zhixin UI)
+ * Copyright 2014 Baidu Inc. All rights reserved.
+ *
  * @file 文本输入框
- * @author leon <ludafa@outlook.com>
+ * @author leon (ludafa@outlook.com)
  */
 
 define(function (require) {
@@ -10,10 +13,30 @@ define(function (require) {
     var painter = require('./painter');
     var lib     = require('./lib');
 
-    var TextBox = Control.extend({
-
+    /**
+     * 文本输入框组件
+     *
+     * @extends module:Control
+     * @requires lib
+     * @requires Control
+     * @requires painter
+     * @exports TextBox
+     */
+    var TextBox = Control.extend(/** @lends module:TextBox.prototype */{
+        /**
+         * 控件类型标识
+         *
+         * @type {string}
+         * @private
+         */
         type: 'TextBox',
-
+        /**
+         * 控件配置项
+         *
+         * @name module:TextBox#options
+         * @type {Object}
+         * @private
+         */
         options: {
         },
 
