@@ -51,7 +51,8 @@ define(function (require) {
                     var body = $(window)[name]() * 0.9;
                     limit[name] = Math.min(body, obj[name]);
 
-                    fixed[name] = this.elements && this.elements[index][name];
+                    var element = this.elements[index];
+                    fixed[name] = element[name];
                 },
                 this
             );
@@ -106,14 +107,17 @@ define(function (require) {
             var content = '';
             var dom = null;
 
+            if (this.showLoading) {
+                $(this.load).show();
+            }
+
             switch (type) {
                 case 'image':
                     dom = $('<img>')
-                            .attr('src', element.src)
-                            .attr('id', me.helper.getPartId('image') + index)
-                            .addClass(me.helper.getPartClassName('image'));
+                        .attr('src', element.src)
+                        .attr('id', me.helper.getPartId('image') + index)
+                        .addClass(me.helper.getPartClassName('image'));
                     content = dom.prop('outerHTML');
-                    me.setContent(content);
 
                     var showImage = function () {
                         element = $.extend(element, privates.getSize.call(me, dom.get(0), index));
@@ -121,6 +125,10 @@ define(function (require) {
 
                         me.setTitle(element.title);
                         privates.showIcons.call(me);
+
+                        me.showLoading && $(me.load).hide();
+
+                        me.setContent(content);
 
                         me.show();
 
@@ -130,6 +138,7 @@ define(function (require) {
                     dom.load(showImage);
 
                     dom.error(function () {
+                        me.hide();
                         dtd.reject();
                     });
 
@@ -338,6 +347,13 @@ define(function (require) {
             mask: true,
 
             /**
+             * 是否显示加载图标
+             *
+             * @type {boolean}
+             */
+            showLoading: true,
+
+            /**
              * 是否根据浏览器可视区域缩放，不超过窗口高度的90%
              *
              * @type {boolean}
@@ -410,6 +426,21 @@ define(function (require) {
             main = $(main)
                 .css('zIndex', level)
                 .appendTo(document.body);
+
+            if (this.showLoading) {
+                var load = $('<div>')
+                    .addClass(this.helper.getPartClassName('loading'))
+                    .css('zIndex', level + 1)
+                    .appendTo(document.body);
+
+                this.load = load.get(0);
+
+                // 兼容ie6的定位问题
+                lib.fixed(this.load, {
+                    top: '50%',
+                    left: '50%'
+                });
+            }
 
 
             // 遮罩
