@@ -1,9 +1,13 @@
-define(function (require) {
-    var lib = require('ui/lib');
-    
-    var Lazy = require('ui/Lazy');
-    
+/**
+ * @file 懒加载测试用例
+ * @author chris <wfsr@foxmail.com>
+ * @author ludafa <leonlu@outlook.com>
+ */
 
+define(function (require) {
+    var $ = require('jquery');
+    var lib = require('ui/lib');
+    var Lazy = require('ui/Lazy');
     var main;
     beforeEach(function () {
         document.body.insertAdjacentHTML(
@@ -14,13 +18,11 @@ define(function (require) {
                 + '</div>'
         );
 
-        main = document.getElementById('lazyContainer');
-        var els = lib.toArray(main.getElementsByTagName('div'));
-        
+        main = lib.g('lazyContainer');
 
         Lazy.add(main, function (scroll, size, cd) {
             var remain = [];
-            lib.each(els, function (el) {
+            $(main).find('div').each(function (el) {
 
                 // DIV块坐标数据
                 cd.top = cd.top + el.offsetTop;
@@ -42,16 +44,19 @@ define(function (require) {
                 else {
                     remain.push(el);
                 }
+
             });
  
             // 剔除已处理的 DIV
-            els = remain;
+            var els = remain;
 
             // 如果图片全部加载过，可从监听集合中移除
             if (!els.length) {
                 Lazy.remove(main);
             }
+
         });
+
         jasmine.Clock.useMock();
 
     });
@@ -83,7 +88,7 @@ define(function (require) {
             Lazy.add(main, callback);
 
             main.scrollIntoView();
-            lib.fire(window, 'scroll');
+            $(window).trigger('scroll');
 
             jasmine.Clock.tick(1000);
             expect(callback).toHaveBeenCalled();

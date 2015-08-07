@@ -1,0 +1,158 @@
+/**
+ * MOYE
+ * Copyright 2014 Baidu Inc. All rights reserved.
+ *
+ * @file 文本框样式
+ * @author leon <leonlu@outlook.com>
+ */
+
+@import './variable.less';
+@import './mixin.less';
+
+// keep the same height as button
+@moye-textbox-font-family: @default-base-font-family;
+@moye-textbox-height: 2.5rem;
+@moye-textbox-border-color: #ccc;
+@moye-textbox-padding-vertical: 0.6875rem;
+@moye-textbox-padding-horizontal: 1rem;
+@moye-textbox-border-width: 1px;
+@moye-textbox-background-color: @moye-white;
+@moye-textbox-text-color: @moye-full-black;
+@moye-textbox-font-size: @moye-medium;
+@moye-textbox-placeholder-color: #bbb;
+
+// radius
+@moye-textbox-radius: 0;
+
+
+.moye-textbox-height(@height, @padding: @moye-textbox-padding-vertical, @border: @moye-textbox-border-width) {
+    .moye-border-box-size-rem(height, @height, @padding, @border);
+    .moye-border-box-size-rem(line-height, @height, @padding, @border);
+}
+
+.moye-textbox-width(@width, @padding: @moye-textbox-padding-horizontal, @border: @moye-textbox-border-width) {
+    .moye-border-box-size-rem(width, @width, @padding, @border);
+}
+
+
+// 基础部分
+.@{moye-prefix}-textbox {
+
+    .inline-block();
+    vertical-align: top;
+
+    input {
+
+        content: @moye-textbox-font-size;
+        content-a: @moye-medium;
+
+        margin: 0;
+        .box-sizing(content-box);
+
+        .moye-padding(
+            @moye-textbox-padding-vertical,
+            @moye-textbox-padding-horizontal
+        );
+
+        .moye-textbox-height(
+            @moye-textbox-height,
+            @moye-textbox-padding-vertical,
+            @moye-textbox-border-width
+        );
+
+        .moye-rem(
+            font-size,
+            @moye-textbox-font-size
+        );
+
+        vertical-align: top;
+        outline: none;
+        color: @moye-textbox-text-color;
+
+        background-color: @moye-textbox-background-color;
+        border: @moye-textbox-border-width solid @moye-textbox-border-color;
+
+        .transition(border-color .3s, background-color .3s, color .3s);
+        .placeholder(@moye-textbox-placeholder-color);
+
+        &:focus {
+            border-color: @moye-textbox-focus-border-color;
+            background-color: @moye-textbox-focus-background-color;
+            color: @moye-textbox-focus-text-color;
+        }
+
+    }
+
+}
+
+// 状态
+
+// active state
+// @moye-textbox-active-border-color: @primary-color;
+// @moye-textbox-active-background-color: @black-10;
+// @moye-textbox-active-color: #333;
+
+// focus state
+@moye-textbox-focus-border-color: @moye-primary-color;
+@moye-textbox-focus-background-color: @moye-white;
+@moye-textbox-focus-text-color: @moye-full-black;
+
+// 禁用 disabled
+@moye-textbox-disabled-border-color: @moye-grey;
+@moye-textbox-disabled-background-color: #f8f8f8;
+@moye-textbox-disabled-text-color: @moye-light-black;
+
+.@{moye-prefix}-textbox-disabled input {
+    background-color: @moye-textbox-disabled-background-color;
+    color: @moye-textbox-disabled-text-color;
+    border-color: @moye-textbox-disabled-border-color;
+    cursor: not-allowed;
+}
+
+
+// 只读 readonly
+@moye-textbox-readonly-border-color: @moye-grey;
+@moye-textbox-readonly-text-color: @moye-light-black;
+@moye-textbox-readonly-background-color: #f8f8f8;
+
+.@{moye-prefix}-textbox-readonly input {
+    background-color: @moye-textbox-readonly-background-color;
+    color: @moye-textbox-readonly-text-color;
+    border-color: @moye-textbox-readonly-border-color;
+    &:focus {
+        background-color: @moye-textbox-readonly-background-color;
+        color: @moye-textbox-readonly-text-color;
+        border-color: @moye-textbox-readonly-border-color;
+    }
+}
+
+
+// 成功/合法
+@moye-textbox-success-border-color: @moye-success-color;
+@moye-textbox-success-background-color: #FFF;
+@moye-textbox-success-text-color: #333;
+
+.@{moye-prefix}-textbox-success input,
+.@{moye-prefix}-textbox-valid input {
+    background-color: @moye-textbox-success-background-color;
+    color: @moye-textbox-success-text-color;
+    border-color: @moye-textbox-success-border-color;
+    &:focus {
+        border-color: @moye-textbox-success-border-color;
+    }
+}
+
+// 失败/非法
+@moye-textbox-error-border-color: @moye-error-border-color;
+@moye-textbox-error-background-color: @moye-error-background-color;
+@moye-textbox-error-text-color: @moye-error-text-color;
+
+.@{moye-prefix}-textbox-error input,
+.@{moye-prefix}-textbox-invalid input {
+    background-color: @moye-textbox-error-background-color;
+    color: @moye-textbox-error-text-color;
+    border-color: @moye-textbox-error-border-color;
+    &:focus {
+        border-color: @moye-textbox-error-border-color;
+    }
+}

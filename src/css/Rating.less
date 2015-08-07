@@ -1,21 +1,32 @@
-@rating-prefix: ecl-ui-rating;
-.@{rating-prefix} {}
-.@{rating-prefix}-stars {
-    
-}
-.@{rating-prefix}-star {
-    display: inline-block;
-    *display: inline;
-    *zoom: 1;
-    list-style: none;
-    cursor: pointer;
-}
-.@{rating-prefix}-star-on {
-    color: red;
+/**
+ * MOYE
+ * Copyright 2014 Baidu Inc. All rights reserved.
+ *
+ * @file 打分样式
+ * @author mengke
+ * @author leon <leonlu@outlook.com>
+ */
+
+@import './variable.less';
+@import './dep.less';
+
+.@{moye-prefix}-rating {
+
+    &-star {
+        .inline-block();
+        list-style: none;
+        cursor: pointer;
+
+        &-on {
+            color: red;
+        }
+
+    }
+
 }
 
-.@{rating-prefix}-disabled {
-    .@{rating-prefix}-star {
+.@{moye-prefix}-rating-disabled {
+    .@{moye-prefix}-rating-star {
         cursor: default;
     }
 }

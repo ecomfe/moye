@@ -1,17 +1,18 @@
 /**
  * Moye (Zhixin UI)
  * Copyright 2014 Baidu Inc. All rights reserved.
- * 
+ *
  * @file Cookie 读写模块
  * @author chris(wfsr@foxmail.com)
  */
 define(function (require) {
 
+    var $ = require('jquery');
     var lib = require('./lib');
 
     /**
      * 转义正则关键字字符
-     * 
+     *
      * @param {string} str 需要转义的字符
      * @return {string} 转义后的字符
      * @inner
@@ -22,7 +23,7 @@ define(function (require) {
 
     /**
      * Cookie 模块
-     * 
+     *
      * @requires lib
      * @exports Cookie
      * @example
@@ -33,9 +34,9 @@ define(function (require) {
      *  });
      * cookie.set('bar');
      * cookie.get(); // 'bar'
-     * 
+     *
      * 或者使用静态方法：
-     * 
+     *
      * Cookie.set('foo', 'bar');
      * Cookie.get('foo');   // 'bar'
      */
@@ -44,7 +45,7 @@ define(function (require) {
 
         /**
          * 控件配置项
-         * 
+         *
          * @name module:Cookie#options
          * @type {Object}
          * @property {string} path Cookie 的存储路径
@@ -62,7 +63,7 @@ define(function (require) {
 
         /**
          * 初始化
-         * 
+         *
          * @param {string} key Cookie 键名
          * @param {?Object=} options 配置项 @see Cookie#options
          * @private
@@ -81,7 +82,7 @@ define(function (require) {
 
         /**
          * 读取指定键名的 Cookie 值
-         * 
+         *
          * @param {?string} key 指定新的键名
          * @return {string} Cookie 中键名为 `key` 的值，无值返回空字符
          * @public
@@ -95,7 +96,7 @@ define(function (require) {
 
         /**
          * 设置指定键的 Cookie 值
-         * 
+         *
          * @param {?string} key 指定的 Cookie 键名
          * @param {string} value 要设置的 Cookie 值
          * @return {module:Cookie} 当前 Cookie 实例
@@ -109,7 +110,7 @@ define(function (require) {
 
             var options = this.options;
             value = encodeURIComponent(value) + this.value;
-            
+
             if (options.duration) {
                 value += ''
                     + '; expires='
@@ -124,14 +125,14 @@ define(function (require) {
 
         /**
          * 移除指定键名的 Cookie
-         * 
+         *
          * @param {?string} key 要移除的 Cookie 键名
          * @return {module:Cookie} 当前 Cookie 实例
          * @public
          */
         remove: function (key) {
             var options = this.options;
-            duration = options.duration;
+            var duration = options.duration;
             options.duration = -1;
             this.set(key || this.key);
             options.duration = duration;
@@ -142,12 +143,12 @@ define(function (require) {
     });
     Cookie.implement(lib.configurable);
 
-    lib.extend(Cookie, /** @lends module:Cookie */{
+    $.extend(Cookie, /** @lends module:Cookie */{
 
         /**
          * 读取指定键名的 Cookie 值
          * @see module:Cookie#get
-         * 
+         *
          * @param {string} key 指定新的键名
          * @return {string} Cookie 中键名为 `key` 的值，无值返回空字符
          * @public
@@ -159,7 +160,7 @@ define(function (require) {
         /**
          * 设置指定键的 Cookie 值
          * @see module:Cookie#set
-         * 
+         *
          * @param {string} key 指定的 Cookie 键名
          * @param {string} value 要设置的 Cookie 值
          * @param {Object} options Cookie 配置项
@@ -174,7 +175,7 @@ define(function (require) {
         /**
          * 移除指定键名的 Cookie
          * @see module:Cookie#remove
-         * 
+         *
          * @param {string} key 要移除的 Cookie 键名
          * @return {module:Cookie} 当前 Cookie 实例
          * @public
@@ -184,6 +185,6 @@ define(function (require) {
         }
     });
 
-    return Cookie;    
+    return Cookie;
 
 });

@@ -1,0 +1,380 @@
+.markdown {
+    font-size: 15px;
+    line-height: 1.7;
+    overflow-x: hidden;
+    overflow-y: auto;
+    word-wrap: break-word
+}
+
+.markdown .markdown-session {
+    list-style: none;
+}
+
+.markdown>*:first-child {
+    margin-top: 0 !important
+}
+
+.markdown>*:last-child {
+    margin-bottom: 0 !important
+}
+
+.markdown a {
+    color: #4183c4;
+    text-decoration: none;
+}
+
+.markdown a:hover {
+    text-decoration: underline;
+}
+
+.markdown a.absent {
+    color: #c00
+}
+
+.markdown a.anchor {
+    display: block;
+    padding-right: 6px;
+    padding-left: 30px;
+    margin-left: -30px;
+    cursor: pointer;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0
+}
+
+.markdown a.anchor:focus {
+    outline: none
+}
+
+.markdown h1,.markdown h2,.markdown h3,.markdown h4,.markdown h5,.markdown h6 {
+    margin: 1em 0 15px;
+    padding: 0;
+    font-weight: bold;
+    line-height: 1.7;
+    cursor: text;
+    position: relative
+}
+
+.markdown h1 .octicon-link,.markdown h2 .octicon-link,.markdown h3 .octicon-link,.markdown h4 .octicon-link,.markdown h5 .octicon-link,.markdown h6 .octicon-link {
+    display: none;
+    color: #000
+}
+
+.markdown h1:hover a.anchor,.markdown h2:hover a.anchor,.markdown h3:hover a.anchor,.markdown h4:hover a.anchor,.markdown h5:hover a.anchor,.markdown h6:hover a.anchor {
+    text-decoration: none;
+    line-height: 1;
+    padding-left: 8px;
+    margin-left: -30px;
+    top: 15%
+}
+
+.markdown h1:hover a.anchor .octicon-link,.markdown h2:hover a.anchor .octicon-link,.markdown h3:hover a.anchor .octicon-link,.markdown h4:hover a.anchor .octicon-link,.markdown h5:hover a.anchor .octicon-link,.markdown h6:hover a.anchor .octicon-link {
+    display: inline-block
+}
+
+.markdown h1 tt,.markdown h1 code,.markdown h2 tt,.markdown h2 code,.markdown h3 tt,.markdown h3 code,.markdown h4 tt,.markdown h4 code,.markdown h5 tt,.markdown h5 code,.markdown h6 tt,.markdown h6 code {
+    font-size: inherit
+}
+
+.markdown h1 {
+    font-size: 2.5em;
+    border-bottom: 1px solid #ddd
+}
+
+.markdown h2 {
+    font-size: 2em;
+    border-bottom: 1px solid #eee
+}
+
+.markdown h3 {
+    font-size: 1.5em
+}
+
+.markdown h4 {
+    font-size: 1.2em
+}
+
+.markdown h5 {
+    font-size: 1em
+}
+
+.markdown h6 {
+    color: #777;
+    font-size: 1em
+}
+
+.markdown p,.markdown blockquote,.markdown ul,.markdown ol,.markdown dl,.markdown table,.markdown pre {
+    margin: 15px 0
+}
+
+.markdown hr {
+    background: transparent url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAAECAYAAACtBE5DAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6OENDRjNBN0E2NTZBMTFFMEI3QjRBODM4NzJDMjlGNDgiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6OENDRjNBN0I2NTZBMTFFMEI3QjRBODM4NzJDMjlGNDgiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo4Q0NGM0E3ODY1NkExMUUwQjdCNEE4Mzg3MkMyOUY0OCIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo4Q0NGM0E3OTY1NkExMUUwQjdCNEE4Mzg3MkMyOUY0OCIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PqqezsUAAAAfSURBVHjaYmRABcYwBiM2QSA4y4hNEKYDQxAEAAIMAHNGAzhkPOlYAAAAAElFTkSuQmCC) repeat-x 0 0;
+    border: 0 none;
+    color: #ccc;
+    height: 4px;
+    padding: 0;
+    margin: 15px 0
+}
+
+.markdown ul,.markdown ol {
+    padding-left: 30px
+}
+
+.markdown ul li {
+    list-style-type: disc;
+}
+
+.markdown ol li {
+    list-style-type: decimal;
+}
+
+.markdown ul.no-list,.markdown ol.no-list {
+    list-style-type: none;
+    padding: 0
+}
+
+.markdown ul ul,.markdown ul ol,.markdown ol ol,.markdown ol ul {
+    margin-top: 0;
+    margin-bottom: 0
+}
+
+.markdown dl {
+    padding: 0
+}
+
+.markdown dl dt {
+    font-size: 14px;
+    font-weight: bold;
+    font-style: italic;
+    padding: 0;
+    margin-top: 15px
+}
+
+.markdown dl dd {
+    margin-bottom: 15px;
+    padding: 0 15px
+}
+
+.markdown blockquote {
+    border-left: 4px solid #DDD;
+    padding: 0 15px;
+    color: #777
+}
+
+.markdown blockquote>:first-child {
+    margin-top: 0px
+}
+
+.markdown blockquote>:last-child {
+    margin-bottom: 0px
+}
+
+.markdown table {
+    width: 100%;
+    overflow: auto;
+    display: block
+}
+
+.markdown table th {
+    font-weight: bold
+}
+
+.markdown table th,.markdown table td {
+    border: 1px solid #ddd;
+    padding: 6px 13px
+}
+
+.markdown table tr {
+    border-top: 1px solid #ccc;
+    background-color: #fff
+}
+
+.markdown table tr:nth-child(2n) {
+    background-color: #f8f8f8
+}
+
+.markdown img {
+    max-width: 100%;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box
+}
+
+.markdown span.frame {
+    display: block;
+    overflow: hidden
+}
+
+.markdown span.frame>span {
+    border: 1px solid #ddd;
+    display: block;
+    float: left;
+    overflow: hidden;
+    margin: 13px 0 0;
+    padding: 7px;
+    width: auto
+}
+
+.markdown span.frame span img {
+    display: block;
+    float: left
+}
+
+.markdown span.frame span span {
+    clear: both;
+    color: #333;
+    display: block;
+    padding: 5px 0 0
+}
+
+.markdown span.align-center {
+    display: block;
+    overflow: hidden;
+    clear: both
+}
+
+.markdown span.align-center>span {
+    display: block;
+    overflow: hidden;
+    margin: 13px auto 0;
+    text-align: center
+}
+
+.markdown span.align-center span img {
+    margin: 0 auto;
+    text-align: center
+}
+
+.markdown span.align-right {
+    display: block;
+    overflow: hidden;
+    clear: both
+}
+
+.markdown span.align-right>span {
+    display: block;
+    overflow: hidden;
+    margin: 13px 0 0;
+    text-align: right
+}
+
+.markdown span.align-right span img {
+    margin: 0;
+    text-align: right
+}
+
+.markdown span.float-left {
+    display: block;
+    margin-right: 13px;
+    overflow: hidden;
+    float: left
+}
+
+.markdown span.float-left span {
+    margin: 13px 0 0
+}
+
+.markdown span.float-right {
+    display: block;
+    margin-left: 13px;
+    overflow: hidden;
+    float: right
+}
+
+.markdown span.float-right>span {
+    display: block;
+    overflow: hidden;
+    margin: 13px auto 0;
+    text-align: right
+}
+
+.markdown code,.markdown tt {
+    margin: 0;
+    border: 1px solid #ddd;
+    background-color: #f8f8f8;
+    border-radius: 3px;
+    padding: 2px 4px;
+}
+
+.markdown code:before,.markdown code:after,.markdown tt:before,.markdown tt:after {
+    content: "\00a0";
+    letter-spacing: -0.2em
+}
+
+.markdown code br,.markdown tt br {
+    display: none
+}
+
+.markdown del code {
+    text-decoration: inherit;
+    vertical-align: text-top
+}
+
+.markdown pre>code {
+    margin: 0;
+    padding: 0;
+    white-space: pre;
+    border: none;
+    background: transparent
+}
+
+.markdown .highlight pre,.markdown pre {
+    background-color: #f8f8f8;
+    border: 1px solid #ddd;
+    font-size: 13px;
+    line-height: 19px;
+    overflow: auto;
+    padding: 20px;
+    border-radius: 3px
+}
+
+.markdown pre {
+    word-wrap: normal
+}
+
+.markdown pre code,.markdown pre tt {
+    margin: 0;
+    padding: 0;
+    background-color: transparent;
+    border: none;
+    word-wrap: normal;
+    max-width: initial;
+    display: inline;
+    overflow: initial;
+    line-height: inherit
+}
+
+.markdown pre code:before,.markdown pre code:after,.markdown pre tt:before,.markdown pre tt:after {
+    content: normal
+}
+
+.markdown .csv-data td,.markdown .csv-data th {
+    overflow: hidden;
+    white-space: nowrap;
+    font-size: 12px;
+    padding: 5px;
+    text-align: left;
+    line-height: 1
+}
+
+.markdown .csv-data .blob-line-nums {
+    line-height: 1;
+    padding: 5px 0;
+    background: #fff;
+    border-top: 0;
+    border: 0
+}
+
+.markdown .csv-data .blob-line-nums span {
+    margin-top: 3px
+}
+
+.markdown .csv-data tr.line {
+    border-top: 0
+}
+
+.markdown .csv-data thead th {
+    font-weight: bold;
+    border-top: 0;
+    background: #f8f8f8
+}

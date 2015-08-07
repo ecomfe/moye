@@ -1,4 +1,12 @@
+/**
+ * @file 分布组件测试用例
+ * @author chris <wfsr@foxmail.com>
+ * @author ludafa <leonlu@outlook.com>
+ */
+
 define(function (require) {
+
+    var $ = require('jquery');
     var PicUploader = require('ui/PicUploader');
     var lib = require('ui/lib');
     var picUploader;
@@ -28,7 +36,7 @@ define(function (require) {
 
 
         it('event:pickerror', function () {
-            //这里想直接塞入文件不太容易，使用fake的元素来模拟
+            // 这里想直接塞入文件不太容易，使用fake的元素来模拟
             
             var uploader = new PicUploader({
                 main: lib.g('picUploaderContainer1'),
@@ -42,10 +50,11 @@ define(function (require) {
             });
             uploader.render();
 
-            var curPan = lib.q('ecl-ui-picuploader-cur', uploader.options.main)[0];
-            var fileBtn = lib.q('ecl-ui-picuploader-file', curPan)[0];
+            var curPan = $('.ecl-ui-picuploader-cur', uploader.options.main)[0];
+            var fileBtn = $('.ecl-ui-picuploader-file', curPan)[0];
+
             fileBtn.value = '';
-            lib.fire(fileBtn, 'change');
+            $(fileBtn).trigger('change');
 
 
             fileBtn.value = 'fakeimg.fake';
@@ -53,19 +62,19 @@ define(function (require) {
                 expect('pickerror').toBe('pickerror');
             });
 
-            lib.fire(fileBtn, 'change');
+            $(fileBtn).trigger('change');
 
             var ieVer = lib.browser.ie;
             lib.browser.ie = 8;
 
-            //测试IE8
+            // 测试IE8
             fileBtn.value = 'fakeimg.fake';
 
             uploader.on('pick', function (e) {
                 expect('iepick').toBe('iepick');
             });
 
-            lib.fire(fileBtn, 'change');
+            $(fileBtn).trigger('change');
 
             lib.browser.ie = ieVer;
 
@@ -73,7 +82,7 @@ define(function (require) {
 
         });
 
-        //如果支持Blob对象
+        // 如果支持Blob对象
         if (typeof window.Blob === 'function') {
             it('event:pick', function () {
                 var uploader = new PicUploader({
@@ -88,17 +97,17 @@ define(function (require) {
                 });
                 uploader.render();
 
-                var curPan = lib.q('ecl-ui-picuploader-cur', uploader.options.main)[0];
-                var fileBtn = lib.q('ecl-ui-picuploader-file', curPan)[0];
+                var curPan = $('.ecl-ui-picuploader-cur', uploader.options.main)[0];
+                var fileBtn = $('.ecl-ui-picuploader-file', curPan)[0];
 
-                fileBtn.files = [new Blob(['fakeimg'])];
+                fileBtn.files = [ new Blob([ 'fakeimg' ]) ];
                 fileBtn.value = 'fakeimg.jpg';
 
                 uploader.on('pick', function (e) {
                     expect('pick').toBe('pick');
                 });
 
-                lib.fire(fileBtn, 'change');
+                $(fileBtn).trigger('change');
                 uploader.dispose();
             });
         }
@@ -106,7 +115,6 @@ define(function (require) {
 
         it('getfilelist', function () {
             var files = picUploader.getFileList();
-
             expect(files.length).toBe(0);
         });
 
@@ -114,7 +122,6 @@ define(function (require) {
 
             picUploader.remove('xxxxxx', 
                 function (removePath, filePath,  index) {
-                    index;
                     expect(removePath).toBeTruthy();
                 }
             );
@@ -144,17 +151,14 @@ define(function (require) {
                 expect(removeEventCount).toBe(1);
             });
 
-            var closeBtn = lib.q(
-                'ecl-ui-picuploader-close', 
+            var closeBtn = $(
+                '.ecl-ui-picuploader-close', 
                 picUploader.options.main
             )[0];
 
             expect(closeBtn).toBeTruthy();
 
-            lib.fire(
-                closeBtn, 
-                'click'
-            );
+            $(closeBtn).trigger('click');
 
         });
 
@@ -162,18 +166,12 @@ define(function (require) {
             var removeEventCount = 0;
             picUploader.on('remove', function () {
                 removeEventCount++;
-            });
-
-            picUploader.on('dispose', function () {
                 expect(removeEventCount).toBe(1);
             });
+
             picUploader.removeAt(0);
             
         });
     });
-
-
-
-
 
 });

@@ -1,0 +1,113 @@
+/**
+ * @file MOYE 样式mixin工具库
+ * @author Leon(leon@outlook.com)
+ */
+
+
+@import 'est/src/all.less';
+@import './variable.less';
+
+
+/**
+ * 在旧世界, 将rem转化为px
+ * @param  {number} @prop 属性名
+ * @param  {number} @root 基准font-size
+ */
+.moye-rem(@prop; @target; @root: @moye-font-size) when (@support-old-ie = true) and (ispixel(@target)) {
+    @{prop}: unit(unit(@target), px);
+}
+
+.moye-rem(@prop; @target; @root: @moye-font-size) when (@support-old-ie = true) and (isem(@target)) {
+    @{prop}: unit(unit(@target * @root), px);
+}
+
+.moye-rem(@prop; @target; @root: @moye-font-size) when (@support-old-ie = true) and (isunit(@target, rem)) {
+    @{prop}: unit(unit(@target * @root), px);
+}
+
+/**
+ * 在新世界, 请rem/px转换成rem
+ * @param  {number} @prop 属性名
+ */
+.moye-rem(@prop; @target; @root: @moye-font-size) when (@support-old-ie = false) and (isunit(@target, rem)) {
+    @{prop}: unit(unit(@target), rem);
+}
+
+.moye-rem(@prop; @target; @root: @moye-font-size) when (@support-old-ie = false) and (ispixel(@target)) {
+    @{prop}: unit(unit(@target) / unit(@root), rem);
+}
+
+/**********
+以moye-size开头的函数都是用来完成各种内置尺寸大小的
+********/
+
+/**
+ * 生成固定套路的高度
+ * @param  {rem} @size @moye-medium, @moye-tiny等等
+ */
+.moye-size-height(@size: @moye-medium) {
+    .moye-rem(height, @size * @moye-line-height);
+    .moye-rem(line-height, @moye-line-height * @size);
+}
+
+/**
+ * 生成固定套路的垂直内间距
+ * @param {rem} @size @moye-medium, @moye-tiny等等
+ */
+.moye-size-padding-vertical(@size: @moye-medium) {
+    @padding-vertical: @size - unit( 9/16, rem);
+    .moye-rem(padding-top, @padding-vertical);
+    .moye-rem(padding-bottom, @padding-vertical);
+}
+
+/**
+ * 生成固定套路的水平内间距
+ * @param  {rem} @size @moye-medium, @moye-tiny等等
+ */
+.moye-size-padding-horizontal(@size: @moye-medium) {
+    .moye-rem(padding-left, @size);
+    .moye-rem(padding-right, @size);
+}
+
+.moye-border-box-size-rem(@prop; @target; @padding: 0; @border: 0; @root: @moye-font-size) {
+    // 先把大家转成数字噻
+    // 这个亲一定是px的
+    @root-value: ~`parseFloat('@{root}', 10)`;
+    @target-value: ~`parseFloat('@{target}', 10)`;
+    @padding-value: ~`parseFloat('@{padding}', 10)`;
+    @border-value: ~`parseFloat('@{border}', 10)`;
+
+    // 如果输入值是rem/em, 先把它们转成px
+    @actual-target-value: ~`/(rem|em)\s*$/.test('@{target}') ? @{target-value} * @{root-value} : @{target-value}`;
+    @actual-padding-value: ~`/(rem|em)\s*$/.test('@{padding}') ? @{padding-value} * @{root-value} : @{padding-value}`;
+    @actual-border-value: ~`/(rem|em)\s*$/.test('@{border}') ? @{border-value} * @{root-value} : @{border-value}`;
+
+    @actual-target: @actual-target-value - 2 * @actual-padding-value - 2 * @actual-border-value;
+
+    .moye-rem(@prop, unit(@actual-target, px), @root);
+}
+
+
+.moye-quad(@prop; @rest...) {
+    @{prop}: ~`(function () {
+        var values = '@{rest}'.slice(1, -1).split(', ');
+        var result = [];
+        var root = parseFloat('@{moye-font-size}', 10);
+        for (var i = 0, len = values.length; i < len; i++) {
+            var value = values[i];
+            var actualValue = parseFloat(value, 10);
+            result[i] = /(rem|em)$/.test(value)
+                    ? (actualValue * root + 'px')
+                    : (actualValue + 'px');
+        }
+        return result.join(' ');
+    })()`;
+}
+
+.moye-padding(...) {
+    .moye-quad(padding, @arguments);
+}
+
+.moye-margin(...) {
+    .moye-quad(margin, @arguments);
+}

@@ -1,77 +1,74 @@
 define(function (require) {
+    var $ = require('jquery');
     var lib = require('ui/lib');
     var Slider = require('ui/Slider');
 
     var slider;
 
-    beforeEach(function () {
+    function createSlider(options) {
+        jasmine.Clock.useMock();
+
         document.body.insertAdjacentHTML(
             'beforeEnd', ''
-                + '<div id="slider-container">'
-
-                +   '<div id="ecl-ui-slider-1" class="ecl-ui-slider">'
-                +     '<i class="ecl-ui-slider-prev">&lt;</i>'
-                +     '<i class="ecl-ui-slider-next">&gt;</i>'
-                +     '<div class="ecl-ui-slider-index">'
-                +       '<i></i><i></i><i></i><i></i>'
-                +     '</div>'
-                +     '<div class="ecl-ui-slider-stage">'
-                +       '<img src="http://pic.hefei.cc/newcms'
-                +         '/2012/03/14/13316929284f6005808aa20.jpg">'
-                +       '<img src="http://pic.hefei.cc/newcms'
-                +         '/2012/03/14/13316929274f60057f72733.jpg">'
-                +       '<img src="http://pic.hefei.cc/newcms'
-                +         '/2012/03/14/13316929284f60058013da9.jpg">'
-                +       '<img src="http://pic.hefei.cc/newcms'
-                +         '/2012/03/14/13316929294f600581a07e5.jpg">'
-                +     '</div>'
-                +   '</div>'
-
-                +   '<div id="ecl-ui-slider-2" class="ecl-ui-slider">'
-                +     '<i class="ecl-ui-slider-prev">&lt;</i>'
-                +     '<i class="ecl-ui-slider-next">&gt;</i>'
-                +     '<div class="ecl-ui-slider-index">'
-                +       '<i></i><i></i><i></i><i></i>'
-                +     '</div>'
-                +     '<div class="ecl-ui-slider-stage '
-                +           'ecl-ui-slider-stage-abs">'
-                +       '<img src="http://pic.hefei.cc/newcms'
-                +         '/2012/03/14/13316929284f6005808aa20.jpg">'
-                +       '<img src="http://pic.hefei.cc/newcms'
-                +         '/2012/03/14/13316929274f60057f72733.jpg">'
-                +       '<img src="http://pic.hefei.cc/newcms'
-                +         '/2012/03/14/13316929284f60058013da9.jpg">'
-                +       '<img src="http://pic.hefei.cc/newcms'
-                +         '/2012/03/14/13316929294f600581a07e5.jpg">'
-                +     '</div>'
-                +   '</div>'
-
-                + '</div>'
+            + '<div id="slider-container">'
+            +   '<div id="ecl-ui-slider-1">'
+            +     '<div data-role="stage">'
+            +       '<img src="http://pic.hefei.cc/newcms'
+            +         '/2012/03/14/13316929284f6005808aa20.jpg">'
+            +       '<img src="http://pic.hefei.cc/newcms'
+            +         '/2012/03/14/13316929274f60057f72733.jpg">'
+            +       '<img src="http://pic.hefei.cc/newcms'
+            +         '/2012/03/14/13316929284f60058013da9.jpg">'
+            +       '<img src="http://pic.baike.soso.com/p/20131122/20131122124317-393756163.jpg">'
+            +     '</div>'
+            +   '</div>'
+            + '</div>'
         );
 
-        slider = new Slider({
-            prefix: 'ecl-ui-slider',
-            main: lib.g('ecl-ui-slider-1'),
-            animOptions: {
-                rollCycle: true
-            }
-        });
+        options = $.extend({
+            main: lib.g('ecl-ui-slider-1')
+        }, options || {});
+        slider = new Slider(options);
         slider.render();
+    }
 
-    });
-
-
-    afterEach(function () {
+    function disposeSlider() {
         slider.dispose();
         document.body.removeChild(lib.g('slider-container'));
-    });
+    }
 
     describe('基本接口', function () {
-
+        beforeEach(createSlider);
+        afterEach(disposeSlider);
 
         it('控件类型', function () {
-            //console.log(slider);
             expect(slider.type).toBe('Slider');
+        });
+
+        it('控件初始化', function () {
+            expect(slider.prev).toBe('&lt;');
+            expect(slider.next).toBe('&gt;');
+            expect(slider.arrow).toBeTruthy();
+            expect(slider.pager).not.toBeNull();
+            expect($(slider.pager).children().length).toBe(4);
+            expect(slider.auto).toBeTruthy();
+            expect(slider.timer).toBeTruthy();
+            expect(slider.circle).toBeTruthy();
+            expect(slider.autoInterval).toBe(2000);
+            expect(slider.switchDelay).toBe(50);
+            expect(slider.anim).toBe('slide');
+            expect(slider.capacity).toBe(4);
+            expect(slider.curAnim).not.toBeNull();
+            expect(slider.stage).not.toBeNull();
+            expect(slider.prevArrow).not.toBeNull();
+            expect(slider.nextArrow).not.toBeNull();
+            expect(slider.index).toBe(0);
+
+            var animOption = slider.animOptions;
+            expect(animOption.easing).toBe('easing');
+            expect(animOption.interval).toBe(200);
+            expect(animOption.direction).toBe('horizontal');
+            expect(animOption.rollCycle).not.toBeTruthy();
         });
 
         it('控件基本接口', function () {
@@ -83,128 +80,187 @@ define(function (require) {
             expect(Slider.Anim.anims.TimeLine).not.toBe(null);
         });
 
-        it('getIndex', function () {
+        it('getNextPage', function () {
+            var lastIdx = slider.capacity - 1;
             slider.index = 1;
-            slider.options.circle = true;
-            expect(slider.getIndex('')).toBe(0);
-            expect(slider.getIndex('NaN')).toBe(0);
-            expect(slider.getIndex(1000)).toBe(0);
-            expect(slider.getIndex(-100)).toBe(slider.count - 1);
-            expect(slider.getIndex(1)).toBe(-1);
+            slider.circle = true;
+            expect(slider.getNextPage('')).toBe(0);
+            expect(slider.getNextPage('NaN')).toBe(0);
+            expect(slider.getNextPage('start')).toBe(0);
+            expect(slider.getNextPage('end')).toBe(lastIdx);
+            expect(slider.getNextPage(1000)).toBe(0);
+            expect(slider.getNextPage(-100)).toBe(lastIdx);
+            expect(slider.getNextPage(1)).toBe(-1);
 
-            slider.options.circle = false;
-            expect(slider.getIndex(1000)).toBe(slider.count - 1);
-            expect(slider.getIndex(-100)).toBe(0);
-            slider.options.circle = true;
+            slider.circle = false;
+            expect(slider.getNextPage(2)).toBe(2);
+            expect(slider.getNextPage(1000)).toBe(lastIdx);
+            expect(slider.getNextPage(-100)).toBe(0);
         });
 
         it('play', function () {
             slider.play();
-            expect(slider.switchTimer).not.toBe(null);
+            expect(slider.timer).not.toBe(null);
         });
 
-        it('refresh', function () {
-            slider.refresh();
-            expect(slider.stage).not.toBe(null);
-            expect(slider.count).toBe(4);
-        });
-
-        it('render', function () {
-            slider.render();
-            expect(slider.switchTimer).not.toBe(null);
-            expect(slider.stage).not.toBe(null);
-            expect(slider.count).toBe(4);
-        });
-
-        it('prev', function () {
+        it('goPrev', function () {
             slider.index = 0;
-            slider.prev();
-            expect(slider.index).toBe(slider.count - 1);
+            slider.goPrev();
+            expect(slider.index).toBe(slider.capacity - 1);
         });
 
-        it('next', function () {
-            slider.index = slider.count - 1;
-            slider.next();
+        it('goNext', function () {
+            slider.index = slider.capacity - 1;
+            slider.goNext();
             expect(slider.index).toBe(0);
         });
-
         it('go', function () {
-            slider.index = slider.count - 1;
-            slider.next();
-            expect(slider.index).toBe(0);
-        });
-
-        it('go', function () {
-            slider.go(4);
-            expect(slider.index).toBe(0);
+            slider.index = 1;
+            slider.go(3);
+            expect(slider.index).toBe(3);
+            slider.go(3);
+            expect(slider.index).toBe(3);
             slider.go(-1);
             expect(slider.index).toBe(3);
         });
+    });
 
-        it('onchange', function () {
-            var a = 1;
-            slider.on('change', slider.options.onChange = function (e) {
-                expect(a).toBe(1);
-                expect(e.index).not.toBe(null);
-                expect(e.lastIndex).not.toBe(null);
-            });
-        });
-
-        it('prev click', function (done) {
-            var prevBtn = lib.q('ecl-ui-slider-prev', slider.main)[0];
-            slider.go(1);
-            lib.fire(prevBtn, 'click');
-            setTimeout(function () {
-                expect(slider.index).toBe(0);
-                done();
-            }, 60);
-        });
-        it('next click', function (done) {
-
-            var nextBtn = lib.q('ecl-ui-slider-next', slider.main)[0];
-            slider.go(0);
-            lib.fire(nextBtn, 'click');
-            setTimeout(function () {
-                expect(slider.index).toBe(0);
-                done();
-            }, 60);
-        });
-
-        it('index click', function (done) {
-            var indexBtns = lib.q('ecl-ui-slider-index', slider.main)[0].children;
-            lib.fire(indexBtns[0], 'click');
-            setTimeout(function () {
-                expect(slider.index).toBe(0);
-                done();
-            }, 60);
-        });
+    describe('测试基本动画', function () {
+        afterEach(disposeSlider);
 
         it('测试default动画', function () {
-            var defaultSlider = new Slider({
-                prefix: 'ecl-ui-slider',
-                main: lib.g('ecl-ui-slider-2'),
+            createSlider({
                 anim: 'no'
             });
-            defaultSlider.render();
-            defaultSlider.go(-1);
-            defaultSlider.go(1);
-            defaultSlider.go(5);
-            defaultSlider.dispose();
+            slider.go(-1);
+            slider.go(1);
+            slider.go(5);
         });
 
         it('测试opacity动画', function () {
-            var opacitySlider = new Slider({
-                prefix: 'ecl-ui-slider',
-                main: lib.g('ecl-ui-slider-2'),
+            createSlider({
                 anim: 'opacity'
             });
-            opacitySlider.render();
-            opacitySlider.go(-1);
-            opacitySlider.go(1);
-            opacitySlider.go(5);
-            opacitySlider.dispose();
+            slider.go(-1);
+            slider.go(1);
+            slider.go(5);
+        });
+    });
+
+    describe('事件', function () {
+        beforeEach(createSlider);
+        afterEach(disposeSlider);
+
+        it('onchange', function () {
+            var fakeChange = jasmine.createSpy('change');
+
+            slider.on('change', function (e) {
+                fakeChange(e.index, e.lastIndex);
+            });
+
+            slider.go(3);
+            expect(fakeChange).toHaveBeenCalledWith(3, 0);
+
+            var fakeChange2 = jasmine.createSpy('change2');
+            slider.on('change', function (e) {
+                fakeChange2(e.index, e.lastIndex);
+            });
+            slider.go(0);
+            expect(fakeChange2).toHaveBeenCalledWith(0, 3);
+
+            slider.go(0);
+            expect(fakeChange2.callCount).toEqual(1);
         });
 
+    });
+
+    describe('事件绑定', function () {
+        afterEach(disposeSlider);
+
+        it('arrow navigation button with auto circle', function () {
+            createSlider();
+
+            var fakeChange = jasmine.createSpy('change');
+
+            slider.on('change', function (e) {
+                fakeChange(e.index, e.lastIndex);
+            });
+
+            $(slider.prevArrow).click();
+            jasmine.Clock.tick(100);
+            expect(fakeChange).toHaveBeenCalledWith(3, 0);
+
+            var fakeChange2 = jasmine.createSpy('change2');
+            slider.on('change', function (e) {
+                fakeChange2(e.index, e.lastIndex);
+            });
+            $(slider.nextArrow).click();
+            jasmine.Clock.tick(100);
+            expect(fakeChange2).toHaveBeenCalledWith(0, 3);
+        });
+
+        it('arrow navigation button with disabled circle', function () {
+            createSlider({circle: false, auto: false});
+
+            expect($(slider.prevArrow).hasClass(
+                slider.helper.getPartClassName('prev-disable'))
+            ).toBe(true);
+
+            slider.go(3);
+            expect($(slider.nextArrow).hasClass(
+                    slider.helper.getPartClassName('next-disable'))
+            ).toBe(true);
+
+            slider.go(1);
+            var fakeChange3 = jasmine.createSpy('change3');
+            slider.on('change', function (e) {
+                fakeChange3(e.index, e.lastIndex);
+            });
+            $(slider.nextArrow).click();
+            jasmine.Clock.tick(100);
+            expect(fakeChange3).toHaveBeenCalledWith(2, 1);
+
+            var fakeChange4 = jasmine.createSpy('change4');
+            slider.on('change', function (e) {
+                fakeChange4(e.index, e.lastIndex);
+            });
+            $(slider.prevArrow).click();
+            jasmine.Clock.tick(100);
+            expect(fakeChange4).toHaveBeenCalledWith(1, 2);
+        });
+
+        it('pager navigation button', function () {
+            createSlider({auto: false});
+
+            var pager = $(slider.pager);
+            var helper = slider.helper;
+            slider.go(0);
+            expect(
+                pager.find(':eq(0)').hasClass(helper.getPartClassName('pager-selected'))
+            ).toBe(true);
+
+            var fakeChange = jasmine.createSpy('change');
+            slider.on('change', function (e) {
+                fakeChange(e.index, e.lastIndex);
+            });
+
+            pager.find(':eq(1)').click();
+            jasmine.Clock.tick(100);
+            expect(fakeChange).toHaveBeenCalledWith(1, 0);
+        });
+
+        it('auto play stop when mouse enter stage', function () {
+            createSlider();
+
+            var main = $(slider.main);
+            expect(slider.isPlaying()).toBeTruthy();
+            main.mouseenter();
+
+            expect(slider.isPlaying()).toBeFalsy();
+
+            main.mouseleave();
+            expect(slider.isPlaying()).toBeTruthy();
+        });
     });
 
 });

@@ -1,215 +1,164 @@
 define(function (require) {
-    var lib = require('ui/lib');        
+
+    var $ = require('jquery');
+    var lib = require('ui/lib');
     var Select = require('ui/Select');
-    
+
     var select;
     var onPick;
 
     beforeEach(function () {
         document.body.insertAdjacentHTML(
-            'beforeEnd', ''
-                + '<div id="selectContainer">'
-                +   '<a href="#" class="ecl-ui-sel-target">'
-                +       '<b>商圈</b><i></i>'
-                +   '</a>'
-                +   '<p class="ecl-ui-sel">'
-                +       '<a href="#" data-value="0">不限</a>'
-                +       '<a href="#" data-value="1">中关村、上地</a>'
-                +       '<a href="#" data-value="2">亚运村</a>'
-                +       '<a href="#" data-value="3">公主坟商圈</a>'
-                +       '<a href="#" data-value="4">劲松潘家园</a>'
-                +       '<a href="#" data-value="5">北京南站商圈超长</a>'
-                +     '</p>'
-                + '</div>'
+            'beforeEnd',
+            '<div id="cycle" class="ui-select"></div></div>'
         );
 
         select = new Select({
-            prefix: 'ecl-ui-sel',
-            main: lib.q('ecl-ui-sel')[0],
-            target: lib.q('ecl-ui-sel-target')[0],
-            maxLength: 8,
-            cols: 2,
-            offset: {
-                y: -1
-            }
-        });
-        select.render();
+            main: lib.g('cycle'),
+            datasource: [{
+                value: 1,
+                name: 1
+            }, {
+                value: 2,
+                name: 2
+            }]
+        }).render();
 
         onPick = jasmine.createSpy('onPick');
-        
     });
 
 
     afterEach(function () {
-        document.body.removeChild(lib.g('selectContainer'));
+        document.body.removeChild(lib.g('cycle'));
         select.dispose();
         onPick = null;
     });
-  
+
     describe('基本接口', function () {
 
         it('控件类型', function () {
-
             expect(select.type).toBe('Select');
+        });
+
+        it('Popup', function () {
+            expect(!!select.popup).toBeTruthy();
+        });
+
+        it('设置一个datasource里不存在的值会得到空值', function () {
+
+            select.setValue(100);
+
+            expect(select.getValue()).toBe('');
 
         });
 
-        it('显示/隐藏', function () {
-            var onShow = jasmine.createSpy('onShow');
-            select.once('show', onShow);
-            select.show();
+        it('不管你设置啥，getValue返回都是string', function () {
 
-            expect(onShow).toHaveBeenCalled();
+            select.setValue(1);
 
-            var onHide = jasmine.createSpy('onHide');
-            select.once('hide', onHide);
-            select.hide();
+            expect(select.getValue()).toBe('1');
 
-            expect(onHide).toHaveBeenCalled();
+            select.setValue(null);
+
+            expect(select.getValue()).toBe('');
+
+            select.setValue(void 0);
+
+            expect(select.getValue()).toBe('');
+
+            select.setValue(false);
+
+            expect(select.getValue()).toBe('');
+
         });
 
-        it('beforeShow', function () {
-            var onBeforeShow = jasmine.createSpy('onBeforeShow');
-            select.once('beforeShow', onBeforeShow);
-            lib.fire(select.target, 'click');
-            expect(onBeforeShow).toHaveBeenCalled();
+        it('显示 / `show` 事件', function () {
+            var spy = jasmine.createSpy();
+            select.on('show', spy);
+            $('#cycle').trigger('click');
+            jasmine.Clock.tick(100);
+            expect(spy).toHaveBeenCalled();
         });
 
-        it('选择：有事件', function () {
-            var target = select.main.getElementsByTagName('a')[1];
-            select.once('pick', onPick);
-            lib.fire(target, 'click');
+        it('显示 / expanded状态', function () {
+            var spy = jasmine.createSpy();
+            select.on('show', spy);
+            $('#cycle').trigger('click');
+            jasmine.Clock.tick(100);
+            expect(select.hasState('expanded')).toBeTruthy();
+        });
 
-            expect(onPick).toHaveBeenCalledWith({
-                value: target.getAttribute('data-value') | 0,
-                text: target.innerHTML,
-                shortText: '中关...',
-                type: 'pick'
-            });
+        it('隐藏 / `hide` 事件', function () {
+            var spy = jasmine.createSpy();
+            select.on('show', spy);
+            $('#cycle').trigger('click');
+            jasmine.Clock.tick(100);
+            $('body').trigger('click');
+            jasmine.Clock.tick(100);
+            expect(spy).toHaveBeenCalled();
+        });
+
+        it('隐藏 / expanded 状态', function () {
+            var spy = jasmine.createSpy();
+            select.on('show', spy);
+            $('#cycle').trigger('click');
+            jasmine.Clock.tick(100);
+            $('body').trigger('click');
+            jasmine.Clock.tick(100);
+            expect(select.hasState('expanded')).toBeFalsy();
         });
 
         it('模拟点击', function () {
-            var target = select.main.getElementsByTagName('a')[2];
-            select.once('pick', onPick);
-
-            lib.fire(target, 'click');
-            expect(onPick).toHaveBeenCalledWith({
-                value: target.getAttribute('data-value') | 0,
-                text: target.innerHTML,
-                shortText: target.innerHTML,
-                type: 'pick'
-            });
-        });
-
-        it('disable && enable', function () {
-            var target = select.main.getElementsByTagName('a')[2];
-
-            select.disable();
-            expect(select.isDisabled()).toBeTruthy();
-
-            select.once('pick', onPick);
-            lib.fire(target, 'click');
-            lib.fire(target, 'click');
-            expect(onPick).not.toHaveBeenCalled();
-
-            select.enable();
-            expect(select.isDisabled()).toBeFalsy();
-
-            lib.fire(target, 'click');
-            expect(onPick).toHaveBeenCalled();
-            select.un('pick', onPick);
-        });
-
-
-        it('模拟重复点击', function () {
-            var target = select.main.getElementsByTagName('a')[2];
-            select.on('pick', onPick);
-
-            lib.fire(target, 'click');
-            expect(onPick.calls.length).toBe(1);
-            lib.fire(target, 'click');
-            expect(onPick.calls.length).toBe(1);
-            lib.fire(target, 'click');
-            expect(onPick.calls.length).toBe(1);
-            select.un('pick', onPick);
+            var spy = jasmine.createSpy();
+            var target = $('.ui-select-option:eq(1)', select.popup.main);
+            select.on('change', spy);
+            target.trigger('click');
+            jasmine.Clock.tick(100);
+            expect(spy).toHaveBeenCalled();
         });
 
         it('模拟点击不触发onChange', function () {
-            var options = select.main.getElementsByTagName('a');
-
-            var onChange = jasmine.createSpy('onChange');
-
-            select.on('pick', onPick);
-            select.on('change', onChange);
-            lib.fire(options[2], 'click');
-            expect(onPick.calls.length).toBe(1);
-            expect(onChange.calls.length).toBe(1);
-            options[3].setAttribute(
-                'data-value',
-                options[2].getAttribute('data-value')
-            );
-            lib.fire(options[3], 'click');
-            expect(onPick.calls.length).toBe(2);
-            expect(onChange.calls.length).toBe(1);
-            select.un('pick', onPick);
-            select.un('change', onChange);
-        });
-
-        it('reset', function () {
-            var onChange = jasmine.createSpy('onChange');
-            select.on('pick', onPick);
-            select.on('change', onChange);
-
-            lib.fire(select.main.getElementsByTagName('a')[2], 'click');
-            expect(onPick).toHaveBeenCalled();
-            expect(onChange).toHaveBeenCalled();
-
-            expect(select.getValue()).toBe(2);
-            expect(select.getValue(false)).toBe('2');
-
-            select.reset();
-            expect(select.getValue()).toBe(0);
-            expect(select.getValue(false)).toBe('0');
+            var options = $('.ui-select-option', select.popup.main);
+            var spy = jasmine.createSpy('onChange');
+            select.on('change', spy);
+            select.setValue(1);
+            $(options[0]).trigger('click');
+            jasmine.Clock.tick(100);
+            expect(spy).not.toHaveBeenCalled();
         });
 
         it('datasource', function () {
-            select.dispose();
-            var container = lib.g('selectContainer');
-            container.innerHTML = ''
-                + '<input class="ecl-ui-sel-target" value="直辖市">';
 
-            var cities = '直辖市, 北京, 上海, 天津, 重庆'.split(/\s*,\s*/);
+            var datasource = [{
+                value: 3,
+                name: 'a3'
+            }, {
+                value: 4,
+                name: 'a4'
+            }, {
+                value: 5,
+                name: 'a5'
+            }];
 
-            select = new Select({
-                prefix: 'ecl-ui-sel',
-                target: lib.q('ecl-ui-sel-target')[0],
-                datasource: cities,
-                valueUseIndex: false,
-                maxLength: 8
-            }).render();
+            select.set('datasource', datasource);
 
-            var options = select.main.getElementsByTagName('a');
+            var options = $('.ui-select-option', select.popup.main);
 
-            expect(options.length).toBe(5);
+            expect(options.length).toBe(3);
 
-            for (var i = 0, len = options.length; i < len; i++) {
-                expect(
-                    options[i].getAttribute('data-value')
-                ).toBe(cities[i]);
-            }
-
-            select.once('pick', onPick);
-            lib.fire(options[1], 'click');
-
-            expect(onPick).toHaveBeenCalledWith({
-                value: cities[1],
-                text: cities[1],
-                shortText: cities[1],
-                type: 'pick'
+            options.each(function (i) {
+                expect($(this).data('value')).toBe(datasource[i].value);
             });
+
+            var spy = jasmine.createSpy();
+
+            select.once('change', spy);
+
+            options.trigger('click');
+            jasmine.Clock.tick(100);
+            expect(spy).toHaveBeenCalled();
 
         });
 
     });
-
 });

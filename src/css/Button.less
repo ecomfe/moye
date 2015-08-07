@@ -1,0 +1,102 @@
+/**
+ * @file MOYE - 按钮 - 样式
+ * @author leon(leonlu@outlook.com)
+ */
+
+@import './dep.less';
+@import './variable.less';
+@import './mixin.less';
+
+// 按钮
+@moye-button-background-color: @moye-primary-color;
+@moye-button-text-color: #fff;
+@moye-button-border-color: #f3f3f3;
+
+@moye-button-padding-vertical: 0.6875rem;
+@moye-button-padding-horizontal: 1rem;
+@moye-button-font-size: @moye-font-size;
+@moye-button-border-width: 1px;
+@moye-button-height: 2.5rem;
+
+.moye-button-height(@height; @padding; @border;) {
+    .moye-border-box-size-rem(
+        height,
+        @height,
+        @padding,
+        @border
+    );
+    .moye-border-box-size-rem(
+        line-height,
+        @height,
+        @padding,
+        @border
+    );
+}
+
+.moye-button-width(@width; @padding; @border;) {
+    .moye-border-box-size-rem(
+        width,
+        @height,
+        @padding,
+        @border
+    );
+}
+
+.@{moye-prefix}-button {
+    .inline-block();
+    .box-sizing(content-box);
+
+    margin: 0;
+
+    .moye-padding(
+        @moye-button-padding-vertical,
+        @moye-button-padding-horizontal
+    );
+
+    .moye-button-height(
+        @moye-button-height,
+        @moye-button-padding-vertical,
+        @moye-button-border-width
+    );
+
+    .moye-rem(font-size, @moye-button-font-size);
+
+    color: @moye-button-text-color;
+    text-align: center;
+    text-decoration: none;
+    background-color: @moye-button-background-color;
+
+    border: @moye-button-border-width solid @moye-button-border-color;
+    outline: 0;
+
+    cursor: pointer;
+
+    .transition(background-color, .3s);
+
+    &:hover {
+        background-color: lighten(@moye-button-background-color, 5%);
+    }
+
+    &:active {
+        background-color: darken(@moye-button-background-color, 10%);
+    }
+
+    &:visited {
+        color: @moye-button-text-color;
+    }
+
+}
+
+@moye-button-disabled-background-color: @moye-grey;
+@moye-button-disabled-background-image: none;
+@moye-button-disabled-text-color: @moye-white;
+
+.@{moye-prefix}-button-disabled {
+    background-color: @moye-button-disabled-background-color;
+    background-image: @moye-button-disabled-background-image;
+    color: @moye-button-disabled-text-color;
+    cursor: not-allowed;
+    &:hover, &:active {
+        background-color: @moye-button-disabled-background-color;
+    }
+}

@@ -1,292 +1,51 @@
 /**
  * Moye (Zhixin UI)
  * Copyright 2014 Baidu Inc. All rights reserved.
- * 
+ *
  * @file 下拉选择菜单
  * @author chris(wfsr@foxmail.com)
+ * @author Leon(leon@outlook.com)
  */
- 
+
 define(function (require) {
 
-    var lib = require('./lib');
+    var $       = require('jquery');
+    var lib     = require('./lib');
     var Control = require('./Control');
-    var Popup = require('./Popup');
-
-    /**
-     * 取字符字节长度
-     * 
-     * @param {string} str 目标字符
-     * @return {number} 目标字符的字节长度
-     * @inner
-     */
-    function bLength(str) {
-        return str.replace(/[^\x00-\xff]/gi, '..').length;
-    }
-
-    /**
-     * 文字溢出处理
-     * 
-     * @param {string} str 目标字符串
-     * @param {number} max 截取的字节长度
-     * @param {?string=} ellipsis 超长后的附加后缀
-     * @return {string} 目标字符串被截取后加上后缀的字符串
-     * @inner
-     */
-    function textOverflow(str, max, ellipsis) {
-
-        if (max >= bLength(str)) {
-            return str;
-        }
-        
-        var i = 0;
-        var l = 0;
-        var rs = '';
-        while (l < max) {
-            rs += str.charAt(i);
-            l += bLength(str.charAt(i));
-            i ++;
-        }
-    
-        if (l > max) {
-            rs = rs.substr(0, rs.length - 1);
-        }
-        
-        var ellipsisLen = ellipsis ? bLength(ellipsis) : 0;
-        if (ellipsisLen) {
-            max -= ellipsisLen;
-            rs = textOverflow(rs, max) + ellipsis;
-        }
-        
-        return rs;
-    }
-
-
-    /**
-     * 私有函数或方法
-     * 
-     * @type {Object}
-     * @namespace
-     * @name module:Select~privates
-     */
-    var privates = /** @lends module:Select~privates */ {
-
-        /**
-         * 处理 disable 事件
-         * 监听自身的 disable 事件，增加 disabled class 标记，使控件忽略交互响应
-         * 
-         * @private
-         */
-        onDisable: function () {
-            this.popup.disable();
-            lib.addClass(this.target, this.options.prefix + '-disabled');
-        },
-
-
-        /**
-         * 处理 enable 事件
-         * 监听自身的 enable 事件，移除 disabled class 标记，使控件可接受交互响应
-         * 
-         * @private
-         */
-        onEnable: function () {
-            this.popup.enable();
-            lib.removeClass(this.target, this.options.prefix + '-disabled');
-        },
-
-
-        /**
-         * 处理选单点击事件
-         * 
-         * @param {Object} args 从 Popup 传来的事件对象
-         * @private
-         */
-        onClick: function (args) {
-            var e = args.event;
-
-            if (!e || this._disabled) {
-                return;
-            }
-
-            var el = lib.getTarget(e);
-            var tag = el.tagName;
-
-            switch (tag) {
-
-                case 'A':
-                    lib.preventDefault(e);
-
-                    privates.pick.call(this, el);
-
-                    break;
-
-                default:
-
-                    break;
-
-            }
-
-            this.fire('click', args);
-        },
-
-        /**
-         * 转发Popup的onBeforeShow事件
-         * 
-         * @param {Object} arg 事件参数
-         * @fires module:Select#beforeShow
-         * @private
-         */
-        onBeforeShow: function (arg) {
-
-            lib.preventDefault(arg.event);
-
-            if (this._disabled) {
-                return;
-            }
-
-            /**
-             * @event module:Select#beforeShow
-             * @type {Object}
-             * @property {DOMEvent} event 事件源对象
-             */
-            this.fire('beforeShow', arg);
-
-            lib.addClass(this.target, this.options.prefix + '-hl');
-        },
-
-        /**
-         * 隐藏浮层后的处理，主要是为了去掉高亮样式
-         * 
-         * @private
-         */
-        onHide: function () {
-            lib.removeClass(this.target, this.options.prefix + '-hl');
-        },
-
-        /**
-         * 选取选项
-         * 
-         * @param {HTMLElement} el 点击的当前事件源对象
-         * @param {boolean} isSilent 静默模式，是否发送事件通知
-         * @fires module:Select#pick
-         * @fires module:Select#change
-         * @private
-         */
-        pick: function (el, isSilent) {
-
-            this.hide();
-
-            var lastItem = this.lastItem;
-            if (lastItem === el) {
-                return;
-            }
-
-            var options = this.options;
-            var target = this.target;
-            var realTarget = this.realTarget;
-            var lastValue = this.lastValue;
-            var selectedClass = options.prefix + '-' + options.selectedClass;
-
-            var value  = el.getAttribute('data-value');
-            var text = value ? el.innerHTML : this.defaultValue;
-            var shortText = text
-                ? textOverflow(text, options.maxLength, options.ellipsis)
-                : text;
-
-            var typeValue = options.isNumber ? (value | 0) : value;
-
-            if (lastItem) {
-                lib.removeClass(lastItem, selectedClass);
-            }
-
-            if (value) {
-                lib.addClass(el, selectedClass);
-            }
-
-            this.lastItem = el;
-
-            if (!isSilent) {
-
-                /**
-                 * @event module:Select#pick
-                 * @type {Object}
-                 * @property {string} value 选中项的值
-                 * @property {string} text 选中项的文字
-                 * @property {Date} shortText 选中项的文字的切割值
-                 */
-                this.fire('pick', { 
-                    value: typeValue,
-                    text: text,
-                    shortText: shortText
-                });
-
-            }
-
-            if (value === lastValue) {              
-                return;
-            }
-
-            this.lastValue = value;
-
-            if (target) {
-
-                if (target.type) {
-                    target.value = shortText;
-                    target.focus();
-                }
-                else {
-                    (realTarget || target).innerHTML = shortText;
-                }
-
-                target.title = text;
-            }
-
-            var klass = options.prefix + '-checked';
-            lib[value ? 'addClass' : 'removeClass'](target, klass);
-
-            if (!isSilent) {
-
-                /**
-                 * @event module:Select#change
-                 * @type {Object}
-                 * @property {string} value 选中项的值
-                 * @property {string} text 选中项的文字
-                 * @property {Date} shortText 选中项的文字的切割值
-                 */
-                this.fire('change', { 
-                    value: typeValue,
-                    text: text,
-                    shortText: shortText
-                });           
-            }
-
-        }
-    };
+    var Popup   = require('./Popup');
 
     /**
      * 下拉选择菜单
-     * 
+     *
      * @extends module:Control
      * @requires lib
      * @requires Control
+     * @requires Popup
      * @exports Select
      * @example
-     *  new Select({
-     *     prefix: 'ecl-ui-sel',
-     *     main: me.qq('ecl-ui-sel'),
-     *     target: me.qq('ecl-ui-sel-holder'),
-     *     offset: {
-     *       y: -1
-     *     },
-     *     onChange: function (arg) {
-     *       window.console && console.log(arg);
-     *     }
-     *   }).render();
+     * <div class="content">
+     *   <div id='content_left'>
+     *       <div>筛选：<div id="hover" class="ui-select"></div></div>
+     *   </div>
+     * </div>
+     * new Select({
+     *   main: document.getElementById('hover'),
+     *   mode: 'over',
+     *   datasource: [
+     *     {value: 0, name: '不限'},
+     *     {value: 1, name: '中关村、上地'},
+     *     {value: 2, name: '公主坟商圈'},
+     *     {value: 3, name: '劲松潘家园'},
+     *     {value: 4, name: '亚运村'},
+     *     {value: 5, name: '北京南站商圈超长'}
+     *   ]
+     * }).render();
      */
     var Select = Control.extend(/** @lends module:Select.prototype */{
 
         /**
          * 控件类型标识
-         * 
+         *
          * @type {string}
          * @private
          */
@@ -294,33 +53,27 @@ define(function (require) {
 
         /**
          * 控件配置项
-         * 
-         * @private
+         *
          * @name module:Select#options
          * @type {Object}
-         * @property {boolean} options.disabled 控件的不可用状态
-         * @property {(string | HTMLElement)} options.main 控件渲染容器
          * @property {number} options.maxLength 显示选中值时的限度字节长度
          * @property {string} options.ellipsis maxLength 限制后的附加的后缀字符
+         * @property {number} options.columns 选项显示的列数，默认为 1 列
+         * @property {string} options.ellipsis selectedClass 选中项的 class
+         * @property {boolean} options.disabled 控件的不可用状态
+         * @property {(string | HTMLElement)} options.main 控件渲染容器
          * @property {(string | HTMLElement)} options.target 计算选单显示时
-         * 相对位置的目标对象
-         * @property {number} options.cols 选项显示的列数，默认为 1 列
+         *           相对位置的目标对象
          * @property {string} options.prefix 控件class前缀，同时将作为main的class之一
-         * @property {string} options.isNumber 控件值的类型是否限制为数字
          * @property {?Array=} options.datasource 填充下拉项的数据源
-         * 推荐格式 { text: '', value: '' }, 未指定 value 时会根据 valueUseIndex 的
-         * 设置使用 text 或自动索引值，可简写成字符串 '北京, 上海, 广州' 或 
-         * '北京:010, 上海:021, 广州:020'
+         *           推荐格式 { text: '', value: '' }, 未指定 value 时会根据 valueUseIndex 的
+         *           设置使用 text 或自动索引值，可简写成字符串 '北京, 上海, 广州' 或
+         *           '北京:010, 上海:021, 广州:020'
          * @property {bool} options.valueUseIndex datasource 未指定 value 时是否
-         * 使用自动索引值
+         *           使用自动索引值
+         * @private
          */
         options: {
-
-            // 提示框的不可用状态，默认为false。处于不可用状态的提示框不会出现。
-            disabled: false,
-
-            // 控件渲染主容器
-            main: '',
 
             // 显示选中值时的限度字节长度
             maxLength: 16,
@@ -328,206 +81,449 @@ define(function (require) {
             // maxLength 限制后的附加的后缀字符
             ellipsis: '...',
 
-            // 计算选单显示时相对位置的目标对象
-            target: '',
-
             // 显示列数
-            cols: 1,
+            columns: 1,
 
             // 选中项的 class
-            selectedClass: 'cur',
-
-            // 控件class前缀，同时将作为main的class之一
-            prefix: 'ecl-ui-sel',
-
-            // 控件值的类型是否为数字
-            isNumber: true,
+            selectedClass: 'selected',
 
             // 数据源
-            datasource: null,
+            datasource: [],
 
             // datasource 项未指定 value 时
-            valueUseIndex: false
+            valueUseIndex: false,
+
+            // 在没有选项被选中时的显示值
+            emptyText: '请选择',
+
+            // 触发展开的交互动作
+            mode: 'click',
+
+            /**
+             * 数据适配器
+             * 在生成控件时重写此参数, 可以灵活适配各种数据格式
+             *
+             * @type {Object}
+             */
+            adapter: {
+
+                /**
+                 * 适配下拉选项数据, 数据流动方向: 用户数据 => 控件数据
+                 *
+                 * @param {Object} option datasource中的一项
+                 * @return {Object} 返回一个选项数据对象, 格式为 {name: 'name', value: 'value'}
+                 */
+                toOption: function (option) {
+                    return option;
+                },
+
+                /**
+                 * 适配提示文本
+                 * 当某个选项被选中时, 会调用此方法来适配显示的文本
+                 *
+                 * @param  {Object} option datasource中的一茂
+                 * @return {string} 适合显示的文本
+                 */
+                toLabel: function (option) {
+                    return option.name;
+                }
+
+            },
+
+            /**
+             * 自动在label结尾处添加一个小三角icon作为状态指示器
+             *
+             * @type {Boolean}
+             */
+            indicator: {
+                normal: '&#xe604;',
+                expanded: '&#xe603;'
+            }
+
         },
 
         /**
-         * 控件初始化
-         * 
-         * @param {Object} options 控件配置项
+         * 初始化参数
+         *
+         * @param  {Object} options 参数
          * @see module:Select#options
-         * @private
          */
         init: function (options) {
 
-            if (!options.target) {
-                throw new Error('invalid target');
-            }
+            this.$parent(options);
 
-            this._disabled  = options.disabled;
-            this.bindEvents(privates);
+            this.datasource = this.datasource || [];
+
+            var value = this.handleValue(this.value);
+
+            var option = this.getOption(value);
+
+            this.value = option ? this.handleValue(option.value) : null;
+
         },
 
+        /**
+         * 处理各种value的值
+         *
+         * @param  {string} value 值
+         * @return {string}
+         * @private
+         */
+        handleValue: function (value) {
+            return value == null ? '' : value + '';
+        },
 
         /**
-         * 绘制控件
-         * 
-         * @return {module:Select} 当前实例
+         * 在datasource中查找value为value的项
+         *
+         * @param  {string} value 值
+         * @return {Object} null
+         * @protected
+         */
+        getOption: function (value) {
+
+            for (var i = 0, datasource = this.datasource, len = datasource.length; i < len; ++i) {
+                var option = this.adapter.toOption.call(this, datasource[i]);
+                if (option.value === value) {
+                    return option;
+                }
+            }
+
+            return null;
+        },
+
+        /**
+         * 初始化Select控件的 DOM 结构
+         *
          * @override
-         * @public
          */
-        render: function () {
-            var options = this.options;
+        initStructure: function () {
 
-            if (!this.rendered) {
-                this.rendered = true;
+            var skins = ['select'];
+            var columns = +this.columns;
 
-                this.target = lib.g(options.target);
-                this.realTarget = lib.dom.first(this.target) || this.target;
-                this.defaultValue = this.realTarget.innerHTML
-                    || this.realTarget.value
-                    || '';
+            if (columns) {
+                skins.push('select-columns' + columns);
+            }
 
-                this.srcOptions.triggers = [this.target];
+            var helper = this.helper;
 
-                var popup = this.popup = new Popup(this.srcOptions);
-                this.addChild(popup);
+            var popup = this.popup = new Popup({
+                main: helper.createPart('popup'),
+                target: this.main,
+                triggers: [this.main],
+                skin: skins,
+                mode: this.mode
+            });
 
-                if (options.datasource) {
-                    options.isNumber = options.valueUseIndex;
-                    this.fill(options.datasource);
+            popup
+                .on('click', $.proxy(this.onPopupClick, this))
+                .on('show', $.proxy(this.onPopupShow, this))
+                .on('hide', $.proxy(this.onPopupHide, this))
+                .render();
+
+            helper.addPartClasses('popup', popup.main);
+            this.addChild(popup);
+
+            this.main.innerHTML = ''
+                + helper.getPartHTML(
+                    'input',
+                    'input',
+                    '',
+                    {type: 'hidden', value: this.value}
+                )
+                + helper.getPartHTML(
+                    'label',
+                    'a',
+                    '',
+                    {href: '#'}
+                )
+                + this.getIndicatorHTML();
+        },
+
+        /**
+         * 初始化Select控件的事件绑定
+         *
+         * @override
+         */
+        initEvents: function () {
+            this.delegate(this.main, 'click', this.onMainClicked);
+        },
+
+        /**
+         * 重绘Select控件
+         *
+         * @override
+         */
+        repaint: require('./painter').createRepaint(
+            Control.prototype.repaint,
+            {
+                name: ['datasource'],
+                paint: function (conf, datasource) {
+
+                    if (!lib.isArray(datasource)) {
+                        datasource = (datasource + '').split(/\s*[,]\s*/);
+                    }
+
+                    var html = [];
+                    var valueUseIndex = !!this.valueUseIndex;
+
+                    for (var i = 0, len = datasource.length; i < len; ++i) {
+
+                        var item = datasource[i];
+
+                        if (!lib.isObject(item)) {
+                            var data = item.split(/\s*[:]\s*/);
+                            item = {
+                                text: data[0]
+                            };
+                            item.value = data.length > 1
+                                ? data[1]
+                                : (valueUseIndex ? i : data[0]);
+                        }
+
+                        html.push(this.getOptionHTML(item, i));
+                    }
+
+                    this.popup.main.innerHTML = html.join('');
                 }
+            },
+            {
+                name: ['value'],
+                paint: function (conf, value) {
 
-                var bound = this._bound;
-                popup.on('click', bound.onClick);
-                popup.on('beforeShow', bound.onBeforeShow);
-                popup.on('hide', bound.onHide);
+                    var helper = this.helper;
+                    var datasource = this.datasource || [];
+                    var selectedClass = helper.getPartClassName('option-selected');
+                    var optionClass = helper.getPrimaryClassName('option');
 
-                popup.render();
+                    value = this.handleValue(value);
 
-                this.on('disable', bound.onDisable);
-                this.on('enable', bound.onEnable);
-                this.main = popup.main;
+                    // 在子元素里遍历, 如果其值与value相等, 则选中, 不相等则清空选项的选中样式
+                    // 如果没有任何选项与value相等, 此时要显示defalutLabel, 并去掉`已选择`状态
+                    var option = lib.reduce(
+                        $('.' + optionClass, this.popup.main),
+                        function (result, element, i) {
 
-                if (options.cols > 1) {
-                    lib.addClass(
-                        this.main,
-                        options.prefix + '-cols' + options.cols
+                            var item = $(element);
+                            var option = this.adapter.toOption.call(this, datasource[i]);
+
+                            // 否则移除它的选中样式
+                            if (this.handleValue(option.value) !== value) {
+                                item.removeClass(selectedClass);
+                            }
+                            // 如果value与option相等(也就是找到了)
+                            // 或者value是undefined(这里我们把第一个项作为选中值)
+                            else {
+                                item.addClass(selectedClass);
+                                result = option;
+                            }
+
+                            return result;
+
+                        },
+                        null,
+                        this
                     );
-                    //lib.addClass(this.main, 'c-clearfix');
+
+                    var input = helper.getPart('input');
+                    var text;
+
+                    // 找到了结果
+                    if (option) {
+                        text = this.adapter.toLabel.call(this, option);
+                        input.value = this.handleValue(value);
+                        this.addState('selected');
+                    }
+                    // 没找到结果
+                    else {
+                        text = this.emptyText;
+                        this.value = input.value = '';
+                        this.removeState('selected');
+                    }
+
+                    helper.getPart('label').innerHTML = text;
                 }
             }
-            else {
-                this.popup.render();
+        ),
+
+        /**
+         * 生成选项指示器的HTML
+         *
+         * @return {string}
+         * @protected
+         */
+        getIndicatorHTML: function () {
+            var indicator = this.indicator;
+            if (indicator === false) {
+                return '';
             }
-
-            return this;
+            return this.helper.getPartHTML(
+                'indicator',
+                'i',
+                this.hasState('expanded') ? this.indicator.expanded : this.indicator.normal
+            );
         },
 
         /**
-         * 显示浮层
-         * 
-         * @param {?HTMLElement=} target 触发显示浮层的节点
-         * @fires module:Select#show 显示事件
-         * @public
+         * 生成选项的HTML
+         *
+         * @param {Object} option 选项配置
+         * @param {number} index  当前选项的序号
+         * @return {string}
+         * @protected
          */
-        show: function (target) {
+        getOptionHTML: function (option, index) {
 
-            this.popup.show();
+            option = this.adapter.toOption.call(this, option, index);
 
-            /**
-             * @event module:Select#show
-             * @type {object}
-             * @property {?HTMLElement=} target 触发显示浮层的节点
-             */
-            this.fire('show', {target: target});
-
-        },
-
-        /**
-         * 隐藏浮层
-         * 
-         * @fires module:Select#hide 隐藏事件
-         * @public
-         */
-        hide: function () {
-            
-            this.popup.hide();
-
-            /**
-             * @event module:Select#hide
-             */
-            this.fire('hide');
+            return ''
+                + '<a href="#" class="' + this.helper.getPartClassName('option') + '" data-action="select" '
+                +     'data-value="' + option.value + '" '
+                +     'data-index="' + index + '">'
+                +     option.name
+                + '</a>';
         },
 
         /**
          * 填充数据
-         * 
+         *
          * @param {(Array | string)} datasource 要填充的数据源
          * 参考 options.datasource
          * @public
          */
         fill: function (datasource) {
+            this.set('datasource', datasource);
+        },
 
-            if (!datasource || !datasource.length) {
-                return;
+        /**
+         * 选取选项
+         *
+         * @param {Element} target 点击的当前事件源对象
+         * @protected
+         */
+        pick: function (target) {
+
+            // 这里不使用$(target).data('value')的原因是:
+            // 如果选项值是numberic，jQuery会自动贱贱地把它从字符串转到数字
+            // 我们想要的是字符串
+            var value = target.getAttribute('data-value');
+
+            if (value !== this.handleValue(this.value)) {
+
+                this.set('value', value);
+
+                /**
+                 * @event module:Select#change
+                 * @type {Object}
+                 * @property {string} value 选中项的值
+                 * @property {string} name 选中项的文字
+                 * @property {Date} shortText 选中项的文字的切割值
+                 */
+                this.fire('change', {
+                    value: value
+                });
             }
-
-            if (!lib.isArray(datasource)) {
-                datasource = String(datasource).split(/\s*[,，]\s*/);
-            }
-
-            var html = [];
-            var valueUseIndex = !!this.options.valueUseIndex;
-            for (var i = 0; i < datasource.length; i++) {
-                var item = datasource[i];
-
-                if (!lib.isObject(item)) {
-                    var data = item.split(/\s*[:：]\s*/);
-                    item = {text: data[0]};
-                    item.value = data.length > 1
-                        ? data[1] 
-                        : (valueUseIndex ? i : data[0]); 
-                }
-
-                html.push(''
-                    + '<a href="#" data-value="' + item.value + '">'
-                    +   item.text
-                    + '</a>'
-                );
-            }
-            
-            this.popup.main.innerHTML = html.join('');
 
         },
 
         /**
          * 获取控件当前值
-         * 
+         *
          * @param {bool} isNumber 是否需要返回数字类型的值
          * @return {(string | number)} 返回当前选中项的值
          * @public
          */
         getValue: function (isNumber) {
-            var options = this.options;
-            var klass = options.prefix + '-' + options.selectedClass;
-            var selected = this.popup.query(klass)[0];
-            var value = selected ? selected.getAttribute('data-value') : '';
-            isNumber = lib.typeOf(isNumber) === 'boolean'
-                ? isNumber
-                : options.isNumber;
-
-            return isNumber ? (value | 0) : value;
+            var value = this.helper.getPart('input').value;
+            return isNumber ? +value : value;
         },
 
         /**
-         * 重置选项
-         * 
-         * 将选项恢复到初始值，依赖于第一个选项，其值为 0 或空
-         * @public
+         * 设置值
+         *
+         * @param {string} value 值
+         * @return {Select}
          */
-        reset: function () {
-            privates.pick.call(this, lib.dom.first(this.main), true);
+        setValue: function (value) {
+            this.set('value', value);
+            return this;
+        },
+
+        /**
+         * 处理选单点击事件
+         *
+         * @param {Event} e 从`Popup`传来的点击事件对象
+         * @protected
+         */
+        onPopupClick: function (e) {
+            var target = e.target;
+            if (target.tagName === 'A') {
+                e.preventDefault();
+                this.pick(target);
+                this.popup.hide();
+            }
+        },
+
+        /**
+         * 转发Popup的onBeforeShow事件
+         *
+         * @param {Event} e 事件参数
+         * @fires module:Select#beforeShow
+         * @protected
+         */
+        onPopupShow: function (e) {
+            if (this.isDisabled()) {
+                e.preventDefault();
+                return;
+            }
+            // 转发事件
+            this.fire(e);
+            // 如果没有被阻止, 那就执行默认动作.
+            if (!e.isDefaultPrevented()) {
+                this.addState('expanded');
+                this.helper.getPart('indicator').innerHTML = this.indicator.expanded;
+            }
+        },
+
+        /**
+         * 隐藏浮层后的处理，主要是为了去掉高亮样式
+         *
+         * @param {Event} e 浮层隐藏事件对象
+         * @protected
+         */
+        onPopupHide: function (e) {
+            // 转发事件
+            this.fire(e);
+            // 如果没有被阻止, 那就执行默认动作.
+            if (!e.isDefaultPrevented()) {
+                this.removeState('expanded');
+                this.helper.getPart('indicator').innerHTML = this.indicator.normal;
+            }
+        },
+
+        /**
+         * main点击时阻止默认行为
+         *
+         * @param {Event} e 浮层隐藏事件对象
+         * @protected
+         */
+        onMainClicked: function (e) {
+            e.preventDefault();
+        },
+
+        /**
+         * 销毁单复选框控件实例
+         *
+         * @override
+         */
+        dispose: function () {
+            this.undelegate(this.main, 'click', this.onMainClicked);
+            this.popup.destroy();
+            this.$parent();
         }
+
+
     });
 
     return Select;

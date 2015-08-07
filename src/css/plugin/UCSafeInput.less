@@ -1,0 +1,47 @@
+/**
+ * MOYE
+ * Copyright 2014 Baidu Inc. All rights reserved.
+ *
+ * @file TextBoxPlugin UC安全控件样式
+ * @author leon <leonlu@outlook.com>
+ */
+
+@import '../variable.less';
+@import '../dep.less';
+
+.@{moye-prefix}-uc-safe-input {
+    .inline-block();
+    /* 宽 必须 */
+    // width: 208px;
+    /* 高 必须 */
+    // height: 30px;
+    /* 行高 必须 */
+    line-height: 30px;
+    /* 背景颜色 统一白色 必须 */
+    background-color: #fff;
+    /* 边框 可选 */
+    // border: #D3E0F0 1px solid;
+    /* 超出的隐藏 必须 */
+    overflow: hidden;
+}
+
+// 以下样式是对UE安全控件样式BUG的hack处理
+.ucsl-install-plug {
+    display: block;
+    font-size: 12px;
+    width: 100%;
+    height: 100%;
+    line-height: 26px;
+    text-align: center;
+    background: #fff;
+}
+
+.ucsl-layermask {
+    z-index: 999;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: #cbcbcb;
+    filter: alpha(opacity=25);
+    opacity: .25;
+}

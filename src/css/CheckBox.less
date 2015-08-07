@@ -1,0 +1,26 @@
+@import (reference) "./variable.less";
+@import (reference) "./dep.less";
+
+.@{moye-prefix}-checkbox {
+    .inline-block();
+
+    input {
+        display: none;
+    }
+
+    label {
+        .inline-block();
+        margin-right: 10px;
+        padding: 0 10px;
+        line-height: 20px;
+        font-size: 12px;
+        cursor: pointer;
+
+        &.checked {
+            background-color: #d92222;
+            color: #fff;
+        }
+
+    }
+
+}

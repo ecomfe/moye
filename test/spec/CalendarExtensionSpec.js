@@ -1,4 +1,5 @@
 define(function (require) {
+    var $ = require('jquery');
     var lib = require('ui/lib');
     
     var CalendarExtension = require('ui/CalendarExtension');
@@ -6,15 +7,18 @@ define(function (require) {
     var calendarExtension;
 
     beforeEach(function () {
+        var html = ''
+            + '<div id="calendarExtensionContainer">'
+            + ' <input type="text" class="calendar-extension-trigger" />'
+            + ' <input type="button" value="click" class="calendar-extension-trigger" />'
+            + '</div>';
+
         document.body.insertAdjacentHTML(
-            'beforeEnd', ''
-                + '<div id="calendarExtensionContainer">'
-                + ' <input type="text" class="calendar-extension-trigger" />'
-                + ' <input type="button" value="click" class="calendar-extension-trigger" />'
-                + '</div>'
+            'beforeEnd',
+            html
         );
 
-        var triggers = lib.q('calendar-extension-trigger');
+        var triggers = $('.calendar-extension-trigger');
         calendarExtension = new CalendarExtension({
             triggers: triggers,
             target: triggers[0]
@@ -35,37 +39,21 @@ define(function (require) {
             var onShow = function (arg) {
                 var target = arg.target;
                 expect(target).toBe(calendar.target);
-
-                var checked = calendar.query('ecl-ui-cal-checked')[0];
-                expect(checked.getAttribute('data-date')).toBe(
+                var checked = $('.ecl-ui-cal-checked', calendar.main);
+                expect(checked.attr('data-date')).toBe(
                     calendar.format(date, 'yyyy-MM-dd')
                 );
-
-                var el = lib.dom.next(checked)
-                    || dom._matchNode(
-                        target,
-                        'previousSibling',
-                        'previousSibling'
-                    );
-
-                lib.fire(el, 'click');
-
-                var pickDate = calendar.from(
-                    el.getAttribute('data-date'),
-                    'yyyy-MM-dd'
-                );
-
+                var el = checked.next();
+                el.trigger('click');
+                var pickDate = calendar.from(el.attr('data-date'), 'yyyy-MM-dd');
                 expect(target.value).toBe(calendar.format(pickDate));
-
                 done();
-
             };
             var calendar = calendarExtension.calendar;
             calendar.on('show', onShow);
 
             calendar.target.value = calendar.format(date);
-            lib.fire(calendar.target, 'click');
-
+            $(calendar.target).trigger('click');
             calendar.on('show', onShow);
         });
 
@@ -73,13 +61,13 @@ define(function (require) {
             var calendar = calendarExtension.calendar;
 
             // 先使日历显示
-            lib.fire(lib.q('calendar-extension-trigger')[0], 'click');
+            $('.calendar-extension-trigger').trigger('click');
 
             var yearMenuHandler = calendar.query('ecl-ui-cal-menu-year-handler')[0];
 
             expect(yearMenuHandler).toBeDefined();
 
-            lib.fire(yearMenuHandler, 'mouseover');
+            $(yearMenuHandler).trigger('mouseover');
 
             var menu = calendarExtension.menus.year;
             expect(menu).toBeDefined();
@@ -87,7 +75,7 @@ define(function (require) {
             var links = menu.main.getElementsByTagName('a');
             var target = links[Math.random() * (links.length - 3) | 0]; // 最后三个链接不是年份
 
-            lib.fire(target, 'click');
+            $(target).trigger('click');
 
             expect(yearMenuHandler.innerHTML).toBe(target.innerHTML);
         });
@@ -96,13 +84,13 @@ define(function (require) {
             var calendar = calendarExtension.calendar;
 
             // 先使日历显示
-            lib.fire(lib.q('calendar-extension-trigger')[0], 'click');
+            $('.calendar-extension-trigger').trigger('click');
 
             var monthMenuHandler = calendar.query('ecl-ui-cal-menu-month-handler')[0];
 
             expect(monthMenuHandler).toBeDefined();
 
-            lib.fire(monthMenuHandler, 'mouseover');
+            $(monthMenuHandler).trigger('mouseover');
 
             var menu = calendarExtension.menus.month;
             expect(menu).toBeDefined();
@@ -110,12 +98,11 @@ define(function (require) {
             var links = menu.main.getElementsByTagName('a');
             var target = links[Math.random() * links.length | 0];
 
-            lib.fire(target, 'click');
+            $(target).trigger('click');
 
             expect(monthMenuHandler.innerHTML).toBe(target.innerHTML);
         });
         
     });
-
 
 });

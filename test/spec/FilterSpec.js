@@ -1,7 +1,7 @@
 define(function (require) {
-    var lib = require('ui/lib');
+
     var Filter = require('ui/Filter');
-    
+    var $      = require('jquery');
     
     var filter;
 
@@ -15,7 +15,7 @@ define(function (require) {
                 +      '<p>按类型：'
                 +      '    <label>'
                 +      '        <input type="radio"'
-                +      '            name="type" />全部'
+                +      '            name="type" value="all"/>全部'
                 +      '    </label>'
                 +      '    <label class="checked">'
                 +      '        <input type="radio" name="type" value="1"'
@@ -39,7 +39,7 @@ define(function (require) {
                 +      '    </label>'
                 +      '</p>'
                 +      '<p>按特色：'
-                +      '    <label>'
+                +      '    <label id="alllll" data-all="all">'
                 +      '        <input type="checkbox"'
                 +      '            name="special" value="" />全部'
                 +      '    </label>'
@@ -86,16 +86,17 @@ define(function (require) {
 
         filter = new Filter({
             prefix: 'ecl-ui-filter',
-            main: lib.q('ecl-ui-filter')[0],
+            main: $('.ecl-ui-filter')[0],
             groups: 'p'
         });
+
         filter.render();
         
     });
 
 
     afterEach(function () {
-        document.body.removeChild(lib.g('filterContainer'));
+        $('#filterContainer').remove();
         filter.dispose();
     });
   
@@ -110,16 +111,16 @@ define(function (require) {
         it('getData', function () {
             
             expect(filter.getData('type'))
-                .toEqual({key: 'type', value: ['1']});
+                .toEqual({ key: 'type', value: [ '1' ] });
             
             expect(filter.getData('special'))
-                .toEqual({key: 'special', value: ['2', '3']});
+                .toEqual({ key: 'special', value: [ '2', '3' ] });
 
         });
 
         it('disable & enable Items', function () {
             
-            filter.disableItems('type', ['1', '2']);
+            filter.disableItems('type', [ '1', '2' ]);
             var inputs = filter.groups.type.getElementsByTagName('input');
 
             expect(inputs[1].checked).toBeFalsy();
@@ -136,7 +137,7 @@ define(function (require) {
             var firedChange = false;
             var inputs = filter.groups.type.getElementsByTagName('input');
             var target = inputs[3];
-            var event = {target: target};
+            var event = { target: target };
 
             var onClick = function () {
                 firedClick = !firedClick;
@@ -153,29 +154,27 @@ define(function (require) {
             filter.on('click', onClick);
             filter.on('change', onChange);
 
-            lib.fire(event.target, 'click');
-            lib.fire(event.target, 'click');
+            $(event.target).click();
+            $(event.target).click();
 
             expect(firedClick).toBeFalsy();
             expect(firedChange).toBeTruthy();
 
             target = inputs[0];
             event.target = target.parentNode;
-            lib.fire(event.target, 'click');
-            lib.fire(event.target, 'click');
+            $(event.target).click();
+            $(event.target).click();
 
             filter.un('click', onClick);
             filter.un('change', onChange);
 
-            expect(lib.q('checked', target.parentNode.parentNode).length)
-                .toBe(1);
+            expect($('.checked', target.parentNode.parentNode).length).toBe(1);
         });
 
         it('onClick - checkbox', function () {
-            var inputs = filter.groups.special
-                .getElementsByTagName('input');
+            var inputs = filter.groups.special.getElementsByTagName('input');
             var target = inputs[3];
-            var event = {target: target};
+            var event = { target: target };
             var changeCount = 0;
 
             var onChange = function (json) {
@@ -183,31 +182,50 @@ define(function (require) {
 
                 expect(json.key).toBe(target.name);
 
-                lib.each(json.value, function (v) {
-                    v && expect(inputs[v].checked).toBe(true);
+                // 如果值长度为9，那就选中了`全部`
+                if (json.value.length === 9) {
+
+                    expect($('#alllll').hasClass('checked')).toBe(true);
+
+                    $.each(json.value, function (i, value) {
+                        var $input = $('input[value=' + value + '][name=special]');
+                        expect($input.prop('checked')).toBe(false);
+                    });
+                    
+                    return;
+                }
+
+                // 没有选中`全部`
+                $.each(json.value, function (i, v) {
+
+                    var $input = $('input[value=' + v + '][name=special]');
+
+                    expect($input.prop('checked')).toBe(true);
                 });
+
             };
 
-
             filter.on('change', onChange);
-            lib.fire(event.target, 'click');
+
+            // 点一下第三项
+            $(event.target).trigger('click');
             expect(changeCount).toBe(1);
 
+            // 点一下第一项`全部`
             target = inputs[0];
             event.target = target.parentNode;
-
-            lib.fire(event.target, 'click');
+            $(event.target).trigger('click');
             expect(changeCount).toBe(2);
 
-            lib.fire(event.target, 'click');
+            // // 再点一下第一项`全部`
+            $(event.target).trigger('click');
             expect(changeCount).toBe(2);
 
-            expect(lib.q('checked', target.parentNode.parentNode).length)
-                .toBe(1);
+            expect($('.checked', target.parentNode.parentNode).length).toBe(1);
 
             target = inputs[1];
             event.target = target;
-            lib.fire(event.target, 'click');
+            $(event.target).click();
 
             expect(changeCount).toBe(3);
 
@@ -216,5 +234,4 @@ define(function (require) {
         });
 
     });
-
 });

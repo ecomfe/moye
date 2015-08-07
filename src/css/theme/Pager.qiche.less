@@ -1,0 +1,26 @@
+@import '../dep.less';
+@import '../variable.less';
+
+.skin-qiche-pager {
+
+    @pager-item-current-color: #0f80e3;
+    // @pager-item-border-color: #55a826;
+
+    a {
+        color: #000;
+        // border-color: @pager-item-border-color;
+    }
+
+    a.@{moye-prefix}-pager-current {
+    
+        background-color: @pager-item-current-color;
+        color: #fff;
+        border: 1px solid @pager-item-current-color;
+    
+        &:hover {
+            background-color: lighten(@pager-item-current-color, 5%);
+        }
+
+    }
+
+}

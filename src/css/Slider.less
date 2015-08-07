@@ -1,45 +1,52 @@
-@slider-prefix: ecl-ui-slider;
+/**
+ * @file MOYE 幻灯片样式
+ * @author leon(leonlu@outlook.com)
+ */
 
-@slider-width: 423px; //slider宽度
-@slider-height: 638px; //slider高度
-@slider-z-index: 1; //slider按钮层级
+@import './dep.less';
+@import './variable.less';
 
-@switch-btn-width: 40px; //切换按钮宽度
-@switch-btn-height: 40px; //切换按钮高度
+@moye-slider-width: 423px;           //slider宽度
+@moye-slider-height: 638px;          //slider高度
+@moye-slider-z-index: 1;             //slider按钮层级
+@moye-slider-switch-btn-width: 40px;        //切换按钮宽度
+@moye-slider-switch-btn-height: 40px;       //切换按钮高度
 
-.@{slider-prefix} {
+
+.@{moye-prefix}-slider {
     position: relative;
-    width: @slider-width;
-    height: @slider-height;
-    
+    width: @moye-slider-width;
+    height: @moye-slider-height;
+
     //舞台
     &-stage {
         position: relative;
-        _width: @slider-width;
-        height: @slider-height;
+        _width: @moye-slider-width;
+        height: @moye-slider-height;
         overflow: hidden;
         white-space: nowrap;
     }
 
     &-item {
-        width: @slider-width;
-        height: @slider-height;
+        width: @moye-slider-width;
+        height: @moye-slider-height;
     }
 
     //向前和向后按钮
-    &-prev, 
+    &-prev,
     &-next {
         position: absolute;
-        width: @switch-btn-width;
-        height: @switch-btn-height;
-        top: @slider-height/2 - @switch-btn-height/2;
-        font: bolder ~'24px/@{switch-btn-height}' '';
+        width: @moye-slider-switch-btn-width;
+        height: @moye-slider-switch-btn-height;
+        top: 50%;
+        margin-top: @moye-slider-switch-btn-height;
+        font: bolder ~'24px/@{moye-slider-switch-btn-height}' '';
         text-align: center;
         color: #FFF;
         background: #CCC;
         background: rgba(204, 204, 204, 0.7);
         left: 2px;
-        z-index: @slider-z-index + 10;
+        z-index: @moye-slider-z-index + 10;
         -webkit-user-select:none;
         -moz-user-select:none;
         -ms-user-select:none;
@@ -53,22 +60,22 @@
         right: 2px;
     }
 
-    &-prev:hover, 
+    &-prev:hover,
     &-next:hover {
         background: #DDD;
     }
 
-    &-prev-disable, 
+    &-prev-disable,
     &-next-disable {
         display:none;
     }
 
     //索引按钮
-    &-index {
+    &-pager {
         position: absolute;
-        bottom: -20px;
-        left: @slider-width/2 - 40;
-        z-index: @slider-z-index;
+        bottom: 0;
+        left: 50%;
+        z-index: @moye-slider-z-index + 2;
         cursor: pointer;
 
         i {
@@ -79,11 +86,11 @@
             margin-right: 10px;
             border-radius:10px;
             background: #CCC;
-            -webkit-transition:all 0.3s 0 linear;
-            -moz-transition:all 0.3s 0 linear;
-            -ms-transition:all 0.3s 0 linear;
-            -o-transition:all 0.3s 0 linear;
-            transition:all 0.3s 0 linear;
+            -webkit-transition: width 0.3s linear;
+            -moz-transition: width 0.3s linear;
+            -ms-transition: width 0.3s linear;
+            -o-transition: width 0.3s linear;
+            transition: width 0.3s linear;
         }
 
         & &-selected {
@@ -93,25 +100,25 @@
 
 
     //slider 垂直动画样式
-    &-stage-vertical{
+    &-stage-vertical {
         white-space: normal;
     }
 
-    &-stage-vertical &-item{
+    &-stage-vertical &-item {
         float: left;
     }
 
-    //透明度动画class
-    &-stage-abs &-item{
+    // 透明度动画class
+    &-stage-opactiy &-item {
         position: absolute;
     }
 
-    &-cover{
-        z-index: @slider-z-index;
+    &-cover {
+        z-index: @moye-slider-z-index;
     }
 
-    &-top{
-        z-index: @slider-z-index + 1;
+    &-top {
+        z-index: @moye-slider-z-index + 1;
     }
 
 }

@@ -8,6 +8,7 @@
 
 define(function (require) {
 
+    var $ = require('jquery');
     var lib = require('./lib');
 
     /**
@@ -44,42 +45,39 @@ define(function (require) {
      * 设置透明度
      * @param {HTMLElement} element dom元素
      * @param {number} opacity 透明度
-     * 
+     *
      * @type {Function}
      */
-    var setOpacity = (function (isLowerIEVersion) {
-        return isLowerIEVersion 
-            ? function (element, opacity) {
-                if (opacity === 1) {
-                    element.style.filter = '';
-                }
-                else {
-                    element.style.filter = ''
-                        + 'alpha(opacity='
-                        + (100 * opacity)
-                        + ')';
-                }
+    var setOpacity = lib.browser.ie < 9
+        ? function (element, opacity) {
+            if (opacity === 1) {
+                element.style.filter = '';
             }
-            : function (element, opacity) {
-                if (opacity === 1) {
-                    element.style.opacity = '';
-                }
-                else {
-                    element.style.opacity = opacity;
-                }
-            };
-
-    })(lib.browser.ie < 9);
+            else {
+                element.style.filter = ''
+                    + 'alpha(opacity='
+                    + (100 * opacity)
+                    + ')';
+            }
+        }
+        : function (element, opacity) {
+            if (opacity === 1) {
+                element.style.opacity = '';
+            }
+            else {
+                element.style.opacity = opacity;
+            }
+        };
 
     /**
      * anim对象接口，子类需重写动画相关函数
      *
      * @requires lib
      * @exports SliderAnim
-     * @example
-     * new SliderAnim(slider, animOptions)
      */
-    var SliderAnim = lib.newClass( /** @lends module:SliderAnim.prototype */ {
+    var SliderAnim = lib.newClass({
+
+        type: 'SliderAnim',
 
         /**
          * 初始化函数
@@ -97,11 +95,10 @@ define(function (require) {
          *
          * @param {number} index 指定的索引
          * @param {number} lastIndex 上一个索引
-         * @return {boolean} 是否能够切换成功
          * @protected
          */
-        switchTo: function ( /*index, lastIndex*/ ) {
-            //overwrite here
+        switchTo: function (index, lastIndex) {
+            // overwrite here
         },
 
         /**
@@ -110,7 +107,9 @@ define(function (require) {
          * @return {boolean} 是否能够切换成功
          * @protected
          */
-        isBusy: function () {},
+        isBusy: function () {
+            return true;
+        },
 
         /**
          * 启用动画，用于多动画效果切换
@@ -158,10 +157,10 @@ define(function (require) {
          * @return {number} 算子百分比
          */
         easing: function (p) {
-            if ((p /= 0.5) < 1) {
-                return 1 / 2 * p * p;
-            }
-            return -1 / 2 * ((--p) * (p - 2) - 1);
+            p *= 2;
+            return p < 1
+                ? 1 / 2 * p * p
+                : -1 / 2 * ((--p) * (p - 2) - 1);
         },
 
         /**
@@ -194,19 +193,19 @@ define(function (require) {
          */
         backBoth: function (p) {
             var s = 1.70158;
-            if ((p /= 0.5) < 1) {
-                return 1 / 2 * (p * p * (((s *= (1.525)) + 1) * p - s));
-            }
-            return 1 / 2 * ((p -= 2) * p * (((s *= (1.525)) + 1) * p + s) + 2);
+            p *= 2;
+            return p < 1
+                ? 1 / 2 * (p * p * (((s *= (1.525)) + 1) * p - s))
+                : 1 / 2 * ((p -= 2) * p * (((s *= (1.525)) + 1) * p + s) + 2);
         },
 
         /**
-         * lineer
+         * linear
          *
          * @param {number} p 当前百分比
          * @return {number} 算子百分比
          */
-        lineer: function (p) {
+        linear: function (p) {
             return p;
         },
 
@@ -219,9 +218,11 @@ define(function (require) {
         bounce: function (p) {
             if (p < (1 / 2.75)) {
                 return (7.5625 * p * p);
-            } else if (p < (2 / 2.75)) {
+            }
+            else if (p < (2 / 2.75)) {
                 return (7.5625 * (p -= (1.5 / 2.75)) * p + 0.75);
-            } else if (p < (2.5 / 2.75)) {
+            }
+            else if (p < (2.5 / 2.75)) {
                 return (7.5625 * (p -= (2.25 / 2.75)) * p + 0.9375);
             }
             return (7.5625 * (p -= (2.625 / 2.75)) * p + 0.984375);
@@ -252,11 +253,13 @@ define(function (require) {
 
     /**
      * 按时间线轮播组件基类
-     * 
+     *
      * @requires SliderAnim
      * @name module:SliderAnim~TimeLine
      */
-    var TimeLine = SliderAnim.extend( /** @lends module:SliderAnim~TimeLine.prototype */ {
+    SliderAnim.TimeLine = SliderAnim.extend({
+
+        type: 'TimeLine',
 
         /**
          * 初始化函数
@@ -267,15 +270,11 @@ define(function (require) {
          * @param {string} options.easing 动画算子
          */
         initialize: function (slider, options) {
-            var me = this;
-            me.slider = slider;
-            me.interval = options.interval || 300;
-            me.easingFn = SliderAnim.easing[options.easing || 'easing'];
-
-            var _timeHandler = me.timeHandler;
-            me.timeHandler = function () {
-                _timeHandler.apply(me);
-            };
+            this.$parent(slider, options);
+            this.slider = slider;
+            this.interval = options.interval || 300;
+            this.easingFn = SliderAnim.easing[options.easing || 'easing'];
+            this.timeHandler = $.proxy(this.timeHandler, this);
         },
 
         /**
@@ -284,7 +283,8 @@ define(function (require) {
          * @param {number} lastIndex 上一个索引
          * @protected
          */
-        beforeSwitch: function (index, lastIndex) {},
+        beforeSwitch: function (index, lastIndex) {
+        },
 
         /**
          * 切换到指定的索引
@@ -302,7 +302,7 @@ define(function (require) {
 
         /**
          * 计时器函数
-         * 
+         *
          * @private
          */
         timeHandler: function () {
@@ -319,9 +319,10 @@ define(function (require) {
 
         /**
          * 是否动画正在进行
+         * @return {boolean}
          */
         isBusy: function () {
-            return this.timer !== 0;
+            return !!this.timer;
         },
 
         /**
@@ -347,30 +348,23 @@ define(function (require) {
          * @protected
          */
         tick: function (percent) {
-            //overwrite here
+            // overwrite here
         }
     });
 
     /**
-     * 导出动画基类，方便外层扩展
-     *
-     * @type {module:SliderAnim~TimeLine}
-     */
-    SliderAnim.TimeLine = TimeLine;
-
-
-
-    /**
      * 基本的轮播效果，无动画切换
-     * 
+     *
      * @name module:SliderAnim.anims.no
      */
-    SliderAnim.add('no', SliderAnim.extend( /** @lends module:SliderAnim.anims.no.prototype */ {
+    SliderAnim.add('no', SliderAnim.extend({
+
+        type: 'SliderAnimNo',
+
         /**
          * 切换到指定的索引
          *
          * @param {number} index 指定的索引
-         * @return {boolean} 是否能够切换成功
          */
         switchTo: function (index) {
             this.slider.stage.scrollLeft = this.slider.stageWidth * index;
@@ -380,69 +374,76 @@ define(function (require) {
 
     /**
      * 滑动门动画组件
-     * 
+     *
      * @name module:SliderAnim.anims.slider
      */
-    SliderAnim.add('slide', TimeLine.extend( /** @lends module:SliderAnim.anims.slide.prototype */ {
+    SliderAnim.add('slide', SliderAnim.TimeLine.extend({
+
+        type: 'SliderAnimSlide',
 
         /**
          * 初始化函数
          *
          * 其他选项参考TimeLine的初始化函数
          *
-         * @param {module:Slider} slider slider对象
-         * @param {string} options.direction 滑动方向，
-         * `horizontal` or `vertical`
-         * @see module:SliderAnim.TimeLine#initialize
+         * @param {Slider} slider slider对象
+         * @param {Object} options 参数
+         * @param {string} options.direction 滑动方向 `horizontal`/`vertical`
          */
         initialize: function (slider, options) {
-            this.parent('initialize', slider, options);
 
-            //设置滑动门的方向 `horizontal` or `vertical`
-            this.yAxis = options.direction === 'vertical';
+            this.$parent(slider, options);
 
-            //是否采用循环滚模式滚动，从结尾平滑滚动到开头，
+            var direction = options.direction || 'horizontal';
+
+            // 设置滑动门的方向 `horizontal` or `vertical`
+            this.yAxis = direction === 'vertical';
+
+            slider.helper.addPartClasses('stage-' + direction);
+
+            // 是否采用循环滚模式滚动，从结尾平滑滚动到开头，
             // 需要拷贝首节点到末尾来支持
             this.rollCycle = options.rollCycle || false;
         },
 
         /**
          * 在切换索引之前的动作
-         * 
+         *
          * @param {number} index 指定的索引
          * @param {number} lastIndex 上一个索引
          * @protected
          */
         beforeSwitch: function (index, lastIndex) {
 
-
             var stageWidth = this.slider.stageWidth;
             var stageHeight = this.slider.stageHeight;
-            var maxIndex = this.slider.count - 1;
+            var maxIndex = this.slider.capacity - 1;
+            var stage = $(this.slider.stage);
 
-            //如果使用循环滚模式
+            // 如果使用循环滚模式
             if (this.rollCycle) {
-                //初始化要拷贝首节点到最后
+                // 初始化要拷贝首节点到最后
                 if (!this.cycleNode) {
-                    var cloned = this.slider.stage.firstChild.cloneNode();
-                    this.slider.stage.appendChild(cloned);
+                    stage.children().first().clone().appendTo(stage);
                     this.cycleNode = true;
                 }
             }
 
-            //这里为了避免reflow使用这种书写方式
+            // 这里为了避免reflow使用这种书写方式
             if (this.yAxis) {
-
                 if (this.isBusy()) {
-                    this.curPos = this.slider.stage.scrollTop;
-                } else {
+                    this.curPos = stage.scrollTop();
+                }
+                else {
                     this.curPos = stageHeight * lastIndex;
                 }
                 this.targetPos = stageHeight * index;
-            } else {
+            }
+            else {
                 if (this.isBusy()) {
-                    this.curPos = this.slider.stage.scrollLeft;
-                } else {
+                    this.curPos = stage.scrollLeft();
+                }
+                else {
                     this.curPos = stageWidth * lastIndex;
                 }
                 this.targetPos = stageWidth * index;
@@ -451,12 +452,12 @@ define(function (require) {
                 // 所以在使用时可以设置slider的switchDelay大于
                 // 滚动动画的时间防止连续点击
                 if (this.rollCycle) {
-                    //结尾滚开头
+                    // 结尾滚开头
                     if (index === 0 && lastIndex === maxIndex) {
                         this.targetPos = stageWidth * (maxIndex + 1);
                     }
-                    //开头滚结尾
-                    else if (index === maxIndex && lastIndex === 0 
+                    // 开头滚结尾
+                    else if (index === maxIndex && lastIndex === 0
                         && !this.isBusy()) {
                         this.curPos = stageWidth * (maxIndex + 1);
                     }
@@ -472,59 +473,65 @@ define(function (require) {
          */
         tick: function (percent) {
             var move = (this.targetPos - this.curPos) * this.easingFn(percent);
-            this.slider.stage[
-            this.yAxis ? 'scrollTop' : 'scrollLeft'] = this.curPos + move;
+            var prop = this.yAxis ? 'scrollTop' : 'scrollLeft';
+            this.slider.stage[prop] = this.curPos + move;
         }
     }));
 
     /**
      * 渐变动画组件，通过改变元素的z-index和透明度来改变
-     * 
-     * @name module:SliderAnim.anims.opacity
      */
-    SliderAnim.add('opacity', TimeLine.extend( /** @lends module:SliderAnim.anims.opacity.prototype */ {
+    SliderAnim.add('opacity', SliderAnim.TimeLine.extend({
+
+        type: 'SliderAnimOpacity',
 
         /**
          * 设置目标元素的透明度
-         * 
+         *
          * @private
          */
         setOpacity: setOpacity,
 
+        initialize: function (slider, options) {
+            this.$parent(slider, options);
+            slider.helper.addPartClasses('stage-opactiy');
+        },
+
         /**
          * 在切换索引之前的动作
-         * 
+         *
          * @param {number} index 指定的索引
          * @protected
          */
         beforeSwitch: function (index) {
-            var childNodes = this.slider.getChildren(
-            this.slider.stage);
+
+            var slider = this.slider;
+            var helper = slider.helper;
+            var childNodes = $(slider.stage).children();
             var l = childNodes.length;
 
-            if (undefined === this.index) {
+            if (lib.isUndefined(this.index)) {
                 this.index = l - 1;
             }
 
-            if (undefined === this.lastIndex) {
+            if (lib.isUndefined(this.lastIndex)) {
                 this.lastIndex = l - 1;
             }
 
-            //还原当前元素
+            // 还原当前元素
             this.setOpacity(childNodes[this.index], 1);
 
             // 移出顶层元素
-            lib.removeClass(childNodes[this.index], this.slider.getClass('top'));
-            //将顶层元素作为背景
-            lib.removeClass(childNodes[this.lastIndex], this.slider.getClass('cover'));
-            //移出背景元素
-            lib.addClass(childNodes[this.index], this.slider.getClass('cover'));
-
+            $(childNodes[this.index]).removeClass(helper.getPartClassName('top'));
+            // 将顶层元素作为背景
+            $(childNodes[this.lastIndex]).removeClass(helper.getPartClassName('cover'));
+            // 移出背景元素
+            $(childNodes[this.index]).addClass(helper.getPartClassName('cover'));
 
             this.lastIndex = this.index;
 
-            //设置当前元素
-            lib.addClass(childNodes[this.index = index], this.slider.getClass('top'));
+            // 设置当前元素
+            $(childNodes[this.index = index]).addClass(helper.getPartClassName('top'));
 
             this.setOpacity(this.curElement = childNodes[index], 0);
         },
@@ -545,12 +552,12 @@ define(function (require) {
 
         /**
          * 注销动画
-         * 
+         *
          * @public
          */
         dispose: function () {
             this.curElement = null;
-            this.parent('dispose');
+            this.$parent();
         }
     }));
 
