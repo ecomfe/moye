@@ -1,0 +1,56 @@
+@import (reference) "./variable.less";
+@import (reference) "./dep.less";
+@import "./icon.less";
+
+// 默认基本样式
+
+// 选框的宽度
+@moye-boxgroup-label-width: 100px;
+// 选框的高度 垂直居中 所以默认line-height等于height
+@moye-boxgroup-label-height: 40px;
+// 选框之间的间距
+@moye-boxgroup-label-margin-right: 10px;
+// 选框选的背景和字体颜色
+@moye-boxgroup-label-default-bgcolor: #149FD6;
+@moye-boxgroup-label-default-color: #fff;
+
+// icon的高宽度
+@moye-boxgroup-label-icon-font-size: @default-font-size;
+
+.@{moye-prefix}-boxgroup {
+
+    input {
+       display: none;
+    }
+
+    &-item {
+
+        .inline-block();
+
+        height: @moye-boxgroup-label-height;
+        line-height: @moye-boxgroup-label-height;
+        margin-right: @moye-boxgroup-label-margin-right;
+
+        .moye-icon {
+            .inline-block();
+            margin-right: 5px;
+            font-size: @moye-boxgroup-label-icon-font-size;
+        }
+
+        .moye-icon-checked {
+            display: none;
+        }
+
+        &-checked {
+            .moye-icon-unchecked {
+                display: none;
+            }
+
+            .moye-icon-checked {
+                .inline-block();
+            }
+        }
+
+    }
+
+}

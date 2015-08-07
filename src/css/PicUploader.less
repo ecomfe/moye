@@ -1,6 +1,15 @@
-@picuploader-prefix: ecl-ui-picuploader;
+/**
+ * MOYE
+ * Copyright 2014 Baidu Inc. All rights reserved.
+ *
+ * @file 图片上传
+ * @author leon <leonlu@outlook.com>
+ */
 
-.@{picuploader-prefix}- {
+@import './variable.less';
+@import './dep.less';
+
+.@{moye-prefix}-picuploader {
     &picker {
         display: inline-block;
         *display:inline;
@@ -47,7 +56,7 @@
         cursor: pointer;
         display: none;
     }
-    
+
     &close:hover {
         background: #CCC;
         background: rgba(0,0,0, 0.5);
@@ -84,9 +93,9 @@
 
 }
 
-.@{picuploader-prefix}-picked {
+.@{moye-prefix}-picuploader-picked {
 
-    .@{picuploader-prefix}-{
+    .@{moye-prefix}-picuploader-{
 
         &pic {
             border:#1366FF 1px solid;
@@ -103,17 +112,17 @@
     }
 }
 
-.@{picuploader-prefix}-error {
+.@{moye-prefix}-picuploader-error {
     background: #FFB4AD;
 }
 
-.@{picuploader-prefix}-disabled {
+.@{moye-prefix}-picuploader-disabled {
 
-    .@{picuploader-prefix}-cur {
+    .@{moye-prefix}-picuploader-cur {
         display: none;
     }
 
-    .@{picuploader-prefix}-close {
+    .@{moye-prefix}-picuploader-close {
         display: none;
     }
 }

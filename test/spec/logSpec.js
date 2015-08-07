@@ -1,6 +1,12 @@
+/**
+ * @file ubs点击日志组件测试用例
+ * @author chris <wfsr@foxmail.com>
+ * @author ludafa <leonlu@outlook.com>
+ */
+
 define(function (require) {
 
-    var lib = require('ui/lib');
+    var $   = require('jquery');
     var log = require('ui/log');
     
 
@@ -50,7 +56,7 @@ define(function (require) {
                 +   '<p data-click="abc"></p>'
                 + '</div>'
         );
-        container = lib.g('logContainer');
+        container = $('#logContainer')[0];
     });
 
     afterEach(function () {
@@ -90,7 +96,7 @@ define(function (require) {
                 expect(data.y).toBe(3);
             };
             log.on('click', onClick);
-            lib.fire(container.getElementsByTagName('input')[1], 'click');
+            $(container.getElementsByTagName('input')[1]).trigger('click');
             log.un('click', onClick);
         });
 
@@ -103,7 +109,7 @@ define(function (require) {
                 expect(data.y).toBe(5);
             };
             log.on('click', onClick);
-            lib.fire(container.getElementsByTagName('input')[2], 'click');
+            $(container.getElementsByTagName('input')[2]).trigger('click');
             log.un('click', onClick);
         });
 
@@ -112,9 +118,9 @@ define(function (require) {
                 var data = json.data;
                 expect(data.foo).toBe('bar');
             };
-            log.config({data: {foo: 'bar'}});
+            log.config({ data: { foo: 'bar' } });
             log.on('click', onClick);
-            lib.fire(container.getElementsByTagName('div')[0], 'click');
+            $(container.getElementsByTagName('div')[0]).trigger('click');
             log.un('click', onClick);
         });
 
@@ -126,7 +132,7 @@ define(function (require) {
             };
             log.on('click', onClick);
             log.fill(inputs, { fill: true });
-            lib.fire(inputs[Math.random() * inputs.length | 0], 'click');
+            $(inputs[Math.random() * inputs.length | 0]).trigger('click');
             log.un('click', onClick);
         });
 
@@ -140,7 +146,7 @@ define(function (require) {
                 expect(~json.url.indexOf('live=1')).toBe(true);
             };
             log.on('send', onSend);
-            lib.fire(container.getElementsByTagName('input')[1], 'click');
+            $(container.getElementsByTagName('input')[1]).trigger('click');
             log.un('send', onSend);
         });
 
@@ -150,7 +156,7 @@ define(function (require) {
                 expect(data.abc).toBe('');
             };
             log.on('click', onClick);
-            lib.fire(container.getElementsByTagName('p')[0], 'click');
+            $(container.getElementsByTagName('p')[0]).trigger('click');
             log.un('click', onClick);
         });
     });
@@ -193,7 +199,7 @@ define(function (require) {
                 log.un('send', arguments.callee);
             });
 
-            log.send({foo: 'bar'});
+            log.send({ foo: 'bar' });
         });
 
         it('xpath - div(other)', function () {
@@ -331,11 +337,11 @@ define(function (require) {
                 expect(json.data.xpath).toMatch(/\(link\)/);
             };
             var el = container.getElementsByTagName('input')[2];
-            lib.addClass(el, 'OP_LOG_LINK');
+            $(el).addClass('OP_LOG_LINK');
             log.on('click', onClick);
             log.click(el);
             log.un('click', onClick);
-            lib.removeClass(el, 'OP_LOG_LINK');
+            $(el).removeClass('OP_LOG_LINK');
         });
     });
 

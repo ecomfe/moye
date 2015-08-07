@@ -1,108 +1,175 @@
-@sel-prefix: ecl-ui-sel;
+/**
+ * MOYE
+ * Copyright 2014 Baidu Inc. All rights reserved.
+ *
+ * @file 下拉选择框样式
+ * @author leon <leonlu@outlook.com>
+ */
+
+@import './variable.less';
+@import './dep.less';
+@import './mixin.less';
+@import './Popup.less';
+@import './icon.less';
+
+@moye-select-text-color: #bbb;
+@moye-select-background-color: #fff;
+@moye-select-selected-text-color: #333;
+@moye-select-border-color: #ccc;
+@moye-select-border-width: 1px;
+@moye-select-font-size: @moye-medium;
+@moye-select-padding-horizontal: 1rem;
+@moye-select-label-width: 15rem;
+@moye-select-indicator-width: 1rem;
+@moye-select-width: @moye-select-label-width + @moye-select-indicator-width;
+
+@moye-select-error-border-color: @moye-error-border-color;
+@moye-select-error-background-color: @moye-error-background-color;
+@moye-select-error-text-color: @moye-error-text-color;
+
 
 // 选单目标容器
-.@{sel-prefix}-target {
-    text-decoration: none;
-    color: #333333;
-    display: inline-block;
-    padding: 3px 25px 3px 10px;
-    border: 1px solid transparent;
-    _border-color: #654321;
-    _filter: chroma(color=#654321);
-    font-size: 12px;
-    position: relative;
-    cursor: default;
-    margin-left: 5px;
+.@{moye-prefix}-select {
 
-    b {
-        font-weight: 300;        
+    .inline-block();
+    .moye-size-height();
+    .moye-size-padding-vertical();
+    .moye-size-padding-horizontal();
+    border: @moye-select-border-width solid @moye-select-border-color;
+    .clearfix();
+
+    // 选中值
+    &-label {
+        float: left;
+        display: block;
+        .moye-size-height();
+        .moye-rem(width, @moye-select-label-width);
+        color: @moye-select-text-color;
+        background-color: @moye-select-background-color;
+        text-decoration: none;
+        vertical-align: top;
+        .ellipsis();
+
+        &:visited {
+            color: @moye-select-text-color;
+        }
+
     }
 
-    &:hover {
-        border-color: #C9CBCE;
-        background-color: #F7F7F7;
+    // 展开收起指示器
+    &-indicator {
+        &:extend(.moye-icon);
+        float: left;
+        display: block;
+        .moye-size-height();
+        .moye-rem(width, @moye-select-indicator-width);
+        color: @moye-select-text-color;
+        text-align: center;
     }
-
-    i {
-        background: url(http://s1.bdstatic.com/r/www/cache/biz/ecom/hotel/img/icon_sprites.gif) no-repeat 0 -18px;
-        width: 10px;
-        height: 8px;
-        position: absolute;
-        top: 50%;
-        right: 10px;
-        margin-top: -4px;
-        font-size:0;
-    }
-}
-
-// 选单展开时 target 的固定状态
-.@{sel-prefix}-hl,
-.@{sel-prefix}-hl:hover {
-    border-color: #B6B9BD;
-    background-color: #F1F1F1;
-
-    i {
-        background-position: 0 -12px;        
-    }
-}
-
-.@{sel-prefix}-disabled,
-.@{sel-prefix}-disabled:hover
- {
-    color: #999;
-    cursor: not-allowed;
-    border: 1px solid transparent;
-    background-color: transparent;
-}
-
-// 有选中值时 target 的状态
-.@{sel-prefix}-checked {
-    color: #FF6C00;
-}
-
-// 选单
-.@{sel-prefix} {
-    position: absolute;
-    border: 1px solid #B6B9BD;
-    width: 140px;
-    z-index: 10;
-    left: -1000em;
-    line-height: 30px;
-    font-size: 12px;
 
     // 选项
-    a {
-        height: 30px;
-        padding: 0 10px;
-        text-decoration: none;
+    &-option {
+
         display: block;
+
+        .moye-rem(width, @moye-select-label-width + @moye-select-indicator-width);
+        .moye-size-height();
+        .moye-size-padding-vertical();
+        .moye-size-padding-horizontal();
+
+        text-decoration: none;
+        color: @moye-select-selected-text-color;
         overflow: hidden;
-        color: #333333;
-        cursor: default;
-        background-color: #FFF;
+        cursor: pointer;
+
+        &:visited {
+            color: @moye-select-selected-text-color;
+        }
 
         &:hover {
-            background-color: #F5F5F5;
+            background-color: @moye-select-option-hover-background-color;
+        }
+
+        // 有选中值时 target 的状态
+        &-selected {
+            color: #000;
+            background-color: #ddd;
         }
     }
 
+    &-selected &-label {
+        color: @moye-select-selected-text-color;
+        &:visited {
+            color: @moye-select-selected-text-color;
+        }
+    }
 
-    // 有选中值时 target 的状态
-    .@{sel-prefix}-cur {
-        color: #000;
+    &-invalid &-label {
+        border-color: @moye-select-error-border-color;
+        background-color: @moye-select-error-background-color;
+    }
+
+    &-disabled,
+    &-disabled:hover {
+        color: #999;
+        cursor: not-allowed;
+        border: 1px solid transparent;
+        background-color: transparent;
     }
 
 }
 
+@moye-select-popup-z-index: 10;
+@moye-select-option-height: 1.5rem;
+@moye-select-option-vertical-padding: 0.25rem;
+@moye-select-option-hover-background-color: #f3f3f3;
 
-.@{sel-prefix}-cols3 {
-    width: 276px;
-    overflow: hidden;
+.@{moye-prefix}-select-popup {
+    background-color: @moye-select-background-color;
+    border: 1px solid #B6B9BD;
+    z-index: @moye-select-popup-z-index !important;
+}
 
-    a {
-        _display: inline;
-        width: 72px;
-        float: left;
-        _zoom: 1;
+
+.moye-select-size(@size) {
+    .moye-size-height(@size);
+    .moye-size-padding-vertical(@size);
+    .moye-size-padding-horizontal(@size);
+
+    &-label,
+    &-indicator,
+    &-option {
+        .moye-size-height(@size);
+        .moye-rem(font-size, @size);
     }
+
+    &-option {
+        .moye-size-padding-vertical(@size);
+        .moye-size-padding-horizontal(@size);
+    }
+};
+
+.skin-mini-select {
+    .moye-select-size(@moye-mini);
+}
+.skin-tiny-select {
+    .moye-select-size(@moye-tiny);
+}
+.skin-small-select {
+    .moye-select-size(@moye-small);
+}
+.skin-medium-select {
+    .moye-select-size(@moye-medium);
+}
+.skin-large-select {
+    .moye-select-size(@moye-large);
+}
+.skin-big-select {
+    .moye-select-size(@moye-big);
+}
+.skin-huge-select {
+    .moye-select-size(@moye-huge);
+}
+.skin-massive-select {
+    .moye-select-size(@moye-massive);
 }

@@ -1,108 +1,166 @@
-@cal-prefix: ecl-ui-cal;
+/**
+ * MOYE
+ * Copyright 2014 Baidu Inc. All rights reserved.
+ *
+ * @file 文本框样式
+ * @author leon <leonlu@outlook.com>
+ */
 
-.@{cal-prefix} h3,
-.@{cal-prefix}-pre,
-.@{cal-prefix}-next {
-    background: url(http://open.baidu.com/stat/ticket/cal.gif) 0 -19px;
-}
+@import './variable.less';
+@import './dep.less';
+@import './Popup.less';
+@import './icon.less';
+@import './mixin.less';
 
-.@{cal-prefix} {
-    position: absolute;
-    border: 1px solid #b5b5b5;
-    background: #fff;
-    text-align: center;
 
-    h3 {
-        margin: 0;
-        padding: 0;
+@moye-calendar-title-background-color: #c40004;
+@moye-calendar-title-color: #fff;
+
+@moye-calendar-month-background-color: #fff;
+@moye-calendar-month-padding-horizontal: @moye-small;
+
+@moye-calendar-date-gap-horizontal: 6px;
+@moye-calendar-date-gap-vertical: 9px;
+@moye-calendar-date-width: 24px;
+@moye-calendar-date-height: 24px;
+@moye-calendar-date-font-size: @moye-small;
+@moye-calendar-date-color: #666;
+@moye-calendar-date-border-witdh: 1px;
+@moye-calendar-date-border-color: @moye-calendar-month-background-color;
+
+
+@moye-calendar-date-weekend-color: #c40004;
+
+@moye-calendar-date-hover-border-color: #ccc;
+@moye-calendar-date-hover-background-color: #f8f8f8;
+@moye-calendar-date-hover-color: #666;
+
+@moye-calendar-date-check-border-color: #c40004;
+@moye-calendar-date-check-background-color: #c40004;
+@moye-calendar-date-check-color: #fff;
+
+@moye-calendar-date-overflow-border-color: @moye-calendar-date-border-color;
+@moye-calendar-date-overflow-background-color: @moye-calendar-month-background-color;
+@moye-calendar-date-overflow-color: #999;
+
+.@{moye-prefix}-calendar {
+
+    .inline-block();
+
+    &-popup {
         text-align: center;
-        line-height: 19px;
-        height: 19px;
-        overflow: hidden;
-        font-size: 14px;
-        background-position: 1px 0;
-        background-repeat: repeat-x;
-        color: #41537b;
-        margin-bottom: 2px;
-        border: 1px solid #c6cede;
-        border-top-color: #e9eff9;
-        border-left-color: #e9eff9;
+        background: #fff;
+        border: 1px solid #b5b5b5;
+        padding-bottom: @moye-calendar-date-gap-vertical;
     }
 
-    ul {
-        color: #666;
+
+    &-content {
+        // @hack
+        // @see https://msdn.microsoft.com/en-us/library/bb250481(v=vs.85).aspx
+        // 主要问题是这样，绝对定位中有一个`hasLayout`的元素，那么在ie6上，浮层被撑到全屏宽
+        // 原因当然是ie6傻啦：如果position:absolute内部元素获得了hasLayout那么它会忽略掉父元素的`shrink wrap`行为
+        // 所以这里搞成inline
+        *display: inline;
+        .clearfix();
     }
 
-    li,
-    p a {
+    &-month {
         float: left;
-        width: 25px;
-        font: 12px Arial;
+        width: 250px;
+
+        ul,
+        p {
+            width: 7*(@moye-calendar-date-width + 2*@moye-calendar-date-border-witdh + @moye-calendar-date-gap-horizontal);
+            padding: 0 @moye-calendar-month-padding-horizontal;
+            margin-left: -@moye-calendar-date-gap-horizontal;
+            .clearfix();
+        }
+
+        h3 {
+            margin: 0;
+            padding: 0;
+            .moye-rem(line-height, @moye-small * 2);
+            .moye-rem(height, @moye-small * 2);
+            .moye-rem(font-size, @moye-small);
+            color: @moye-calendar-title-color;
+            background-color: @moye-calendar-title-background-color;
+        }
+
     }
 
-    p a {
-        color: #000;
-        height: 18px;
-        line-height: 18px;
-        margin-top: 3px;
+    &-week,
+    &-date {
+        float: left;
+        *display: inline;
+        margin-left: @moye-calendar-date-gap-horizontal;
+        margin-top: @moye-calendar-date-gap-vertical;
+        width: @moye-calendar-date-width;
+        font-size: @moye-calendar-date-font-size;
+        color: @moye-calendar-date-color;
+        height: @moye-calendar-date-height;
+        line-height: @moye-calendar-date-height;
+        border: 1px solid @moye-calendar-month-background-color;
         text-decoration: none;
         outline: none;
         overflow: hidden;
+    }
 
+    &-date:hover {
+        border-color: @moye-calendar-date-hover-border-color;
+        background-color: @moye-calendar-date-hover-background-color;
+        color: @moye-calendar-date-hover-color;
+    }
+
+
+    // NOTICE: 以下这些状态的顺序是有要求的哟
+    &-weekend {
+        color: @moye-calendar-date-weekend-color;
+    }
+
+    &-today {
+        color: red;
         &:hover {
             color: #fff;
-            background: #eb4f03;
-        }
-
-        &.@{cal-prefix}-disabled,
-        &.@{cal-prefix}-disabled:hover {
-            color: #ddd;
-            cursor: not-allowed;
-            background: none;
         }
     }
 
-} 
-.@{cal-prefix}-month {
-    float: left;
-    margin: auto 2px;
-    width: 175px;
-    border-left:1px solid #dae2f5;
-
-    .@{cal-prefix}-today {
-        color: red;
+    &-checked,
+    &-checked:hover {
+        color: @moye-calendar-date-check-color;
+        background-color: @moye-calendar-date-check-background-color;
+        border-color: @moye-calendar-date-check-border-color;
     }
 
-    .@{cal-prefix}-weekend {
-        color: orange;
+    &-prev-month,
+    &-next-month {
+        color: @moye-calendar-date-overflow-color;
+        background-color: @moye-calendar-date-overflow-background-color;
+        border-color: @moye-calendar-date-overflow-border-color;
     }
 
-    .@{cal-prefix}-checked {
+    &-disabled,
+    &-disabled:hover {
+        color: #ddd;
+        cursor: not-allowed;
+        background: none;
+    }
+
+    &-pager {
+        position: absolute;
+        line-height: 30px;
         color: #fff;
-        background: #3977d2;
+        font-size: 12px;
+        text-decoration: none;
+
+        &-prev {
+            left: 6px;
+        }
+
+        &-next {
+            right: 6px;
+        }
+
     }
 
-    .@{cal-prefix}-pre-month,
-    .@{cal-prefix}-next-month {
-        color: #999;
-    }
-}
-
-.@{cal-prefix}-pre,
-.@{cal-prefix}-next {
-    width: 5px;
-    height: 9px;
-    font-size: 0;
-    position: absolute;
-    overflow: hidden;
-    top: 6px;
-}
-
-.@{cal-prefix}-pre {
-    left: 6px;
-}
-
-.@{cal-prefix}-next {
-    right: 6px;
-    background-position: 0 -28px;
 }

@@ -3,164 +3,13 @@
  * Copyright 2014 Baidu Inc. All rights reserved.
  *
  * @file 评分组件
- * @author hushicai02
+ * @author hushicai02 chenzhian(chenzhian@baidu.com)
  */
 
 define(function (require) {
-    var lib = require('./lib');
+    var $ = require('jquery');
     var Control = require('./Control');
-
-    /**
-     * 私有函数或方法
-     * 
-     * @type {Object}
-     * @namespace
-     * @name module:Rating~privates
-     */
-    var privates = /** @lends module:Rating~privates */ {
-
-        /**
-         * 清洗点亮的星星
-         *
-         * @private
-         */
-        drain: function () {
-            var options = this.options;
-            var prefix = options.prefix;
-
-            var ons = this.query(prefix + '-star-on');
-
-            lib.each(
-            ons, function (star) {
-                lib.removeClass(star, prefix + '-star-on');
-            });
-        },
-
-        /**
-         * 按给定星级，从左往右点亮星星
-         *
-         * @param {number} value 星级
-         * @private
-         */
-        fill: function (value) {
-            value = parseInt(value || 0, 10);
-
-            var options = this.options;
-            var prefix = options.prefix;
-            var result = this.stars.slice(0, value);
-
-            lib.each(
-            result, function (star) {
-                lib.addClass(star, prefix + '-star-on');
-            });
-
-            return result;
-        },
-
-        /**
-         * 重置星级，避开常用词reset，将方法命名为resetRating
-         *
-         * @private
-         */
-        resetRating: function () {
-            var options = this.options;
-            var value = options.value;
-            var prefix = options.prefix;
-
-            var result = this.stars.slice(0, value);
-
-            lib.each(
-            result, function (star) {
-                lib.addClass(star, prefix + '-star-on');
-            });
-
-            return result;
-        },
-
-        /**
-         * click事件处理
-         *
-         * @param {?Event} e DOM事件对象
-         * @fires module:Rating#rated
-         * @private
-         */
-        onClick: function (e) {
-            var options = this.options;
-            var prefix = options.prefix;
-            var target = lib.getTarget(e);
-            var value = options.value;
-
-            if (!e || this.disabled) {
-                return false;
-            }
-
-            if (lib.hasClass(target, prefix + '-star')) {
-                var newValue = parseInt(
-                target.getAttribute('data-value'), 10);
-
-                // 如果星级没变化，则不处理
-                if (newValue === value) {
-                    return false;
-                }
-
-                options.value = newValue;
-
-                privates.drain.call(this);
-                privates.resetRating.call(this);
-
-                /**
-                 * @event module:Rating#rated
-                 * @type {Object}
-                 * @property {number} value 星级
-                 */
-                this.fire('rated', {
-                    value: options.value
-                });
-            }
-        },
-
-        /**
-         * mouseover事件处理
-         *
-         * @param {?Event} e DOM事件对象
-         * @private
-         */
-        onMouseOver: function (e) {
-            var options = this.options;
-            var prefix = options.prefix;
-            var target = lib.getTarget(e);
-
-            if (!e || this.disabled) {
-                return false;
-            }
-
-            if (lib.hasClass(target, prefix + '-star')) {
-                privates.drain.call(this);
-                privates.fill.call(this, target.getAttribute('data-value'));
-            }
-        },
-
-        /**
-         * mouseout事件处理
-         *
-         * @param {?Event} e DOM事件处理
-         * @private
-         */
-        onMouseOut: function (e) {
-            var options = this.options;
-            var prefix = options.prefix;
-            var target = lib.getTarget(e);
-
-            if (!e || this.disabled) {
-                return false;
-            }
-
-            if (lib.hasClass(target, prefix + '-star')) {
-                privates.drain.call(this);
-                privates.resetRating.call(this);
-            }
-        }        
-    };
+    var painter = require('./painter');
 
     /**
      * 评分组件
@@ -168,28 +17,25 @@ define(function (require) {
      *
      * @extends module:Control
      * @requires Control
+     * @requires painter
      * @exports Rating
      */
     var Rating = Control.extend(/** @lends module:Rating.prototype */{
 
+        /**
+         * 控件配置项
+         *
+         * @name module:City#options
+         * @type {Object}
+         * @property {string} options.max 最多星星数
+         * @property {string} options.value 星级
+         * @protected
+         */
         options: {
-            // 可用性
-            disabled: false,
-
-            // 主元素
-            main: '',
-
-            // class前缀
-            prefix: 'ecl-ui-rating',
-
             // 最多星星数
             max: 5,
-
             // 星级
-            value: 0,
-
-            // 如果需要自定义星星样式，则置为1，然后通过className去控制样式
-            skin: 0
+            value: 0
         },
 
         /**
@@ -206,104 +52,215 @@ define(function (require) {
          *
          * @param {Object} options 控件配置项
          * @see module:Rating#options
+         * @override
          * @private
          */
         init: function (options) {
-            this.main = lib.g(options.main);
-            this._disabled = options.disabled;
-
-            this.bindEvents(privates);
+            this.$parent(options);
+            var helper = this.helper;
+            this.ratedClass = helper.getPartClassName('star-on');
+            this.itemClass = helper.getPartClassName('star');
         },
 
         /**
-         * 绘制控件
+         * 初始化星号评级控件的 DOM 结构
          *
-         * @public
+         * @override
          */
-        render: function () {
+        initStructure: function () {
+            var helper = this.helper;
             var options = this.options;
+            var mainClass = helper.getPartClassName();
+            var $main = $(this.main);
 
-            if (!this.rendered) {
-                this.rendered = true;
-
-                // 生成星星
-                var html = [];
-                var prefix = options.prefix;
-
-                html.push('<ul class="' + prefix + '-stars">');
-                for (var i = 0; i < options.max; i++) {
-                    html.push(
-                        '<li ',
-                        'class="' + prefix + '-star' + '" ',
-                        'data-value="' + (i + 1) + '"',
-                        '>',
-                        // 默认星星字符
-                        (options.skin ? '' : '☆'),
-                        '</li>'
-                    );
-                }
-                html.push('</ul>');
-                this.main.innerHTML = html.join('');
-
-                this.stars = this.query(prefix + '-star');
-
-                // 绑定事件
-                var bound = this._bound;
-                lib.each(this.stars, function (star) {
-                    lib.on(star, 'mouseover', bound.onMouseOver);
-                    lib.on(star, 'mouseout', bound.onMouseOut);
-                    lib.on(star, 'click', bound.onClick);
-                });
+            // 如果dom结构已被smarty渲染，则跳过dom结构初始化
+            if ($main.find('.' + mainClass).data('dom-inited') === true) {
+                this.value = $main.find('.' + this.ratedClass).length;
+                this.max = $main.find('.' + this.itemClass).length;
+                return;
             }
 
-            privates.resetRating.call(this);
+            var html = ['<ul class="' + mainClass + '">'];
 
-            this._disabled && this.disable();
+            for (var i = 0; i < options.max; i++) {
+                html.push(
+                    '<li ',
+                    'class="' + this.itemClass + '" ',
+                    'data-value="' + (i + 1) + '"',
+                    '>',
+                    // 默认星星字符
+                    (options.skin ? '' : '\u2606'),
+                    '</li>'
+                );
+            }
 
-            return this;
+            html.push('</ul>');
+            this.main.innerHTML = html.join('');
         },
 
         /**
-         * 启用组件
+         * 初始化星号评级控件的事件绑定
          *
-         * @public
+         * @override
          */
-        enable: function () {
-            lib.removeClass(this.main, this.options.prefix + '-disabled');
+        initEvents: function () {
+            this.$stars = $(this.main).find('.' + this.itemClass);
 
-            this.parent('enable');
+            this.delegate(this.main, 'click', '.' + this.itemClass, this.onClick);
+
+            this.delegate(this.main, 'mouseover', '.' + this.itemClass, this.onMouseOver);
+
+            this.delegate(this.main, 'mouseout', '.' + this.itemClass, this.onMouseOut);
         },
 
         /**
-         * 不启用组件
+         * 重绘
          *
-         * @public
+         * @override
+         * @protected
          */
-        disable: function () {
-            lib.addClass(this.main, this.options.prefix + '-disabled');
+        repaint: painter.createRepaint(
+            Control.prototype.repaint,
+            {
+                name: ['value'],
+                paint: function (conf, value) {
+                    value = parseInt(value || 0, 10);
 
-            this.parent('disable');
-        },
+                    this.resetStars();
+                    this.fillStars(value);
+                }
+            }
+        ),
 
         /**
-         * 销毁控件
+         * click事件处理
          *
-         * @public
+         * @param {Event} e DOM事件对象
+         * @fires module:Rating#rated
+         * @private
          */
-        dispose: function () {
-            var bound = this._bound;
+        onClick: function (e) {
+            var $target = $(e.target);
+            var value = this.value;
+            var newValue;
 
-            // 释放事件
-            lib.each(this.stars, function (star) {
-                lib.un(star, 'click', bound.onClick);
-                lib.un(star, 'mouseover', bound.onMouseOver);
-                lib.un(star, 'mouseout', bound.onMouseOut);
+            if (this.isDisabled()) {
+                return;
+            }
+
+            newValue = parseInt($target.attr('data-value'), 10);
+
+            // 如果星级没变化，则不处理
+            if (newValue === value) {
+                return;
+            }
+
+            this.set('value', newValue);
+
+            /**
+             * @event module:Rating#change
+             * @type {Object}
+             * @property {number} value 星级
+             */
+            this.fire('change', {
+                value: newValue
             });
+        },
 
-            delete this.stars;
+        /**
+         * mouseover事件处理
+         *
+         * @param {Event} e DOM事件对象
+         * @private
+         */
+        onMouseOver: function (e) {
+            var $target = $(e.target);
+            var value = parseInt($target.attr('data-value'), 10);
 
-            this.parent('dispose');
+            if (this.isDisabled()) {
+                return;
+            }
+            this.resetStars();
+            this.fillStars(value);
+
+            /**
+             * @event module:Rating#hover
+             * @type {Object}
+             * @property {number} value 星级
+             */
+            this.fire('hover', {
+                value: value
+            });
+        },
+
+        /**
+         * mouseout事件处理
+         *
+         * @param {Event} e DOM事件处理
+         * @private
+         */
+        onMouseOut: function (e) {
+            if (this.isDisabled()) {
+                return;
+            }
+            this.resetStars();
+            this.fillStars(this.value);
+
+            /**
+             * @event module:Rating#hover
+             * @type {Object}
+             * @property {number} value 星级
+             */
+            this.fire('hover', {
+                value: this.value
+            });
+        },
+
+        /**
+         * 清洗已点亮星星
+         *
+         * @private
+         */
+        resetStars: function () {
+            this.$stars.removeClass(this.ratedClass);
+        },
+
+        /**
+         * 填充星星
+         *
+         * @param  {number} value 需要点亮星星个数
+         * @private
+         */
+        fillStars: function (value) {
+            var stars = this.$stars.slice(0, value);
+            $(stars).addClass(this.ratedClass);
+        },
+
+        /**
+         * 获得值
+         *
+         * @public
+         * @return {number} 当前值
+         */
+        getValue: function () {
+            return this.value;
+        },
+
+        /**
+         * 设值
+         *
+         * @param {number} value      要设置的值
+         * @param {?boolean} fireChange 设置时是否需要触发change事件
+         * @public
+         */
+        setValue: function (value, fireChange) {
+            value = parseInt(value, 10);
+            this.set('value', value);
+            fireChange && this.fire('change', {
+                value: value
+            });
         }
+
     });
 
     return Rating;

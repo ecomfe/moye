@@ -1,69 +1,68 @@
+/**
+ * @file 分布组件测试用例
+ * @author chris <wfsr@foxmail.com>
+ * @author ludafa <leonlu@outlook.com>
+ * @author wuqi03 <wuqi03@baidu.com>
+ */
+
 define(function (require) {
+
+    var $ = require('jquery');
     var lib = require('ui/lib');
     var Pager = require('ui/Pager');
-    
+
     var pager;
     var first = Math.random() > 0.5 ? 1 : 0;
 
     beforeEach(function () {
         document.body.insertAdjacentHTML(
-            'beforeEnd', ''
-                + '<div id="pagerContainer">'
-                +   '<div class="ecl-ui-pager c-clearfix"></div>'
-                + '</div>'
+            'beforeEnd',
+            '<div id="pagerContainer"></div>'
         );
-
-        pager = new Pager({
-            prefix: 'ecl-ui-pager',
-            main: lib.q('ecl-ui-pager')[0],
-            page: 0,
-            first: first,
-            total: 18
-        });
-        pager.render();               
-        
     });
 
 
     afterEach(function () {
-        document.body.removeChild(lib.g('pagerContainer'));
-        pager.dispose();
+        pager && pager.dispose();
+        $('#pagerContainer').remove();
     });
-  
-    describe('基本接口', function () {
 
+    describe('Pager 基本接口', function () {
 
-        it('控件类型', function () {
-
-            expect(pager.type).toBe('Pager');
-
-        });
-
-
-        it('非法的 main', function () {
-            var main = pager.main;
-            pager.main = null;
-            expect(main).not.toBe(null);
-            expect(
-                function () {
-                    pager.render();
-                }
-            ).toThrow();
-            pager.main = main;
-
-        });
-
-        it('showAlways = false', function () {
-
-            pager.setTotal(1);
-            var showAlways = pager.options.showAlways;
-            pager.options.showAlways = false;
+        it('始终显示', function () {
+            pager = new Pager({
+                main: 'pagerContainer',
+                page: 0,
+                showAlways: true,
+                first: first,
+                total: 1
+            });
             pager.render();
-            pager.options.showAlways = showAlways;
+            expect(pager.main.offsetHeight).not.toBe(0);
+        });
+
+        it('当总页面码数小于2时隐藏', function () {
+            pager = new Pager({
+                main: 'pagerContainer',
+                page: 0,
+                showAlways: false,
+                first: first,
+                total: 1
+            });
+            pager.render();
             expect(pager.main.offsetHeight).toBe(0);
         });
 
         it('改变页码', function () {
+            pager = new Pager({
+                main: 'pagerContainer',
+                page: 0,
+                showAlways: false,
+                first: first,
+                total: 1
+            });
+            pager.render();
+
             pager.setTotal(10);
             pager.setPage(8);
             pager.render();
@@ -77,77 +76,105 @@ define(function (require) {
             expect(pager.main.getElementsByTagName('a')[8 - first].innerHTML)
                 .toBe('..');
 
+            pager.set('page', 5);
+            pager.render();
+            expect(pager.getPage()).toBe(5);
+
+            // setTotal生效，page设置成初始值
+            pager.setTotal(20);
+            expect(pager.getTotal()).toBe(20);
+            expect(pager.getPage()).toBe(first);
+
             var fireClick = false;
             var fireChange = false;
-            var el = pager.main.getElementsByTagName('em')[1];
+            var el = pager.main.getElementsByTagName('a')[2];
             var onClick = function () {
                 fireClick = true;
             };
             var onChange = function (json) {
                 fireChange = true;
-                expect(json.page - first).toBe(
-                    el.parentNode.getAttribute('data-page') | 0
-                );
+                expect(json.page).toBe(first + 1);
             };
-            pager.on('click', onClick);
+
+            $(pager.main).on('click', onClick);
             pager.on('change', onChange);
-            lib.fire(el, 'click');
-            pager.un('click', onClick);
+            $(el).trigger('click');
+            $(pager.main).off('click', onClick);
             pager.un('change', onChange);
 
             expect(fireClick).toBeTruthy();
             expect(fireChange).toBeTruthy();
-        });
 
-        it('忽略直接点击容器', function () {
-            var fireClick = false;
-            var fireChange = false;
-            var onClick = function () {
-                fireClick = true;
-            };
-            var onChange = function () {
-                fireChange = true;
-            };
-            var el = document.createElement('div');
-            el.innerHTML = 'just for test';
-            pager.main.appendChild(el);
-            pager.on('click', onClick);
-            pager.on('change', onChange);
-            lib.fire(pager.main, 'click');
-            lib.fire(el, 'click');
-            pager.un('click', onClick);
-            pager.un('change', onChange);
-            pager.main.removeChild(el);
-            el = null;
-
-            expect(fireClick).toBeTruthy();
-            expect(fireChange).toBeFalsy();
         });
 
         it('分页逻辑', function () {
-            expect(pager.getPage()).toBe(first);
+
+            pager = new Pager({
+                main: 'pagerContainer',
+                page: 0,
+                first: 0,
+                padding: 3,
+                showAlways: true,
+                total: 10
+            });
+
+            pager.render();
+
+            expect(pager.getPage()).toBe(0);
 
             pager.setPage(2);
-            pager.render();
             expect(pager.getPage()).toBe(2);
 
-            pager.setTotal(0);
-            expect(pager.getTotal()).toBe(1);
+        });
 
-            pager.setTotal('NaN');
-            expect(pager.getTotal()).toBe(1);
+        it('简版pager', function () {
+            pager = new Pager({
+                main: 'pagerContainer',
+                page: 1,
+                first: 1,
+                padding: 3,
+                showAlways: true,
+                mode: 'simple',
+                total: 10,
+                getPageItemHTML: function (page) {
+                    return '<span>' + page + '/' + this.total + '</span>';
+                }
+            });
 
-            pager.setTotal(1);
             pager.render();
-            expect(pager.getTotal()).toBe(1);
-            expect(pager.getPage()).toBe(first);
-
-            pager.setTotal(10);
             pager.setPage(5);
+
+            expect(pager.getPage()).toBe(5);
+
+            expect(pager.main.getElementsByTagName('span')[0].innerHTML)
+                .toBe('5/10');
+        });
+
+        it('链接分页', function () {
+            pager = new Pager({
+                main: 'pagerContainer',
+                page: 1,
+                first: 1,
+                padding: 3,
+                showAlways: true,
+                anchor: 'http://www.baidu.com/',
+                total: 10
+            });
+
             pager.render();
-            expect(pager.main.getElementsByTagName('a').length).toBe(11);
+            pager.setPage(5);
+
+            expect(pager.main.getElementsByTagName('a')[0].href)
+                .toBe('http://www.baidu.com/?page=4');
+
+        });
+
+        it('分页销毁', function () {
+            var main = document.getElementById('pagerContainer');
+            pager.dispose();
+            expect(main.innerHTML).toBe('');
+
         });
 
     });
-
 });
