@@ -42,6 +42,9 @@ define(function (require) {
             var obj = {};
             var limit = {};
 
+            var trigger = $(this.triggers).eq(index);
+            var fixed = {};
+
             lib.each(
                 ['width', 'height'],
                 function (name) {
@@ -49,12 +52,12 @@ define(function (require) {
 
                     var body = $(window)[name]() * 0.9;
                     limit[name] = Math.min(body, obj[name]);
+                    fixed[name] = trigger.data(name);
                 },
                 this
             );
 
-            var fixed = this.elements[index];
-
+            // 长宽均已经固定，直接返回
             if (fixed.width && fixed.height) {
                 return fixed;
             }
@@ -95,7 +98,7 @@ define(function (require) {
          * @private
          */
         showElement: function (index) {
-            var element = this.elements[index];
+            var element = this.getElement(index);
             var type = element.type;
             var me = this;
             /* eslint-disable new-cap */
@@ -118,13 +121,16 @@ define(function (require) {
                     content = dom.prop('outerHTML');
 
                     var showImage = function () {
-                        element = $.extend(element, privates.getSize.call(me, dom.get(0), index));
+                        var size = privates.getSize.call(me, dom.get(0), index);
+
+                        element = $.extend(element, size);
+
                         me.current = index;
 
                         me.setTitle(element.title);
                         privates.showIcons.call(me);
 
-                        me.showLoading && $(me.load).hide();
+                        $(me.load).hide();
 
                         me.setContent(content);
 
@@ -137,6 +143,7 @@ define(function (require) {
 
                     dom.error(function () {
                         me.hide();
+                        $(this.load).hide();
                         dtd.reject();
                     });
 
@@ -314,6 +321,7 @@ define(function (require) {
          * @property {number} options.padding  元素与外边框之间的间距
          * @property {boolean} options.mask  是否显示覆盖层
          * @property {number} options.level 当前LightBox的z-index
+         * @property {boolean} options.showLoading 是否显示正在加载的图标
          * @property {boolean} options.autoScale 是否根据浏览器可视区域缩放，不超过窗口高度的90%
          * @property {boolean} options.cyclic 是否循环翻页
          * @property {boolean} options.maskClickClose 当遮罩被点击时, 相当于点击close
@@ -472,8 +480,8 @@ define(function (require) {
 
                 me.elements.push({
                     src: href,
-                    width: element.data('width') || 0,
-                    height: element.data('height') || 0,
+                    width: 0,
+                    height: 0,
                     type: type,
                     title: element.attr('title')
                         || element.data('title')
@@ -770,6 +778,17 @@ define(function (require) {
          */
         getCurrent: function () {
             return this.current;
+        },
+
+        /**
+         * 获取当前某个图片对应的配置
+         *
+         * @param {number} index 索引
+         * @return {number}
+         * @public
+         */
+        getElement: function (index) {
+            return this.elements[index];
         },
 
         /**

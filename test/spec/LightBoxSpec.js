@@ -17,7 +17,6 @@ define(function (require) {
         '<div class="lightbox"></div>'
     ];
 
-    /* eslint-disable max-len*/
     beforeEach(function () {
         document.body.insertAdjacentHTML(
             'beforeEnd', images.join('')
@@ -25,7 +24,6 @@ define(function (require) {
         lightbox = new LightBox();
         lightbox.render();
     });
-    /* eslint-enable max-len*/
 
 
     afterEach(function () {
@@ -66,6 +64,14 @@ define(function (require) {
             lightbox.onMainClicked.call(lightbox, {currentTarget: $('.ui-lightbox-next')[0]});
             lightbox.on('change', function (e) {
                 expect(e.activeIndex).toBe(1);
+                expect(lightbox.getCurrent()).toBe(1);
+            });
+        });
+
+        it('check select', function () {
+            lightbox.select(2);
+            lightbox.on('change', function (e) {
+                expect(e.activeIndex).toBe(2);
             });
         });
 
