@@ -1,0 +1,76 @@
+/**
+ * MOYE
+ * Copyright 2014 Baidu Inc. All rights reserved.
+ *
+ * @file 对话窗样式
+ * @author leon <leonlu@outlook.com>
+ */
+
+@import (reference) './dep.less';
+@import (reference) './variable.less';
+@import (reference) './mixin.less';
+
+@import './Mask.less';
+@import (reference) './Button.less';
+
+@moye-dialog-content-padding: 10px;
+
+.@{moye-prefix}-dialog {
+
+    position: fixed;
+    _position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 400px;
+
+    visibility: hidden;
+    border: 1px solid #eee;
+    background:#FFF;
+    .opacity(0);
+    .transition(opacity .3s);
+
+
+    &-visible {
+        visibility: visible;
+        .opacity(100);
+    }
+
+    &-header {
+        height: 20px;
+        line-height: 20px;
+        font: bold 14px inherit;
+        padding: @moye-dialog-content-padding;
+        border-bottom: 1px solid #eee;
+    }
+
+    &-content {
+        padding: @moye-dialog-content-padding;
+    }
+
+    &-close {
+        position: absolute;
+        width: 16px;
+        height: 16px;
+        top: 0;
+        right: 0;
+        padding: 7px;
+        text-align: center;
+        line-height: 16px;
+        font: bold 12px/16px inherit;
+        cursor: pointer;
+
+        &:hover {
+            background-color: #eee;
+        }
+    }
+
+    &-footer {
+        text-align: right;
+        padding: 5px;
+    }
+
+    .ui-button {
+        margin: 0 5px;
+    }
+
+}

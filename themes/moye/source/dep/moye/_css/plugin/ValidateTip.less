@@ -1,0 +1,35 @@
+/**
+ * MOYE
+ * Copyright 2014 Baidu Inc. All rights reserved.
+ *
+ * @file TextBoxPlugin 文本框 - 校验提示 - 插件 - 样式
+ * @author leon <leonlu@outlook.com>
+ */
+
+@import '../variable.less';
+@import '../dep.less';
+@import '../mixin.less';
+@import '../Popup.less';
+
+@moye-validate-tip-font-size: @moye-mini;
+@moye-validate-tip-line-height: @moye-huge;
+@moye-validate-tip-text-color: @moye-error-color;
+
+.@{moye-skin-prefix}-validate-tip {
+    width: auto;
+    height: auto;
+    padding: 10px;
+}
+
+.@{moye-skin-prefix}-validate-tip-popup {
+    .moye-rem(font-size, @moye-validate-tip-font-size);
+    .moye-rem(line-height, @moye-validate-tip-line-height);
+    color: @moye-validate-tip-text-color;
+}
+
+.@{moye-skin-prefix}-validate-tip-icon {
+    width: auto;
+    height: auto;
+    padding: 10px;
+    color: @moye-dark-grey;
+}

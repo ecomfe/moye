@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Moye</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    
+    <link rel="icon" href="/favicon.png">
+    
+    
+    
+<link rel="stylesheet" href="/moye/css/post.css" type="text/css">
+
+    
+    <link rel="alternative" href="/atom.xml" title="Moye" type="application/atom+xml">
+    
+</head>
+<body>
+    
+    <div id="container">
+    <article id="post-Calendar" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <nav class="article-nav">
+
+  <a class="article-nav-logo" href="/moye/index.html">
+    <img src="/moye/img/moye.png" alt="moye" /> Moye
+  </a>
+
+  
+    <div class="article-nav-category">
+      <h4 class="article-nav-category-title">组件</h4>
+      
+        <a class="article-nav-category-link "
+          href="/moye/component/Button.html">
+          按钮 / Button 
+        </a>
+      
+        <a class="article-nav-category-link current"
+          href="/moye/component/Calendar.html">
+          日历 / Calendar 
+        </a>
+      
+        <a class="article-nav-category-link "
+          href="/moye/component/City.html">
+          城市选择器 / City 
+        </a>
+      
+        <a class="article-nav-category-link "
+          href="/moye/component/Dialog.html">
+          对话框 / Dialog 
+        </a>
+      
+        <a class="article-nav-category-link "
+          href="/moye/component/LazyImg.html">
+          懒图片 / LazyImg 
+        </a>
+      
+        <a class="article-nav-category-link "
+          href="/moye/component/Marquee.html">
+          走马灯 / Marquee 
+        </a>
+      
+        <a class="article-nav-category-link "
+          href="/moye/component/Pager.html">
+          翻页器 / Pager 
+        </a>
+      
+        <a class="article-nav-category-link "
+          href="/moye/component/Popup.html">
+          浮层 / Popup 
+        </a>
+      
+        <a class="article-nav-category-link "
+          href="/moye/component/Rating.html">
+          评分 / Rating 
+        </a>
+      
+        <a class="article-nav-category-link "
+          href="/moye/component/Select.html">
+          下拉框 / Select 
+        </a>
+      
+        <a class="article-nav-category-link "
+          href="/moye/component/Slider.html">
+          轮播图 / Slider 
+        </a>
+      
+        <a class="article-nav-category-link "
+          href="/moye/component/Tab.html">
+          选项卡 / Tab 
+        </a>
+      
+        <a class="article-nav-category-link "
+          href="/moye/component/TextBox.html">
+          文本框 / TextBox 
+        </a>
+      
+        <a class="article-nav-category-link "
+          href="/moye/component/Tip.html">
+          提示 / Tip 
+        </a>
+      
+    </div>
+  
+    <div class="article-nav-category">
+      <h4 class="article-nav-category-title">简介</h4>
+      
+        <a class="article-nav-category-link "
+          href="/">
+          开始 
+        </a>
+      
+    </div>
+  
+
+</nav>
+
+
+  <div class="article-content">
+    <header class="article-header">
+      
+  
+    <h1 class="article-title" itemprop="name">
+      日历 / Calendar
+      <!-- Place this tag where you want the button to render. -->
+      <a class="github-button" href="https://github.com/ecomfe/moye" data-icon="octicon-star" data-style="mega" data-count-href="/ecomfe/moye/stargazers" data-count-api="/repos/ecomfe/moye#stargazers_count" data-count-aria-label="# stargazers on GitHub" aria-label="Star ecomfe/moye on GitHub">Star</a>
+    </h1>
+  
+
+
+    </header>
+    <div class="article-entry" itemprop="articleBody">
+      <h3 id="普通使用">普通使用</h3><iframe height="377" scrolling="no" src="//codepen.io/jinzhubaofu/embed/XbOpgP/?height=377&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/XbOpgP/" target="_blank" rel="external">XbOpgP</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+
+
+<h3 id="在浮层中展现多个月份">在浮层中展现多个月份</h3><iframe height="370" scrolling="no" src="//codepen.io/jinzhubaofu/embed/yNZMLR/?height=370&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/yNZMLR/" target="_blank" rel="external">yNZMLR</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+
+<h3 id="可选范围">可选范围</h3><p>可以通过配置<code>Calendar</code>的<code>range</code>属性来设定日历的可选范围，或者可以通过<code>setRange</code>方法可动态设定。示例：</p>
+<p>此处请注意, 如果设定的值不在可选的范围内, 值被会被清空.</p>
+<iframe height="380" scrolling="no" src="//codepen.io/jinzhubaofu/embed/ZGweYw/?height=380&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/ZGweYw/" target="_blank" rel="external">ZGweYw</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+
+
+<h3 id="特殊日期">特殊日期</h3><p>可以通过process参数来处理任意特殊日期的显示值或样式。可用于处理节日特殊样式等等情况, 示例:</p>
+<iframe height="373" scrolling="no" src="//codepen.io/jinzhubaofu/embed/KpJWpx/?height=373&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/KpJWpx/" target="_blank" rel="external">KpJWpx</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+
+    </div>
+
+    <footer class="article-footer">
+
+      <div class="duoshuo">
+
+        <!-- 多说评论框 start -->
+        <div class="ds-thread" data-thread-key="Calendar" data-title="日历 / Calendar" data-url="http://ecomfe.github.io/moye/component/Calendar.html"></div>
+
+        <!-- 多说评论框 end -->
+        <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+
+        <script type="text/javascript">
+        window.duoshuoQuery = {short_name:"moye"};
+        (function() {
+          var ds = document.createElement('script');
+          ds.type = 'text/javascript';
+          ds.src = '//static.duoshuo.com/embed.js';
+          ds.charset = 'UTF-8';
+          document.getElementsByTagName('head')[0].appendChild(ds);
+        })();
+        </script>
+        <!-- 多说公共JS代码 end -->
+
+        <!-- Place this tag right after the last button or just before your close body tag. -->
+        <script async defer id="github-bjs" src="https://buttons.github.io/buttons.js"></script>
+      </div>
+
+    </footer>
+  </div>
+</article>
+
+    </div>
+    <script src="/moye/js/requirejs.min.js" type="text/javascript"></script>
+    <script src="//libs.baidu.com/jquery/2.0.3/jquery.min.js" type="text/javascript"></script>
+
+    <script>
+    require.config({
+        'baseUrl': '/moye/js',
+        'paths': {
+            'common': './common',
+            'highlight': '../dep/highlight/highlight.pack'
+        },
+        'packages': [{
+            'name': 'moye',
+            'location': '../dep/moye/ui',
+            'main': 'main'
+        }],
+        'urlArgs': 'v0.0.1'
+    });
+    </script>
+    
+</body>
+</html>

@@ -1,0 +1,107 @@
+/**
+ * MOYE
+ * Copyright 2014 Baidu Inc. All rights reserved.
+ *
+ * @file 翻动条样式
+ * @author leon <leonlu@outlook.com>
+ */
+
+@import './variable.less';
+
+// 滚动条
+@moye-scrollbar-width: 500px;
+@moye-scrollbar-height: 300px;
+@moye-scrollbar-thumb-size: 10px;
+
+
+//禁止选择文本
+.@{moye-prefix}-scrollbar-noselect {
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+    cursor: default;
+}
+
+.@{moye-prefix}-scrollbar {
+    width: @moye-scrollbar-width;
+    border: 2px solid #DDD;
+    height: @moye-scrollbar-height;
+
+    &-panel {
+        margin-right:10px;
+        width: @moye-scrollbar-width - @moye-scrollbar-thumb-size;
+        height: @moye-scrollbar-height;
+        overflow: hidden;
+    }
+
+    &-track {
+        float: right;
+        position: relative;
+        width: @moye-scrollbar-thumb-size;
+        height: @moye-scrollbar-height;
+        background: #EEE;
+    }
+
+    &-thumb {
+        *font-size:0;
+        position: absolute;
+        top:0;
+        width: @moye-scrollbar-thumb-size;
+        height: @moye-scrollbar-thumb-size*3;
+        background: #333;
+        cursor: default;
+    }
+
+    &-noscroll &-track{
+        display: none;
+    }
+
+    &-noscroll &-panel{
+        margin-right:0;
+    }
+
+    &-disable &-thumb{
+        background: #EEE;
+    }
+
+
+    &-position-mode {
+        position: relative;
+        height: @moye-scrollbar-height;
+        overflow: hidden;
+    }
+
+    &-position-mode &-panel {
+        width: @moye-scrollbar-width - @moye-scrollbar-thumb-size;
+        position: absolute;
+        height: auto;
+    }
+
+    &-position-mode &-track {
+        float: none;
+        position: absolute;
+        right: 0;
+    }
+
+    //水平滚动样式
+    &-horizontal &-panel{
+        width: @moye-scrollbar-width;
+        margin-right: 0;
+        height: @moye-scrollbar-height - @moye-scrollbar-thumb-size;
+    }
+
+
+    &-horizontal &-track{
+        float: none;
+        width: @moye-scrollbar-width;
+        height: @moye-scrollbar-thumb-size;
+    }
+
+    &-horizontal &-thumb{
+        left:0;
+        width: @moye-scrollbar-thumb-size*3;
+        height: @moye-scrollbar-thumb-size;
+    }
+
+}

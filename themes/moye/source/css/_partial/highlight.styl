@@ -1,0 +1,569 @@
+// // https://github.com/chriskempson/tomorrow-theme
+// highlight-background = #2d2d2d
+// highlight-current-line = #393939
+// highlight-selection = #515151
+// highlight-foreground = #cccccc
+// highlight-comment = #999999
+// highlight-red = #f2777a
+// highlight-orange = #f99157
+// highlight-yellow = #ffcc66
+// highlight-green = #99cc99
+// highlight-aqua = #66cccc
+// highlight-blue = #6699cc
+// highlight-purple = #cc99cc
+
+// $code-block
+//   background: highlight-background
+//   margin: 0 article-padding * -1
+//   padding: 15px article-padding
+//   border-style: solid
+//   border-color: color-border
+//   border-width: 1px 0
+//   overflow: auto
+//   color: highlight-foreground
+//   line-height: font-size * line-height
+
+// $line-numbers
+//   color: #666
+//   font-size: 0.85em
+
+// .article-entry
+//   pre, code
+//     font-family: font-mono
+//   code
+//     background: color-background
+//     text-shadow: 0 1px #fff
+//     padding: 0 0.3em
+//   pre
+//     @extend $code-block
+//     code
+//       background: none
+//       text-shadow: none
+//       padding: 0
+//   .highlight
+//     @extend $code-block
+//     pre
+//       border: none
+//       margin: 0
+//       padding: 0
+//     table
+//       margin: 0
+//       width: auto
+//     td
+//       border: none
+//       padding: 0
+//     figcaption
+//       clearfix()
+//       font-size: 0.85em
+//       color: highlight-comment
+//       line-height: 1em
+//       margin-bottom: 1em
+//       a
+//         float: right
+//     .gutter pre
+//       @extend $line-numbers
+//       text-align: right
+//       padding-right: 20px
+//     .line
+//       height: font-size * line-height
+//   .gist
+//     margin: 0 article-padding * -1
+//     border-style: solid
+//     border-color: color-border
+//     border-width: 1px 0
+//     background: highlight-background
+//     padding: 15px article-padding 15px 0
+//     .gist-file
+//       border: none
+//       font-family: font-mono
+//       margin: 0
+//       .gist-data
+//         background: none
+//         border: none
+//         .line-numbers
+//           @extend $line-numbers
+//           background: none
+//           border: none
+//           padding: 0 20px 0 0
+//         .line-data
+//           padding: 0 !important
+//       .highlight
+//         margin: 0
+//         padding: 0
+//         border: none
+//       .gist-meta
+//         background: highlight-background
+//         color: highlight-comment
+//         font: 0.85em font-sans
+//         text-shadow: 0 0
+//         padding: 0
+//         margin-top: 1em
+//         margin-left: article-padding
+//         a
+//           color: color-link
+//           font-weight: normal
+//           &:hover
+//             text-decoration: underline
+
+// pre
+//   .comment
+//   .title
+//     color: highlight-comment
+//   .variable
+//   .attribute
+//   .tag
+//   .regexp
+//   .ruby .constant
+//   .xml .tag .title
+//   .xml .pi
+//   .xml .doctype
+//   .html .doctype
+//   .css .id
+//   .css .class
+//   .css .pseudo
+//     color: highlight-red
+//   .number
+//   .preprocessor
+//   .built_in
+//   .literal
+//   .params
+//   .constant
+//     color: highlight-orange
+//   .class
+//   .ruby .class .title
+//   .css .rules .attribute
+//     color: highlight-green
+//   .string
+//   .value
+//   .inheritance
+//   .header
+//   .ruby .symbol
+//   .xml .cdata
+//     color: highlight-green
+//   .css .hexcolor
+//     color: highlight-aqua
+//   .function
+//   .python .decorator
+//   .python .title
+//   .ruby .function .title
+//   .ruby .title .keyword
+//   .perl .sub
+//   .javascript .title
+//   .coffeescript .title
+//     color: highlight-blue
+//   .keyword
+//   .javascript .function
+//     color: highlight-purple
+
+figure.highlight {
+    background: #fff;
+    margin: 10px 0;
+    border-radius: 3px;
+    font-size 12px
+    line-height: 18px
+    color: #333;
+    font-family: Menlo;
+    border: 1px solid #d9d9d9;
+    overflow: hidden
+}
+figure.highlight table {
+    display: block;
+    width: 100%;
+    overflow-y: hidden;
+    overflow-x: auto
+}
+figure.highlight .code,
+figure.highlight .gutter,
+figure.highlight .tag,
+figure.highlight pre {
+    border: none;
+    padding: 0;
+    margin: 0;
+    cursor: text
+}
+figure.highlight figcaption {
+    font-size: 1.3em;
+    padding: 10px 15px;
+    margin: 0;
+    background: #f7f7f7;
+    border-bottom: 1px solid #d9d9d9;
+    color: #999
+}
+figure.highlight figcaption a {
+    float: right
+}
+figure.highlight .gutter {
+    background: #fff;
+    border-right: 1px solid #d9d9d9;
+    padding: .3em .5em
+}
+figure.highlight .gutter .line {
+    color: #aaa
+}
+figure.highlight .code {
+    padding: .3em .3em .3em 1em
+}
+figure.highlight .line {
+    height: 1.2em;
+    font-size: 1.3em
+}
+.gist .line,
+.gist .line-number {
+    font-size: 1em;
+    font-family: Menlo;
+    margin: 0 0 5px
+}
+.highlight .comment {
+    color: #969896
+}
+.highlight .string {
+    color: #df5000
+}
+.highlight .keyword {
+    color: #a71d5d
+}
+.highlight.apacheconf .code .cbracket,
+.highlight.apacheconf .code .common,
+.highlight.apacheconf .code .keyword {
+    color: #0086b3
+}
+.highlight.apacheconf .code .sqbracket {
+    color: #df5000
+}
+.highlight.apacheconf .code .tag {
+    color: #63a35c
+}
+.highlight.bash .code .shebang {
+    color: #969896
+}
+.highlight.bash .code .built_in,
+.highlight.bash .code .literal {
+    color: #0086b3
+}
+.highlight.bash .code .variable {
+    color: #333
+}
+.highlight.bash .code .title,
+.highlight.coffeescript .code .title {
+    color: #795da3
+}
+.highlight.coffeescript .code .built_in,
+.highlight.coffeescript .code .literal,
+.highlight.coffeescript .code .number {
+    color: #0086b3
+}
+.highlight.coffeescript .code .attribute,
+.highlight.coffeescript .code .reserved {
+    color: #1d3e81
+}
+.highlight.c .code .preprocessor,
+.highlight.coffeescript .code .regexp,
+.highlight.coffeescript .code .subst,
+.highlight.cpp .code .preprocessor {
+    color: #df5000
+}
+.highlight.c .code .title,
+.highlight.cpp .code .title {
+    color: #795da3
+}
+.highlight.c .code .built_in,
+.highlight.c .code .number,
+.highlight.cpp .code .built_in,
+.highlight.cpp .code .number {
+    color: #0086b3
+}
+.highlight.cs .code .preprocessor,
+.highlight.cs .code .preprocessor .keyword {
+    color: #333
+}
+.highlight.cs .code .title {
+    color: #795da3
+}
+.highlight.cs .code .built_in,
+.highlight.cs .code .number {
+    color: #0086b3
+}
+.highlight.cs .code .xmlDocTag {
+    color: #63a35c
+}
+.highlight.css .code .at_rule,
+.highlight.css .code .important {
+    color: #a71d5d
+}
+.highlight.css .code .attribute,
+.highlight.css .code .function,
+.highlight.css .code .hexcolor,
+.highlight.css .code .number {
+    color: #0086b3
+}
+.highlight.css .code .attr_selector,
+.highlight.css .code .value {
+    color: #333
+}
+.highlight.css .code .class,
+.highlight.css .code .id,
+.highlight.css .code .pseudo {
+    color: #795da3
+}
+.highlight.css .code .tag {
+    color: #63a35c
+}
+.highlight.diff .code .chunk {
+    color: #795da3;
+    font-weight: 700
+}
+.highlight.diff .code .addition {
+    color: #55a532;
+    background-color: #eaffea
+}
+.highlight.diff .code .deletion {
+    color: #bd2c00;
+    background-color: #ffecec
+}
+.highlight.http .code .attribute,
+.highlight.http .code .literal {
+    color: #0086b3
+}
+.highlight.http .code .request {
+    color: #a71d5d
+}
+.highlight.ini .code .title {
+    color: #795da3
+}
+.highlight.ini .code .setting {
+    color: #a71d5d
+}
+.highlight.ini .code .keyword,
+.highlight.ini .code .value {
+    color: #333
+}
+.highlight.java .code .title {
+    color: #795da3
+}
+.highlight.java .code .javadoc {
+    color: #969896
+}
+.highlight.java .code .javadoctag {
+    color: #a71d5d
+}
+.highlight.java .code .number {
+    color: #0086b3
+}
+.highlight.java .code .params {
+    color: #1d3e81
+}
+.highlight.js .code .title {
+    color: #795da3
+}
+.highlight.js .code .javadoc {
+    color: #969896
+}
+.highlight.js .code .javadoctag,
+.highlight.js .code .tag {
+    color: #a71d5d
+}
+.highlight.js .code .tag .title {
+    color: #333
+}
+.highlight.js .code .regexp {
+    color: #df5000
+}
+.highlight.js .code .built_in,
+.highlight.js .code .literal,
+.highlight.js .code .number {
+    color: #0086b3
+}
+.highlight.json .code .attribute {
+    color: #df5000
+}
+.highlight.json .code .number {
+    color: #0086b3
+}
+.highlight.mak .code .constant {
+    color: #333
+}
+.highlight.mak .code .variable {
+    color: #df5000
+}
+.highlight.mak .code .title {
+    color: #795da3
+}
+.highlight.mak .code .keyword {
+    color: #0086b3
+}
+.highlight.md .code .blockquote,
+.highlight.md .code .emphasis,
+.highlight.md .code .link_label,
+.highlight.md .code .strong,
+.highlight.md .code .value {
+    color: #df5000
+}
+.highlight.md .code .code,
+.highlight.md .code .link_reference {
+    color: #0086b3
+}
+.highlight.md .code .link_url {
+    text-decoration: underline
+}
+.highlight.nginx .code .title {
+    color: #a71d5d
+}
+.highlight.nginx .code .built_in {
+    color: #0086b3
+}
+.highlight.nginx .code .number,
+.highlight.nginx .code .regexp {
+    color: #df5000
+}
+.highlight.nginx .code .variable {
+    color: #333
+}
+.highlight.objectivec .code .preprocessor {
+    color: #a71d5d
+}
+.highlight.objectivec .code .preprocessor .title {
+    color: #df5000
+}
+.highlight.objectivec .code .title {
+    color: #795da3
+}
+.highlight.objectivec .code .built_in,
+.highlight.objectivec .code .literal,
+.highlight.objectivec .code .number {
+    color: #0086b3
+}
+.highlight.perl .code .sub {
+    color: #795da3
+}
+.highlight.perl .code .regexp {
+    color: #df5000
+}
+.highlight.php .code .phpdoc {
+    color: #a71d5d
+}
+.highlight.php .code .regexp {
+    color: #df5000
+}
+.highlight.php .code .literal,
+.highlight.php .code .number {
+    color: #0086b3
+}
+.highlight.php .code .title,
+.highlight.python .code .decorator,
+.highlight.python .code .title {
+    color: #795da3
+}
+.highlight.python .code .number {
+    color: #0086b3
+}
+.highlight.ruby .code .parent,
+.highlight.ruby .code .title {
+    color: #795da3
+}
+.highlight.ruby .code .constant,
+.highlight.ruby .code .number,
+.highlight.ruby .code .prompt,
+.highlight.ruby .code .subst .keyword,
+.highlight.ruby .code .symbol {
+    color: #0086b3
+}
+.highlight.sql .built_in {
+    color: #a71d5d
+}
+.highlight.sql .number {
+    color: #0086b3
+}
+.highlight.xml .tag {
+    color: #333
+}
+.highlight.xml .value {
+    color: #df5000
+}
+.highlight.xml .attribute {
+    color: #795da3
+}
+.highlight.xml .title {
+    color: #63a35c
+}
+.highlight.puppet .title {
+    color: #795da3
+}
+.highlight.puppet .function {
+    color: #0086b3
+}
+.highlight.less .at_rule,
+.highlight.less .tag {
+    color: #a71d5d
+}
+.highlight.less .attribute,
+.highlight.less .function,
+.highlight.less .hexcolor,
+.highlight.less .number {
+    color: #0086b3
+}
+.highlight.less .built_in {
+    color: #df5000
+}
+.highlight.less .class,
+.highlight.less .id,
+.highlight.less .pseudo {
+    color: #795da3
+}
+.highlight.scss .at_rule,
+.highlight.scss .important,
+.highlight.scss .tag {
+    color: #a71d5d
+}
+.highlight.scss .attribute,
+.highlight.scss .function,
+.highlight.scss .hexcolor,
+.highlight.scss .number,
+.highlight.scss .preprocessor {
+    color: #0086b3
+}
+.highlight.scss .variable {
+    color: #333
+}
+.highlight.scss .built_in {
+    color: #df5000
+}
+.highlight.scss .class,
+.highlight.scss .id,
+.highlight.scss .pseudo {
+    color: #795da3
+}
+.highlight.stylus .at_rule {
+    color: #a71d5d
+}
+.highlight.stylus .tag {
+    color: #63a35c
+}
+.highlight.stylus .attribute,
+.highlight.stylus .hexcolor,
+.highlight.stylus .number,
+.highlight.stylus .params {
+    color: #0086b3
+}
+.highlight.stylus .class,
+.highlight.stylus .id,
+.highlight.stylus .pseudo,
+.highlight.stylus .title {
+    color: #795da3
+}
+.highlight.go .typename {
+    color: #a71d5d
+}
+.highlight.go .built_in,
+.highlight.go .constant {
+    color: #0086b3
+}
+.highlight.swift .preprocessor {
+    color: #a71d5d
+}
+.highlight.swift .title {
+    color: #795da3
+}
+.highlight.swift .built_in,
+.highlight.swift .number {
+    color: #0086b3
+}

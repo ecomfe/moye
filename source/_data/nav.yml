@@ -1,0 +1,82 @@
+---
+  -
+    text: "组件"
+    title: "component"
+    data:
+
+      -
+        text: "按钮 / Button"
+        title: "Button"
+        link: component/Button.html
+
+      -
+        text: "日历 / Calendar"
+        title: "Calendar"
+        link: component/Calendar.html
+
+      -
+        text: "城市选择器 / City"
+        title: "City"
+        link: component/City.html
+
+      -
+        text: "对话框 / Dialog"
+        title: "Dialog"
+        link: component/Dialog.html
+
+      -
+        text: "懒图片 / LazyImg"
+        title: "LazyImg"
+        link: component/LazyImg.html
+
+      -
+        text: "走马灯 / Marquee"
+        title: "Marquee"
+        link: component/Marquee.html
+
+      -
+        text: "翻页器 / Pager"
+        title: "Pager"
+        link: component/Pager.html
+
+      -
+        text: "浮层 / Popup"
+        title: "Popup"
+        link: component/Popup.html
+
+      -
+        text: "评分 / Rating"
+        title: "Rating"
+        link: component/Rating.html
+
+      -
+        text: "下拉框 / Select"
+        title: "Select"
+        link: component/Select.html
+
+      -
+        text: "轮播图 / Slider"
+        title: "Slider"
+        link: component/Slider.html
+
+      -
+        text: "选项卡 / Tab"
+        title: "Tab"
+        link: component/Tab.html
+
+      -
+        text: "文本框 / TextBox"
+        title: "TextBox"
+        link: component/TextBox.html
+
+      -
+        text: "提示 / Tip"
+        title: "Tip"
+        link: component/Tip.html
+  -
+    text: "简介"
+    title: "introduction"
+    data:
+      -
+        text: "开始"
+        title: "get-started"

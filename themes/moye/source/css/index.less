@@ -1,0 +1,391 @@
+
+@import "../dep/moye/_css/est/src/all.less";
+@import "./_util/variable.less";
+
+@import "./_util/normalize.less";
+@import "./_util/minxin.less";
+@import "./_util/grid.less";
+
+@import "./_partial/header.less";
+
+@import "../dep/highlight/styles/solarized_light.less";
+@import "../dep/moye/moye.less";
+
+.main {
+    height: 417px;
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+
+    &-bg {
+        width: 100%;
+        position: absolute;
+        top: -1px;
+        right: 0;
+        z-index: -1;
+    }
+
+    &-content {
+        .container();
+        position: relative;
+        background-image: url(./images/topbg.png);
+        background-position: center bottom;
+        background-repeat: no-repeat;
+        height: 302px;
+    }
+
+    &-text {
+        width: 310px;
+        margin: 0 auto;
+        padding: 0;
+        font-size: 20.62px;
+        line-height: 28px;
+        text-align: center;
+        white-space: pre-wrap;
+        color: @color-words;
+        letter-spacing: 12px;
+        white-space: nowrap;
+    }
+    &-title {
+        .div-center();
+        margin-bottom: 20px;
+        border-bottom: 1px solid @color-border;
+        font-family: "Arial Black", "Helvetica Neue", "Hiragino Sans GB", "Microsoft YaHei", Arial;
+        font-size: 95px;
+        width: 310px;
+        height: 104px;
+        line-height: 104px;
+        color: #fff;
+        margin-top: 115px;
+        text-align: center;
+        border-bottom: 2px solid #fff;
+    }
+    &-btn {
+        margin-top: 50px;
+        .div-center();
+        text-align: center;
+        a {
+            padding: 7px 50px;
+            text-align: center;
+            font-size: 24.74px;
+            text-decoration: none;
+            letter-spacing: 4px;
+            color: #fff;
+            background-color: transparent;
+            border: 2px solid #fff;
+
+            .border-radius(5px);
+            .inline-block();
+            &:hover {
+                color: @color-green-dark;
+                .box-shadow(0 0 10px #fff);
+                background-color: #fff;
+            }
+        }
+    }
+}
+
+.examples {
+    @width: 980px;
+    .container(@width);
+    &-row {
+        padding: 30px 0;
+        border-bottom: 1px solid @color-bg;
+        .clearfix();
+
+        &-left {
+            float: left;
+            width: @width/3;
+
+            h2 {
+                color: @color-green-dark;
+                font-weight: 700;
+                margin-top: 16px;
+                margin-bottom: 10px;
+                font-size: 24.74px;
+            }
+
+            p {
+                font-size: 16px;
+                word-break: break-all;
+            }
+        }
+        &-right {
+            float: right;
+            width: @width*2/3-100px;
+
+            .hljs {
+                font-size: 15px;
+            }
+        }
+    }
+
+    &-result {
+        margin-top: 30px;
+        text-align: center;
+    }
+
+    code.hljs {
+        background: transparent;
+    }
+
+    &-html .ui-button {
+        margin-right: 20px;
+        padding: 6px 12px;
+        line-height: 23px;
+        height: 23px;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: middle;
+        .border-radius(4px);
+        border: 1px solid #4cae4c;
+        background-color: #5cb85c;
+        color: #fff;
+        font-size: 14px;
+
+        &:hover {
+            background-color: #449d44;
+        }
+    }
+
+    &-smarty .ui-select-label {
+        text-align: left;
+    }
+
+    &-theme {
+        border-bottom: none;
+
+        .ui-pager {
+            margin-bottom: 20px;
+
+            &-item {
+                .border-radius(2px);
+            }
+        }
+
+        .hljs {
+            height: 260px;
+            overflow: scroll-y;
+        }
+    }
+
+    &-js .ui-tab {
+        border-bottom: 1px solid #ccc;
+        width: 400px;
+
+        height: 35px;
+        line-height: 35px;
+
+        &-wrapper {
+            margin: 0;
+        }
+
+        &-item {
+            float: left;
+            font-size: 14px;
+            height: 35px;
+            line-height: 35px;
+            margin-right: 2px;
+            margin-bottom: -1px;
+            vertical-align: top;
+            border: 1px solid transparent;
+            .border-radius(4px 4px 0 0);
+            background: transparent;
+
+            &:hover {
+                background-color: #ddd;
+                border-bottom: none;
+            }
+
+            &::after,
+            i {
+                display: none;
+            }
+        }
+
+        &-item-active {
+            border-color: #ccc;
+            color: #555;
+            cursor: default;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-bottom-color: transparent;
+
+            &:hover {
+                background-color: #fff;
+                border-bottom-color: #fff;
+            }
+        }
+    }
+
+}
+
+.feature {
+    height: 417px;
+    text-align: center;
+    position: relative;
+
+    &-bg {
+        width: 100%;
+        position: absolute;
+        top: -1px;
+        right: 0;
+        z-index: -1;
+    }
+    &-content {
+        margin-right: auto;
+        margin-left: auto;
+        padding-top: 48px;
+        padding-bottom: 118px;
+
+        .clearfix();
+        .size(1120px, 490px);
+    }
+    &-left,
+    &-right,
+    &-mid {
+        float: left;
+        width: 372.6px;
+        height: 324px;
+        border-right: 1px solid @color-words;
+        text-align: center;
+        p {
+            margin: 0;
+            padding: 0;
+            font-size: 22px;
+            line-height: 32px;
+            color: @color-words;
+        }
+        h1 {
+            margin-top: 30px;
+            margin-bottom: 0;
+            font-weight: 300;
+            color: #fff;
+        }
+    }
+    &-img {
+        height: 125px;
+        margin: 0 auto;
+        margin-bottom: 60px;
+        background-image: url("images/spirits.png");
+    }
+    &-left .feature-img {
+        width: 236px;
+    }
+    &-mid .feature-img {
+        width: 223px;
+        background-position: -236px 0;
+    }
+    &-right .feature-img {
+        width: 208px;
+        background-position: -460px 0;
+    }
+    &-right {
+        border-right: none;
+    }
+}
+
+.slogan {
+    height: 430px;
+    background-color: #31a38d;
+    position: relative;
+    text-align: center;
+
+    #triangle-up {
+        @line-length: 65px;
+        display: block;
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        margin-left: -@line-length;
+        width: 0;
+        height: 0;
+        border-right: @line-length solid transparent;
+        border-bottom: @line-length solid #363939;
+        border-left: @line-length solid transparent;
+        .opacity(20);
+    }
+    h1 {
+        padding-top: 40px;
+        margin-bottom: 0;
+        font-size: 44.55px;
+        font-weight: 700;
+        letter-spacing: 2px;
+        text-align: center;
+        color: #fff;
+        text-shadow: 5px 5px 5px #1f917d;
+    }
+    a {
+        font-size: 25px;
+        color: #fff;
+        text-decoration: none;
+        text-align: center;
+        position: absolute;
+        bottom: 5px;
+        left: 50%;
+        margin-left: -65px;
+        width: 130px;
+        .inline-block();
+    }
+    &-logo {
+        margin-right: auto;
+        margin-left: auto;
+        background-image: url("images/spirits.png");
+        background-repeat: no-repeat;
+        background-position: 0 -125px;
+
+        .size(668px, 250px);
+    }
+}
+
+.links {
+    height: 395px;
+    background-color: #1b1c1d;
+
+    @font-size: 18px;
+
+    &-content {
+        padding-top: 100px;
+        @width: 1120px;
+        .container(@width, 0);
+        .clearfix();
+
+        &-left,
+        &-mid,
+        &-right {
+            float: left;
+            width: @width/3;
+            text-align: center;
+
+            h2 {
+                font-weight: 300;
+                color: #fff;
+                font-size: @font-size;
+            }
+
+            a {
+                display: block;
+                font-size: @font-size - 3px;
+                color: #bdbebe;
+                .hover-link();
+                line-height: 32px;
+            }
+        }
+    }
+
+    &-copyright {
+        .container(880px, 0);
+        text-align: center;
+        padding-top: 25px;
+        margin-top: 20px;
+        font-size: @font-size;
+        color: #fff;
+        line-height: 32px;
+        border-top: 2px solid #9c9c9d;
+
+        a {
+            .hover-link();
+            color: #008aff;
+        }
+    }
+}

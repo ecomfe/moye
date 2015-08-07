@@ -1,0 +1,23 @@
+# Header
+menu:
+  Home: index.html
+  所有组件: component/Button.html
+rss: /atom.xml
+
+# Content
+excerpt_link: Read More
+fancybox: true
+
+# Miscellaneous
+google_analytics:
+favicon: /favicon.png
+twitter:
+google_plus:
+fb_admins:
+fb_app_id:
+
+friend_links:
+  Baidu EFE: 'http://efe.baidu.com'
+  Baidu FEX: 'http://fex.baidu.com'
+  DataV: 'http://fex.baidu.com'
+  ZRender: 'http://fex.baidu.com'

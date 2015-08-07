@@ -1,0 +1,62 @@
+@import (reference) "../../dep/moye/_css/est/src/all.less";
+@import (reference) "../_util/variable.less";
+@import "../_util/fonts.less";
+
+.head {
+    height: @header-height;
+    background-color: #363939;
+    border-bottom: 1px solid #284b4a;
+
+    .header {
+        .clearfix();
+        .container(980px, 0);
+        &-title {
+            .inline-block();
+            img {
+                margin-top: 9px;
+                vertical-align: middle;
+                margin-right: 14px;
+            }
+            h1 {
+                display: inline-block;
+                height: 30px;
+                margin: 0;
+                padding: 0;
+                font-size: 24px;
+                font-weight: 300;
+                line-height: 30px;
+                vertical-align: bottom;
+                color: @color-green-dark;
+
+                .inline-block();
+            }
+        }
+        &-nav {
+            height: @header-height;
+            line-height: @header-height;
+            vertical-align: top;
+            margin-left: 128px;
+
+            .inline-block();
+            &-link {
+                margin: 0;
+                margin-right: 37px;
+                padding: 5px 8px;
+                font-size: 13.75px;
+                text-decoration: none;
+                color: #fff;
+
+                .yahei();
+                &:hover {
+                    color: @color-green-dark;
+                }
+            }
+        }
+        &-github-star {
+            float: right;
+            height: 20px;
+            width: 80px;
+            margin-top: 11px;
+        }
+    }
+}

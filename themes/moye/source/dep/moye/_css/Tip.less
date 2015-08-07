@@ -1,0 +1,124 @@
+/**
+ * @file MOYE 浮动提示
+ * @author leon(leonlu@outlook.com)
+ */
+
+@import (reference) './variable.less';
+@import (reference) './dep.less';
+
+// 浮动提示
+@moye-tip-border-color: #c1d5ea;
+@moye-tip-border-width: 8px;
+@moye-tip-background-color: #e2eefa;
+@moye-tip-arrow-border-width: 2px;
+
+.@{moye-prefix}-tip {
+    width: 268px;
+    height: 120px;
+    top: 0;
+    z-index: 1000;
+    position: absolute;
+    border: 1px solid @moye-tip-border-color;
+    background-color: @moye-tip-background-color;
+
+    &-arrow,
+    &-arrow em,
+    &-arrow ins {
+        width: 0;
+        height: 0;
+        font-size: 0;
+        line-height: 0;
+        display: block;
+        position: absolute;
+    }
+
+    &-arrow {
+
+        em {
+            border: @moye-tip-border-width solid transparent;
+
+            // 修复ie6 无法边框透明的bug
+            _border: @moye-tip-border-width solid @moye-tip-background-color;
+            _filter: chroma(color=@moye-tip-background-color);
+        }
+
+        ins {
+            border: @moye-tip-border-width solid transparent;
+            // 修复ie6 无法边框透明的bug
+            _border: @moye-tip-border-width solid @moye-tip-border-color;
+            _filter: chroma(color=@moye-tip-border-color);
+        }
+
+    }
+
+    // tip显示在trigger左侧(箭头在控件右侧)
+    &-arrow-left {
+        right: 0;
+
+        em {
+            border-right: none;
+            border-left-color: @moye-tip-border-color;
+        }
+
+        ins {
+            border-right: none;
+            border-left-color: @moye-tip-background-color;
+            left: -@moye-tip-arrow-border-width;
+        }
+    }
+
+    // tip显示在trigger右侧(箭头在控件左侧)
+    &-arrow-right {
+        left: -@moye-tip-border-width - 1;
+
+        em {
+            border-left: none;
+            border-right-color: @moye-tip-border-color;
+        }
+
+        ins {
+            border-left: none;
+            border-right-color: @moye-tip-background-color;
+            left: @moye-tip-arrow-border-width;
+        }
+    }
+
+    // tip显示在trigger顶部(箭头在控件底部)
+    &-arrow-top {
+        bottom: 0;
+
+        em {
+            border-bottom: none;
+            border-top-color: @moye-tip-border-color;
+        }
+
+        ins {
+            border-bottom: none;
+            border-top-color: @moye-tip-background-color;
+            top: -@moye-tip-arrow-border-width;
+        }
+    }
+
+    // tip显示在trigger底部(箭头在控件顶部)
+    &-arrow-bottom {
+        top: -@moye-tip-border-width;
+
+        em {
+            border-top: none;
+            border-bottom-color: @moye-tip-border-color;
+        }
+
+        ins {
+            border-top: none;
+            border-bottom-color: @moye-tip-background-color;
+            top: @moye-tip-arrow-border-width;
+        }
+    }
+
+    // 标题定义
+    &-title {
+        height: 50px;
+        background-color: @moye-tip-background-color;
+    }
+
+}

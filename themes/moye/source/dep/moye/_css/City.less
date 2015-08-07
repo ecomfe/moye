@@ -1,0 +1,82 @@
+/**
+ * MOYE
+ * Copyright 2014 Baidu Inc. All rights reserved.
+ *
+ * @file 城市控件样式
+ * @author leon <leonlu@outlook.com>
+ */
+@import (reference) './dep.less';
+@import (reference) './variable.less';
+
+.@{moye-prefix}-city {
+
+    .inline-block();
+
+    &-popup {
+        position: absolute;
+        // @hack firefox需要给一个top, 否则会把body撑开
+        top: 0;
+        width: 360px;
+        z-index: 1000;
+        border: 1px solid #ddd;
+        background-color: #fff;
+        padding: 5px;
+        font-size: 12px;
+        color: #555;
+        left: -2000px;
+
+        a {
+            text-decoration: none;
+        }
+
+    }
+
+    &-labels {
+        list-style: none;
+        border-bottom: 1px solid #ddd;
+        .clearfix();
+
+        li {
+            border: 1px solid #ddd;
+            background-color: #fff;
+            float: left;
+            padding: 3px 5px;
+            margin-right: 10px;
+            margin-bottom: -1px;
+            cursor: default;
+            color: #0069CA;
+        }
+    }
+
+
+    &-panels {
+        list-style: none;
+        .clearfix();
+
+        li {
+            display: none;
+            float: left;
+            line-height: 18px;
+        }
+
+        a {
+            color: #555;
+            width: 70px;
+            display: inline-block;
+            padding: 5px 0;
+            text-align: center;
+            text-decoration: none;
+        }
+    }
+
+    &-panels &-active  {
+        display: block;
+    }
+
+    &-panels &-labels {
+        background-color: #E8EDF1;
+    }
+
+}
+
+

@@ -1,0 +1,124 @@
+/**
+ * @file MOYE 幻灯片样式
+ * @author leon(leonlu@outlook.com)
+ */
+
+@import './dep.less';
+@import './variable.less';
+
+@moye-slider-width: 423px;           //slider宽度
+@moye-slider-height: 638px;          //slider高度
+@moye-slider-z-index: 1;             //slider按钮层级
+@moye-slider-switch-btn-width: 40px;        //切换按钮宽度
+@moye-slider-switch-btn-height: 40px;       //切换按钮高度
+
+
+.@{moye-prefix}-slider {
+    position: relative;
+    width: @moye-slider-width;
+    height: @moye-slider-height;
+
+    //舞台
+    &-stage {
+        position: relative;
+        _width: @moye-slider-width;
+        height: @moye-slider-height;
+        overflow: hidden;
+        white-space: nowrap;
+    }
+
+    &-item {
+        width: @moye-slider-width;
+        height: @moye-slider-height;
+    }
+
+    //向前和向后按钮
+    &-prev,
+    &-next {
+        position: absolute;
+        width: @moye-slider-switch-btn-width;
+        height: @moye-slider-switch-btn-height;
+        top: 50%;
+        margin-top: @moye-slider-switch-btn-height;
+        font: bolder ~'24px/@{moye-slider-switch-btn-height}' '';
+        text-align: center;
+        color: #FFF;
+        background: #CCC;
+        background: rgba(204, 204, 204, 0.7);
+        left: 2px;
+        z-index: @moye-slider-z-index + 10;
+        -webkit-user-select:none;
+        -moz-user-select:none;
+        -ms-user-select:none;
+        user-select:none;
+        border-radius: 10px;
+        cursor: pointer;
+    }
+
+    &-next {
+        left: auto;
+        right: 2px;
+    }
+
+    &-prev:hover,
+    &-next:hover {
+        background: #DDD;
+    }
+
+    &-prev-disable,
+    &-next-disable {
+        display:none;
+    }
+
+    //索引按钮
+    &-pager {
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        z-index: @moye-slider-z-index + 2;
+        cursor: pointer;
+
+        i {
+            width: 10px;
+            height: 10px;
+            font-size:0;
+            display:inline-block;
+            margin-right: 10px;
+            border-radius:10px;
+            background: #CCC;
+            -webkit-transition: width 0.3s linear;
+            -moz-transition: width 0.3s linear;
+            -ms-transition: width 0.3s linear;
+            -o-transition: width 0.3s linear;
+            transition: width 0.3s linear;
+        }
+
+        & &-selected {
+            width: 16px;
+        }
+    }
+
+
+    //slider 垂直动画样式
+    &-stage-vertical {
+        white-space: normal;
+    }
+
+    &-stage-vertical &-item {
+        float: left;
+    }
+
+    // 透明度动画class
+    &-stage-opactiy &-item {
+        position: absolute;
+    }
+
+    &-cover {
+        z-index: @moye-slider-z-index;
+    }
+
+    &-top {
+        z-index: @moye-slider-z-index + 1;
+    }
+
+}

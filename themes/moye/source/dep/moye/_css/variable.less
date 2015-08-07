@@ -1,0 +1,144 @@
+/**
+ * MOYE
+ * Copyright 2014 Baidu Inc. All rights reserved.
+ *
+ * @moye-file 样式变量
+ * @moye-author leon <leonlu@moye-outlook.com>
+ */
+
+// moye控件样式前缀
+@moye-prefix: ui;
+@moye-state-prefix: state;
+@moye-skin-prefix: skin;
+
+/*-------------------
+      Base Sizes
+--------------------*/
+
+@moye-rem        : 1em;
+@moye-font-size  : unit(@default-font-size, px);
+@moye-line-height: 1.5;
+
+/*-------------------
+      Base Font Family
+--------------------*/
+
+@moye-font-family : 'Helvetica Neue', Arial, 'Hiragino Sans GB', 'Microsoft Yahei', 'Wen-quanYi Micro Hei', sans-serif;
+
+/*---  Colors  ---*/
+@moye-black            : #1B1C1D;
+@moye-blue             : #3B83C0;
+@moye-green            : #5BBD72;
+@moye-grey             : #CCCCCC;
+@moye-orange           : #E07B53;
+@moye-pink             : #D9499A;
+@moye-purple           : #564F8A;
+@moye-red              : #D95C5C;
+@moye-teal             : #00B5AD;
+@moye-yellow           : #F2C61F;
+
+/*---  Light Colors  ---*/
+@moye-light-black       : #333333;
+@moye-light-blue        : #54C8FF;
+@moye-light-green       : #2ECC40;
+@moye-light-orange      : #FF851B;
+@moye-light-pink        : #FF8EDF;
+@moye-light-purple      : #CDC6FF;
+@moye-light-red         : #FF695E;
+@moye-light-teal        : #6DFFFF;
+@moye-light-yellow      : #FFE21F;
+
+/*---   Neutrals  ---*/
+@moye-full-black        : #000000;
+@moye-dark-grey         : #AAAAAA;
+@moye-light-grey        : #DCDDDE;
+@moye-off-white         : #FAFAFA;
+@moye-dark-white        : #F0F0F0;
+@moye-white             : #FFFFFF;
+
+/*-------------------
+    Emotive Colors
+--------------------*/
+
+/* Positive */
+@moye-positive-color            : @moye-green;
+@moye-positive-background-color : #EEFFE7;
+@moye-positive-border-color     : #B7CAA7;
+@moye-positive-header-color     : #356E36;
+@moye-positive-text-color       : #3C763D;
+
+/* Negative */
+@moye-negative-color            : @moye-red;
+@moye-negative-background-color : #FFF0F0;
+@moye-negative-border-color     : #DBB1B1;
+@moye-negative-header-color     : #912D2B;
+@moye-negative-text-color       : #A94442;
+
+/* Info */
+@moye-info-color                : #31CCEC;
+@moye-info-background-color     : #E9FAFF;
+@moye-info-border-color         : #AAD6DF;
+@moye-info-header-color         : #297187;
+@moye-info-text-color           : #337B92;
+
+/* Warning */
+@moye-warning-color             : #F2C037;
+@moye-warning-border-color      : #D9CAAB;
+@moye-warning-background-color  : #FFFBE6;
+@moye-warning-header-color      : #825C01;
+@moye-warning-text-color        : #876A38;
+
+
+/*-------------------
+    Brand Colors
+--------------------*/
+
+@moye-primary-color            : @moye-blue;
+@moye-secondary-color          : @moye-black;
+
+/* Positive / Negative Dupes */
+@moye-success-color            : @moye-positive-color;
+@moye-error-color              : @moye-negative-color;
+@moye-success-background-color : @moye-positive-background-color;
+@moye-error-background-color   : @moye-negative-background-color;
+@moye-success-text-color       : @moye-positive-text-color;
+@moye-error-text-color         : @moye-negative-text-color;
+@moye-success-border-color     : @moye-positive-border-color;
+@moye-error-border-color       : @moye-negative-border-color;
+@moye-success-header-color     : @moye-positive-header-color;
+@moye-error-header-color       : @moye-negative-header-color;
+
+
+
+/*-------------------
+        Sizes
+--------------------*/
+
+/*
+  To have sizing resolve to a specified pixel values adjust
+  the numerator to the desired font size and the denominator
+  to the base em size
+*/
+
+@moye-mini-size        : (12 / 16);
+@moye-tiny-size        : (14 / 16);
+@moye-small-size       : (15 / 16);
+@moye-medium-size      : (16 / 16);
+@moye-large-size       : (18 / 16);
+@moye-big-size         : (20 / 16);
+@moye-huge-size        : (22 / 16);
+@moye-massive-size     : (24 / 16);
+
+/*-------------------
+       Em Sizes
+--------------------*/
+
+/* Exact pixel values expressed in rem */
+@moye-mini            : unit(round(@moye-mini-size * @moye-font-size) / @moye-font-size, rem);     // 12px
+@moye-tiny            : unit(round(@moye-tiny-size * @moye-font-size) / @moye-font-size, rem);     // 14px
+@moye-small           : unit(round(@moye-small-size * @moye-font-size) / @moye-font-size, rem);    // 15px
+@moye-medium          : unit(round(@moye-medium-size * @moye-font-size) / @moye-font-size, rem);   // 16px
+@moye-large           : unit(round(@moye-large-size * @moye-font-size) / @moye-font-size, rem);    // 18px
+@moye-big             : unit(round(@moye-big-size * @moye-font-size) / @moye-font-size, rem);      // 20px
+@moye-huge            : unit(round(@moye-huge-size * @moye-font-size) / @moye-font-size, rem);     // 22px
+@moye-massive         : unit(round(@moye-massive-size * @moye-font-size) / @moye-font-size, rem);  // 24px

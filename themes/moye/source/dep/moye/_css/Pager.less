@@ -1,0 +1,94 @@
+/**
+ * MOYE
+ * Copyright 2014 Baidu Inc. All rights reserved.
+ *
+ * @file 翻页样式
+ * @author leon <leonlu@outlook.com>
+ */
+
+@import (reference) './variable.less';
+@import (reference) './dep.less';
+
+// 翻页器
+@moye-pager-item-color: #03c;
+@moye-pager-item-border-color: #ccc;
+@moye-pager-item-background-color: #fff;
+@moye-pager-item-hover-background-color: #EFF4FA;
+@moye-pager-item-current-color: #666;
+@moye-pager-item-triangle-color: #666;
+@moye-pager-item-disabled-color: #999;
+
+.@{moye-prefix}-pager {
+    .inline-block();
+
+    span {
+        .inline-block();
+
+        padding: 0 10px;
+        font-size: 12px;
+    }
+
+    a {
+        .inline-block();
+
+        width: 23px;
+        height: 23px;
+        padding: 0;
+        margin: 0 3px;
+
+        text-decoration: none;
+        line-height: 23px;
+        color: @moye-pager-item-color;
+        font-size: 12px;
+        font-family: Arial, Helvetica, sans-serif;
+        text-align: center;
+        background-color: @moye-pager-item-background-color;
+        border: 1px solid @moye-pager-item-border-color;
+
+        &:hover {
+            background-color: @moye-pager-item-hover-background-color;
+        }
+
+        &.@{moye-prefix}-pager-prev,
+        &.@{moye-prefix}-pager-next {
+            width: auto;
+            padding: 0 5px;
+        }
+
+        &.@{moye-prefix}-pager-ellipsis {
+            border: none;
+            &:hover {
+                background: none;
+                em {
+                    border-color: @moye-pager-item-hover-background-color;
+                }
+            }
+        }
+
+        &.@{moye-prefix}-pager-current {
+            font-weight: 700;
+            border: none;
+            color: @moye-pager-item-current-color;
+            cursor: default;
+            &:hover {
+                background: none;
+            }
+        }
+
+        &.@{moye-prefix}-pager-disabled {
+            color: @moye-pager-item-disabled-color;
+            cursor: default;
+            &:hover {
+                border-color: @moye-pager-item-border-color;
+                background-color: @moye-pager-item-background-color;
+            }
+        }
+
+    }
+
+    &-disabled {
+        color: @moye-pager-item-disabled-color;
+        cursor: default;
+    }
+
+}

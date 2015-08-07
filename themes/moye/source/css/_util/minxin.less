@@ -1,0 +1,26 @@
+
+.yahei() {
+    font-family: "Helvetica Neue", "Hiragino Sans GB", "Microsoft YaHei", Arial;
+}
+
+.arial() {
+    font-family: arial,"\5b8b\4f53",sans-serif;
+}
+
+.container(@width: @container-width, @padding: 80px) {
+    width: @width;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: @padding;
+    padding-right: @padding;
+}
+
+.div-center() {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+body {
+    .yahei();
+    min-width: @container-width;
+}

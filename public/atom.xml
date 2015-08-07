@@ -1,0 +1,491 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  
+  <title><![CDATA[Moye]]></title>
+  <subtitle><![CDATA[轻便、强大的UI组件库]]></subtitle>
+  <link href="/moye/atom.xml" rel="self"/>
+  <link href="http://ecomfe.github.io/moye/moye//"/>
+  <updated>2015-08-06T11:41:22.000Z</updated>
+  <id>http://ecomfe.github.io/moye/moye//</id>
+  
+  <author>
+    <name><![CDATA[ecomfe]]></name>
+    
+  </author>
+  
+  <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[提示 / Tip]]></title>
+    <link href="http://ecomfe.github.io/moye/moye/component/Tip.html"/>
+    <id>http://ecomfe.github.io/moye/moye/component/Tip.html</id>
+    <published>2015-08-06T11:13:48.000Z</published>
+    <updated>2015-08-06T11:41:22.000Z</updated>
+    <content type="html"><![CDATA[<h1 id="Tip_组件">Tip 组件</h1><h3 id="如何标识目标">如何标识目标</h3><p>只需要给目标 DOM 添加样式类<code>tooltips</code>即可</p>
+<iframe height="763" scrolling="no" src="//codepen.io/jinzhubaofu/embed/KpJeGM/?height=763&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/KpJeGM/" target="_blank" rel="external">KpJeGM</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+
+<h3 id="方位关系">方位关系</h3><p>你可以通过将目标元素添加<code>data-tooltips</code>属性来指定<code>Tip</code>的定位关系</p>
+<p>Tip 支持多种定位关系，大体上分为两个部分：</p>
+<ol>
+<li>Tip 位于目标的哪个方位，也就是 top / bottom / left / right，简写为 t / b / l / r；</li>
+<li>Tip 如何与目标对齐，也就是 left / center / right，或者是 top /center / bottom, 简写就是 l / c / r 和 t / c / b；</li>
+</ol>
+<p>将这两个简写定位合并起来就是<code>Tip</code>的定位标识。</p>
+<p>例子1：tc，就是 top + center，也就是<code>Tip</code>位于目标的顶部，居中对齐</p>
+<p>例子1：lb，就是 left + bottom，也就是<code>Tip</code>位于目标的左侧，底部对齐</p>
+<p>效果如下边这个效果：</p>
+<p></p><p data-height="655" data-theme-id="17600" data-slug-hash="zGeaWz" data-default-tab="result" data-user="jinzhubaofu" class="codepen"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/zGeaWz/" target="_blank" rel="external">zGeaWz</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.</p><p></p>
+<script async src="//assets.codepen.io/assets/embed/ei.js"></script>
+
+<h3 id="静态模式">静态模式</h3><p>这个模式是只能通过<code>javascript</code>来控制<code>Tip</code>的显示或隐藏，也就是说鼠标的<code>hover</code>动作不管用了。这种模式可以作为表单元素校验出错的提示信息。</p>
+<iframe height="266" scrolling="no" src="//codepen.io/jinzhubaofu/embed/QbYxzy/?height=266&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;">See the Pen <a href="http://codepen.io/jinzhubaofu/pen/QbYxzy/" target="_blank" rel="external">QbYxzy</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+]]></content>
+    <summary type="html">
+    <![CDATA[<h1 id="Tip_组件">Tip 组件</h1><h3 id="如何标识目标">如何标识目标</h3><p>只需要给目标 DOM 添加样式类<code>tooltips</code>即可</p>
+<iframe height="763" scrolling="no" src]]>
+    </summary>
+    
+      <category term="component" scheme="http://ecomfe.github.io/moye/moye/categories/component/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[选项卡 / Tab]]></title>
+    <link href="http://ecomfe.github.io/moye/moye/component/Tab.html"/>
+    <id>http://ecomfe.github.io/moye/moye/component/Tab.html</id>
+    <published>2015-08-06T10:05:14.000Z</published>
+    <updated>2015-08-06T11:12:19.000Z</updated>
+    <content type="html"><![CDATA[<h1 id="Tab_选项卡">Tab 选项卡</h1><h3 id="正常模式">正常模式</h3><p>点击标签可以切换</p>
+<blockquote>
+<p>可以通过阻止<code>change</code>事件对象的默认行为来阻止切换标签</p>
+</blockquote>
+<iframe height="381" scrolling="no" src="//codepen.io/jinzhubaofu/embed/JdxZoN/?height=381&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;">See the Pen <a href="http://codepen.io/jinzhubaofu/pen/JdxZoN/" target="_blank" rel="external">JdxZoN</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+
+<h3 id="hover切换元素">hover切换元素</h3><iframe height="376" scrolling="no" src="//codepen.io/jinzhubaofu/embed/aOXKOp/?height=376&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;">See the Pen <a href="http://codepen.io/jinzhubaofu/pen/aOXKOp/" target="_blank" rel="external">aOXKOp</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+]]></content>
+    <summary type="html">
+    <![CDATA[<h1 id="Tab_选项卡">Tab 选项卡</h1><h3 id="正常模式">正常模式</h3><p>点击标签可以切换</p>
+<blockquote>
+<p>可以通过阻止<code>change</code>事件对象的默认行为来阻止切换标签</p>
+</blockquo]]>
+    </summary>
+    
+      <category term="component" scheme="http://ecomfe.github.io/moye/moye/categories/component/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[轮播图 / Slider]]></title>
+    <link href="http://ecomfe.github.io/moye/moye/component/Slider.html"/>
+    <id>http://ecomfe.github.io/moye/moye/component/Slider.html</id>
+    <published>2015-08-06T09:55:03.000Z</published>
+    <updated>2015-08-06T10:04:03.000Z</updated>
+    <content type="html"><![CDATA[<h1 id="Slider_轮播图">Slider 轮播图</h1><p>自动轮播</p>
+<p>设置参数<code>auto</code>为<code>true</code>, 控件会在完成<code>render</code>后开始<code>播放</code>, 即开始轮播.</p>
+<p>或者调用<code>slider.play()</code>/<code>slider.stop()</code>来开始/暂停播放</p>
+<iframe height="738" scrolling="no" src="//codepen.io/jinzhubaofu/embed/zGejgB/?height=738&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/zGejgB/" target="_blank" rel="external">zGejgB</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+
+
+<h2 id="各种切换动画效果">各种切换动画效果</h2><h3 id="滑动(slide)垂直方向切换">滑动(slide)垂直方向切换</h3><iframe height="744" scrolling="no" src="//codepen.io/jinzhubaofu/embed/aOXKbB/?height=744&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/aOXKbB/" target="_blank" rel="external">aOXKbB</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+
+<h3 id="透明渐变">透明渐变</h3><iframe height="742" scrolling="no" src="//codepen.io/jinzhubaofu/embed/mJvKdL/?height=742&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;">See the Pen <a href="http://codepen.io/jinzhubaofu/pen/mJvKdL/" target="_blank" rel="external">mJvKdL</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+]]></content>
+    <summary type="html">
+    <![CDATA[<h1 id="Slider_轮播图">Slider 轮播图</h1><p>自动轮播</p>
+<p>设置参数<code>auto</code>为<code>true</code>, 控件会在完成<code>render</code>后开始<code>播放</code>, 即开始轮]]>
+    </summary>
+    
+      <category term="component" scheme="http://ecomfe.github.io/moye/moye/categories/component/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[下拉框 / Select]]></title>
+    <link href="http://ecomfe.github.io/moye/moye/component/Select.html"/>
+    <id>http://ecomfe.github.io/moye/moye/component/Select.html</id>
+    <published>2015-08-06T09:48:56.000Z</published>
+    <updated>2015-08-06T09:53:01.000Z</updated>
+    <content type="html"><![CDATA[<h3 id="各种大小的下拉框">各种大小的下拉框</h3><p>虽然丑了些。。。</p>
+<iframe height="490" scrolling="no" src="//codepen.io/jinzhubaofu/embed/aOXGMZ/?height=490&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/aOXGMZ/" target="_blank" rel="external">aOXGMZ</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+
+<h3 id="鼠标hover触发展开">鼠标hover触发展开</h3><iframe height="413" scrolling="no" src="//codepen.io/jinzhubaofu/embed/yNZjdB/?height=413&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;">See the Pen <a href="http://codepen.io/jinzhubaofu/pen/yNZjdB/" target="_blank" rel="external">yNZjdB</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+]]></content>
+    <summary type="html">
+    <![CDATA[<h3 id="各种大小的下拉框">各种大小的下拉框</h3><p>虽然丑了些。。。</p>
+<iframe height="490" scrolling="no" src="//codepen.io/jinzhubaofu/embed/aOXGMZ/?height=490&th]]>
+    </summary>
+    
+      <category term="component" scheme="http://ecomfe.github.io/moye/moye/categories/component/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[评分 / Rating]]></title>
+    <link href="http://ecomfe.github.io/moye/moye/component/Rating.html"/>
+    <id>http://ecomfe.github.io/moye/moye/component/Rating.html</id>
+    <published>2015-08-06T09:33:37.000Z</published>
+    <updated>2015-08-06T09:36:22.000Z</updated>
+    <content type="html"><![CDATA[<h1 id="Rating_打分组件">Rating 打分组件</h1><p>当鼠标移动到星星上时，星星会暂时地指向鼠标所在的星星；此时移出星星，那么组件会恢复到原有值。只有在星星点击一下，值才会被固定下来，移出时不再恢复。</p>
+<iframe height="556" scrolling="no" src="//codepen.io/jinzhubaofu/embed/eNxrbm/?height=556&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/eNxrbm/" target="_blank" rel="external">eNxrbm</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+]]></content>
+    <summary type="html">
+    <![CDATA[<h1 id="Rating_打分组件">Rating 打分组件</h1><p>当鼠标移动到星星上时，星星会暂时地指向鼠标所在的星星；此时移出星星，那么组件会恢复到原有值。只有在星星点击一下，值才会被固定下来，移出时不再恢复。</p>
+<iframe height="556" s]]>
+    </summary>
+    
+      <category term="component" scheme="http://ecomfe.github.io/moye/moye/categories/component/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[浮层 / Popup]]></title>
+    <link href="http://ecomfe.github.io/moye/moye/component/Popup.html"/>
+    <id>http://ecomfe.github.io/moye/moye/component/Popup.html</id>
+    <published>2015-08-06T09:25:23.000Z</published>
+    <updated>2015-08-06T09:31:55.000Z</updated>
+    <content type="html"><![CDATA[<h2 id="浮层_/_Popup">浮层 / Popup</h2><p><code>Popup</code>是一个工具控件, 用来完成浮出层的功能. 经常作为其他控件的子控件组合使用, 一般不直接使用.</p>
+<p><code>Popup</code>的主要参数是<code>triggers</code>, 用以指定触发<code>Popup</code>浮层. <code>triggers</code>是一个<code>jQuery</code>可以接受的<code>css selector</code>.</p>
+<p>使用<code>target</code>属性来指定<code>Popup</code>的显示位置.</p>
+<iframe height="293" scrolling="no" src="//codepen.io/jinzhubaofu/embed/waNjEE/?height=293&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/waNjEE/" target="_blank" rel="external">waNjEE</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+
+
+<p>如果不指定<code>target</code>属性, 那么<code>Popup</code>会挂靠到当前的触发元素上</p>
+<iframe height="344" scrolling="no" src="//codepen.io/jinzhubaofu/embed/doaegW/?height=344&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/doaegW/" target="_blank" rel="external">doaegW</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+
+
+<p>可以通过指定<code>dir</code>参数来调整<code>Popup</code>挂靠的方向. 上例中 <code>dir</code>设定为<code>rc</code>, 表示<code>Popup</code>挂靠到目标元素的右侧中间位置.</p>
+<iframe height="480" scrolling="no" src="//codepen.io/jinzhubaofu/embed/jPdxeJ/?height=480&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/jPdxeJ/" target="_blank" rel="external">jPdxeJ</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+
+<p>可以指定<code>liveTriggers</code>来限定一个容器, 在限容器内的所有<code>triggers</code>都可以触发<code>Popup</code>, 即使它们是在初始化之后被创建的.</p>
+]]></content>
+    <summary type="html">
+    <![CDATA[<h2 id="浮层_/_Popup">浮层 / Popup</h2><p><code>Popup</code>是一个工具控件, 用来完成浮出层的功能. 经常作为其他控件的子控件组合使用, 一般不直接使用.</p>
+<p><code>Popup</code>的主要参数是<code]]>
+    </summary>
+    
+      <category term="component" scheme="http://ecomfe.github.io/moye/moye/categories/component/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[翻页器 / Pager]]></title>
+    <link href="http://ecomfe.github.io/moye/moye/component/Pager.html"/>
+    <id>http://ecomfe.github.io/moye/moye/component/Pager.html</id>
+    <published>2015-08-06T07:16:19.000Z</published>
+    <updated>2015-08-06T09:12:43.000Z</updated>
+    <content type="html"><![CDATA[<h1 id="Pager">Pager</h1><h2 id="简单版本">简单版本</h2><iframe height="121" scrolling="no" src="//codepen.io/jinzhubaofu/embed/qdgoMz/?height=121&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/qdgoMz/" target="_blank" rel="external">qdgoMz</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+
+<h2 id="设置总页面">设置总页面</h2><p>与下拉框组合使用，设置总页码</p>
+<iframe height="228" scrolling="no" src="//codepen.io/jinzhubaofu/embed/zGeWmy/?height=228&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;">See the Pen <a href="http://codepen.io/jinzhubaofu/pen/zGeWmy/" target="_blank" rel="external">zGeWmy</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+
+
+<h2 id="自定义页码展现">自定义页码展现</h2><iframe height="256" scrolling="no" src="//codepen.io/jinzhubaofu/embed/zGeWmy/?height=256&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;">See the Pen <a href="http://codepen.io/jinzhubaofu/pen/zGeWmy/" target="_blank" rel="external">zGeWmy</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+
+<h2 id="精简版分页">精简版分页</h2><iframe height="266" scrolling="no" src="//codepen.io/jinzhubaofu/embed/oXmdqY/?height=266&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;">See the Pen <a href="http://codepen.io/jinzhubaofu/pen/oXmdqY/" target="_blank" rel="external">oXmdqY</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+
+<h2 id="精简版分页灵活运用">精简版分页灵活运用</h2><iframe height="266" scrolling="no" src="//codepen.io/jinzhubaofu/embed/PqVeRQ/?height=266&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;">See the Pen <a href="http://codepen.io/jinzhubaofu/pen/PqVeRQ/" target="_blank" rel="external">PqVeRQ</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+
+<h2 id="分页getPage和setPage使用">分页getPage和setPage使用</h2><iframe height="266" scrolling="no" src="//codepen.io/jinzhubaofu/embed/KpJRoJ/?height=266&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;">See the Pen <a href="http://codepen.io/jinzhubaofu/pen/KpJRoJ/" target="_blank" rel="external">KpJRoJ</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+
+<h3 id="全部配置参数">全部配置参数</h3><hr>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">属性名</th>
+<th style="text-align:left">类型</th>
+<th style="text-align:left">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">disabled</td>
+<td style="text-align:left">boolean</td>
+<td style="text-align:left">控件的不可用状态</td>
+</tr>
+<tr>
+<td style="text-align:left">main</td>
+<td style="text-align:left">HTMLElement</td>
+<td style="text-align:left">控件渲染容器</td>
+</tr>
+<tr>
+<td style="text-align:left">page</td>
+<td style="text-align:left">number</td>
+<td style="text-align:left">当前页（第一页从0开始）</td>
+</tr>
+<tr>
+<td style="text-align:left">first</td>
+<td style="text-align:left">number</td>
+<td style="text-align:left">起始页码，默认为0</td>
+</tr>
+<tr>
+<td style="text-align:left">padding</td>
+<td style="text-align:left">number</td>
+<td style="text-align:left">当页数较多时，首尾显示页码的个数</td>
+</tr>
+<tr>
+<td style="text-align:left">showAlways</td>
+<td style="text-align:left">boolean</td>
+<td style="text-align:left">是否一直显示分页控件</td>
+</tr>
+<tr>
+<td style="text-align:left">showCount</td>
+<td style="text-align:left">number</td>
+<td style="text-align:left">当页数较多时，中间显示页码的个数</td>
+</tr>
+<tr>
+<td style="text-align:left">total</td>
+<td style="text-align:left">number</td>
+<td style="text-align:left">总页数</td>
+</tr>
+<tr>
+<td style="text-align:left">anchor</td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">跳转链接</td>
+</tr>
+<tr>
+<td style="text-align:left">mode</td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">分页类型（normal/simple）</td>
+</tr>
+<tr>
+<td style="text-align:left">getPageItemHTML</td>
+<td style="text-align:left">function</td>
+<td style="text-align:left">分页item字符串</td>
+</tr>
+<tr>
+<td style="text-align:left">lang</td>
+<td style="text-align:left">Object<string, string=""></string,></td>
+<td style="text-align:left">用于显示上下页的文字</td>
+</tr>
+<tr>
+<td style="text-align:left">lang.prev</td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">上一页显示文字(支持HTML)</td>
+</tr>
+<tr>
+<td style="text-align:left">lang.next</td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">下一页显示文字(支持HTML)</td>
+</tr>
+<tr>
+<td style="text-align:left">lang.ellipsis</td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">省略处显示文字(支持HTML)</td>
+</tr>
+</tbody>
+</table>
+<p>在页面切换的时候可以绑定回调事件<code>onChange</code>。</p>
+]]></content>
+    <summary type="html">
+    <![CDATA[<h1 id="Pager">Pager</h1><h2 id="简单版本">简单版本</h2><iframe height="121" scrolling="no" src="//codepen.io/jinzhubaofu/embed/qdgoMz/?height=121&t]]>
+    </summary>
+    
+      <category term="component" scheme="http://ecomfe.github.io/moye/moye/categories/component/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[走马灯 / Marquee]]></title>
+    <link href="http://ecomfe.github.io/moye/moye/component/Marquee.html"/>
+    <id>http://ecomfe.github.io/moye/moye/component/Marquee.html</id>
+    <published>2015-08-06T06:44:37.000Z</published>
+    <updated>2015-08-06T07:11:15.000Z</updated>
+    <content type="html"><![CDATA[<h1 id="走马灯">走马灯</h1><p>向左滚动</p>
+<iframe height="266" scrolling="no" src="//codepen.io/jinzhubaofu/embed/vObReY/?height=266&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/vObReY/" target="_blank" rel="external">vObReY</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+
+
+<p>向右滚动</p>
+<iframe height="266" scrolling="no" src="//codepen.io/jinzhubaofu/embed/VLgXMo/?height=266&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/VLgXMo/" target="_blank" rel="external">VLgXMo</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+
+<p>向上滚动</p>
+<iframe height="291" scrolling="no" src="//codepen.io/jinzhubaofu/embed/KpJoyX/?height=291&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/KpJoyX/" target="_blank" rel="external">KpJoyX</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+
+<p>还可以滚动一个图片哟</p>
+<iframe height="385" scrolling="no" src="//codepen.io/jinzhubaofu/embed/eNxMeK/?height=385&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/eNxMeK/" target="_blank" rel="external">eNxMeK</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+
+<p>通过 api 控制滚动</p>
+<iframe height="266" scrolling="no" src="//codepen.io/jinzhubaofu/embed/doameb/?height=266&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/doameb/" target="_blank" rel="external">doameb</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+
+<p>非常长的文本也可以连续滚动</p>
+<p>水平方向</p>
+<iframe height="266" scrolling="no" src="//codepen.io/jinzhubaofu/embed/KpJoRZ/?height=266&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/KpJoRZ/" target="_blank" rel="external">KpJoRZ</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+
+<p>竖直方向</p>
+<iframe height="147" scrolling="no" src="//codepen.io/jinzhubaofu/embed/NqoYzg/?height=147&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/NqoYzg/" target="_blank" rel="external">NqoYzg</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+]]></content>
+    <summary type="html">
+    <![CDATA[<h1 id="走马灯">走马灯</h1><p>向左滚动</p>
+<iframe height="266" scrolling="no" src="//codepen.io/jinzhubaofu/embed/vObReY/?height=266&theme-id=17600&d]]>
+    </summary>
+    
+      <category term="component" scheme="http://ecomfe.github.io/moye/moye/categories/component/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[懒图片 / LazyImg]]></title>
+    <link href="http://ecomfe.github.io/moye/moye/component/LazyImg.html"/>
+    <id>http://ecomfe.github.io/moye/moye/component/LazyImg.html</id>
+    <published>2015-08-06T06:23:57.000Z</published>
+    <updated>2015-08-06T13:11:36.000Z</updated>
+    <content type="html"><![CDATA[<h1 id="Lazy_懒加载">Lazy 懒加载</h1><h2 id="示例">示例</h2><iframe height="424" scrolling="no" src="//codepen.io/jinzhubaofu/embed/jPdzBw/?height=424&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/jPdzBw/" target="_blank" rel="external">jPdzBw</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+]]></content>
+    <summary type="html">
+    <![CDATA[<h1 id="Lazy_懒加载">Lazy 懒加载</h1><h2 id="示例">示例</h2><iframe height="424" scrolling="no" src="//codepen.io/jinzhubaofu/embed/jPdzBw/?height=424]]>
+    </summary>
+    
+      <category term="component" scheme="http://ecomfe.github.io/moye/moye/categories/component/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[对话框 / Dialog]]></title>
+    <link href="http://ecomfe.github.io/moye/moye/component/Dialog.html"/>
+    <id>http://ecomfe.github.io/moye/moye/component/Dialog.html</id>
+    <published>2015-08-06T02:34:40.000Z</published>
+    <updated>2015-08-06T06:04:39.000Z</updated>
+    <content type="html"><![CDATA[<h1 id="Dialog_窗口">Dialog 窗口</h1><h2 id="普通窗口">普通窗口</h2><iframe height="361" scrolling="no" src="//codepen.io/jinzhubaofu/embed/xGMWKz/?height=361&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/xGMWKz/" target="_blank" rel="external">xGMWKz</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+
+<h2 id="会自毁的窗口">会自毁的窗口</h2><iframe height="266" scrolling="no" src="//codepen.io/jinzhubaofu/embed/mJvxbZ/?height=266&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/mJvxbZ/" target="_blank" rel="external">mJvxbZ</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+
+<h2 id="带按钮的窗口">带按钮的窗口</h2><p>通过我们提供<code>buttons</code>参数. 通过这个参数, 可以很方便地添加脚注中的按钮</p>
+<iframe height="266" scrolling="no" src="//codepen.io/jinzhubaofu/embed/WvPzNx/?height=266&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/WvPzNx/" target="_blank" rel="external">WvPzNx</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+
+
+<p>还可以通过设定<code>footer</code>的值, 来构建自定义脚注, 自行添加按钮</p>
+<iframe height="266" scrolling="no" src="//codepen.io/jinzhubaofu/embed/xGMWbJ/?height=266&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/xGMWbJ/" target="_blank" rel="external">xGMWbJ</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+
+<p>这里可以给<code>Dialog</code>中任意的<code>DOM</code>元素添加<code>data-action</code>属性。在用户点击了一个带有<code>data-action</code>的元素时，<code>Dialog</code>会根据<code>data-action</code>所指定的动作来释放事件。比如上边例子里，我们给脚注中的按钮添加了<code>close</code>的动作标识。<code>Dialog</code>中有一个默认的动作处理动作<code>close</code>。所有带有 <code>close</code>动作标识的元素，被点击之后，<code>Dialog</code>都会自动关闭哟。</p>
+<blockquote>
+<p>注意: <code>footer</code>与<code>buttons</code>的优先级. 如果, <code>footer</code>与<code>buttons</code>同时存在, 那么<code>footer</code>会覆盖<code>buttons</code>.</p>
+</blockquote>
+<p>是不是觉得自己拼<code>按钮</code>很麻烦呢? 来, 我们内置一些常用的带按钮的窗口~</p>
+<h2 id="内置的窗口们">内置的窗口们</h2><h3 id="内置的窗口们的特性">内置的窗口们的特性</h3><ol>
+<li><p>对于警告窗口和确认窗口，它们属于用户必须响应的交互，而且这种响应一定有固定的结果。因此，我们把它们的返回结果进行了 <code>Promise</code>封装。也就是说，<code>Dialog.alert()</code>和<code>Dialog.confirm()</code>会返回<code>promise</code>. 即这两个操作是异步的, 会返回预期结果. 用户只能在我们限定的选项中做出一个选择. 当<code>promise</code>被<code>resolved</code>或<code>rejected</code>, 会带有按钮的标识<code>part</code>.</p>
+</li>
+<li><p>都是没有关闭按钮的. 原因是关闭按钮在这里是多余的. 关闭按钮在<code>alert</code>中表达的<code>确认</code>, 与<code>确认</code>按钮一致; 在<code>confirm</code>中表达的意图是<code>取消</code>, 与<code>取消</code>按钮一致. 因此, 关闭按钮是重复的, 不展现这个按钮. 这也与<code>window.alert()</code>和<code>window.confirm()</code>的交互相一致.</p>
+</li>
+<li><p>都是会自毁的. 这与window.alert()和window.confirm()是一致的.</p>
+</li>
+<li><p><code>Dialog.alert()</code>产生的窗口带有样式类<code>.skin-alert-dialog</code>, 也可以添加其他的<code>skin</code>来丰富样式效果.</p>
+</li>
+<li><p><code>Dialog.confirm()</code>产生的窗口带有样式类<code>.skin-confirm-dialog</code>, 也可以添加其他的<code>skin</code>来丰富样式效果.</p>
+</li>
+<li><p>点击<code>mask</code>不会关闭窗口, 原因与2一致.</p>
+</li>
+</ol>
+<h3 id="警告窗口_Dialog-alert()">警告窗口 <code>Dialog.alert()</code></h3><iframe height="266" scrolling="no" src="//codepen.io/jinzhubaofu/embed/pJGLgw/?height=266&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/pJGLgw/" target="_blank" rel="external">pJGLgw</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+
+<h3 id="确认窗口_Dialog-confirm()">确认窗口 <code>Dialog.confirm()</code></h3><iframe height="266" scrolling="no" src="//codepen.io/jinzhubaofu/embed/LVqdGM/?height=266&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/LVqdGM/" target="_blank" rel="external">LVqdGM</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+]]></content>
+    <summary type="html">
+    <![CDATA[<h1 id="Dialog_窗口">Dialog 窗口</h1><h2 id="普通窗口">普通窗口</h2><iframe height="361" scrolling="no" src="//codepen.io/jinzhubaofu/embed/xGMWKz/?heig]]>
+    </summary>
+    
+      <category term="component" scheme="http://ecomfe.github.io/moye/moye/categories/component/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[城市选择器 / City]]></title>
+    <link href="http://ecomfe.github.io/moye/moye/component/City.html"/>
+    <id>http://ecomfe.github.io/moye/moye/component/City.html</id>
+    <published>2015-08-06T02:34:40.000Z</published>
+    <updated>2015-08-06T13:11:13.000Z</updated>
+    <content type="html"><![CDATA[<h1 id="城市控件">城市控件</h1><p>特性:</p>
+<ol>
+<li>带有初始值</li>
+<li>只能选择城市, 不可手工输入</li>
+<li>使用默认城市列表</li>
+<li>可指定<code>name</code>值, 可在直接<code>form</code>中使用</li>
+</ol>
+<iframe height="431" scrolling="no" src="//codepen.io/jinzhubaofu/embed/xGMYEr/?height=431&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/xGMYEr/" target="_blank" rel="external">xGMYEr</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+
+<h3 id="不使用默认城市">不使用默认城市</h3><iframe height="205" scrolling="no" src="//codepen.io/jinzhubaofu/embed/OVdQXd/?height=205&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/OVdQXd/" target="_blank" rel="external">OVdQXd</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+]]></content>
+    <summary type="html">
+    <![CDATA[<h1 id="城市控件">城市控件</h1><p>特性:</p>
+<ol>
+<li>带有初始值</li>
+<li>只能选择城市, 不可手工输入</li>
+<li>使用默认城市列表</li>
+<li>可指定<code>name</code>值, 可在直接<code>form</c]]>
+    </summary>
+    
+      <category term="component" scheme="http://ecomfe.github.io/moye/moye/categories/component/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[文本框 / TextBox]]></title>
+    <link href="http://ecomfe.github.io/moye/moye/component/TextBox.html"/>
+    <id>http://ecomfe.github.io/moye/moye/component/TextBox.html</id>
+    <published>2015-08-05T11:29:19.000Z</published>
+    <updated>2015-08-06T02:31:25.000Z</updated>
+    <content type="html"><![CDATA[<h1 id="TextBox_文本框">TextBox 文本框</h1><p>在用户输入过程中，<code>TextBox</code>会发送<code>onChange</code>事件，可以监听这个事件来处理用户的输入，包括获取数据、校验数据；</p>
+<iframe height="174" scrolling="no" src="//codepen.io/jinzhubaofu/embed/ZGwrbQ/?height=174&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/ZGwrbQ/" target="_blank" rel="external">ZGwrbQ</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+
+<h2 id="文本框的状态">文本框的状态</h2><iframe height="200" scrolling="no" src="//codepen.io/jinzhubaofu/embed/yNZveN/?height=200&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/yNZveN/" target="_blank" rel="external">yNZveN</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+
+<h2 id="自动推荐">自动推荐</h2><p>下面这个示例，在用户输入的过程中，从百度加载相关的热门搜索词。</p>
+<iframe height="416" scrolling="no" src="//codepen.io/jinzhubaofu/embed/VLgQaQ/?height=416&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/VLgQaQ/" target="_blank" rel="external">VLgQaQ</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+]]></content>
+    <summary type="html">
+    <![CDATA[<h1 id="TextBox_文本框">TextBox 文本框</h1><p>在用户输入过程中，<code>TextBox</code>会发送<code>onChange</code>事件，可以监听这个事件来处理用户的输入，包括获取数据、校验数据；</p>
+<iframe he]]>
+    </summary>
+    
+      <category term="component" scheme="http://ecomfe.github.io/moye/moye/categories/component/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[日历 / Calendar]]></title>
+    <link href="http://ecomfe.github.io/moye/moye/component/Calendar.html"/>
+    <id>http://ecomfe.github.io/moye/moye/component/Calendar.html</id>
+    <published>2015-08-05T11:13:44.000Z</published>
+    <updated>2015-08-06T13:11:22.000Z</updated>
+    <content type="html"><![CDATA[<h3 id="普通使用">普通使用</h3><iframe height="377" scrolling="no" src="//codepen.io/jinzhubaofu/embed/XbOpgP/?height=377&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/XbOpgP/" target="_blank" rel="external">XbOpgP</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+
+
+<h3 id="在浮层中展现多个月份">在浮层中展现多个月份</h3><iframe height="370" scrolling="no" src="//codepen.io/jinzhubaofu/embed/yNZMLR/?height=370&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/yNZMLR/" target="_blank" rel="external">yNZMLR</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+
+<h3 id="可选范围">可选范围</h3><p>可以通过配置<code>Calendar</code>的<code>range</code>属性来设定日历的可选范围，或者可以通过<code>setRange</code>方法可动态设定。示例：</p>
+<p>此处请注意, 如果设定的值不在可选的范围内, 值被会被清空.</p>
+<iframe height="380" scrolling="no" src="//codepen.io/jinzhubaofu/embed/ZGweYw/?height=380&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/ZGweYw/" target="_blank" rel="external">ZGweYw</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+
+
+<h3 id="特殊日期">特殊日期</h3><p>可以通过process参数来处理任意特殊日期的显示值或样式。可用于处理节日特殊样式等等情况, 示例:</p>
+<iframe height="373" scrolling="no" src="//codepen.io/jinzhubaofu/embed/KpJWpx/?height=373&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/KpJWpx/" target="_blank" rel="external">KpJWpx</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+]]></content>
+    <summary type="html">
+    <![CDATA[<h3 id="普通使用">普通使用</h3><iframe height="377" scrolling="no" src="//codepen.io/jinzhubaofu/embed/XbOpgP/?height=377&theme-id=17600&default-tab]]>
+    </summary>
+    
+      <category term="component" scheme="http://ecomfe.github.io/moye/moye/categories/component/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[按钮 / Button]]></title>
+    <link href="http://ecomfe.github.io/moye/moye/component/Button.html"/>
+    <id>http://ecomfe.github.io/moye/moye/component/Button.html</id>
+    <published>2015-08-04T06:39:02.000Z</published>
+    <updated>2015-08-05T09:39:30.000Z</updated>
+    <content type="html"><![CDATA[<h3 id="按钮">按钮</h3><h4 id="普通青年">普通青年</h4><iframe height="138" scrolling="no" src="//codepen.io/jinzhubaofu/embed/PqVWow/?height=138&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/PqVWow/" target="_blank" rel="external">PqVWow</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+
+<figure class="highlight js"><figcaption><span>test</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">require</span>([<span class="string">'jquery'</span>, <span class="string">'ui/Button'</span>], <span class="function"><span class="keyword">function</span> (<span class="params">$, Button</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">new</span> Button(&#123;</span><br><span class="line">        main: <span class="built_in">document</span>.getElementById(<span class="string">'button1'</span>)</span><br><span class="line">    &#125;)</span><br><span class="line">    .render();</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<h4 id="参数配置">参数配置</h4><figure class="highlight js"><figcaption><span>configuration</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">require</span>([<span class="string">'jquery'</span>, <span class="string">'ui/Button'</span>], <span class="function"><span class="keyword">function</span> (<span class="params">$, Button</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">new</span> Button(&#123;</span><br><span class="line">        main: <span class="built_in">document</span>.getElementById(<span class="string">'button2'</span>),</span><br><span class="line">        width: <span class="string">'100px'</span>,</span><br><span class="line">        height: <span class="string">'61.8px'</span>,</span><br><span class="line">        text: <span class="string">'hello world~'</span></span><br><span class="line">    &#125;)</span><br><span class="line">    .render();</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<h4 id="事件绑定">事件绑定</h4><figure class="highlight js"><figcaption><span>event-binding</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">require</span>([<span class="string">'jquery'</span>, <span class="string">'ui/Button'</span>], <span class="function"><span class="keyword">function</span> (<span class="params">$, Button</span>) </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> i = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">new</span> Button(&#123;</span><br><span class="line">        main: <span class="built_in">document</span>.getElementById(<span class="string">'button3'</span>),</span><br><span class="line">        text: <span class="string">'赞'</span></span><br><span class="line">    &#125;)</span><br><span class="line">    .render()</span><br><span class="line">    .on(<span class="string">'click'</span>, <span class="function"><span class="keyword">function</span> (<span class="params">e</span>) </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.setText(<span class="string">'+'</span> + (++i));</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<h4 id="应用于&lt;a&gt;标签">应用于<code>&lt;a&gt;</code>标签</h4><figure class="highlight js"><figcaption><span>link</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">require</span>([<span class="string">'jquery'</span>, <span class="string">'ui/Button'</span>], <span class="function"><span class="keyword">function</span> (<span class="params">$, Button</span>) </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">new</span> Button(&#123;</span><br><span class="line">        main: <span class="built_in">document</span>.getElementById(<span class="string">'button4'</span>)</span><br><span class="line">    &#125;)</span><br><span class="line">    .render();</span><br><span class="line"></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<h4 id="禁用状态">禁用状态</h4><figure class="highlight js"><figcaption><span>disable</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">require</span>([<span class="string">'jquery'</span>, <span class="string">'ui/Button'</span>], <span class="function"><span class="keyword">function</span> (<span class="params">$, Button</span>) </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">new</span> Button(&#123;</span><br><span class="line">        main: <span class="built_in">document</span>.getElementById(<span class="string">'button5'</span>),</span><br><span class="line">        disabled: <span class="literal">true</span></span><br><span class="line">    &#125;)</span><br><span class="line">    .render()</span><br><span class="line">    .on(<span class="string">'click'</span>, <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">'如果这里被调用就出错了哟~'</span>);</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+]]></content>
+    <summary type="html">
+    <![CDATA[<h3 id="按钮">按钮</h3><h4 id="普通青年">普通青年</h4><iframe height="138" scrolling="no" src="//codepen.io/jinzhubaofu/embed/PqVWow/?height=138&theme-i]]>
+    </summary>
+    
+      <category term="component" scheme="http://ecomfe.github.io/moye/moye/categories/component/"/>
+    
+  </entry>
+  
+</feed>

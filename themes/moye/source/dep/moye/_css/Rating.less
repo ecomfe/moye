@@ -1,0 +1,32 @@
+/**
+ * MOYE
+ * Copyright 2014 Baidu Inc. All rights reserved.
+ *
+ * @file 打分样式
+ * @author mengke
+ * @author leon <leonlu@outlook.com>
+ */
+
+@import './variable.less';
+@import './dep.less';
+
+.@{moye-prefix}-rating {
+
+    &-star {
+        .inline-block();
+        list-style: none;
+        cursor: pointer;
+
+        &-on {
+            color: red;
+        }
+
+    }
+
+}
+
+.@{moye-prefix}-rating-disabled {
+    .@{moye-prefix}-rating-star {
+        cursor: default;
+    }
+}
