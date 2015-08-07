@@ -250,7 +250,7 @@ define(
             getValue: function () {
                 var value = [];
                 var main = $(this.main);
-                $('.' + this.activeClass + 'input', main).each(function () {
+                $('.' + this.activeClass + ' input', main).each(function () {
                     value.push($(this).prop('value'));
                 });
                 return value;
