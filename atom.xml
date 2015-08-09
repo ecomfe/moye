@@ -1,0 +1,803 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  
+  <title><![CDATA[Moye]]></title>
+  <subtitle><![CDATA[轻便、强大的UI组件库]]></subtitle>
+  <link href="/moye/atom.xml" rel="self"/>
+  <link href="http://ecomfe.github.io/moye/moye//"/>
+  <updated>2015-08-09T11:41:32.000Z</updated>
+  <id>http://ecomfe.github.io/moye/moye//</id>
+  
+  <author>
+    <name><![CDATA[ecomfe]]></name>
+    
+  </author>
+  
+  <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[Form]]></title>
+    <link href="http://ecomfe.github.io/moye/moye/component/Form.html"/>
+    <id>http://ecomfe.github.io/moye/moye/component/Form.html</id>
+    <published>2015-08-09T02:41:28.000Z</published>
+    <updated>2015-08-09T11:41:32.000Z</updated>
+    <content type="html"><![CDATA[<h3 id="基本表单使用">基本表单使用</h3><iframe height="268" scrolling="no" src="//codepen.io/wuhy/embed/XbGNZp/?height=268&theme-id=17700&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;">See the Pen <a href="http://codepen.io/wuhy/pen/XbGNZp/" target="_blank" rel="external">Form</a> by spark (<a href="http://codepen.io/wuhy" target="_blank" rel="external">@wuhy</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+
+<p><strong>注意：</strong> 禁用的表单项，不会出现在 <code>getData</code> 接口返回的数据里。为了能获取到对应的表单数据，需要对每个表单控件设置 <code>name</code> 属性。</p>
+<p>默认，表单项是没有校验功能，可以使用下面的表单校验插件开启校验，如果还是无法满足你的需求，你也可以强制性重写表单的 <code>validate</code> 方法。</p>
+<p>对于 <code>submit</code> 类型的按钮，会自动触发 <code>submit</code> 事件，对于普通的按钮，如果想自动触发 <code>submit</code> 逻辑，可以使用 <code>FormSubmit</code> 插件：</p>
+<figure class="highlight js"><figcaption><span>自动提交</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 要求 require `moye/plugin/FormSubmit` 插件</span></span><br><span class="line"><span class="keyword">var</span> form = <span class="keyword">new</span> Form(&#123;</span><br><span class="line">    main: <span class="built_in">document</span>.getElementById(<span class="string">'my-form'</span>),</span><br><span class="line">    target: <span class="string">'my-frame'</span>,</span><br><span class="line">    plugins: [ <span class="comment">// 启用 FormSubmit 插件</span></span><br><span class="line">        &#123;</span><br><span class="line">            type: <span class="string">'FormSubmit'</span>,</span><br><span class="line">            options: &#123;</span><br><span class="line">                triggers: [<span class="string">'save-btn'</span>] <span class="comment">// 配置要自动触发 `submit` 的按钮 id 或 控件的 id</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    ]</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<h3 id="表单关联域联动">表单关联域联动</h3><iframe height="266" scrolling="no" src="//codepen.io/wuhy/embed/MwxJam/?height=266&theme-id=17700&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;">See the Pen <a href="http://codepen.io/wuhy/pen/MwxJam/" target="_blank" rel="external">Moye Form Relation Plugin</a> by spark (<a href="http://codepen.io/wuhy" target="_blank" rel="external">@wuhy</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+
+
+<p>经常会有这种需求，比如当某个控件值发生变化时候，某个或某些控件需要发生联动变化，这时候可以使用 <code>FormRelation</code> 插件，为了监控这些表单域变化，需要使用 <code>FormFieldWatcher</code> 插件。</p>
+<figure class="highlight js"><figcaption><span>表单域联动</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 要求 require `moye/plugin/FormFieldWatcher` 插件</span></span><br><span class="line"><span class="comment">// 要求 require `moye/plugin/FormRelation` 插件</span></span><br><span class="line"><span class="comment">// 下面这段代码做的事情非常简单：只有姓名和邮箱都不为空的时候，提交按钮才可用</span></span><br><span class="line"><span class="keyword">var</span> form = <span class="keyword">new</span> Form(&#123;</span><br><span class="line">    main: <span class="built_in">document</span>.getElementById(<span class="string">'my-form'</span>),</span><br><span class="line">    target: <span class="string">'my-frame'</span>,</span><br><span class="line">    plugins: [</span><br><span class="line">        &#123;</span><br><span class="line">            type: <span class="string">'FormFieldWatcher'</span>,</span><br><span class="line">            options: &#123;</span><br><span class="line">                eventTypes: [<span class="string">'input'</span>, <span class="string">'change'</span>] <span class="comment">// 配置要监控的表单域的事件类型</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;,</span><br><span class="line">        &#123;</span><br><span class="line">            type: <span class="string">'FormRelation'</span>,</span><br><span class="line">            options: &#123;</span><br><span class="line">                relations: [</span><br><span class="line">                    &#123;</span><br><span class="line">                        dependences: [</span><br><span class="line">                            &#123;</span><br><span class="line">                                id: <span class="string">'uNameTextBox'</span>, <span class="comment">// 控件 id</span></span><br><span class="line">                                logic: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123; <span class="comment">// 要触发联动的逻辑条件定义</span></span><br><span class="line">                                    <span class="keyword">return</span> !<span class="keyword">this</span>.getValue();</span><br><span class="line">                                &#125;</span><br><span class="line">                            &#125;,</span><br><span class="line">                            &#123;</span><br><span class="line">                                id: <span class="string">'emailTextBox'</span>,</span><br><span class="line">                                logic: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">                                    <span class="keyword">return</span> !<span class="keyword">this</span>.getValue();</span><br><span class="line">                                &#125;</span><br><span class="line">                            &#125;</span><br><span class="line">                        ],</span><br><span class="line">                        <span class="comment">// 触发联动效果的依赖表单域需要满足的条件</span></span><br><span class="line">                        <span class="comment">// 这里定义条件为只要上面的依赖逻辑条件任何一个为 true 就会触发目标</span></span><br><span class="line">                        <span class="comment">// 控件的联动行为</span></span><br><span class="line">                        pattern: FormRelation.patterns.any,</span><br><span class="line">                        targets: [<span class="string">'submitBtn'</span>], <span class="comment">// 要触发联动的目标控件 id</span></span><br><span class="line">                        actions: [</span><br><span class="line">                            <span class="function"><span class="keyword">function</span> (<span class="params">result</span>) </span>&#123; <span class="comment">// 联动行为</span></span><br><span class="line">                                result ? <span class="keyword">this</span>.disable() : <span class="keyword">this</span>.enable();</span><br><span class="line">                            &#125;</span><br><span class="line">                        ]</span><br><span class="line">                    &#125;</span><br><span class="line">                ]</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    ]</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<h3 id="表单校验">表单校验</h3><iframe height="266" scrolling="no" src="//codepen.io/wuhy/embed/OVqWXP/?height=266&theme-id=17700&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;">See the Pen <a href="http://codepen.io/wuhy/pen/OVqWXP/" target="_blank" rel="external">Moye Form Validate</a> by spark (<a href="http://codepen.io/wuhy" target="_blank" rel="external">@wuhy</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+
+<p><code>Moye</code> 预定义的校验规则：</p>
+<ul>
+<li><p><code>moye/plugin/validator/email</code> : 邮件校验规则</p>
+</li>
+<li><p><code>moye/plugin/validator/identity</code> : 身份证校验规则</p>
+</li>
+<li><p><code>moye/plugin/validator/max</code> : 最大值校验规则</p>
+</li>
+<li><p><code>moye/plugin/validator/min</code> : 最小值校验规则</p>
+</li>
+<li><p><code>moye/plugin/validator/maxlength</code> : 最大长度校验规则</p>
+</li>
+<li><p><code>moye/plugin/validator/minlength</code> : 最小长度校验规则</p>
+</li>
+<li><p><code>moye/plugin/validator/mobile</code> : 手机号码校验规则</p>
+</li>
+<li><p><code>moye/plugin/validator/natural</code> : 数字验规则</p>
+</li>
+<li><p><code>moye/plugin/validator/required</code> : 不为空校验规则</p>
+</li>
+</ul>
+<p>如果没有想要的校验规则，可以自定义自己的校验规则，具体参考上述校验规则实现。</p>
+<figure class="highlight js"><figcaption><span>校验规则添加</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 为了实现表单自动校验，需要添加表单域的校验规则，需要先 require 如下几个插件：</span></span><br><span class="line"><span class="comment">// `moye/plugin/Validator`</span></span><br><span class="line"><span class="comment">// `moye/plugin/ValidateTip`  如果要添加校验提示，需要这个插件</span></span><br><span class="line"><span class="comment">// `moye/plugin/validator/xx` require 用到的校验规则插件</span></span><br><span class="line"></span><br><span class="line">ctrlId: &#123;</span><br><span class="line">    type: <span class="string">'TextBox'</span>,</span><br><span class="line">    name: <span class="string">'email'</span>,</span><br><span class="line">    value: <span class="string">''</span>,</span><br><span class="line">    title: <span class="string">'邮箱'</span>,</span><br><span class="line">    plugins: [</span><br><span class="line">        <span class="string">'Validator'</span>,  <span class="comment">// 启用校验插件</span></span><br><span class="line">        <span class="string">'ValidateTip'</span> <span class="comment">// 启用校验 tip 插件</span></span><br><span class="line">    ],</span><br><span class="line">    rules: [ <span class="comment">// 定义校验规则</span></span><br><span class="line">        &#123;</span><br><span class="line">            type: <span class="string">'minlength'</span>,</span><br><span class="line">            minLength: <span class="number">5</span>,</span><br><span class="line">            message: <span class="string">'!&#123;title&#125;长度不能小于@&#123;minLength&#125;'</span> <span class="comment">// !开头变量从控件读取，@开头变量从规则对象读取</span></span><br><span class="line">        &#125;,</span><br><span class="line">        &#123;</span><br><span class="line">            type: <span class="string">'maxlength'</span>,</span><br><span class="line">            maxLength: <span class="number">100</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="string">'email'</span></span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+    <summary type="html">
+    <![CDATA[<h3 id="基本表单使用">基本表单使用</h3><iframe height="268" scrolling="no" src="//codepen.io/wuhy/embed/XbGNZp/?height=268&theme-id=17700&default-tab=re]]>
+    </summary>
+    
+      <category term="component" scheme="http://ecomfe.github.io/moye/moye/categories/component/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[继承 / inherits]]></title>
+    <link href="http://ecomfe.github.io/moye/moye/introduction/inherits.html"/>
+    <id>http://ecomfe.github.io/moye/moye/introduction/inherits.html</id>
+    <published>2015-08-07T10:09:07.000Z</published>
+    <updated>2015-08-09T11:41:32.000Z</updated>
+    <content type="html"><![CDATA[<h1 id="继承机制">继承机制</h1><p>每个可实例化的<code>moye</code>控件都应该继承自<code>Control</code>基类。可以通过<code>Control.extend(proto)</code>方法来创建一个新的控件类。</p>
+<p>参数<code>proto</code>是一个<code>Object</code>类型对象，其所有属性都被合并到新控件的原型链对象上。因此，可以在<code>proto</code>上挂接所需要的属性或方法，控件实例可以直接访问。</p>
+<p>示例：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> Control = <span class="built_in">require</span>(<span class="string">'moye/Control'</span>);</span><br><span class="line"><span class="keyword">var</span> Test = Control.extend(&#123;</span><br><span class="line"></span><br><span class="line">  type: <span class="string">'Test'</span>,</span><br><span class="line"></span><br><span class="line">  init: <span class="function"><span class="keyword">function</span> (<span class="params">options</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.$parent(options);</span><br><span class="line">  &#125;,</span><br><span class="line"></span><br><span class="line">  initStructure: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.main.innerHTML = <span class="string">'test'</span>;</span><br><span class="line">  &#125;,</span><br><span class="line"></span><br><span class="line">  initEvents: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    $(<span class="keyword">this</span>.main).on(<span class="string">'click'</span>, $.proxy(<span class="keyword">this</span>.onMainClick, <span class="keyword">this</span>));</span><br><span class="line">  &#125;,</span><br><span class="line"></span><br><span class="line">  onMainClick: <span class="function"><span class="keyword">function</span> (<span class="params">e</span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'test clicked'</span>);</span><br><span class="line">  &#125;,</span><br><span class="line"></span><br><span class="line">  dispose: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    $(<span class="keyword">this</span>.main).off(<span class="string">'click'</span>);</span><br><span class="line">    <span class="keyword">this</span>.$parent();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> Test2 = Test.extend(&#123;</span><br><span class="line"></span><br><span class="line">  type: <span class="string">'Test2'</span>,</span><br><span class="line"></span><br><span class="line">  onMainClick: <span class="function"><span class="keyword">function</span> (<span class="params">e</span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'test2 clicked'</span>);</span><br><span class="line">    <span class="keyword">this</span>.$parent(e);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>可以通过覆盖基类<code>Control</code>提供了一系列的接口来实现子控件的具体交互逻辑。这里主要想介绍一下调用父类接口的方法，即：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 凡是覆盖父类接口的方法(@override)中，</span></span><br><span class="line"><span class="comment">// 都可以使用`this.$parent(args)`的方式来调用父类接口</span></span><br><span class="line"><span class="keyword">this</span>.$parent( ... );</span><br></pre></td></tr></table></figure>
+<p>因此，在Test2实例的主元素被点击进会在控制输出如下结果：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">test</span>2 clicked</span><br><span class="line"><span class="built_in">test</span> clicked</span><br></pre></td></tr></table></figure>
+]]></content>
+    <summary type="html">
+    <![CDATA[<h1 id="继承机制">继承机制</h1><p>每个可实例化的<code>moye</code>控件都应该继承自<code>Control</code>基类。可以通过<code>Control.extend(proto)</code>方法来创建一个新的控件类。</p>
+<p>]]>
+    </summary>
+    
+      <category term="introduction" scheme="http://ecomfe.github.io/moye/moye/categories/introduction/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[皮肤 / skin]]></title>
+    <link href="http://ecomfe.github.io/moye/moye/introduction/skin.html"/>
+    <id>http://ecomfe.github.io/moye/moye/introduction/skin.html</id>
+    <published>2015-08-07T09:46:10.000Z</published>
+    <updated>2015-08-09T11:41:32.000Z</updated>
+    <content type="html"><![CDATA[<h2 id="皮肤">皮肤</h2><p>皮肤机制为 <code>moye</code> 控件提供强大的样式自定义能力，可以支持 <code>自定义样式</code> 与 <code>换肤</code> / <code>风格主题</code> 。</p>
+<h3 id="功能特点：">功能特点：</h3><ol>
+<li>首先，每个控件都有一个基础样式类型: <code>ui-{type}</code>，其中<code>{type}</code>表示控件的主类型；</li>
+<li>其次，控件可以设定皮肤参数，并可以指定多个皮肤。每个皮肤设定都会添加两个样式类型: <code>skin-{skin}</code> 与 <code>skin-{skin}-{type}</code>， 其中 <code>{skin}</code> 表示设定的皮肤。</li>
+</ol>
+<h3 id="生效时机：">生效时机：</h3><p>皮肤是由 <code>Control</code> 的 <code>render</code> 方法统一处理的，在调用 <code>Control.prototype.render()</code> 时会自动按照上述规则生成样式，并添加到主元素。</p>
+<h3 id="示例">示例</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> Button = <span class="built_in">require</span>(<span class="string">'moye/Button'</span>);</span><br><span class="line"><span class="keyword">var</span> button = <span class="keyword">new</span> Button(&#123;</span><br><span class="line">  main: <span class="built_in">document</span>.getElementById(<span class="string">'button'</span>),</span><br><span class="line">  skin: [<span class="string">'jinrong'</span>, <span class="string">'small'</span>]</span><br><span class="line">&#125;);</span><br><span class="line">button.render();</span><br></pre></td></tr></table></figure>
+<p>使用以上代码 <code>moye</code> 会为元素button添加以下样式类型：</p>
+<ol>
+<li><code>ui-button</code> 类型样式</li>
+<li><code>skin-jinrong</code> 与 <code>skin-jinrong-button</code> 金融皮肤样式</li>
+<li><code>skin-small</code> 与 <code>skin-small-button</code> 小体积皮肤样式</li>
+</ol>
+<h3 id="特别说明：">特别说明：</h3><p>目前， 皮肤是只读属性，不能通过<code>repaint</code>来重绘。</p>
+]]></content>
+    <summary type="html">
+    <![CDATA[<h2 id="皮肤">皮肤</h2><p>皮肤机制为 <code>moye</code> 控件提供强大的样式自定义能力，可以支持 <code>自定义样式</code> 与 <code>换肤</code> / <code>风格主题</code> 。</p>
+<h3 id="功能特]]>
+    </summary>
+    
+      <category term="introduction" scheme="http://ecomfe.github.io/moye/moye/categories/introduction/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[生命周期 / life cycle]]></title>
+    <link href="http://ecomfe.github.io/moye/moye/introduction/life-cycle.html"/>
+    <id>http://ecomfe.github.io/moye/moye/introduction/life-cycle.html</id>
+    <published>2015-08-07T08:29:55.000Z</published>
+    <updated>2015-08-09T11:41:32.000Z</updated>
+    <content type="html"><![CDATA[<h1 id="moye_生命周期机制">moye 生命周期机制</h1><p>控件从被创意到被销毁，有一个完整的生命周期。目前<code>moye</code>控件的生命周期机制是这样的：</p>
+<ol>
+<li><code>NEW</code> 实例刚刚被创建</li>
+<li><code>INITED</code> 实例参数已完成初始化</li>
+<li><code>RENDERED</code> 实例已完成渲染</li>
+<li><code>DISPOSED</code> 实例已经被销毁</li>
+</ol>
+<p>控件生命周期状态的流转是在<code>Control</code>基类中完成以下方法中完成的</p>
+<ol>
+<li><code>Control.prototype.initialize</code>: <code>NEW</code> -&gt; <code>INITED</code></li>
+<li><code>Control.prototype.render</code>: <code>INITED</code> -&gt; <code>RENDERED</code></li>
+<li><code>Control.prototype.dispose</code>: <code>RENDERED</code> -&gt; <code>DISPOSED</code></li>
+</ol>
+<p>因此，我们可以总结出，以下接口的调用时机：</p>
+<ol>
+<li><code>Control.prototype.init</code> 在<code>NEW</code>状态下被调用，只应该被调用一次；</li>
+<li><code>Control.prototype.initStructure</code>与<code>Control.prototype.initEvents</code> 在<code>INITED</code>状态下被调用，只应该被调用一次；</li>
+<li><code>Control.prototype.repaint</code> 在<code>RENDERED</code>状态下被调用，可以被重复调用多次；</li>
+<li><code>Control.prototype.dispose</code> 在<code>RENDERED</code>状态下被调用，只应该被调用一次；</li>
+</ol>
+]]></content>
+    <summary type="html">
+    <![CDATA[<h1 id="moye_生命周期机制">moye 生命周期机制</h1><p>控件从被创意到被销毁，有一个完整的生命周期。目前<code>moye</code>控件的生命周期机制是这样的：</p>
+<ol>
+<li><code>NEW</code> 实例刚刚被创建</li>
+<]]>
+    </summary>
+    
+      <category term="introduction" scheme="http://ecomfe.github.io/moye/moye/categories/introduction/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[插件 / Plugin]]></title>
+    <link href="http://ecomfe.github.io/moye/moye/introduction/plugin.html"/>
+    <id>http://ecomfe.github.io/moye/moye/introduction/plugin.html</id>
+    <published>2015-08-07T08:05:23.000Z</published>
+    <updated>2015-08-09T11:41:32.000Z</updated>
+    <content type="html"><![CDATA[<h2 id="moye插件机制">moye插件机制</h2><p>出于性能考虑, <code>moye</code>控件只保留最小功能集合. 许多增强功能是由<code>插件</code>来协助完成的.</p>
+<p>例如, 在<code>获取校验码</code>按钮一般情况都有一个冷却时间60秒. 点击之后60秒内是禁用的, 此时按钮文字显示冷却时间的倒计时. 此功能不方便直接写在<code>Button</code>控件中, 即可编写一个<code>插件</code>来完成.</p>
+<h3 id="使用方式">使用方式</h3><p>可以使用两种方式来激活一个控件</p>
+<ol>
+<li><p>通过构造参数<code>plugins</code></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="built_in">require</span>(<span class="string">'moye/plugin/ButtonCooldown'</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> button = <span class="keyword">new</span> Button(&#123;</span><br><span class="line">  main: <span class="built_in">document</span>.getElementById(<span class="string">'some-button'</span>),</span><br><span class="line">  plugins: [<span class="string">'ButtonCoolDown'</span>]</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>通过调用接口<code>use()</code></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="built_in">require</span>(<span class="string">'moye/plugin/ButtonCooldown'</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> button = <span class="keyword">new</span> Button(&#123;</span><br><span class="line">  main: <span class="built_in">document</span>.getElementById(<span class="string">'some-button'</span>)</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">button.use(<span class="string">'ButtonCooldown'</span>);</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h3 id="如何编写一个插件">如何编写一个插件</h3><h4 id="基础">基础</h4><p>我们提供了一个<code>Plugin</code>的基类, 其中定义了<code>Plugin</code>所需要的几个接口:</p>
+<ol>
+<li>activate({Control}) 激活插件, 在控件初始化时调用. <strong>必须重写</strong></li>
+<li>inactivate()        禁用插件, 在有必要禁用插件时调用. <strong>有必要时重写</strong></li>
+<li>dispose()           销毁插件, 在控件被销毁时调用. <strong>有必要时重写</strong></li>
+</ol>
+<p>因此, 大家在编写插件时, 首先需要引入基类<code>Plugin</code>, 然后从<code>Plugin</code>上生成新的插件并重写上边的三个方法. 示例:</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> ExamplePlugin = Plugin.extend(&#123;</span><br><span class="line">  activate: <span class="function"><span class="keyword">function</span> (<span class="params">control</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.control = control;</span><br><span class="line">  &#125;,</span><br><span class="line">  dispose: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.control = <span class="literal">null</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<h4 id="最优实践">最优实践</h4><ol>
+<li><p>扩展控件的方法</p>
+<p>挂接方法是指将额外方法挂接到控件实例上, 来提供扩展功能. 例如:</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">ButtonCooldown = Plugin.extend(&#123;</span><br><span class="line">  activate: <span class="function"><span class="keyword">function</span> (<span class="params">control</span>) </span>&#123;</span><br><span class="line">    control.startCooldown = $.proxy(<span class="keyword">this</span>.start, <span class="keyword">this</span>);</span><br><span class="line">  &#125;,</span><br><span class="line">  start: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="comment">// 开始倒计时</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>插件激活后, 控件就会获得<code>startCooldown</code>的方法, 可以在合适的时候进行调用.</p>
+<blockquote>
+<p>请尽量不要覆盖<code>控件</code>原有方法. 入侵式挂接可能会导致不可预期的逻辑混乱.</p>
+</blockquote>
+</li>
+<li><p>扩展控件的事件</p>
+<blockquote>
+<p><code>插件</code>触发<code>寄主控件</code>事件, <code>寄主</code>是事件源, 即<code>control.fire(&#39;plugin-special-event&#39;)</code>;</p>
+<p>插件本身没有实现<code>Observable</code>接口, 不能释放事件;</p>
+<p>理论上讲, 从外部来看, 使用者没有办法获取到插件实例;</p>
+</blockquote>
+<p>激活插件后, 根据插件的属性或者监听控件的事件, 结合控件自身逻辑, 在合适的时机在<code>控件实例</code>上触发事件. 例如:</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">Validator = Plugin.extend(&#123;</span><br><span class="line"></span><br><span class="line">  activate: <span class="function"><span class="keyword">function</span> (<span class="params">control</span>) </span>&#123;</span><br><span class="line">    control.on(<span class="string">'change'</span>, $.proxy(<span class="keyword">this</span>.validate, <span class="keyword">this</span>);</span><br><span class="line">    <span class="keyword">this</span>.rules = control.rules;</span><br><span class="line">    <span class="keyword">this</span>.control = control;</span><br><span class="line">  &#125;,</span><br><span class="line"></span><br><span class="line">  validate: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="comment">// 根据rules所定义的规则来计算当前用户输入是否合法</span></span><br><span class="line">    <span class="keyword">var</span> state = <span class="literal">false</span>;</span><br><span class="line">    <span class="comment">// 其他插件可以`invalid`事件来完成相应的交互.</span></span><br><span class="line">    <span class="comment">// 例如, ValidityTip插件就是监听事件`invalid`来触发错误提示信息的展现的.</span></span><br><span class="line">    <span class="keyword">this</span>.control.fire(<span class="string">'invalid'</span>);</span><br><span class="line">    <span class="keyword">return</span> state;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>以上示例简单完成了两个功能</p>
+<ol>
+<li>当<code>寄主控件</code>发生了<code>change</code>事件时, 进行校验.</li>
+<li>如果校验失败, 在<code>寄主控件</code>上触发事件<code>invalid</code>.</li>
+</ol>
+<p><code>插件事件</code>是多插件合作的基础. 由于<code>插件A</code>没办法知晓<code>插件B</code>是否存在, 因此也就没有一个明确的接口可以使用. 所以插件与插件之间的合作都是通过<code>寄主控件</code>的插件事件来完成的.</p>
+</li>
+<li><p>插件如何获取参数</p>
+<p>我们推荐直接将插件参数添在控件上, 在开发插件时直接从插件上获取. 示例:</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">TextBoxPlaceholder = Plugin.extend(&#123;</span><br><span class="line">  activate: <span class="function"><span class="keyword">function</span> (<span class="params">control</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (lib.browser.ie &lt; <span class="number">9</span> &amp;&amp; control.placeholder) &#123;</span><br><span class="line">      <span class="comment">// 只有当浏览器为ie678并且Textbox需要一个placeholder时我们才继续</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>插件的执行时机</p>
+<p>我们推荐监听控件的 <code>生命周期事件</code> / <code>交互事件</code> 来完成控件状态转化. 例如:</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">TextBoxPlaceholder = Plugin.extend(&#123;</span><br><span class="line">  activate: <span class="function"><span class="keyword">function</span> (<span class="params">control</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (lib.browser.ie &lt; <span class="number">9</span> &amp;&amp; control.placeholder) &#123;</span><br><span class="line">      control.on(<span class="string">'afterrender'</span>, $.proxy(<span class="keyword">this</span>.buildPlaceHoder, <span class="keyword">this</span>);</span><br><span class="line">      <span class="keyword">this</span>.control = control;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line"></span><br><span class="line">  build: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="comment">// 生成placeholder所需要的元素</span></span><br><span class="line">    <span class="comment">// 事件绑定</span></span><br><span class="line">    <span class="comment">// 等等...</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>上边这个示例中所定义的TextBoxPlaceHolder是用来兼容ie678上input的placeholder属性的. 那么在需要在控件完成渲染后才能进行插件所需要的额外逻辑的执行.</p>
+</li>
+</ol>
+<h4 id="代码示例">代码示例</h4><p>下边的代码简要地介绍如何编写一个插件:</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line">define(function (require) &#123;</span><br><span class="line"></span><br><span class="line">    var $ = require('jquery');</span><br><span class="line">    var Plugin = require('./Plugin');</span><br><span class="line">    var lib = require('../lib');</span><br><span class="line"></span><br><span class="line">    var ButtonCooldown = Plugin.extend(&#123;</span><br><span class="line"></span><br><span class="line">        $class: 'ButtonCooldown',</span><br><span class="line"></span><br><span class="line">        /**</span><br><span class="line">         * 默认参数</span><br><span class="line">         * @type &#123;Object&#125;</span><br><span class="line">         */</span><br><span class="line">        options: &#123;</span><br><span class="line">          // 这里放置的参数会自动与构造参数合并, 构造参数的优先级高于此处</span><br><span class="line">        &#125;,</span><br><span class="line"></span><br><span class="line">        activate: function (target) &#123;</span><br><span class="line">          this.target = target;</span><br><span class="line">          target.startCooldown  = $.proxy(this.startCooldown, this);</span><br><span class="line">          target.isCooling      = $.proxy(this.isCooling, this);</span><br><span class="line">        &#125;,</span><br><span class="line"></span><br><span class="line">        dispose: function () &#123;</span><br><span class="line">          this.target = null;</span><br><span class="line">        &#125;,</span><br><span class="line"></span><br><span class="line">        startCooldown: function (cooldown, interval, message) &#123;</span><br><span class="line">          var me = this;</span><br><span class="line">          me.timer = setInterval(function () &#123;</span><br><span class="line"></span><br><span class="line">            if (me.count--) &#123;</span><br><span class="line">              me.updateButtonText();</span><br><span class="line">            &#125;</span><br><span class="line">            else &#123;</span><br><span class="line">              me.finishCooldown();</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">          &#125;, 1000);</span><br><span class="line">        &#125;,</span><br><span class="line"></span><br><span class="line">        finishCooldown: function () &#123;</span><br><span class="line">          clearInterval(this.timer);</span><br><span class="line">          this.target.fire('cooldown');</span><br><span class="line">        &#125;,</span><br><span class="line"></span><br><span class="line">        isCooling: function () &#123;</span><br><span class="line">            // ...</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    return ButtonCooldown;</span><br><span class="line"></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+]]></content>
+    <summary type="html">
+    <![CDATA[<h2 id="moye插件机制">moye插件机制</h2><p>出于性能考虑, <code>moye</code>控件只保留最小功能集合. 许多增强功能是由<code>插件</code>来协助完成的.</p>
+<p>例如, 在<code>获取校验码</code>按钮一般情况都]]>
+    </summary>
+    
+      <category term="introduction" scheme="http://ecomfe.github.io/moye/moye/categories/introduction/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[开发指南 / introduction]]></title>
+    <link href="http://ecomfe.github.io/moye/moye/introduction/develop.html"/>
+    <id>http://ecomfe.github.io/moye/moye/introduction/develop.html</id>
+    <published>2015-08-07T07:59:18.000Z</published>
+    <updated>2015-08-09T11:41:32.000Z</updated>
+    <content type="html"><![CDATA[<h1 id="如何开发_Moye_组件">如何开发 Moye 组件</h1><h3 id="准备开发">准备开发</h3><p>目前, <code>moye</code>的开发分支是<code>feature/ng</code>, 请在此分支上进行开发.</p>
+<p><code>moye</code>基于<code>edp webserver</code>进行调试, 使用了<code>est</code>作为less mixin库, 在<code>demo</code>中需要安装一些<code>npm</code>包. 因此, 推荐下面的方法来准备开发环境.</p>
+<figure class="highlight dos"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/<span class="built_in">path</span>/to/moye</span><br><span class="line">npm install</span><br><span class="line">bower install</span><br><span class="line">edp webserver <span class="built_in">start</span></span><br></pre></td></tr></table></figure>
+<p><strong>请注意</strong></p>
+<p>其中, edp werbserver请使用1.0.15@beta以上的版本, 使用这个命令来安装</p>
+<figure class="highlight coffeescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">npm</span> install -g edp-webserver<span class="property">@beta</span></span><br></pre></td></tr></table></figure>
+<p><code>bower</code>是一个前端依赖包的管理工具, 可以通过这个命令来安装</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm <span class="operator"><span class="keyword">install</span> -<span class="keyword">g</span> bower</span></span><br></pre></td></tr></table></figure>
+<h3 id="Moye_目录结构">Moye 目录结构</h3><pre><code><span class="comment"><figure class="highlight ceylon"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Moye</span><br><span class="line">    |- dep        <span class="comment">// 外部依赖模块</span></span><br><span class="line">    |- <span class="annotation">doc</span>        <span class="comment">// 文档目录</span></span><br><span class="line">    |- example    <span class="comment">// 组件对应的示例</span></span><br><span class="line">    |- src        <span class="comment">// 组件源码，包括 LESS 与 JS</span></span><br><span class="line">    |- test       <span class="comment">// 测试用例</span></span><br></pre></td></tr></table></figure></span>
+</code></pre><ul>
+<li>doc/api 目录为 <code>jsdoc3</code> 自动生成的 API 文档。</li>
+<li>test 目录下 <code>config.js</code> 与 <code>main.js</code> 为 edp-test 使用的测试配置，通常不需要修改。</li>
+<li>test/spec 下包含所有组件对应的单测，单测文件格式： <code>组件名</code> + <code>Spec.js</code>。</li>
+<li>项目构建基于 <code>Grunt</code> 的 <code>grunt build</code> 命令。</li>
+<li><p>更新 <code>github</code> 上 API 文档页面，可使用 <code>grunt page</code> 命令。</p>
+<p><strong>注意：</strong> 所有目录必须使用<strong><code>单数</code></strong>形式。</p>
+</li>
+</ul>
+<h3 id="组件开发">组件开发</h3><h4 id="js相关">js相关</h4><ol>
+<li><p>继承自组件基类 <code>Control</code>，基本结构（主要字段和方法）：</p>
+ <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> Control = <span class="keyword">require</span>(<span class="string">'./Control'</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> Foo = Control.extend(<span class="comment">/** <span class="doctag">@lends</span> module:Foo.prototype */</span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 组件名</span></span><br><span class="line">    type: <span class="string">'Foo'</span>,</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 默认配置项</span></span><br><span class="line">    options: &#123;</span><br><span class="line">    &#125;,</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 初始化</span></span><br><span class="line">    init: <span class="function"><span class="keyword">function</span> <span class="params">(options)</span> </span>&#123;</span><br><span class="line">    &#125;,</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 初始化控件的DOM结构</span></span><br><span class="line">    initStructure: <span class="function"><span class="keyword">function</span> <span class="params">()</span> </span>&#123;</span><br><span class="line">    &#125;,</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 初始化控件的事件绑定</span></span><br><span class="line">    initEvents: <span class="function"><span class="keyword">function</span> <span class="params">()</span> </span>&#123;</span><br><span class="line">    &#125;,</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 属性发生变化时对控件进行重绘</span></span><br><span class="line">    <span class="comment">// 在两种情况下会被重绘</span></span><br><span class="line">    <span class="comment">// 1. render</span></span><br><span class="line">    <span class="comment">// 2. 当propName的值发生变化时, 例如调用`set(propName, propValue)`</span></span><br><span class="line">    repaint: <span class="function"><span class="keyword">function</span> <span class="params">(changes, changeIndex)</span> </span>&#123;</span><br><span class="line">    &#125;,</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 设定属性值</span></span><br><span class="line">    set: <span class="function"><span class="keyword">function</span> <span class="params">(propName, propValue)</span> </span>&#123;</span><br><span class="line">    &#125;,</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 毁销控件</span></span><br><span class="line">    dispose: <span class="function"><span class="keyword">function</span> <span class="params">()</span> </span>&#123;</span><br><span class="line">        this.<span class="variable">$parent</span>();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p> 此时 Foo 具有父类 Control 中的属性与行为，如需实现 Control 类中同名方法，但保留父类方法相同逻辑，可使用 <code>this.$parent([参数]);</code>。</p>
+<p> <strong>注意：</strong></p>
+<ul>
+<li>继承层次尽量保持在两层以内</li>
+<li>谨慎使用 implement 直接修改现有公共组件，除非需要影响所有使用者，否则尽量使用 extend 生成子类再改写。</li>
+<li>组件主容器名统一为 <strong><code>main</code></strong>。</li>
+</ul>
+</li>
+<li><p>所有继承自 <code>Control</code> 的子类都具有事件功能，实现见 <code>lib.observable</code>，主要方法为 <code>on</code>、<code>un</code> 与 <code>fire</code>。</p>
+</li>
+<li>所有继承自 <code>Control</code> 的子类都具有配置的参数，实现见 <code>lib.configurable</code>。对于 <code>on</code> 开头后跟大写字母，值类型为函数的配置项，自动添加到事件绑定。</li>
+<li><code>Control</code> 中实现的 <code>dispose</code> 方法默认作了一些清理，如果绑定了其它 DOM 事件或希望作别的处理，可以自行实现 <code>dispose</code> 方法，在方法最后再调用 <code>this.$parent();</code>。</li>
+</ol>
+<h4 id="样式相关">样式相关</h4><ol>
+<li><p><code>moye</code>样式基于<code>less</code>, 并且使用了<code>less</code>工具库<a href="https://github.com/ecomfe/est" target="_blank" rel="external">est</a>. 在控件样式中可以通过<code>@import &quot;./dep.less&quot;</code>来加载<code>est</code>;</p>
+</li>
+<li><p>我们在<code>variable.less</code>中提供了大量的预定义变量, 包含 <code>前缀</code> / <code>颜色</code> / <code>大小</code> . 可以通过<code>@import &quot;./variable.less&quot;</code>来加载它.</p>
+</li>
+<li><p>每个组件的主类名请保持为<code>.@{moye-prefix}-your-control-type</code>, <code>@moye-prefix</code>的定义在<code>variable.less</code>中, 默认值为<code>ui</code>. 例如输入框控件的less代码为:</p>
+<figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="at_rule">@import</span> <span class="string">"./variable.less"</span>;</span><br><span class="line"><span class="at_rule">@import</span> <span class="string">"./dep.less"</span>;</span><br><span class="line"></span><br><span class="line"><span class="class">.@&#123;moye-prefix&#125;</span><span class="tag">-textbox</span> &#123;</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>请尽可能地请<code>数值</code> / <code>颜色</code> 抽离为参数. 这样可以为提供<code>定制</code>主题提供较为方便接入口;</p>
+<blockquote>
+<p>在定制主题时, 优先覆盖控件所抽离的参数调整控件样式</p>
+</blockquote>
+<p>参数的命名规则必须为: <code>@moye-{type}-{variable-name}</code>;</p>
+<p>示例:</p>
+<figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="at_rule">@import</span> <span class="string">"./variable.less"</span>;</span><br><span class="line"><span class="at_rule">@import</span> <span class="string">"./dep.less"</span>;</span><br><span class="line"></span><br><span class="line"><span class="variable">@moye-textbox-background-color:</span> <span class="hexcolor">#fff</span>;</span><br><span class="line"><span class="variable">@moye-textbox-text-color:</span> <span class="hexcolor">#333</span>;</span><br><span class="line"></span><br><span class="line"><span class="class">.@&#123;moye-prefix&#125;</span><span class="tag">-textbox</span> &#123;</span><br><span class="line">  <span class="attribute">background-color</span>: <span class="variable">@moye-textbox-background-color</span>;</span><br><span class="line">  <span class="attribute">color</span>: <span class="variable">@moye-textbox-text-color</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 主题定制: 暗黑世界...</span></span><br><span class="line"><span class="variable">@moye-textbox-backgroud-color:</span> <span class="hexcolor">#000</span>;</span><br><span class="line"><span class="variable">@moye-textbox-text-color:</span> <span class="hexcolor">#eee</span>;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>数值单位请尽可能使用rem. <code>moye</code> 在 <code>mixin.less</code>中提供了混入<code>.moye-rem(@prop, @value)</code>, 提供<code>rem</code>的兼容性处理, 请尽量使用此mixin设定以上数值(如果需要支持ie678, 我们会在<code>.moye-rem()</code>中把<code>rem</code>转化为<code>px</code>; 我们默认是支持ie678的, 所以编译出的css中使用的是<code>px</code>). 以下属性强烈建议使用<code>rem</code>:</p>
+<ol>
+<li><code>width</code> / <code>height</code></li>
+<li><code>padding</code> / <code>margin</code></li>
+<li><code>font-size</code> / <code>line-height</code></li>
+</ol>
+<p>如果是<code>border-width</code>可以使用<code>px</code>;</p>
+</li>
+<li><p>为了更好地配合栅格化, 请尽可能地提供<code>border-box</code>的控件展现. <code>moye</code>在<code>mixin.less</code>中提供了<code>.moye-border-box-size-rem()</code>, 方便大家开发.</p>
+</li>
+<li><p><code>moye</code>的样式代码风格与<a href="https://github.com/ecomfe/spec/blob/master/less-code-style.md" target="_blank" rel="external">ecomfe的less代码风格规范</a>完全一致, 请按此规范要求保证良好的编码风格.</p>
+</li>
+</ol>
+<h3 id="非_UI_类组件">非 UI 类组件</h3><ol>
+<li>可以参考 <code>Control</code>，直接使用 <code>lib.newClass</code> 创建。</li>
+<li>如需事件支持，请使用 <code>Foo.implement(lib.observable)</code>。</li>
+<li>如需可配置参数，请使用 <code>Foo.implement(lib.configurable)</code>;</li>
+</ol>
+<h3 id="文档注释">文档注释</h3><p>所有组件，必须有完善的文档注释，遵循 <code>jsdoc3</code> 的规范，使用 <code>grunt jsdoc</code> 命令生成后验证，务必保证生成正确的 API 文档。可以参考现有组件的注释。</p>
+<h3 id="编写使用范例">编写使用范例</h3><h3 id="测试">测试</h3><p>务必完成代码风格、单元测试及代码覆盖率的要求。</p>
+<h3 id="提交">提交</h3><p>在代码 Review 没问题后，会合并到公共组件中。</p>
+<p><strong>注意</strong></p>
+<p>新组件开发必须使用新的分支开发，规范见 <a href="acceptance-criteria-of-moye">moye组件准入规范</a></p>
+]]></content>
+    <summary type="html">
+    <![CDATA[<h1 id="如何开发_Moye_组件">如何开发 Moye 组件</h1><h3 id="准备开发">准备开发</h3><p>目前, <code>moye</code>的开发分支是<code>feature/ng</code>, 请在此分支上进行开发.</p>
+<p><cod]]>
+    </summary>
+    
+      <category term="introduction" scheme="http://ecomfe.github.io/moye/moye/categories/introduction/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[最佳实践 / best practice]]></title>
+    <link href="http://ecomfe.github.io/moye/moye/introduction/best-practice.html"/>
+    <id>http://ecomfe.github.io/moye/moye/introduction/best-practice.html</id>
+    <published>2015-08-07T07:26:33.000Z</published>
+    <updated>2015-08-09T11:41:32.000Z</updated>
+    <content type="html"><![CDATA[<h2 id="初始化组件">初始化组件</h2><p>一般我们会这样来初始化组件：</p>
+<figure class="highlight html"><figcaption><span>DOM结构</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="title">div</span> <span class="attribute">id</span>=<span class="value">"container"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">div</span> <span class="attribute">data-ui-id</span>=<span class="value">"submitButton"</span>&gt;</span><span class="tag">&lt;/<span class="title">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="title">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight js"><figcaption><span>初始化组件</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 需要哪些组件，需要在这里事先把它们加载回来，比如我们这里用到了 `Button`</span></span><br><span class="line"><span class="built_in">require</span>([<span class="string">'moye'</span>, <span class="string">'moye/Button'</span>], <span class="function"><span class="keyword">function</span> (<span class="params">moye</span>) </span>&#123;</span><br><span class="line"></span><br><span class="line">    moye.init(</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 这里指定了组件所在的容器 DOM</span></span><br><span class="line">        <span class="built_in">document</span>.body,</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 这里是初始化组件所需要的参数们</span></span><br><span class="line">        &#123;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 这个属性名与 DOM 结构上的 data-ui-id 相对应</span></span><br><span class="line">            submitButton: &#123;</span><br><span class="line"></span><br><span class="line">                <span class="comment">// 这是一个必须的参数，用来指定这个控件的类型</span></span><br><span class="line">                type: <span class="string">'Button'</span>,</span><br><span class="line">                text: <span class="string">'submit'</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    );</span><br><span class="line"></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<h2 id="给组件绑定事件">给组件绑定事件</h2><p>一般我们会这样给组件绑定事件：</p>
+<figure class="highlight js"><figcaption><span>绑定组件事件处理</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 通过 moye.get() 来获取到指定 id 的控件实例，然后你就可以对它为所欲为啦</span></span><br><span class="line">moye.get(<span class="string">'sumbitButton'</span>).on(<span class="string">'click'</span>, <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    alert(<span class="string">'submit'</span>);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<h2 id="创建新的组件实例">创建新的组件实例</h2><p>除了获取到组件模块后，通过<code>new Control()</code>的方式之外，我们还提供了一个简单的方法来创建实例：</p>
+<figure class="highlight js"><figcaption><span>通过 moye.create() 创建实例</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> submitButton = moye.create(<span class="string">'Button'</span>, &#123;</span><br><span class="line">    text: <span class="string">'submit'</span></span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 但这个时候，submitButton 还没有被挂载到 DOM 树上，是没有生效的。</span></span><br><span class="line"><span class="comment">// 你可以调用它的`appendTo()`方法来将它装载到 DOM 树上。</span></span><br><span class="line"><span class="comment">// `appendTo()`方法会自动判断组件当前是否已经渲染，如果没有渲染，那么它会先渲染，再挂载。</span></span><br><span class="line">submitButton.appendTo(<span class="built_in">document</span>.body);</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>使用这个办法创建实例同样需要<code>Button</code>模块已经被加载到页面中，否则会抛出异常哟</p>
+</blockquote>
+]]></content>
+    <summary type="html">
+    <![CDATA[<h2 id="初始化组件">初始化组件</h2><p>一般我们会这样来初始化组件：</p>
+<figure class="highlight html"><figcaption><span>DOM结构</span></figcaption><table><tr><td clas]]>
+    </summary>
+    
+      <category term="introduction" scheme="http://ecomfe.github.io/moye/moye/categories/introduction/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[开始 / get started]]></title>
+    <link href="http://ecomfe.github.io/moye/moye/introduction/get-started.html"/>
+    <id>http://ecomfe.github.io/moye/moye/introduction/get-started.html</id>
+    <published>2015-08-07T04:17:45.000Z</published>
+    <updated>2015-08-09T11:41:32.000Z</updated>
+    <content type="html"><![CDATA[<h2 id="安装_/_Install">安装 / Install</h2><p>通过 <code>bower</code> 进行安装</p>
+<figure class="highlight sh"><figcaption><span>通过 bower 安装 moye</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 如果你没有安装 bower，请先安装 bower 哟</span></span><br><span class="line"><span class="comment"># 如果已经安装过 bower，请跳过这一条</span></span><br><span class="line">npm install -g bower</span><br><span class="line"></span><br><span class="line"><span class="comment"># 开始安装 moye</span></span><br><span class="line">bower install moye</span><br></pre></td></tr></table></figure>
+<p>或者从 github 上直接克隆源码</p>
+<figure class="highlight sh"><figcaption><span>从 github 安装 moye</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 通过 git 从 github 上获取 moye</span></span><br><span class="line"></span><br><span class="line">git <span class="built_in">clone</span> https://github.com/ecomfe/moye.git</span><br></pre></td></tr></table></figure>
+<h2 id="设定_/_Setup">设定 / Setup</h2><h3 id="设定_amd_配置">设定 <code>amd</code> 配置</h3><p>moye 是基于 <code>amd</code> 模式开发的，因此在正式使用前，需要对 <code>amd</code> 模块加载器进行配置。</p>
+<figure class="highlight js"><figcaption><span>为 moye 添加 amd 配置</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">require</span>.config(&#123;</span><br><span class="line">    baseUrl: <span class="string">'src'</span>,</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 只需要在这里配置一下 moye 包配置即可</span></span><br><span class="line">    packages: [&#123;</span><br><span class="line">        name: <span class="string">'moye'</span>,</span><br><span class="line">        main: <span class="string">'main'</span>,</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 实际上主要是这个参数啦，指向项目中的 moye 目录即可</span></span><br><span class="line">        location: <span class="string">'path/to/your/moye'</span></span><br><span class="line">    &#125;]</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>NOTICE: <code>moye</code> 并不支持在 <code>global</code> 变量模式或者 <code>cjs</code> 模式下使用。建议使用 <a href="http://requirejs.org/docs/why.html" target="_blank" rel="external">amd</a> 来构建你的项目</p>
+</blockquote>
+<h3 id="设定_less_编译路径">设定 less 编译路径</h3><p><code>moye</code>的样式源码是使用 <a href="http://www.lesscss.net/" target="_blank" rel="external">less</a> 进行编写的。<br>我们使用了 <a href="http://ecomfe.github.io/est">est</a> 来简化我们在开发 <code>less</code> 时的工作。<a href="http://ecomfe.github.io/est">est</a> 这是一个非常强大的 <code>less mixin</code> 库。<br>因此，在你的 <code>less</code> 编译参数中，需要将 <code>est</code> 的路径加入到 <code>paths</code>中。</p>
+<figure class="highlight sh"><figcaption><span>将 est 路径加入 less 编译参数中</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lessc --include-path=path/to/your/est</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>一将来讲 <code>est</code> 会在 <code>bower install</code> 一起安装到你的项目，位于 <code>moye</code> 同一级的目录。<br>如果没有通过 <code>bower</code> 安装，那么可以通过这条命令来安装它</p>
+</blockquote>
+<figure class="highlight sh"><figcaption><span>通过 git 安装 est</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/ecomfe/est.git</span><br></pre></td></tr></table></figure>
+<h2 id="完成_/_done">完成 / done</h2><p>你已经完成了全部设置，开始使用吧！</p>
+<a href="/moye/component/Button.html" title="立即开始">立即开始</a>
+]]></content>
+    <summary type="html">
+    <![CDATA[<h2 id="安装_/_Install">安装 / Install</h2><p>通过 <code>bower</code> 进行安装</p>
+<figure class="highlight sh"><figcaption><span>通过 bower 安装 moye</sp]]>
+    </summary>
+    
+      <category term="introduction" scheme="http://ecomfe.github.io/moye/moye/categories/introduction/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[提示 / Tip]]></title>
+    <link href="http://ecomfe.github.io/moye/moye/component/Tip.html"/>
+    <id>http://ecomfe.github.io/moye/moye/component/Tip.html</id>
+    <published>2015-08-06T11:13:48.000Z</published>
+    <updated>2015-08-09T11:41:32.000Z</updated>
+    <content type="html"><![CDATA[<h1 id="Tip_组件">Tip 组件</h1><h3 id="如何标识目标">如何标识目标</h3><p>只需要给目标 DOM 添加样式类<code>tooltips</code>即可</p>
+<iframe height="763" scrolling="no" src="//codepen.io/jinzhubaofu/embed/KpJeGM/?height=763&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/KpJeGM/" target="_blank" rel="external">KpJeGM</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+
+<h3 id="方位关系">方位关系</h3><p>你可以通过将目标元素添加<code>data-tooltips</code>属性来指定<code>Tip</code>的定位关系</p>
+<p>Tip 支持多种定位关系，大体上分为两个部分：</p>
+<ol>
+<li>Tip 位于目标的哪个方位，也就是 top / bottom / left / right，简写为 t / b / l / r；</li>
+<li>Tip 如何与目标对齐，也就是 left / center / right，或者是 top /center / bottom, 简写就是 l / c / r 和 t / c / b；</li>
+</ol>
+<p>将这两个简写定位合并起来就是<code>Tip</code>的定位标识。</p>
+<p>例子1：tc，就是 top + center，也就是<code>Tip</code>位于目标的顶部，居中对齐</p>
+<p>例子1：lb，就是 left + bottom，也就是<code>Tip</code>位于目标的左侧，底部对齐</p>
+<p>效果如下边这个效果：</p>
+<p></p><p data-height="655" data-theme-id="17600" data-slug-hash="zGeaWz" data-default-tab="result" data-user="jinzhubaofu" class="codepen"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/zGeaWz/" target="_blank" rel="external">zGeaWz</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.</p><p></p>
+<script async src="//assets.codepen.io/assets/embed/ei.js"></script>
+
+<h3 id="静态模式">静态模式</h3><p>这个模式是只能通过<code>javascript</code>来控制<code>Tip</code>的显示或隐藏，也就是说鼠标的<code>hover</code>动作不管用了。这种模式可以作为表单元素校验出错的提示信息。</p>
+<iframe height="266" scrolling="no" src="//codepen.io/jinzhubaofu/embed/QbYxzy/?height=266&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;">See the Pen <a href="http://codepen.io/jinzhubaofu/pen/QbYxzy/" target="_blank" rel="external">QbYxzy</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+]]></content>
+    <summary type="html">
+    <![CDATA[<h1 id="Tip_组件">Tip 组件</h1><h3 id="如何标识目标">如何标识目标</h3><p>只需要给目标 DOM 添加样式类<code>tooltips</code>即可</p>
+<iframe height="763" scrolling="no" src]]>
+    </summary>
+    
+      <category term="component" scheme="http://ecomfe.github.io/moye/moye/categories/component/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[选项卡 / Tab]]></title>
+    <link href="http://ecomfe.github.io/moye/moye/component/Tab.html"/>
+    <id>http://ecomfe.github.io/moye/moye/component/Tab.html</id>
+    <published>2015-08-06T10:05:14.000Z</published>
+    <updated>2015-08-09T11:41:32.000Z</updated>
+    <content type="html"><![CDATA[<h1 id="Tab_选项卡">Tab 选项卡</h1><h3 id="正常模式">正常模式</h3><p>点击标签可以切换</p>
+<blockquote>
+<p>可以通过阻止<code>change</code>事件对象的默认行为来阻止切换标签</p>
+</blockquote>
+<iframe height="381" scrolling="no" src="//codepen.io/jinzhubaofu/embed/JdxZoN/?height=381&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;">See the Pen <a href="http://codepen.io/jinzhubaofu/pen/JdxZoN/" target="_blank" rel="external">JdxZoN</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+
+<h3 id="hover切换元素">hover切换元素</h3><iframe height="376" scrolling="no" src="//codepen.io/jinzhubaofu/embed/aOXKOp/?height=376&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;">See the Pen <a href="http://codepen.io/jinzhubaofu/pen/aOXKOp/" target="_blank" rel="external">aOXKOp</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+]]></content>
+    <summary type="html">
+    <![CDATA[<h1 id="Tab_选项卡">Tab 选项卡</h1><h3 id="正常模式">正常模式</h3><p>点击标签可以切换</p>
+<blockquote>
+<p>可以通过阻止<code>change</code>事件对象的默认行为来阻止切换标签</p>
+</blockquo]]>
+    </summary>
+    
+      <category term="component" scheme="http://ecomfe.github.io/moye/moye/categories/component/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[轮播图 / Slider]]></title>
+    <link href="http://ecomfe.github.io/moye/moye/component/Slider.html"/>
+    <id>http://ecomfe.github.io/moye/moye/component/Slider.html</id>
+    <published>2015-08-06T09:55:03.000Z</published>
+    <updated>2015-08-09T11:41:32.000Z</updated>
+    <content type="html"><![CDATA[<h1 id="Slider_轮播图">Slider 轮播图</h1><p>自动轮播</p>
+<p>设置参数<code>auto</code>为<code>true</code>, 控件会在完成<code>render</code>后开始<code>播放</code>, 即开始轮播.</p>
+<p>或者调用<code>slider.play()</code>/<code>slider.stop()</code>来开始/暂停播放</p>
+<iframe height="738" scrolling="no" src="//codepen.io/jinzhubaofu/embed/zGejgB/?height=738&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/zGejgB/" target="_blank" rel="external">zGejgB</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+
+
+<h2 id="各种切换动画效果">各种切换动画效果</h2><h3 id="滑动(slide)垂直方向切换">滑动(slide)垂直方向切换</h3><iframe height="744" scrolling="no" src="//codepen.io/jinzhubaofu/embed/aOXKbB/?height=744&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/aOXKbB/" target="_blank" rel="external">aOXKbB</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+
+<h3 id="透明渐变">透明渐变</h3><iframe height="742" scrolling="no" src="//codepen.io/jinzhubaofu/embed/mJvKdL/?height=742&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;">See the Pen <a href="http://codepen.io/jinzhubaofu/pen/mJvKdL/" target="_blank" rel="external">mJvKdL</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+]]></content>
+    <summary type="html">
+    <![CDATA[<h1 id="Slider_轮播图">Slider 轮播图</h1><p>自动轮播</p>
+<p>设置参数<code>auto</code>为<code>true</code>, 控件会在完成<code>render</code>后开始<code>播放</code>, 即开始轮]]>
+    </summary>
+    
+      <category term="component" scheme="http://ecomfe.github.io/moye/moye/categories/component/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[下拉框 / Select]]></title>
+    <link href="http://ecomfe.github.io/moye/moye/component/Select.html"/>
+    <id>http://ecomfe.github.io/moye/moye/component/Select.html</id>
+    <published>2015-08-06T09:48:56.000Z</published>
+    <updated>2015-08-09T11:41:32.000Z</updated>
+    <content type="html"><![CDATA[<h3 id="各种大小的下拉框">各种大小的下拉框</h3><p>虽然丑了些。。。</p>
+<iframe height="490" scrolling="no" src="//codepen.io/jinzhubaofu/embed/aOXGMZ/?height=490&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/aOXGMZ/" target="_blank" rel="external">aOXGMZ</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+
+<h3 id="鼠标hover触发展开">鼠标hover触发展开</h3><iframe height="413" scrolling="no" src="//codepen.io/jinzhubaofu/embed/yNZjdB/?height=413&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;">See the Pen <a href="http://codepen.io/jinzhubaofu/pen/yNZjdB/" target="_blank" rel="external">yNZjdB</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+]]></content>
+    <summary type="html">
+    <![CDATA[<h3 id="各种大小的下拉框">各种大小的下拉框</h3><p>虽然丑了些。。。</p>
+<iframe height="490" scrolling="no" src="//codepen.io/jinzhubaofu/embed/aOXGMZ/?height=490&th]]>
+    </summary>
+    
+      <category term="component" scheme="http://ecomfe.github.io/moye/moye/categories/component/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[评分 / Rating]]></title>
+    <link href="http://ecomfe.github.io/moye/moye/component/Rating.html"/>
+    <id>http://ecomfe.github.io/moye/moye/component/Rating.html</id>
+    <published>2015-08-06T09:33:37.000Z</published>
+    <updated>2015-08-09T11:41:32.000Z</updated>
+    <content type="html"><![CDATA[<h1 id="Rating_打分组件">Rating 打分组件</h1><p>当鼠标移动到星星上时，星星会暂时地指向鼠标所在的星星；此时移出星星，那么组件会恢复到原有值。只有在星星点击一下，值才会被固定下来，移出时不再恢复。</p>
+<iframe height="556" scrolling="no" src="//codepen.io/jinzhubaofu/embed/eNxrbm/?height=556&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/eNxrbm/" target="_blank" rel="external">eNxrbm</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+]]></content>
+    <summary type="html">
+    <![CDATA[<h1 id="Rating_打分组件">Rating 打分组件</h1><p>当鼠标移动到星星上时，星星会暂时地指向鼠标所在的星星；此时移出星星，那么组件会恢复到原有值。只有在星星点击一下，值才会被固定下来，移出时不再恢复。</p>
+<iframe height="556" s]]>
+    </summary>
+    
+      <category term="component" scheme="http://ecomfe.github.io/moye/moye/categories/component/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[浮层 / Popup]]></title>
+    <link href="http://ecomfe.github.io/moye/moye/component/Popup.html"/>
+    <id>http://ecomfe.github.io/moye/moye/component/Popup.html</id>
+    <published>2015-08-06T09:25:23.000Z</published>
+    <updated>2015-08-09T11:41:32.000Z</updated>
+    <content type="html"><![CDATA[<h2 id="浮层_/_Popup">浮层 / Popup</h2><p><code>Popup</code>是一个工具控件, 用来完成浮出层的功能. 经常作为其他控件的子控件组合使用, 一般不直接使用.</p>
+<p><code>Popup</code>的主要参数是<code>triggers</code>, 用以指定触发<code>Popup</code>浮层. <code>triggers</code>是一个<code>jQuery</code>可以接受的<code>css selector</code>.</p>
+<p>使用<code>target</code>属性来指定<code>Popup</code>的显示位置.</p>
+<iframe height="293" scrolling="no" src="//codepen.io/jinzhubaofu/embed/waNjEE/?height=293&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/waNjEE/" target="_blank" rel="external">waNjEE</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+
+
+<p>如果不指定<code>target</code>属性, 那么<code>Popup</code>会挂靠到当前的触发元素上</p>
+<iframe height="344" scrolling="no" src="//codepen.io/jinzhubaofu/embed/doaegW/?height=344&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/doaegW/" target="_blank" rel="external">doaegW</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+
+
+<p>可以通过指定<code>dir</code>参数来调整<code>Popup</code>挂靠的方向. 上例中 <code>dir</code>设定为<code>rc</code>, 表示<code>Popup</code>挂靠到目标元素的右侧中间位置.</p>
+<iframe height="480" scrolling="no" src="//codepen.io/jinzhubaofu/embed/jPdxeJ/?height=480&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/jPdxeJ/" target="_blank" rel="external">jPdxeJ</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+
+<p>可以指定<code>liveTriggers</code>来限定一个容器, 在限容器内的所有<code>triggers</code>都可以触发<code>Popup</code>, 即使它们是在初始化之后被创建的.</p>
+]]></content>
+    <summary type="html">
+    <![CDATA[<h2 id="浮层_/_Popup">浮层 / Popup</h2><p><code>Popup</code>是一个工具控件, 用来完成浮出层的功能. 经常作为其他控件的子控件组合使用, 一般不直接使用.</p>
+<p><code>Popup</code>的主要参数是<code]]>
+    </summary>
+    
+      <category term="component" scheme="http://ecomfe.github.io/moye/moye/categories/component/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[翻页器 / Pager]]></title>
+    <link href="http://ecomfe.github.io/moye/moye/component/Pager.html"/>
+    <id>http://ecomfe.github.io/moye/moye/component/Pager.html</id>
+    <published>2015-08-06T07:16:19.000Z</published>
+    <updated>2015-08-09T11:41:32.000Z</updated>
+    <content type="html"><![CDATA[<h1 id="Pager">Pager</h1><h2 id="简单版本">简单版本</h2><iframe height="121" scrolling="no" src="//codepen.io/jinzhubaofu/embed/qdgoMz/?height=121&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/qdgoMz/" target="_blank" rel="external">qdgoMz</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+
+<h2 id="设置总页面">设置总页面</h2><p>与下拉框组合使用，设置总页码</p>
+<iframe height="228" scrolling="no" src="//codepen.io/jinzhubaofu/embed/zGeWmy/?height=228&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;">See the Pen <a href="http://codepen.io/jinzhubaofu/pen/zGeWmy/" target="_blank" rel="external">zGeWmy</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+
+
+<h2 id="自定义页码展现">自定义页码展现</h2><iframe height="256" scrolling="no" src="//codepen.io/jinzhubaofu/embed/zGeWmy/?height=256&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;">See the Pen <a href="http://codepen.io/jinzhubaofu/pen/zGeWmy/" target="_blank" rel="external">zGeWmy</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+
+<h2 id="精简版分页">精简版分页</h2><iframe height="266" scrolling="no" src="//codepen.io/jinzhubaofu/embed/oXmdqY/?height=266&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;">See the Pen <a href="http://codepen.io/jinzhubaofu/pen/oXmdqY/" target="_blank" rel="external">oXmdqY</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+
+<h2 id="精简版分页灵活运用">精简版分页灵活运用</h2><iframe height="266" scrolling="no" src="//codepen.io/jinzhubaofu/embed/PqVeRQ/?height=266&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;">See the Pen <a href="http://codepen.io/jinzhubaofu/pen/PqVeRQ/" target="_blank" rel="external">PqVeRQ</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+
+<h2 id="分页getPage和setPage使用">分页getPage和setPage使用</h2><iframe height="266" scrolling="no" src="//codepen.io/jinzhubaofu/embed/KpJRoJ/?height=266&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;">See the Pen <a href="http://codepen.io/jinzhubaofu/pen/KpJRoJ/" target="_blank" rel="external">KpJRoJ</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+
+<h3 id="全部配置参数">全部配置参数</h3><hr>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">属性名</th>
+<th style="text-align:left">类型</th>
+<th style="text-align:left">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">disabled</td>
+<td style="text-align:left">boolean</td>
+<td style="text-align:left">控件的不可用状态</td>
+</tr>
+<tr>
+<td style="text-align:left">main</td>
+<td style="text-align:left">HTMLElement</td>
+<td style="text-align:left">控件渲染容器</td>
+</tr>
+<tr>
+<td style="text-align:left">page</td>
+<td style="text-align:left">number</td>
+<td style="text-align:left">当前页（第一页从0开始）</td>
+</tr>
+<tr>
+<td style="text-align:left">first</td>
+<td style="text-align:left">number</td>
+<td style="text-align:left">起始页码，默认为0</td>
+</tr>
+<tr>
+<td style="text-align:left">padding</td>
+<td style="text-align:left">number</td>
+<td style="text-align:left">当页数较多时，首尾显示页码的个数</td>
+</tr>
+<tr>
+<td style="text-align:left">showAlways</td>
+<td style="text-align:left">boolean</td>
+<td style="text-align:left">是否一直显示分页控件</td>
+</tr>
+<tr>
+<td style="text-align:left">showCount</td>
+<td style="text-align:left">number</td>
+<td style="text-align:left">当页数较多时，中间显示页码的个数</td>
+</tr>
+<tr>
+<td style="text-align:left">total</td>
+<td style="text-align:left">number</td>
+<td style="text-align:left">总页数</td>
+</tr>
+<tr>
+<td style="text-align:left">anchor</td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">跳转链接</td>
+</tr>
+<tr>
+<td style="text-align:left">mode</td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">分页类型（normal/simple）</td>
+</tr>
+<tr>
+<td style="text-align:left">getPageItemHTML</td>
+<td style="text-align:left">function</td>
+<td style="text-align:left">分页item字符串</td>
+</tr>
+<tr>
+<td style="text-align:left">lang</td>
+<td style="text-align:left">Object<string, string=""></string,></td>
+<td style="text-align:left">用于显示上下页的文字</td>
+</tr>
+<tr>
+<td style="text-align:left">lang.prev</td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">上一页显示文字(支持HTML)</td>
+</tr>
+<tr>
+<td style="text-align:left">lang.next</td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">下一页显示文字(支持HTML)</td>
+</tr>
+<tr>
+<td style="text-align:left">lang.ellipsis</td>
+<td style="text-align:left">string</td>
+<td style="text-align:left">省略处显示文字(支持HTML)</td>
+</tr>
+</tbody>
+</table>
+<p>在页面切换的时候可以绑定回调事件<code>onChange</code>。</p>
+]]></content>
+    <summary type="html">
+    <![CDATA[<h1 id="Pager">Pager</h1><h2 id="简单版本">简单版本</h2><iframe height="121" scrolling="no" src="//codepen.io/jinzhubaofu/embed/qdgoMz/?height=121&t]]>
+    </summary>
+    
+      <category term="component" scheme="http://ecomfe.github.io/moye/moye/categories/component/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[走马灯 / Marquee]]></title>
+    <link href="http://ecomfe.github.io/moye/moye/component/Marquee.html"/>
+    <id>http://ecomfe.github.io/moye/moye/component/Marquee.html</id>
+    <published>2015-08-06T06:44:37.000Z</published>
+    <updated>2015-08-09T11:41:32.000Z</updated>
+    <content type="html"><![CDATA[<h1 id="走马灯">走马灯</h1><p>向左滚动</p>
+<iframe height="266" scrolling="no" src="//codepen.io/jinzhubaofu/embed/vObReY/?height=266&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/vObReY/" target="_blank" rel="external">vObReY</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+
+
+<p>向右滚动</p>
+<iframe height="266" scrolling="no" src="//codepen.io/jinzhubaofu/embed/VLgXMo/?height=266&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/VLgXMo/" target="_blank" rel="external">VLgXMo</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+
+<p>向上滚动</p>
+<iframe height="291" scrolling="no" src="//codepen.io/jinzhubaofu/embed/KpJoyX/?height=291&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/KpJoyX/" target="_blank" rel="external">KpJoyX</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+
+<p>还可以滚动一个图片哟</p>
+<iframe height="385" scrolling="no" src="//codepen.io/jinzhubaofu/embed/eNxMeK/?height=385&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/eNxMeK/" target="_blank" rel="external">eNxMeK</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+
+<p>通过 api 控制滚动</p>
+<iframe height="266" scrolling="no" src="//codepen.io/jinzhubaofu/embed/doameb/?height=266&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/doameb/" target="_blank" rel="external">doameb</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+
+<p>非常长的文本也可以连续滚动</p>
+<p>水平方向</p>
+<iframe height="266" scrolling="no" src="//codepen.io/jinzhubaofu/embed/KpJoRZ/?height=266&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/KpJoRZ/" target="_blank" rel="external">KpJoRZ</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+
+<p>竖直方向</p>
+<iframe height="147" scrolling="no" src="//codepen.io/jinzhubaofu/embed/NqoYzg/?height=147&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/NqoYzg/" target="_blank" rel="external">NqoYzg</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+]]></content>
+    <summary type="html">
+    <![CDATA[<h1 id="走马灯">走马灯</h1><p>向左滚动</p>
+<iframe height="266" scrolling="no" src="//codepen.io/jinzhubaofu/embed/vObReY/?height=266&theme-id=17600&d]]>
+    </summary>
+    
+      <category term="component" scheme="http://ecomfe.github.io/moye/moye/categories/component/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[懒图片 / LazyImg]]></title>
+    <link href="http://ecomfe.github.io/moye/moye/component/LazyImg.html"/>
+    <id>http://ecomfe.github.io/moye/moye/component/LazyImg.html</id>
+    <published>2015-08-06T06:23:57.000Z</published>
+    <updated>2015-08-09T11:41:32.000Z</updated>
+    <content type="html"><![CDATA[<h1 id="Lazy_懒加载">Lazy 懒加载</h1><h2 id="示例">示例</h2><iframe height="424" scrolling="no" src="//codepen.io/jinzhubaofu/embed/jPdzBw/?height=424&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/jPdzBw/" target="_blank" rel="external">jPdzBw</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+]]></content>
+    <summary type="html">
+    <![CDATA[<h1 id="Lazy_懒加载">Lazy 懒加载</h1><h2 id="示例">示例</h2><iframe height="424" scrolling="no" src="//codepen.io/jinzhubaofu/embed/jPdzBw/?height=424]]>
+    </summary>
+    
+      <category term="component" scheme="http://ecomfe.github.io/moye/moye/categories/component/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[对话框 / Dialog]]></title>
+    <link href="http://ecomfe.github.io/moye/moye/component/Dialog.html"/>
+    <id>http://ecomfe.github.io/moye/moye/component/Dialog.html</id>
+    <published>2015-08-06T02:34:40.000Z</published>
+    <updated>2015-08-09T11:41:32.000Z</updated>
+    <content type="html"><![CDATA[<h1 id="Dialog_窗口">Dialog 窗口</h1><h2 id="普通窗口">普通窗口</h2><iframe height="361" scrolling="no" src="//codepen.io/jinzhubaofu/embed/xGMWKz/?height=361&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/xGMWKz/" target="_blank" rel="external">xGMWKz</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+
+<h2 id="会自毁的窗口">会自毁的窗口</h2><iframe height="266" scrolling="no" src="//codepen.io/jinzhubaofu/embed/mJvxbZ/?height=266&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/mJvxbZ/" target="_blank" rel="external">mJvxbZ</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+
+<h2 id="带按钮的窗口">带按钮的窗口</h2><p>通过我们提供<code>buttons</code>参数. 通过这个参数, 可以很方便地添加脚注中的按钮</p>
+<iframe height="266" scrolling="no" src="//codepen.io/jinzhubaofu/embed/WvPzNx/?height=266&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/WvPzNx/" target="_blank" rel="external">WvPzNx</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+
+
+<p>还可以通过设定<code>footer</code>的值, 来构建自定义脚注, 自行添加按钮</p>
+<iframe height="266" scrolling="no" src="//codepen.io/jinzhubaofu/embed/xGMWbJ/?height=266&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/xGMWbJ/" target="_blank" rel="external">xGMWbJ</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+
+<p>这里可以给<code>Dialog</code>中任意的<code>DOM</code>元素添加<code>data-action</code>属性。在用户点击了一个带有<code>data-action</code>的元素时，<code>Dialog</code>会根据<code>data-action</code>所指定的动作来释放事件。比如上边例子里，我们给脚注中的按钮添加了<code>close</code>的动作标识。<code>Dialog</code>中有一个默认的动作处理动作<code>close</code>。所有带有 <code>close</code>动作标识的元素，被点击之后，<code>Dialog</code>都会自动关闭哟。</p>
+<blockquote>
+<p>注意: <code>footer</code>与<code>buttons</code>的优先级. 如果, <code>footer</code>与<code>buttons</code>同时存在, 那么<code>footer</code>会覆盖<code>buttons</code>.</p>
+</blockquote>
+<p>是不是觉得自己拼<code>按钮</code>很麻烦呢? 来, 我们内置一些常用的带按钮的窗口~</p>
+<h2 id="内置的窗口们">内置的窗口们</h2><h3 id="内置的窗口们的特性">内置的窗口们的特性</h3><ol>
+<li><p>对于警告窗口和确认窗口，它们属于用户必须响应的交互，而且这种响应一定有固定的结果。因此，我们把它们的返回结果进行了 <code>Promise</code>封装。也就是说，<code>Dialog.alert()</code>和<code>Dialog.confirm()</code>会返回<code>promise</code>. 即这两个操作是异步的, 会返回预期结果. 用户只能在我们限定的选项中做出一个选择. 当<code>promise</code>被<code>resolved</code>或<code>rejected</code>, 会带有按钮的标识<code>part</code>.</p>
+</li>
+<li><p>都是没有关闭按钮的. 原因是关闭按钮在这里是多余的. 关闭按钮在<code>alert</code>中表达的<code>确认</code>, 与<code>确认</code>按钮一致; 在<code>confirm</code>中表达的意图是<code>取消</code>, 与<code>取消</code>按钮一致. 因此, 关闭按钮是重复的, 不展现这个按钮. 这也与<code>window.alert()</code>和<code>window.confirm()</code>的交互相一致.</p>
+</li>
+<li><p>都是会自毁的. 这与window.alert()和window.confirm()是一致的.</p>
+</li>
+<li><p><code>Dialog.alert()</code>产生的窗口带有样式类<code>.skin-alert-dialog</code>, 也可以添加其他的<code>skin</code>来丰富样式效果.</p>
+</li>
+<li><p><code>Dialog.confirm()</code>产生的窗口带有样式类<code>.skin-confirm-dialog</code>, 也可以添加其他的<code>skin</code>来丰富样式效果.</p>
+</li>
+<li><p>点击<code>mask</code>不会关闭窗口, 原因与2一致.</p>
+</li>
+</ol>
+<h3 id="警告窗口_Dialog-alert()">警告窗口 <code>Dialog.alert()</code></h3><iframe height="266" scrolling="no" src="//codepen.io/jinzhubaofu/embed/pJGLgw/?height=266&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/pJGLgw/" target="_blank" rel="external">pJGLgw</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+
+<h3 id="确认窗口_Dialog-confirm()">确认窗口 <code>Dialog.confirm()</code></h3><iframe height="266" scrolling="no" src="//codepen.io/jinzhubaofu/embed/LVqdGM/?height=266&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/LVqdGM/" target="_blank" rel="external">LVqdGM</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+]]></content>
+    <summary type="html">
+    <![CDATA[<h1 id="Dialog_窗口">Dialog 窗口</h1><h2 id="普通窗口">普通窗口</h2><iframe height="361" scrolling="no" src="//codepen.io/jinzhubaofu/embed/xGMWKz/?heig]]>
+    </summary>
+    
+      <category term="component" scheme="http://ecomfe.github.io/moye/moye/categories/component/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[城市选择器 / City]]></title>
+    <link href="http://ecomfe.github.io/moye/moye/component/City.html"/>
+    <id>http://ecomfe.github.io/moye/moye/component/City.html</id>
+    <published>2015-08-06T02:34:40.000Z</published>
+    <updated>2015-08-09T11:41:32.000Z</updated>
+    <content type="html"><![CDATA[<h1 id="城市控件">城市控件</h1><p>特性:</p>
+<ol>
+<li>带有初始值</li>
+<li>只能选择城市, 不可手工输入</li>
+<li>使用默认城市列表</li>
+<li>可指定<code>name</code>值, 可在直接<code>form</code>中使用</li>
+</ol>
+<iframe height="431" scrolling="no" src="//codepen.io/jinzhubaofu/embed/xGMYEr/?height=431&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/xGMYEr/" target="_blank" rel="external">xGMYEr</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+
+<h3 id="不使用默认城市">不使用默认城市</h3><iframe height="205" scrolling="no" src="//codepen.io/jinzhubaofu/embed/OVdQXd/?height=205&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/OVdQXd/" target="_blank" rel="external">OVdQXd</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+]]></content>
+    <summary type="html">
+    <![CDATA[<h1 id="城市控件">城市控件</h1><p>特性:</p>
+<ol>
+<li>带有初始值</li>
+<li>只能选择城市, 不可手工输入</li>
+<li>使用默认城市列表</li>
+<li>可指定<code>name</code>值, 可在直接<code>form</c]]>
+    </summary>
+    
+      <category term="component" scheme="http://ecomfe.github.io/moye/moye/categories/component/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[文本框 / TextBox]]></title>
+    <link href="http://ecomfe.github.io/moye/moye/component/TextBox.html"/>
+    <id>http://ecomfe.github.io/moye/moye/component/TextBox.html</id>
+    <published>2015-08-05T11:29:19.000Z</published>
+    <updated>2015-08-09T11:41:32.000Z</updated>
+    <content type="html"><![CDATA[<h1 id="TextBox_文本框">TextBox 文本框</h1><p>在用户输入过程中，<code>TextBox</code>会发送<code>onChange</code>事件，可以监听这个事件来处理用户的输入，包括获取数据、校验数据；</p>
+<iframe height="174" scrolling="no" src="//codepen.io/jinzhubaofu/embed/ZGwrbQ/?height=174&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/ZGwrbQ/" target="_blank" rel="external">ZGwrbQ</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+
+<h2 id="文本框的状态">文本框的状态</h2><iframe height="200" scrolling="no" src="//codepen.io/jinzhubaofu/embed/yNZveN/?height=200&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/yNZveN/" target="_blank" rel="external">yNZveN</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+
+<h2 id="自动推荐">自动推荐</h2><p>下面这个示例，在用户输入的过程中，从百度加载相关的热门搜索词。</p>
+<iframe height="416" scrolling="no" src="//codepen.io/jinzhubaofu/embed/VLgQaQ/?height=416&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/VLgQaQ/" target="_blank" rel="external">VLgQaQ</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+]]></content>
+    <summary type="html">
+    <![CDATA[<h1 id="TextBox_文本框">TextBox 文本框</h1><p>在用户输入过程中，<code>TextBox</code>会发送<code>onChange</code>事件，可以监听这个事件来处理用户的输入，包括获取数据、校验数据；</p>
+<iframe he]]>
+    </summary>
+    
+      <category term="component" scheme="http://ecomfe.github.io/moye/moye/categories/component/"/>
+    
+  </entry>
+  
+</feed>

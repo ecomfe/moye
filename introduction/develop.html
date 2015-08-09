@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Moye</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    
+    <link rel="icon" href="/favicon.png">
+    
+    
+    
+<link rel="stylesheet" href="/moye/css/post.css" type="text/css">
+
+    
+    <link rel="alternative" href="/atom.xml" title="Moye" type="application/atom+xml">
+    
+</head>
+<body>
+    
+    <div id="container">
+    <article id="post-develop" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <nav class="article-nav">
+
+  <a class="article-nav-logo" href="/moye/index.html">
+    <img src="/moye/img/moye.png" alt="moye" /> Moye
+  </a>
+
+  
+    <div class="article-nav-category">
+      <h4 class="article-nav-category-title">
+        
+        <a class="article-nav-category-link" href=/moye/introduction/get-started.html>开始</a>
+        
+      </h4>
+
+      
+    </div>
+  
+    <div class="article-nav-category">
+      <h4 class="article-nav-category-title">
+        
+        组件
+        
+      </h4>
+
+      
+        <a class="article-nav-category-link "
+          href="/moye/component/Button.html">
+          按钮 / Button 
+        </a>
+      
+        <a class="article-nav-category-link "
+          href="/moye/component/Calendar.html">
+          日历 / Calendar 
+        </a>
+      
+        <a class="article-nav-category-link "
+          href="/moye/component/City.html">
+          城市选择器 / City 
+        </a>
+      
+        <a class="article-nav-category-link "
+          href="/moye/component/Dialog.html">
+          对话框 / Dialog 
+        </a>
+      
+        <a class="article-nav-category-link "
+          href="/moye/component/LazyImg.html">
+          懒图片 / LazyImg 
+        </a>
+      
+        <a class="article-nav-category-link "
+          href="/moye/component/Marquee.html">
+          走马灯 / Marquee 
+        </a>
+      
+        <a class="article-nav-category-link "
+          href="/moye/component/Pager.html">
+          翻页器 / Pager 
+        </a>
+      
+        <a class="article-nav-category-link "
+          href="/moye/component/Popup.html">
+          浮层 / Popup 
+        </a>
+      
+        <a class="article-nav-category-link "
+          href="/moye/component/Rating.html">
+          评分 / Rating 
+        </a>
+      
+        <a class="article-nav-category-link "
+          href="/moye/component/Select.html">
+          下拉框 / Select 
+        </a>
+      
+        <a class="article-nav-category-link "
+          href="/moye/component/Slider.html">
+          轮播图 / Slider 
+        </a>
+      
+        <a class="article-nav-category-link "
+          href="/moye/component/Tab.html">
+          选项卡 / Tab 
+        </a>
+      
+        <a class="article-nav-category-link "
+          href="/moye/component/TextBox.html">
+          文本框 / TextBox 
+        </a>
+      
+        <a class="article-nav-category-link "
+          href="/moye/component/Tip.html">
+          提示 / Tip 
+        </a>
+      
+        <a class="article-nav-category-link "
+          href="/moye/component/Form.html">
+          表单 / Form 
+        </a>
+      
+    </div>
+  
+    <div class="article-nav-category">
+      <h4 class="article-nav-category-title">
+        
+        简介
+        
+      </h4>
+
+      
+        <a class="article-nav-category-link "
+          href="/moye/introduction/get-started.html">
+          开始 / get started 
+        </a>
+      
+        <a class="article-nav-category-link "
+          href="/moye/introduction/best-practice.html">
+          最佳实践 / best practice 
+        </a>
+      
+    </div>
+  
+    <div class="article-nav-category">
+      <h4 class="article-nav-category-title">
+        
+        开发 moye
+        
+      </h4>
+
+      
+        <a class="article-nav-category-link current"
+          href="/moye/introduction/develop.html">
+          开发指南 / introduction 
+        </a>
+      
+        <a class="article-nav-category-link "
+          href="/moye/introduction/plugin.html">
+          插件 / Plugin 
+        </a>
+      
+        <a class="article-nav-category-link "
+          href="/moye/introduction/life-cycle.html">
+          生命周期 / life cycle 
+        </a>
+      
+        <a class="article-nav-category-link "
+          href="/moye/introduction/skin.html">
+          皮肤 / skin 
+        </a>
+      
+        <a class="article-nav-category-link "
+          href="/moye/introduction/inherits.html">
+          继承 / inherits 
+        </a>
+      
+    </div>
+  
+
+</nav>
+
+
+  <div class="article-content">
+    <header class="article-header">
+      
+  
+    <h1 class="article-title" itemprop="name">
+      开发指南 / introduction
+      <!-- Place this tag where you want the button to render. -->
+      <a class="github-button" href="https://github.com/ecomfe/moye" data-icon="octicon-star" data-style="mega" data-count-href="/ecomfe/moye/stargazers" data-count-api="/repos/ecomfe/moye#stargazers_count" data-count-aria-label="# stargazers on GitHub" aria-label="Star ecomfe/moye on GitHub">Star</a>
+    </h1>
+  
+
+
+    </header>
+    <div class="article-entry markdown-body" itemprop="articleBody">
+      <h1 id="如何开发_Moye_组件">如何开发 Moye 组件</h1><h3 id="准备开发">准备开发</h3><p>目前, <code>moye</code>的开发分支是<code>feature/ng</code>, 请在此分支上进行开发.</p>
+<p><code>moye</code>基于<code>edp webserver</code>进行调试, 使用了<code>est</code>作为less mixin库, 在<code>demo</code>中需要安装一些<code>npm</code>包. 因此, 推荐下面的方法来准备开发环境.</p>
+<figure class="highlight dos"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/<span class="built_in">path</span>/to/moye</span><br><span class="line">npm install</span><br><span class="line">bower install</span><br><span class="line">edp webserver <span class="built_in">start</span></span><br></pre></td></tr></table></figure>
+<p><strong>请注意</strong></p>
+<p>其中, edp werbserver请使用1.0.15@beta以上的版本, 使用这个命令来安装</p>
+<figure class="highlight coffeescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">npm</span> install -g edp-webserver<span class="property">@beta</span></span><br></pre></td></tr></table></figure>
+<p><code>bower</code>是一个前端依赖包的管理工具, 可以通过这个命令来安装</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm <span class="operator"><span class="keyword">install</span> -<span class="keyword">g</span> bower</span></span><br></pre></td></tr></table></figure>
+<h3 id="Moye_目录结构">Moye 目录结构</h3><pre><code><span class="comment"><figure class="highlight ceylon"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Moye</span><br><span class="line">    |- dep        <span class="comment">// 外部依赖模块</span></span><br><span class="line">    |- <span class="annotation">doc</span>        <span class="comment">// 文档目录</span></span><br><span class="line">    |- example    <span class="comment">// 组件对应的示例</span></span><br><span class="line">    |- src        <span class="comment">// 组件源码，包括 LESS 与 JS</span></span><br><span class="line">    |- test       <span class="comment">// 测试用例</span></span><br></pre></td></tr></table></figure></span>
+</code></pre><ul>
+<li>doc/api 目录为 <code>jsdoc3</code> 自动生成的 API 文档。</li>
+<li>test 目录下 <code>config.js</code> 与 <code>main.js</code> 为 edp-test 使用的测试配置，通常不需要修改。</li>
+<li>test/spec 下包含所有组件对应的单测，单测文件格式： <code>组件名</code> + <code>Spec.js</code>。</li>
+<li>项目构建基于 <code>Grunt</code> 的 <code>grunt build</code> 命令。</li>
+<li><p>更新 <code>github</code> 上 API 文档页面，可使用 <code>grunt page</code> 命令。</p>
+<p><strong>注意：</strong> 所有目录必须使用<strong><code>单数</code></strong>形式。</p>
+</li>
+</ul>
+<h3 id="组件开发">组件开发</h3><h4 id="js相关">js相关</h4><ol>
+<li><p>继承自组件基类 <code>Control</code>，基本结构（主要字段和方法）：</p>
+ <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> Control = <span class="keyword">require</span>(<span class="string">'./Control'</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> Foo = Control.extend(<span class="comment">/** <span class="doctag">@lends</span> module:Foo.prototype */</span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 组件名</span></span><br><span class="line">    type: <span class="string">'Foo'</span>,</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 默认配置项</span></span><br><span class="line">    options: &#123;</span><br><span class="line">    &#125;,</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 初始化</span></span><br><span class="line">    init: <span class="function"><span class="keyword">function</span> <span class="params">(options)</span> </span>&#123;</span><br><span class="line">    &#125;,</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 初始化控件的DOM结构</span></span><br><span class="line">    initStructure: <span class="function"><span class="keyword">function</span> <span class="params">()</span> </span>&#123;</span><br><span class="line">    &#125;,</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 初始化控件的事件绑定</span></span><br><span class="line">    initEvents: <span class="function"><span class="keyword">function</span> <span class="params">()</span> </span>&#123;</span><br><span class="line">    &#125;,</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 属性发生变化时对控件进行重绘</span></span><br><span class="line">    <span class="comment">// 在两种情况下会被重绘</span></span><br><span class="line">    <span class="comment">// 1. render</span></span><br><span class="line">    <span class="comment">// 2. 当propName的值发生变化时, 例如调用`set(propName, propValue)`</span></span><br><span class="line">    repaint: <span class="function"><span class="keyword">function</span> <span class="params">(changes, changeIndex)</span> </span>&#123;</span><br><span class="line">    &#125;,</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 设定属性值</span></span><br><span class="line">    set: <span class="function"><span class="keyword">function</span> <span class="params">(propName, propValue)</span> </span>&#123;</span><br><span class="line">    &#125;,</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 毁销控件</span></span><br><span class="line">    dispose: <span class="function"><span class="keyword">function</span> <span class="params">()</span> </span>&#123;</span><br><span class="line">        this.<span class="variable">$parent</span>();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p> 此时 Foo 具有父类 Control 中的属性与行为，如需实现 Control 类中同名方法，但保留父类方法相同逻辑，可使用 <code>this.$parent([参数]);</code>。</p>
+<p> <strong>注意：</strong></p>
+<ul>
+<li>继承层次尽量保持在两层以内</li>
+<li>谨慎使用 implement 直接修改现有公共组件，除非需要影响所有使用者，否则尽量使用 extend 生成子类再改写。</li>
+<li>组件主容器名统一为 <strong><code>main</code></strong>。</li>
+</ul>
+</li>
+<li><p>所有继承自 <code>Control</code> 的子类都具有事件功能，实现见 <code>lib.observable</code>，主要方法为 <code>on</code>、<code>un</code> 与 <code>fire</code>。</p>
+</li>
+<li>所有继承自 <code>Control</code> 的子类都具有配置的参数，实现见 <code>lib.configurable</code>。对于 <code>on</code> 开头后跟大写字母，值类型为函数的配置项，自动添加到事件绑定。</li>
+<li><code>Control</code> 中实现的 <code>dispose</code> 方法默认作了一些清理，如果绑定了其它 DOM 事件或希望作别的处理，可以自行实现 <code>dispose</code> 方法，在方法最后再调用 <code>this.$parent();</code>。</li>
+</ol>
+<h4 id="样式相关">样式相关</h4><ol>
+<li><p><code>moye</code>样式基于<code>less</code>, 并且使用了<code>less</code>工具库<a href="https://github.com/ecomfe/est" target="_blank" rel="external">est</a>. 在控件样式中可以通过<code>@import &quot;./dep.less&quot;</code>来加载<code>est</code>;</p>
+</li>
+<li><p>我们在<code>variable.less</code>中提供了大量的预定义变量, 包含 <code>前缀</code> / <code>颜色</code> / <code>大小</code> . 可以通过<code>@import &quot;./variable.less&quot;</code>来加载它.</p>
+</li>
+<li><p>每个组件的主类名请保持为<code>.@{moye-prefix}-your-control-type</code>, <code>@moye-prefix</code>的定义在<code>variable.less</code>中, 默认值为<code>ui</code>. 例如输入框控件的less代码为:</p>
+<figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="at_rule">@import</span> <span class="string">"./variable.less"</span>;</span><br><span class="line"><span class="at_rule">@import</span> <span class="string">"./dep.less"</span>;</span><br><span class="line"></span><br><span class="line"><span class="class">.@&#123;moye-prefix&#125;</span><span class="tag">-textbox</span> &#123;</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>请尽可能地请<code>数值</code> / <code>颜色</code> 抽离为参数. 这样可以为提供<code>定制</code>主题提供较为方便接入口;</p>
+<blockquote>
+<p>在定制主题时, 优先覆盖控件所抽离的参数调整控件样式</p>
+</blockquote>
+<p>参数的命名规则必须为: <code>@moye-{type}-{variable-name}</code>;</p>
+<p>示例:</p>
+<figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="at_rule">@import</span> <span class="string">"./variable.less"</span>;</span><br><span class="line"><span class="at_rule">@import</span> <span class="string">"./dep.less"</span>;</span><br><span class="line"></span><br><span class="line"><span class="variable">@moye-textbox-background-color:</span> <span class="hexcolor">#fff</span>;</span><br><span class="line"><span class="variable">@moye-textbox-text-color:</span> <span class="hexcolor">#333</span>;</span><br><span class="line"></span><br><span class="line"><span class="class">.@&#123;moye-prefix&#125;</span><span class="tag">-textbox</span> &#123;</span><br><span class="line">  <span class="attribute">background-color</span>: <span class="variable">@moye-textbox-background-color</span>;</span><br><span class="line">  <span class="attribute">color</span>: <span class="variable">@moye-textbox-text-color</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 主题定制: 暗黑世界...</span></span><br><span class="line"><span class="variable">@moye-textbox-backgroud-color:</span> <span class="hexcolor">#000</span>;</span><br><span class="line"><span class="variable">@moye-textbox-text-color:</span> <span class="hexcolor">#eee</span>;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>数值单位请尽可能使用rem. <code>moye</code> 在 <code>mixin.less</code>中提供了混入<code>.moye-rem(@prop, @value)</code>, 提供<code>rem</code>的兼容性处理, 请尽量使用此mixin设定以上数值(如果需要支持ie678, 我们会在<code>.moye-rem()</code>中把<code>rem</code>转化为<code>px</code>; 我们默认是支持ie678的, 所以编译出的css中使用的是<code>px</code>). 以下属性强烈建议使用<code>rem</code>:</p>
+<ol>
+<li><code>width</code> / <code>height</code></li>
+<li><code>padding</code> / <code>margin</code></li>
+<li><code>font-size</code> / <code>line-height</code></li>
+</ol>
+<p>如果是<code>border-width</code>可以使用<code>px</code>;</p>
+</li>
+<li><p>为了更好地配合栅格化, 请尽可能地提供<code>border-box</code>的控件展现. <code>moye</code>在<code>mixin.less</code>中提供了<code>.moye-border-box-size-rem()</code>, 方便大家开发.</p>
+</li>
+<li><p><code>moye</code>的样式代码风格与<a href="https://github.com/ecomfe/spec/blob/master/less-code-style.md" target="_blank" rel="external">ecomfe的less代码风格规范</a>完全一致, 请按此规范要求保证良好的编码风格.</p>
+</li>
+</ol>
+<h3 id="非_UI_类组件">非 UI 类组件</h3><ol>
+<li>可以参考 <code>Control</code>，直接使用 <code>lib.newClass</code> 创建。</li>
+<li>如需事件支持，请使用 <code>Foo.implement(lib.observable)</code>。</li>
+<li>如需可配置参数，请使用 <code>Foo.implement(lib.configurable)</code>;</li>
+</ol>
+<h3 id="文档注释">文档注释</h3><p>所有组件，必须有完善的文档注释，遵循 <code>jsdoc3</code> 的规范，使用 <code>grunt jsdoc</code> 命令生成后验证，务必保证生成正确的 API 文档。可以参考现有组件的注释。</p>
+<h3 id="编写使用范例">编写使用范例</h3><h3 id="测试">测试</h3><p>务必完成代码风格、单元测试及代码覆盖率的要求。</p>
+<h3 id="提交">提交</h3><p>在代码 Review 没问题后，会合并到公共组件中。</p>
+<p><strong>注意</strong></p>
+<p>新组件开发必须使用新的分支开发，规范见 <a href="acceptance-criteria-of-moye">moye组件准入规范</a></p>
+
+    </div>
+
+    <footer class="article-footer">
+
+      <div class="duoshuo">
+
+        <!-- 多说评论框 start -->
+        <div class="ds-thread" data-thread-key="develop" data-title="开发指南 / introduction" data-url="http://ecomfe.github.io/moye/introduction/develop.html"></div>
+
+        <!-- 多说评论框 end -->
+        <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+
+        <script type="text/javascript">
+        window.duoshuoQuery = {short_name:"moye"};
+        (function() {
+          var ds = document.createElement('script');
+          ds.type = 'text/javascript';
+          ds.src = '//static.duoshuo.com/embed.js';
+          ds.charset = 'UTF-8';
+          document.getElementsByTagName('head')[0].appendChild(ds);
+        })();
+        </script>
+        <!-- 多说公共JS代码 end -->
+
+        <!-- Place this tag right after the last button or just before your close body tag. -->
+        <script async defer id="github-bjs" src="https://buttons.github.io/buttons.js"></script>
+      </div>
+
+    </footer>
+  </div>
+</article>
+
+    </div>
+    <script src="/moye/js/requirejs.min.js" type="text/javascript"></script>
+    <script src="//libs.baidu.com/jquery/2.0.3/jquery.min.js" type="text/javascript"></script>
+
+    <script>
+    require.config({
+        'baseUrl': '/moye/js',
+        'paths': {
+            'common': './common',
+            'highlight': '../dep/highlight/highlight.pack'
+        },
+        'packages': [{
+            'name': 'moye',
+            'location': '../dep/moye/ui',
+            'main': 'main'
+        }],
+        'urlArgs': 'v0.0.1'
+    });
+    </script>
+    
+</body>
+</html>
