@@ -38,7 +38,12 @@ new Slider({
 ```
 <div class="content">
   <div id="slider-container-default">
-    <div data-role="stage"><img src="http://pic.hefei.cc/newcms/2012/03/14/13316929284f6005808aa20.jpg"><img src="http://pic.hefei.cc/newcms/2012/03/14/13316929274f60057f72733.jpg"><img src="http://pic.hefei.cc/newcms/2012/03/14/13316929284f60058013da9.jpg"><img src="http://pic.hefei.cc/newcms/2012/03/14/13316929294f600581a07e5.jpg"></div>
+    <div data-role="stage">
+    <img src="http://pic.hefei.cc/newcms/2012/03/14/13316929284f6005808aa20.jpg">
+    <img src="http://pic.hefei.cc/newcms/2012/03/14/13316929274f60057f72733.jpg">
+    <img src="http://pic.hefei.cc/newcms/2012/03/14/13316929284f60058013da9.jpg">
+    <img src="http://pic.hefei.cc/newcms/2012/03/14/13316929294f600581a07e5.jpg">
+    </div>
   </div>
 </div>
 

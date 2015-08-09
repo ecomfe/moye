@@ -24,7 +24,6 @@ define(function (require) {
      *     main: document.getElementById('button1')
      *  }).render();
      */
-
     var Button = Control.extend(/** @lends module:Button.prototype */{
 
         /**
@@ -41,7 +40,7 @@ define(function (require) {
          * 控件默认选项配置
          *
          * @name module:BoxGroup#options
-         * @type {Object}text
+         * @type {Object}
          * @property {Object} options 控件选项配置
          * @property {string} options.text button的值
          * @publc

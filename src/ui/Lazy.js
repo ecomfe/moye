@@ -4,7 +4,7 @@
  *
  * @file 延迟按需加载
  * @author chris(wfsr@foxmail.com)
- * @author ludafa <leonlu@outlook.com>
+ * @author ludafa(leonlu@outlook.com)
  */
 
 define(function (require) {
@@ -45,12 +45,9 @@ define(function (require) {
 
     /**
      * 私有函数或方法
-     *
-     * @type {Object}
-     * @namespace
-     * @name module:Lazy~privates
      */
     var privates = /** @lends module:Lazy~privates */ {
+
         /**
          * 计算在可视区域内的延迟加载元素
          *

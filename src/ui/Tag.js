@@ -1,19 +1,21 @@
 /**
  * @file 标签组件
  * @author Leon(ludafa@outlook.com)
+ * @module Tag
+ * @extends module:Control
  */
 
 define(function (require) {
 
     var $       = require('jquery');
     var Control = require('./Control');
-    var lib     = require('./lib');
 
-    var Tag = Control.extend({
+    var Tag = Control.extend(/** @lends Tag.prototype */{
 
         type: 'Tag',
 
         options: {
+
             /**
              * 适配器
              *
@@ -30,9 +32,18 @@ define(function (require) {
                     return tag;
                 }
             },
+
+
             value: []
         },
 
+        /**
+         * 初始化
+         *
+         * @private
+         * @override
+         * @param {Object} options 参数
+         */
         init: function (options) {
             this.$parent(options);
             this.value = this.value && this.value.length
@@ -40,10 +51,20 @@ define(function (require) {
                 : $(this.main).data('value') || [];
         },
 
+        /**
+         * 初始化事件绑定
+         *
+         * @private
+         */
         initEvents: function () {
             this.delegate(this.main, 'click', this._onMainClick);
         },
 
+        /**
+         * 重绘
+         *
+         * @private
+         */
         repaint: require('./painter').createRepaint(
             Control.prototype.repaint,
             {
@@ -77,8 +98,9 @@ define(function (require) {
 
         /**
          * 点击主元素事件的处理
+         *
          * @private
-         * @param  {Event} e 点击事件
+         * @param {Event} e 点击事件
          */
         _onMainClick: function (e) {
             var target = $(e.target);
@@ -97,7 +119,8 @@ define(function (require) {
 
         /**
          * 获取值
-         * @return {Array.*}
+         *
+         * @return {Array.<*>}
          */
         getValue: function () {
             return this.value;
@@ -105,8 +128,9 @@ define(function (require) {
 
         /**
          * 设定值
-         * @param {Array.*} value
-         * @return {Tag}
+         *
+         * @param {Array.<*>} value 新的值
+         * @return {module:Tag}
          */
         setValue: function (value) {
             this.value = null;
@@ -116,17 +140,20 @@ define(function (require) {
 
         /**
          * 添加一个tag
-         * @param {*} tag 一个可以被适配器解析的tag数据
-         * @return {Tag}
+         *
+         * @param  {*} tag 一个可以被适配器解析的tag数据
+         * @return {module:Tag}
          */
         add: function (tag) {
             this.setValue(this.value.concat(tag));
+            return this;
         },
 
         /**
          * 移除一个Tag
+         *
          * @param  {string} tag 标签值
-         * @return {Tag}
+         * @return {module:Tag}
          */
         remove: function (tag) {
 
@@ -139,6 +166,7 @@ define(function (require) {
                     break;
                 }
             }
+
             return this;
         },
 

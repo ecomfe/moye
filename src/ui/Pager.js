@@ -4,7 +4,7 @@
  *
  * @file 分页控件
  * @author  chris(wfsr@foxmail.com)
- *          wuqi03(wuqi03@baidu.com)
+ * @author  wuqi03(wuqi03@baidu.com)
  */
 
 define(function (require) {
@@ -23,7 +23,7 @@ define(function (require) {
      * @requires Control
      * @exports Pager
      * @example
-     * &lt;div class="pager-container"&gt;&lt;/div&gt;
+     * <div class="pager-container"></div>;
      * new Pager({
      *     main: lib.q('pager-container')[0],
      *     total: 10,
@@ -92,6 +92,7 @@ define(function (require) {
 
             /**
              * 显示模式
+             * 
              * 可选值: normal | simple
              *
              * normal: 显示方式是  <  1 2 3 .. 12  > ，每个分页是一个item;
@@ -222,6 +223,7 @@ define(function (require) {
 
         /**
          * 默认分页item
+         * 
          * @param {number} index 当前渲染item的index
          * @param {string} part 当前渲染item的状态
          * @return {string} item的html字符串
@@ -255,6 +257,7 @@ define(function (require) {
 
         /**
          * 默认分页item
+         * 
          * @param {number} index 当前渲染item的index
          * @param {string} part 当前渲染item的状态
          * @return {string} item的html字符串
@@ -263,9 +266,10 @@ define(function (require) {
 
         /**
          * 获取当前节点显示的文案
+         * 
          * @param {number} index 分页节点
          * @param {string} part role
-         * @return {string|number}
+         * @return {(string|number)}
          */
         getItemText: function (index, part) {
             return this.lang[part] || index;
@@ -273,6 +277,7 @@ define(function (require) {
 
         /**
          * 获取当前元素的class
+         * 
          * @param {Array} states 所有状态的集合
          * @return {string}
          */
@@ -287,6 +292,7 @@ define(function (require) {
 
         /**
          * 当前锚点链接
+         * 
          * @param {number} page 当前节点的页码
          * @return {string}
          */
@@ -385,6 +391,7 @@ define(function (require) {
          * 即ellipsis在5号位置, 那么他就是-5
          * 输入: start 0, stop 10, paddingLeft 3 paddingRight 3
          * 输出: 0, 1, 2, -3, 8, 9, 10
+         * 
          * @param  {number} start        起始页码
          * @param  {number} stop         结束页面(不包含)
          * @param  {number} paddingLeft  起始页码之后, 应展开的页码个数

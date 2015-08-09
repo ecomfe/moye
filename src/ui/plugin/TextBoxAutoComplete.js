@@ -51,14 +51,14 @@ define(function (require) {
      * @extends module:Plugin
      * @exports TextBoxAutoComplete
      */
-    var TextBoxAutoComplete = Plugin.extend({
+    var TextBoxAutoComplete = Plugin.extend(/** @lends module:TextBoxAutoComplete.prototype */{
 
         $class: 'TextBoxAutoComplete',
 
         /**
          * TextBoxAutoComplete 配置选项
          *
-         * @type {Object} options 配置
+         * @type {Object}
          * @property {boolean} options.history 是否保留历史数据
          * @property {number} options.delay 数据加载阀值
          * @property {Function(string):(Promise | *)} options.datasource 数据源

@@ -225,7 +225,6 @@ define(function (require) {
                  * 完成初次渲染
                  *
                  * @event module:Control#afterrender
-                 *
                  */
                 this.fire('afterrender');
             }
@@ -441,11 +440,12 @@ define(function (require) {
 
 
             /**
-             * statechange事件.
+             * statechange事件
              *
              * @event module:Control#statechange
-             * @property {string} state 发生变化的状态
-             * @property {string} action 动作名称
+             * @param {Object} e 事件对象
+             * @param {string} e.state  发生变化的状态
+             * @param {Object} e.action 动作名称
              */
             this.fire('statechange', {
                 state: state,
@@ -473,14 +473,6 @@ define(function (require) {
             me.currentStates[state] = false;
             this.helper.removeStateClasses(state);
 
-
-            /**
-             * statechange事件.
-             *
-             * @event module:Control#statechange
-             * @property {string} state 发生变化的状态
-             * @property {string} action 动作名称
-             */
             me.fire('statechange', {
                 state: state,
                 action: 'remove'
@@ -824,7 +816,7 @@ define(function (require) {
          * 使用插件
          *
          * @public
-         * @param {Plugin} plugin 插件
+         * @param {module:Plugin} plugin 插件
          * @return {module:Control}
          */
         use: function (plugin) {

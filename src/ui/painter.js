@@ -3,16 +3,14 @@
  *
  * @file 重绘工具
  * @author Leon(ludafa@outlook.com)
+ * @module painter
  */
 
 define(function (require) {
 
     var lib = require('./lib');
 
-    /**
-     * @exports painter
-     */
-    var painter = {
+    return {
 
         /**
          * 创建一组可以监听属性变化渲染器
@@ -35,8 +33,8 @@ define(function (require) {
          * - `{Object} painter`：当前的`渲染器`
          * - `{Mixed} args...`：根据`name`配置指定的属性，依次将属性的最新值作为参数
          *
-         * @method module:painter.createRepaint
-         * @param {(Object | Function)} args `painter`对象
+         * @public
+         * @param {...(Object | Function)} painters `painter`对象
          * @return {Function} `repaint`方法的实现
          */
         createRepaint: function () {
@@ -99,8 +97,6 @@ define(function (require) {
             };
         }
     };
-
-    return painter;
 
 });
 

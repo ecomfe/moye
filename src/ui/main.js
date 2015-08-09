@@ -46,9 +46,10 @@ define(function (require) {
         /**
          * 依照配置, 初始化指定元素中的所有moye组件
          *
+         * @public
          * @param  {Element} container  容器元素
          * @param  {Object}  properties 配置
-         * @param  {Context} context    上下文
+         * @param  {module:Context} context    上下文
          * @return {Object}  容器内所有被初始化的组件实例
          */
         init: function (container, properties, context) {
@@ -115,6 +116,7 @@ define(function (require) {
         /**
          * 新建一个控件实例
          *
+         * @public
          * @param  {string} type    控件类型
          * @param  {Object} options 控件参数
          * @return {module:Control}
@@ -131,6 +133,7 @@ define(function (require) {
         /**
          * 获取指定Id的控件
          *
+         * @public
          * @param  {string} instanceId 控件id
          * @return {module:Control}
          */
@@ -140,6 +143,8 @@ define(function (require) {
 
         /**
          * 通过一个DOM元素(通常是控件的主元素)来获取控件实例
+         *
+         * @public
          * @param {Element} dom 控件主元素
          * @return {module:Control}
          */
@@ -171,8 +176,9 @@ define(function (require) {
          *
          * 如果未指定上下文环境id, 则返回默认上下文
          *
+         * @public
          * @param  {string} contextId 上下文ID
-         * @return {Context}
+         * @return {module:Context}
          */
         getContext: function (contextId) {
             return contextId ? Context.get(contextId) : defaultContext;
@@ -181,6 +187,7 @@ define(function (require) {
         /**
          * 取配置
          *
+         * @public
          * @param  {string} name 配置属性名
          * @return {*}
          */
@@ -191,6 +198,7 @@ define(function (require) {
         /**
          * 设定配置
          *
+         * @public
          * @param {string} name  配置属性名
          * @param {*}      value 配置属性值
          * @return {module:Control}

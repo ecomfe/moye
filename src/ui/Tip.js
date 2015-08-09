@@ -1,5 +1,5 @@
 /**
- * Moye
+ * Moye (Zhixin UI)
  * Copyright 2014 Baidu Inc. All rights reserved.
  *
  * @file  提示层控件
@@ -68,7 +68,7 @@ define(function (require) {
              *
              * 触发显示的元素设定请参看triggers和liveTriggers
              *
-             * @type {string|HTMLElement}
+             * @type {(string|HTMLElement)}
              */
             target: '',
 
@@ -79,14 +79,14 @@ define(function (require) {
              *
              * 当指定了 liveTriggers 时只能用 string 类型指定 class
              *
-             * @type {string | Array.<HTMLElement>}
+             * @type {(string | Array.<HTMLElement>)}
              */
             triggers: '.tooltips',
 
             /**
              * 动态 triggers 的父元素节点
              *
-             * @type {string | HTMLElement}
+             * @type {(string | HTMLElement)}
              */
             liveTriggers: '',
 
@@ -139,7 +139,7 @@ define(function (require) {
                 /**
                  * x 轴方向偏移量
                  *
-                 * @type {number | string}
+                 * @type {(number | string)}
                  * @defaultvalue
                  */
                 x: 0,
@@ -147,7 +147,7 @@ define(function (require) {
                 /**
                  * y 轴方向偏移量
                  *
-                 * @type {number | string}
+                 * @type {(number | string)}
                  * @defaultvalue
                  */
                 y: 0
