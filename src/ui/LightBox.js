@@ -41,8 +41,7 @@ define(function (require) {
 
             var obj = {};
             var limit = {};
-
-            var trigger = $(this.triggers).eq(index);
+            var element = this.elements[index];
             var fixed = {};
 
             lib.each(
@@ -52,7 +51,7 @@ define(function (require) {
 
                     var body = $(window)[name]() * 0.9;
                     limit[name] = Math.min(body, obj[name]);
-                    fixed[name] = trigger.data(name);
+                    fixed[name] = element[name];
                 },
                 this
             );
@@ -120,20 +119,18 @@ define(function (require) {
                         .addClass(me.helper.getPartClassName('image'));
                     content = dom.prop('outerHTML');
 
-                    var showImage = function () {
-                        var size = privates.getSize.call(me, dom.get(0), index);
+                    var size = privates.getSize.call(me, dom.get(0), index);
+                    element = lib.extend(element, size);
+                    var title = element.title;
 
-                        element = $.extend(element, size);
+                    var showImage = function () {
 
                         me.current = index;
-
-                        me.setTitle(element.title);
                         privates.showIcons.call(me);
 
-                        $(me.load).hide();
-
+                        me.showLoading && $(me.load).hide();
+                        me.setTitle(title);
                         me.setContent(content);
-
                         me.show();
 
                         dtd.resolve();
@@ -146,10 +143,6 @@ define(function (require) {
                         $(this.load).hide();
                         dtd.reject();
                     });
-
-                    break;
-
-                default:
 
                     break;
             }
@@ -181,28 +174,34 @@ define(function (require) {
         /**
          * 当触发翻页时
          *
-         * @param {Object} e 事件传入对象
          * @param {string | number} action 当前事件 可选值：prev|next；或者是直接传入要显示的索引
          *
          * @fires module:LightBox#change
+         * @fires module:LightBox#afterchange
          * @private
          */
-        onChange: function (e, action) {
+        onChange: function (action) {
+
+            var total = this.total;
+            var index;
 
             if (lib.isNumber(action)) {
                 index = action;
             }
             else {
-                var total = this.elements.length;
-                var index = action === 'next' ? this.current + 1 : this.current - 1;
+                index = action === 'next' ? this.current + 1 : this.current - 1;
+            }
+
+            if (index === this.current) {
+                return;
             }
 
 
             if (index < 0) {
-                index = this.cyclic ? total + index : 0;
+                index = total + index;
             }
             else if (index >= total) {
-                index = this.cyclic ? index - total : 0;
+                index = index - total;
             }
 
             /**
@@ -222,12 +221,20 @@ define(function (require) {
             var element = me.elements[index];
 
             if (element) {
-                privates.showElement
+                privates
+                    .showElement
                     .call(this, index)
                     .then(function () {
                         me.set({
                             width: element.width,
                             height: element.height
+                        });
+
+                        /**
+                         * @event module:LightBox#afterchange
+                         */
+                        me.fire('afterchange', {
+                            activeIndex: index
                         });
                     });
             }
@@ -237,6 +244,8 @@ define(function (require) {
          * 当触发显示时
          *
          * @param  {Object} e 事件对象
+         *
+         * @fires module:LightBox#show
          * @private
          */
         onShow: function (e) {
@@ -244,9 +253,7 @@ define(function (require) {
             e.preventDefault();
 
             var target = $(e.currentTarget);
-
             var index = this.current = target.data('index');
-
             var me = this;
 
             privates.showElement
@@ -360,6 +367,13 @@ define(function (require) {
             showLoading: true,
 
             /**
+             * 是否显示页码
+             *
+             * @type {boolean}
+             */
+            showPage: true,
+
+            /**
              * 是否根据浏览器可视区域缩放，不超过窗口高度的90%
              *
              * @type {boolean}
@@ -381,7 +395,7 @@ define(function (require) {
             level: 10,
 
             /**
-             * 当前LightBox的z-index
+             * 是否循环播放，最后一张点击下一页回到第一张
              *
              * @type {boolean}
              */
@@ -462,6 +476,8 @@ define(function (require) {
             me.current = me.current || 0;
             var triggers = $(me.triggers);
             var count = triggers.length;
+
+            var total = 0;
             triggers.each(function (index, element) {
                 element = $(element);
 
@@ -475,20 +491,28 @@ define(function (require) {
                     type = 'image';
                 }
                 else {
+                    // 以后可能还会有别的类型...
                     return;
                 }
 
                 me.elements.push({
                     src: href,
-                    width: 0,
-                    height: 0,
+                    width: element.data('width') || 0,
+                    height: element.data('height') || 0,
                     type: type,
                     title: element.attr('title')
                         || element.data('title')
-                        || ((index + 1) + ' / ' + count)
                 });
-                element.data('index', index);
+                element.data('index', total);
+
+                total++;
             });
+
+            this.total = total;
+
+            if (this.showPage) {
+                $(this.main).append(this.helper.createPart('page', 'span'));
+            }
 
             var icons = ['close'];
             if (count > 1) {
@@ -570,7 +594,6 @@ define(function (require) {
         initEvents: function () {
 
             this.showBound = $.proxy(privates.onShow, this);
-            this.hideBound = $.proxy(privates.onHide, this);
             this.changeBound = $.proxy(privates.onChange, this);
 
             this.delegate(this.main, 'click', '[data-action]', this.onMainClicked);
@@ -629,7 +652,7 @@ define(function (require) {
             if (action === 'prev'
                 || action === 'next') {
 
-                privates.onChange.call(this, e, action);
+                this.changeBound(action);
                 return;
             }
 
@@ -652,10 +675,16 @@ define(function (require) {
                 name: ['width', 'height'],
                 paint: function (conf, width, height) {
 
+                    // 按宽度和padding对标题、页码、图片进行定位
                     $(this.getChild('title').main).css({
                         bottom: this.padding + 'px',
                         left: this.padding + 'px',
                         width: width - this.padding * 2 + 'px'
+                    });
+
+                    $(this.helper.getPart('page')).css({
+                        bottom: this.padding + 'px',
+                        right: this.padding + 'px'
                     });
 
                     $(this.getChild('content').main).css({
@@ -683,9 +712,14 @@ define(function (require) {
                 name: ['title'],
                 paint: function (conf, title) {
                     var panel = this.getChild('title');
-                    if (panel) {
+                    if (!title) {
+                        $(panel.main).hide();
+                    }
+                    else if (panel) {
+                        $(panel.main).show();
                         panel.set('content', title);
                     }
+
                 }
             },
             {
@@ -704,7 +738,7 @@ define(function (require) {
                         // 切换状态, 先把自己给显示出来
                         this.addState('visible');
                         // 然后我们利用宽高, 重置一下左/上的缩进
-                        var element = this.elements[this.current];
+                        var element = this.getElement(this.current);
                         this.set({
                             width: element.width,
                             height: element.height
@@ -730,7 +764,7 @@ define(function (require) {
          * @public
          */
         select: function (index) {
-            privates.onChange.call(this, null, index);
+            this.changeBound(index);
             return this;
         },
 
@@ -767,6 +801,11 @@ define(function (require) {
          */
         setTitle: function (title) {
             this.set('title', title);
+
+            // 显示页码
+            if (this.showPage) {
+                this.helper.getPart('page').innerHTML = (this.current + 1) + '/' + this.total;
+            }
             return this;
         },
 
@@ -852,11 +891,14 @@ define(function (require) {
             this.clearTriggersEvents(this.triggers);
 
             this.showBound = null;
-            this.hideBound = null;
             this.elements = [];
 
             this.undelegate(this.main, 'click', this.onMainClicked);
             $(this.main).remove();
+
+            if (this.showLoading) {
+                $(this.load).remove();
+            }
 
             // 销毁遮罩
             if (this.mask) {

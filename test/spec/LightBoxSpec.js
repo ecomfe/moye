@@ -9,13 +9,16 @@ define(function (require) {
     var LightBox = require('ui/LightBox');
     var lightbox;
 
+    /* eslint-disable max-len */
     var images = [
         '<a class="lightbox" href="http://www.baidu.com/img/bdlogo.png" data-title="123"></a>',
         '<a class="lightbox" href="http://www.baidu.com/img/bdlogo.png" data-width="123"></a>',
-        '<div class="lightbox" data-url="http://www.baidu.com/img/bdlogo.png"></div>',
+        '<div class="lightbox" data-url="http://www.baidu.com/img/bdlogo.png" data-height="123"></div>',
+        '<div class="lightbox" data-url="http://www.baidu.com/img/bdlogo.png" data-width="123" data-height="123"></div>',
         '<a class="lightbox" href="#"></a>',
         '<div class="lightbox"></div>'
     ];
+    /* eslint-enable max-len */
 
     beforeEach(function () {
         document.body.insertAdjacentHTML(
@@ -39,23 +42,9 @@ define(function (require) {
             expect(lightbox.type).toBe('LightBox');
         });
 
-        it('event:show', function () {
-            lightbox.on('show', function () {
-                expect(lightbox.main).toBeTruthy();
-                expect($(lightbox.main).hasClass('ui-lightbox-visible')).toBeTruthy();
-            });
-            lightbox.show();
-        });
-
-        it('event:hide', function () {
-            lightbox.on('hide', function () {
-                expect($(lightbox.main).hasClass('ui-lightbox-visible')).toBeFalsy();
-            });
-            lightbox.hide();
-        });
-
         it('check close', function () {
             lightbox.onMainClicked.call(lightbox, {currentTarget: $('.ui-lightbox-close')[0]});
+            expect(lightbox.currentStates.visiable).toBeFalsy();
         });
 
         it('check prev next', function () {
@@ -64,11 +53,18 @@ define(function (require) {
             lightbox.onMainClicked.call(lightbox, {currentTarget: $('.ui-lightbox-next')[0]});
             lightbox.on('change', function (e) {
                 expect(e.activeIndex).toBe(1);
-                expect(lightbox.getCurrent()).toBe(1);
             });
         });
 
-        it('check select', function () {
+        it('check select 4', function () {
+            expect(lightbox.total).toBe(4);
+            lightbox.select(4);
+            lightbox.on('change', function (e) {
+                expect(e.activeIndex).toBe(0);
+            });
+        });
+
+        it('check select 2', function () {
             lightbox.select(2);
             lightbox.on('change', function (e) {
                 expect(e.activeIndex).toBe(2);
