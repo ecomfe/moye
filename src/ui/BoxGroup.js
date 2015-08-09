@@ -14,6 +14,27 @@ define(
         var painter = require('./painter');
 
         /**
+         * 默认选中时的主题对应的样式
+         *
+         * @const
+         * @type {Array}
+         */
+        var THEMEICON = {
+            'default': {
+                normal: '',
+                expanded: ''
+            },
+            'radio-point': {
+                normal: '&#xe60b;',
+                expanded: '&#xe60a;'
+            },
+            'checkbox-tick': {
+                normal: '&#xe60c;',
+                expanded: '&#xe60d;'
+            }
+        };
+
+        /**
          * 单复选框组件
          *
          * @extends module:Control
@@ -79,6 +100,7 @@ define(
 
                 // 选中的元素 Array, 单选时取第一个
                 value: []
+
             },
 
             /**
@@ -232,10 +254,11 @@ define(
              */
             getItemHTML: function (state, item) {
                 var checkedClass = state ? (' ' + this.activeClass) : '';
+                var icon = THEMEICON[this.styleClass];
                 return ''
                     + '<label class="' + this.styleClass + checkedClass + '">'
-                    +     '<i class="icon icon-un"></i>'
-                    +     '<i class="icon icon-on"></i>'
+                    +     '<i class="icon icon-un">' + icon.normal + '</i>'
+                    +     '<i class="icon icon-on">' + icon.expanded + '</i>'
                     +     '<input type="' + this.boxType + '" value="' + item.value + '">'
                     +      item.name
                     + '</label>';
