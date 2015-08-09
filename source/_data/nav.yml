@@ -77,6 +77,12 @@
         text: "提示 / Tip"
         title: "提示 / Tip"
         link: component/Tip.html
+
+      -
+        text: "表单 / Form"
+        title: "表单 / Form"
+        link: component/Form.html
+
   -
     text: "简介"
     data:
