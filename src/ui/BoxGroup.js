@@ -82,6 +82,10 @@ define(function (require) {
             // 被选中时的样式
             activeClass: 'ui-boxgroup-item-checked',
 
+            // 触发事件的选择器
+            itemSelector: '[data-role=boxgroup-item]',
+
+            // 选中/未选中图标的内容
             icons: {},
 
             // 数据源
@@ -101,6 +105,12 @@ define(function (require) {
         init: function (options) {
             this.$parent(options);
             this.icons = this.getIcons(this.icons);
+            this.onClick = lib.throttle.call(this, this.onClick, 50);
+
+            // 将为数字的value值都向为字符串转化
+            lib.each(this.value, function (value, index) {
+                this.value[index] = value + '';
+            }, this);
         },
 
         /**
@@ -127,11 +137,11 @@ define(function (require) {
          * @override
          */
         initEvents: function () {
-            this.delegate(this.main, 'click', 'label', this.onClick);
+            this.delegate(this.main, 'click', this.itemSelector, this.onClick);
         },
 
         initStructure: function () {
-            $(this.main).addClass('ui-' + this.type.toLowerCase() + '-' + this.boxType);
+            $(this.main).addClass(this.helper.getPrimaryClassName(this.boxType));
         },
 
         /**
@@ -152,6 +162,7 @@ define(function (require) {
                     var html = [];
                     for (var i = 0, len = datasource.length; i < len; i++) {
                         var item = datasource[i];
+                        item.value += '';
                         var state = $.inArray(item.value, this.value) > -1;
                         html[i] = this.getItemHTML(state, item);
                     }
@@ -167,21 +178,22 @@ define(function (require) {
                     if (this.helper.isInStage('INITED') && main.data('dom-inited')) {
                         return;
                     }
+                    lib.each(value, function (val, i) {
+                        value[i] = val + '';
+                    });
                     value = this.value = value || [];
                     if (this.boxType.toLowerCase() === 'radio') {
                         value.length = 1;
                     }
-                    $('label', main).each(function () {
-                        var me = $(this);
-                        var input = me.find('input');
-                        var inputValue = +input.prop('value');
+                    var me = this;
+                    $(this.itemSelector, main).each(function () {
+                        var $this = $(this);
+                        var input = $this.find('input');
+                        var inputValue = input.prop('value');
                         var bool = $.inArray(inputValue, value) > -1;
-                        var act = bool ? 'addClass' : 'removeClass';
 
-                        // 操作元素添加或移除activeClass 并指定checked属性的值
-                        me[act](this.activeClass);
-                        input.prop(
-                            'checked', bool);
+                        $this[bool ? 'addClass' : 'removeClass'](me.activeClass);
+                        input.prop('checked', bool);
                     });
                 }
             }
@@ -190,70 +202,35 @@ define(function (require) {
         /**
          * 主元素被点击时的处理函数
          *
-         * @fires module:BoxGroup#click
+         * @fires module:BoxGroup#change
          * @param {Event} e 点击事件
          * @private
          */
         onClick: function (e) {
 
-            var me = this;
+            var target = $(e.currentTarget);
+            var input  = target.find('input');
 
-            var target = $(e.target);
-
-            // 这里先将input默认设定为target，后面会修正，可以减少一次DOM查找
-            var input  = target;
-
-            var tagName = target.prop('tagName');
-
-            var isRadio = (me.boxType.toLowerCase() === 'radio');
-
-
-            // 如果直接点击了input, i,那么我们需要向上选择到它的父结点label
-            if (tagName === 'INPUT' || tagName === 'I') {
-                e.preventDefault() || (e.returnValue = false);
-                // 向上选择到label一层
-                target = target.parent();
-            }
-            else {
-                // 当点击的元素是LABEL，那么要阻止默认。。。
-                // 原理: 当label包含的for属性，或者label中包含中input时，
-                // 当label被点击时，浏览器会自动触发一次input完整真实的click事件
-                // 导致我们在外层监听的click监听事件处理函数被执行两次
-                // 这里可以通过阻止默认事件，来阻止上边描述的事情
-                // 但同时也阻止了浏览器对input状态的自动维护
-                // 好在我们可以自己处理
-                e.preventDefault() || (e.returnValue = false);
-                input = target.find('input');
-            }
+            var isRadio = (this.boxType.toLowerCase() === 'radio');
 
             // 复选点击同一个则反选,单选同一个则忽略
-
-            //  单选同一个忽略
             if (isRadio && input.prop('checked')) {
                 return;
             }
 
             // 此时点击的是未选中的单选或者复选框 所以则反选
+            var activeClass = this.activeClass;
+            var checkedItems = $(this.main).find('.' + activeClass);
 
-            var activeClass = me.activeClass;
-            var checkedItems = $(me.main).find('.' + activeClass);
-
+            // 单选保证选项中只有一个选项被选中
             if (isRadio && checkedItems) {
-
-                // 单选保证选项中只有一个选项被选中
                 checkedItems.removeClass(activeClass).find('input').prop('checked', false);
-
             }
 
-            target
-                .toggleClass(activeClass)
-                .find('input')
-                .prop('checked', !target.hasClass(activeClass));
+            target.toggleClass(activeClass);
+            input.prop('checked', !target.hasClass(activeClass));
 
-            this.fire('change', {
-                target: this
-            });
-
+            this.fire('change');
         },
 
         /**
@@ -277,11 +254,11 @@ define(function (require) {
             var uncheckedIcon = icons.unchecked || '';
 
             return ''
-                + '<label class="' + classNames.join(' ') + '">'
+                + '<label class="' + classNames.join(' ') + '" data-role="boxgroup-item">'
                 +     checkedIcon
                 +     uncheckedIcon
                 +     '<input type="' + this.boxType + '" value="' + item.value + '">'
-                +      item.name
+                +     item.name
                 + '</label>';
 
         },
@@ -293,10 +270,13 @@ define(function (require) {
          * @public
          */
         getValue: function () {
-            return $('.' + this.activeClass + ' input', this.main)
+            var value = [];
+            $('.' + this.activeClass + ' input', this.main)
                 .map(function () {
-                    return this.value;
+                    value.push($(this).val());
                 });
+
+            return value;
         },
 
         /**
@@ -308,10 +288,9 @@ define(function (require) {
          */
         setValue: function (value) {
 
-            this.value = null;
+            this.set('value', value);
 
-            return this.set('value', value);
-
+            return this;
         },
 
         /**
@@ -320,8 +299,10 @@ define(function (require) {
          * @override
          */
         dispose: function () {
-            this.undelegate(this.main, 'click', 'label', this.onClick);
-            Control.prototype.dispose.apply(this, arguments);
+
+            this.undelegate(this.main, 'click', this.itemSelector, this.onClick);
+
+            this.$parent();
         }
     });
 
