@@ -21,7 +21,7 @@ define(function (require) {
         },
 
         message: {
-            invalid: '!{title}不能超过!{maxLength}'
+            invalid: '!{title}长度不能超过!{maxLength}'
         }
 
     });

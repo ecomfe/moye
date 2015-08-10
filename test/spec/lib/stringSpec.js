@@ -56,7 +56,11 @@ define(function (require) {
 
             expect(lib.format(template, data)).toBe('0,,,1,a,1,2,[object Object]');
 
-            expect(lib.format('!{a},@{a},#{a},${a},%{a}', data)).toBe('0,,,,');
+            expect(lib.format('!{a},${a},%{a}', data)).toBe('0,0,%{a}');
+
+            expect(lib.format('${a},${b},${d}', function (attrName) {
+                return data[attrName];
+            })).toBe('0,,1');
         });
 
     });

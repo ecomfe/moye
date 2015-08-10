@@ -175,8 +175,14 @@ define(function (require) {
             }
 
             var template = lib.isString(message) ? message : message[state];
+            var me = this;
+            var dataGetter = function (attrName) {
+                var value = me[attrName];
+                (value == null) && (value = control[attrName]);
+                return value;
+            };
             return template
-                ? lib.format(template, control, this)
+                ? lib.format(template, dataGetter)
                 : '';
         },
 
