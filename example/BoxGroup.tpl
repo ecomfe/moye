@@ -48,12 +48,12 @@ require(['ui/BoxGroup'], function (BoxGroup) {
 
 
 ```html
-<div class="content">复选框1：<div id="checkbox2"></div></div>
+<div class="content">复选框2：<div id="checkbox2"></div></div>
 ```
 
 ```js
 require(['ui/BoxGroup'], function (BoxGroup) {
-  new BoxGroup({
+  var initValue = new BoxGroup({
     main: document.getElementById('checkbox2'),
     datasource: [
       {value: 0, name: '不限'},
@@ -62,13 +62,19 @@ require(['ui/BoxGroup'], function (BoxGroup) {
       {value: 3, name: '北京南站商圈超长'}
     ],
     value: [1, 2]
-  }).render();
+  })
+  .render()
+  .on('change', function (e) {
+    console.log(this.getValue());
+  }).getValue();
+
+  console.log(initValue);
 });
 ```
-<div class="content">复选框1：<div id="checkbox2"></div></div>
+<div class="content">复选框2：<div id="checkbox2"></div></div>
 <script>
 require(['ui/BoxGroup'], function (BoxGroup) {
-  new BoxGroup({
+  var initValue = new BoxGroup({
     main: document.getElementById('checkbox2'),
     datasource: [
       {value: 0, name: '不限'},
@@ -77,7 +83,13 @@ require(['ui/BoxGroup'], function (BoxGroup) {
       {value: 3, name: '北京南站商圈超长'}
     ],
     value: [1, 2]
-  }).render();
+  })
+  .render()
+  .on('change', function (e) {
+    console.log(this.getValue());
+  }).getValue();
+
+  console.log(initValue);
 });
 </script>
 
@@ -128,22 +140,7 @@ require(['ui/BoxGroup'], function (BoxGroup) {
 
 ```js
 require(['ui/BoxGroup'], function (BoxGroup) {
-  new BoxGroup({
-    main: document.getElementById('radio2'),
-    datasource: [
-      {value: 0, name: '不限'},
-      {value: 1, name: '中关村-上地'},
-      {value: 2, name: '亚运村'},
-      {value: 3, name: '北京南站商圈超长'}
-    ],
-    value: [1]
-  }).render();
-});
-```
-<div class="content">单选框2：<div id="radio2"></div></div>
-<script>
-require(['ui/BoxGroup'], function (BoxGroup) {
-  new BoxGroup({
+  var initValue = new BoxGroup({
     main: document.getElementById('radio2'),
     boxType: 'radio',
     datasource: [
@@ -152,8 +149,38 @@ require(['ui/BoxGroup'], function (BoxGroup) {
       {value: 2, name: '亚运村'},
       {value: 3, name: '北京南站商圈超长'}
     ],
-    value: [1]
-  }).render();
+    value: [0]
+  })
+  .render()
+  .setValue([2])
+  .on('change', function (e) {
+    console.log(this.getValue());
+  }).getValue();
+
+  console.log(initValue);;
+});
+```
+<div class="content">单选框2：<div id="radio2"></div></div>
+<script>
+require(['ui/BoxGroup'], function (BoxGroup) {
+  var initValue = new BoxGroup({
+    main: document.getElementById('radio2'),
+    boxType: 'radio',
+    datasource: [
+      {value: 0, name: '不限'},
+      {value: 1, name: '中关村-上地'},
+      {value: 2, name: '亚运村'},
+      {value: 3, name: '北京南站商圈超长'}
+    ],
+    value: [0]
+  })
+  .render()
+  .setValue([2])
+  .on('change', function (e) {
+    console.log(this.getValue());
+  }).getValue();
+
+  console.log(initValue);;
 });
 </script>
 
