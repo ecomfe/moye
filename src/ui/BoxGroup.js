@@ -82,6 +82,10 @@ define(function (require) {
             // 被选中时的样式
             activeClass: 'ui-boxgroup-item-checked',
 
+            // 触发事件的选择器
+            itemSelector: '[data-role=boxgroup-item]',
+
+            // 选中/未选中图标的内容
             icons: {},
 
             // 数据源
@@ -102,6 +106,11 @@ define(function (require) {
             this.$parent(options);
             this.icons = this.getIcons(this.icons);
             this.onClick = lib.throttle.call(this, this.onClick, 50);
+
+            // 将为数字的value值都向为字符串转化
+            lib.each(this.value, function (value, index) {
+                this.value[index] = value + '';
+            }, this);
         },
 
         /**
@@ -128,7 +137,7 @@ define(function (require) {
          * @override
          */
         initEvents: function () {
-            this.delegate(this.main, 'click', '[data-role=boxgroup-item]', this.onClick);
+            this.delegate(this.main, 'click', this.itemSelector, this.onClick);
         },
 
         initStructure: function () {
@@ -153,10 +162,9 @@ define(function (require) {
                     var html = [];
                     for (var i = 0, len = datasource.length; i < len; i++) {
                         var item = datasource[i];
+                        item.value += '';
                         var state = $.inArray(item.value, this.value) > -1;
-                        html[i] = $(this.getItemHTML(state, item))
-                            .attr('data-role', 'boxgroup-item')
-                            .prop('outerHTML');
+                        html[i] = this.getItemHTML(state, item);
                     }
 
                     main.html(html.join(''));
@@ -170,19 +178,21 @@ define(function (require) {
                     if (this.helper.isInStage('INITED') && main.data('dom-inited')) {
                         return;
                     }
+                    lib.each(value, function (val, i) {
+                        value[i] = val + '';
+                    });
                     value = this.value = value || [];
                     if (this.boxType.toLowerCase() === 'radio') {
                         value.length = 1;
                     }
-                    $('[data-role=boxgroup-item]', main).each(function () {
-                        var me = $(this);
-                        var input = me.find('input');
-                        var inputValue = +input.prop('value');
+                    var me = this;
+                    $(this.itemSelector, main).each(function () {
+                        var $this = $(this);
+                        var input = $this.find('input');
+                        var inputValue = input.prop('value');
                         var bool = $.inArray(inputValue, value) > -1;
-                        var act = bool ? 'addClass' : 'removeClass';
 
-                        // 操作元素添加或移除activeClass 并指定checked属性的值
-                        me[act](this.activeClass);
+                        $this[bool ? 'addClass' : 'removeClass'](me.activeClass);
                         input.prop('checked', bool);
                     });
                 }
@@ -244,7 +254,7 @@ define(function (require) {
             var uncheckedIcon = icons.unchecked || '';
 
             return ''
-                + '<label class="' + classNames.join(' ') + '">'
+                + '<label class="' + classNames.join(' ') + '" data-role="boxgroup-item">'
                 +     checkedIcon
                 +     uncheckedIcon
                 +     '<input type="' + this.boxType + '" value="' + item.value + '">'
@@ -260,10 +270,13 @@ define(function (require) {
          * @public
          */
         getValue: function () {
-            return $('.' + this.activeClass + ' input', this.main)
+            var value = [];
+            $('.' + this.activeClass + ' input', this.main)
                 .map(function () {
-                    return this.value;
+                    value.push($(this).val());
                 });
+
+            return value;
         },
 
         /**
@@ -275,10 +288,9 @@ define(function (require) {
          */
         setValue: function (value) {
 
-            this.value = null;
+            this.set('value', value);
 
-            return this.set('value', value);
-
+            return this;
         },
 
         /**
@@ -288,7 +300,7 @@ define(function (require) {
          */
         dispose: function () {
 
-            this.undelegate(this.main, 'click', '[data-role=boxgroup-item]', this.onClick);
+            this.undelegate(this.main, 'click', this.itemSelector, this.onClick);
 
             this.$parent();
         }
