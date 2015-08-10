@@ -137,7 +137,7 @@ ctrlId: {
         {
             type: 'minlength',
             minLength: 5,
-            message: '!{title}长度不能小于@{minLength}' // !开头变量从控件读取，@开头变量从规则对象读取
+            message: '!{title}长度不能小于!{minLength}'
         },
         {
             type: 'maxlength',
