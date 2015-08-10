@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: TextBox.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: TextBox.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * Moye (Zhixin UI)
+ * Copyright 2014 Baidu Inc. All rights reserved.
+ *
+ * @file 文本输入框
+ * @author leon (ludafa@outlook.com)
+ */
+
+define(function (require) {
+
+    var $       = require('jquery');
+    var Control = require('./Control');
+    var painter = require('./painter');
+    var lib     = require('./lib');
+
+    /**
+     * 文本输入框组件
+     *
+     * @extends module:Control
+     * @requires lib
+     * @requires Control
+     * @requires painter
+     * @exports TextBox
+     */
+    var TextBox = Control.extend(/** @lends module:TextBox.prototype */{
+        /**
+         * 控件类型标识
+         *
+         * @type {string}
+         * @private
+         */
+        type: 'TextBox',
+        /**
+         * 控件配置项
+         *
+         * @name module:TextBox#options
+         * @type {Object}
+         * @private
+         */
+        options: {
+        },
+
+        /**
+         * 初始化参数
+         *
+         * @param {Object} options 参数
+         * @protected
+         */
+        init: function (options) {
+            this.$parent(options);
+            var input = options.input
+                ? $(options.input)
+                : $(this.main).find('input');
+            this.value = options.value || input.val();
+            this.input = input[0];
+        },
+
+        /**
+         * 初始化事件绑定
+         *
+         * @protected
+         * @return {TextBox}
+         */
+        initEvents: function () {
+            var input = this.input;
+            var dispatchEvent = this.dispatchEvent;
+
+            // 将HTMLElement事件代理到`Control`事件
+            this.delegate(input, 'blur',  dispatchEvent)
+                .delegate(input, 'focus', dispatchEvent)
+                .delegate(input, 'keyup', dispatchEvent);
+
+            if (lib.browser.ie &lt; 9) {
+                this.delegate(input, 'propertychange', dispatchEvent);
+            }
+            else {
+                this.delegate(input, 'input', dispatchEvent);
+            }
+
+            return this;
+        },
+
+        repaint: painter.createRepaint(
+            Control.prototype.repaint,
+            {
+                name: ['name'],
+                paint: function (conf, name) {
+                    this.input.name = name || '';
+                }
+            },
+            {
+                name: ['value'],
+                paint: function (conf, value) {
+                    this.setValue(value || '');
+                }
+            }
+        ),
+
+        /**
+         * HTMLElement事件处理函数
+         *
+         * @private
+         * @param {Event} e HTMLElement事件
+         */
+        dispatchEvent: function (e) {
+
+            if (this.isReadOnly()) {
+                e.preventDefault();
+                return;
+            }
+
+            var type = e.type;
+
+            if (type === 'keyup' &amp;&amp; e.keyCode === 13) {
+                type = 'enter';
+            }
+
+            if (type === 'input'
+                || type === 'propertychange' &amp;&amp; e.originalEvent.propertyName === 'value'
+            ) {
+                type = 'change';
+            }
+
+
+            var event = this.fire(type);
+
+            if (event.isDefaultPrevented()) {
+                e.preventDefault();
+            }
+
+        },
+
+        /**
+         * 返回控件值
+         *
+         * @public
+         * @return {string}
+         */
+        getValue: function () {
+            return this.input.value;
+        },
+
+        /**
+         * 设置值
+         *
+         * @param {string} value 控件值
+         * @return {Control}
+         */
+        setValue: function (value) {
+            this.input.value = value;
+            return this;
+        },
+
+        /**
+         * 禁用
+         * @return {TextBox}
+         */
+        disable: function () {
+            if (!this.hasState('disabled')) {
+                this.addState('disabled');
+                this.input.disabled = true;
+            }
+            return this;
+        },
+
+        /**
+         * 激活
+         *
+         * @return {TextBox}
+         */
+        enable: function () {
+            if (this.hasState('disabled')) {
+                this.removeState('disabled');
+                this.input.disabled = false;
+            }
+            return this;
+        },
+
+        /**
+         * 设为只读
+         *
+         * @param {boolean} readOnly 是否只读
+         */
+        setReadOnly: function (readOnly) {
+            this[readOnly ? 'addState' : 'removeState']('readonly');
+            $(this.input).attr('readonly', !!readOnly);
+        },
+
+        /**
+         * 是否为只读
+         *
+         * @return {boolean}
+         */
+        isReadOnly: function () {
+            return this.hasState('readonly');
+        }
+
+    });
+
+    return TextBox;
+
+});
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-BoxGroup.html">BoxGroup</a></li><li><a href="module-Button.html">Button</a></li><li><a href="module-ButtonCountdown.html">ButtonCountdown</a></li><li><a href="module-Calendar.html">Calendar</a></li><li><a href="module-City.html">City</a></li><li><a href="module-Context.html">Context</a></li><li><a href="module-Control.html">Control</a></li><li><a href="module-Cookie.html">Cookie</a></li><li><a href="module-Dialog.html">Dialog</a></li><li><a href="module-Form.html">Form</a></li><li><a href="module-FormFieldWatcher.html">FormFieldWatcher</a></li><li><a href="module-FormRelation.html">FormRelation</a></li><li><a href="module-FormSubmit.html">FormSubmit</a></li><li><a href="module-Helper.html">Helper</a></li><li><a href="module-Lazy.html">Lazy</a></li><li><a href="module-LazyImg.html">LazyImg</a></li><li><a href="module-Lazyload.html">Lazyload</a></li><li><a href="module-lib.html">lib</a></li><li><a href="module-log.html">log</a></li><li><a href="module-main.html">main</a></li><li><a href="module-Marquee.html">Marquee</a></li><li><a href="module-Mask.html">Mask</a></li><li><a href="module-Pager.html">Pager</a></li><li><a href="module-painter.html">painter</a></li><li><a href="module-Panel.html">Panel</a></li><li><a href="module-Plugin.html">Plugin</a></li><li><a href="module-Popup.html">Popup</a></li><li><a href="module-RangeSlider.html">RangeSlider</a></li><li><a href="module-Rating.html">Rating</a></li><li><a href="module-ScrollBar.html">ScrollBar</a></li><li><a href="module-Select.html">Select</a></li><li><a href="module-Slider.html">Slider</a></li><li><a href="module-SliderAnim.html">SliderAnim</a></li><li><a href="module-Tab.html">Tab</a></li><li><a href="module-TabBar.html">TabBar</a></li><li><a href="module-Tag.html">Tag</a></li><li><a href="module-TextBox.html">TextBox</a></li><li><a href="module-TextBoxAutoComplete.html">TextBoxAutoComplete</a></li><li><a href="module-TextBoxPlaceHolder.html">TextBoxPlaceHolder</a></li><li><a href="module-Tip.html">Tip</a></li><li><a href="module-ValidateTip.html">ValidateTip</a></li><li><a href="module-Validator.html">Validator</a></li><li><a href="module-ValidityRule.html">ValidityRule</a></li></ul><h3>Classes</h3><ul><li><a href="Validity.html">Validity</a></li><li><a href="ValidityState.html">ValidityState</a></li></ul><h3>Events</h3><ul><li><a href="module-Calendar.html#event:hide">hide</a></li><li><a href="module-Calendar.html#event:pick">pick</a></li><li><a href="module-Calendar.html#event:show">show</a></li><li><a href="module-City.html#event:beforeShow">beforeShow</a></li><li><a href="module-City.html#event:pick">pick</a></li><li><a href="module-Control.html#event:afterdispose">afterdispose</a></li><li><a href="module-Control.html#event:afterrender">afterrender</a></li><li><a href="module-Control.html#event:beforedispose">beforedispose</a></li><li><a href="module-Control.html#event:beforerender">beforerender</a></li><li><a href="module-Control.html#event:disable">disable</a></li><li><a href="module-Control.html#event:enable">enable</a></li><li><a href="module-Control.html#event:statechange">statechange</a></li><li><a href="module-Dialog.html#event:dispose">dispose</a></li><li><a href="module-Dialog.html#event:hide">hide</a></li><li><a href="module-Form.html#event:submit">submit</a></li><li><a href="module-FormFieldWatcher.html#event:fieldchange%25E5%259F%259F%25E8%25BE%2593%25E5%2585%25A5%25E5%258F%2598%25E5%258C%2596%25E4%25BA%258B%25E4%25BB%25B6">fieldchange 域输入变化事件</a></li><li><a href="module-log.html#event:click">click</a></li><li><a href="module-log.html#event:send">send</a></li><li><a href="module-log.html#event:start">start</a></li><li><a href="module-Pager.html#event:change">change</a></li><li><a href="module-Popup.html#event:beforeshow">beforeshow</a></li><li><a href="module-Popup.html#event:click">click</a></li><li><a href="module-Popup.html#event:hide">hide</a></li><li><a href="module-Popup.html#event:show">show</a></li><li><a href="module-RangeSlider.html#event:change">change</a></li><li><a href="module-RangeSlider.html#event:end%25E6%25BB%2591%25E5%258A%25A8%25E7%25BB%2593%25E6%259D%259F%25E4%25BA%258B%25E4%25BB%25B6">end 滑动结束事件</a></li><li><a href="module-RangeSlider.html#event:sliding%25E6%25BB%2591%25E5%259D%2597%25E6%25BB%2591%25E5%258A%25A8%25E4%25BA%258B%25E4%25BB%25B6">sliding 滑块滑动事件</a></li><li><a href="module-RangeSlider.html#event:start%25E6%25BB%2591%25E5%258A%25A8%25E5%25BC%2580%25E5%25A7%258B%25E4%25BA%258B%25E4%25BB%25B6">start 滑动开始事件</a></li><li><a href="module-Rating.html#event:change">change</a></li><li><a href="module-Rating.html#event:hover">hover</a></li><li><a href="module-ScrollBar.html#event:change">change</a></li><li><a href="module-Select.html#event:change">change</a></li><li><a href="module-Slider.html#event:change">change</a></li><li><a href="module-Tab.html#event:change">change</a></li><li><a href="module-TextBox.html#event:autocomplete">autocomplete</a></li><li><a href="module-TextBox.html#event:autocompletebeforeshow">autocompletebeforeshow</a></li><li><a href="module-TextBox.html#event:autocompleteclick">autocompleteclick</a></li><li><a href="module-TextBox.html#event:autocompletehide">autocompletehide</a></li><li><a href="module-TextBox.html#event:autocompletepick">autocompletepick</a></li><li><a href="module-TextBox.html#event:autocompleteshow">autocompleteshow</a></li><li><a href="module-Validator.html#event:aftervalidate%25E6%25A0%25A1%25E9%25AA%258C%25E5%25AE%258C%25E6%2588%2590%25E4%25BA%258B%25E4%25BB%25B6">aftervalidate 校验完成事件</a></li><li><a href="module-Validator.html#event:beforevalidate">beforevalidate</a></li><li><a href="module-Validator.html#event:invalid%25E6%25A0%25A1%25E9%25AA%258C%25E4%25B8%258D%25E9%2580%259A%25E8%25BF%2587%25E4%25BA%258B%25E4%25BB%25B6">invalid 校验不通过事件</a></li><li><a href="module-Validator.html#event:valid%25E6%25A0%25A1%25E9%25AA%258C%25E9%2580%259A%25E8%25BF%2587%25E4%25BA%258B%25E4%25BB%25B6">valid 校验通过事件</a></li><li><a href="module-Validator.html#event:validating%25E6%25A0%25A1%25E9%25AA%258C%25E4%25B8%25AD%25E4%25BA%258B%25E4%25BB%25B6%25EF%25BC%258C%25E9%2592%2588%25E5%25AF%25B9%25E5%25BC%2582%25E6%25AD%25A5%25E6%25A0%25A1%25E9%25AA%258C%25E6%2589%258D%25E6%259C%2589">validating 校验中事件，针对异步校验才有</a></li></ul><h3>Namespaces</h3><ul><li><a href="module-lib.browser.html">browser</a></li></ul><h3>Interfaces</h3><ul><li><a href="configurable.html">configurable</a></li><li><a href="observable.html">observable</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a> on Mon Aug 10 2015 17:04:33 GMT+0800 (CST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

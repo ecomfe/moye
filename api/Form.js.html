@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: Form.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: Form.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @file 表单控件
+ *       注意： 当前Form组件的校验能力依赖于表单域使用插件Validator
+ * @author Leon(ludafa@outlook.com)
+ * @auhtor wuhuiyao(wuhuiyao@baidu.com)
+ */
+
+define(function (require) {
+
+    var $ = require('jquery');
+    var lib = require('./lib');
+    var Panel = require('./Panel');
+
+    /**
+     * 判断给定的 DOM 元素是否是表单元素
+     *
+     * @inner
+     * @param {HTMLElement} elem 要判断的 DOM 元素
+     * @return {boolean}
+     */
+    function isFormElement(elem) {
+        return 'FORM' === elem.tagName;
+    }
+
+    /**
+     * 提交表单
+     *
+     * @inner
+     * @fires module:Form#submit
+     * @param {Form} form 表单控件实例
+     */
+    function submit(form) {
+        var event = new $.Event('submit');
+
+        /**
+         * @event module:Form#submit
+         * @param {Object} e 事件对象参数
+         */
+        form.fire(event);
+
+        if (!event.isDefaultPrevented()) {
+            form.main.submit();
+        }
+    }
+
+    /**
+     * 表单控件
+     *
+     * @extends module:Panel
+     * @exports Form
+     */
+    var Form = Panel.extend(/** @lends module:Form.prototype */{
+
+        /**
+         * 控件类型
+         *
+         * @readonly
+         * @type {string}
+         */
+        type: 'Form',
+
+        /**
+         * 控件默认选项配置
+         *
+         * @property {Object} options 控件选项配置
+         * @property {string} options.action 表单提交的 action
+         * @property {string} options.method 表单提交的 method
+         * @property {string} options.target 表单提交的 target
+         */
+        options: {
+            action: '',
+            method: 'GET',
+            target: '_self'
+        },
+
+        /**
+         * 创建主元素
+         *
+         * @override
+         */
+        createMain: function () {
+            return document.createElement('form');
+        },
+
+        /**
+         * 初始化表单控件的配置
+         *
+         * @override
+         */
+        init: function (options) {
+            this.$parent(options);
+            this.action = this.action || this.main.action;
+            this.target = this.target || this.main.target;
+        },
+
+        /**
+         * 初始化表单控件的 DOM 结构
+         *
+         * @override
+         */
+        initStructure: function () {
+            var main = this.main;
+            if (isFormElement(main)) {
+                main.method = this.method || main.method;
+            }
+        },
+
+        /**
+         * 初始化表单控件的事件绑定
+         *
+         * @override
+         */
+        initEvents: function () {
+            if (isFormElement(this.main)) {
+                this.delegate(this.main, 'submit', this.onSubmit);
+            }
+        },
+
+        /**
+         * 重绘表单控件
+         *
+         * @override
+         */
+        repaint: require('./painter').createRepaint(
+            Panel.prototype.repaint,
+            {
+                name: 'action',
+                paint: function (conf, action) {
+                    this.main.action = action;
+                }
+            },
+            {
+                name: 'target',
+                paint: function (conf, target) {
+                    this.main.target = target || '';
+                }
+            }
+        ),
+
+        /**
+         * 表单提交时的处理函数
+         *
+         * @private
+         * @fires module:Form#submit
+         * @param {Event} e 提交事件
+         */
+        onSubmit: function (e) {
+            e.preventDefault();
+            this.submit();
+        },
+
+        /**
+         * 提交表单，提交前会自动校验表单有效性，验证通过，才会真正触发提交事件
+         *
+         * @public
+         * @return {Form}
+         */
+        submit: function () {
+            var me = this;
+
+            if (!isFormElement(me.main)) {
+                return;
+            }
+
+            var isValid = me.validate();
+            if (lib.isPromise(isValid)) {
+                isValid.then(function (result) {
+                    result &amp;&amp; submit(me);
+                });
+            }
+            else if (isValid) {
+                submit(me);
+            }
+
+            return this;
+        },
+
+        /**
+         * 获取表单中的InputControl的数据，形成以 `name` 为键，`value` 为值的对象
+         * 如果有同 `name` 的多个控件，则值为数组
+         *
+         * @return {Object}
+         */
+        getData: function () {
+            var controls = this.getInputControls();
+
+            // 这里支持一下原生dom的值
+            var data = {};
+
+            lib.each(controls, function (control) {
+
+                // 被禁用的控件不能作为表单数据, 跳过之
+                if (control.isDisabled()) {
+                    return;
+                }
+
+                // TODO 这里还有些规范约定，不能提交数据，比如未选中的checkbox, select等
+
+                var name = control.name;
+                var value = control.getValue();
+
+                // 这里处理多个InputControl共用一个name的情况
+                // 按原生Form的处理规则, 将它们合并为一个数组
+                if (data.hasOwnProperty(name)) {
+                    data[name] = [].concat(data[name], value);
+                }
+                else {
+                    data[name] = value;
+                }
+            });
+
+            return data;
+        },
+
+        /**
+         * 获取表单中的 `输入控件`
+         *
+         * @return {Array.&lt;Control>}
+         */
+        getInputControls: function () {
+            var controls = [];
+            var context = this.context;
+
+            var children = this.children || [];
+            $.each(children, function (idx, control) {
+                if (
+                    // 是一个控件
+                    control
+                    // 必须有属性name
+                    &amp;&amp; control.name
+                    // 是一个输入控件 TODO: 对于输入控件行为约束规范，需要在开发文档明确，
+                    // 保证所有输入控件都按照这里判断标准实现
+                    &amp;&amp; lib.isFunction(control.getValue)
+                    // 与form在同一上下文中
+                    &amp;&amp; control.context === context
+                ) {
+                    controls.push(control);
+                }
+                // TODO 考虑有些组件是容器组件比如Panel，可能需要递归遍历
+            });
+
+            return controls;
+        },
+
+        /**
+         * 验证表单
+         *
+         * @private
+         * @param {string} checker 输入控件校验方法名
+         * @return {boolean|Promise}
+         */
+        check: function (checker) {
+            var defer = false;
+            var valid = true;
+            var states = [];
+            var inputs = inputs = this.getInputControls();
+
+            // 考虑到有些输入控件校验返回是异步对象，有些不是，这里先收集所有输入控件的校验状态
+            // 只要存在一个异步对象，则返回promise
+            for (var i = 0, len = inputs.length; i &lt; len; i++) {
+
+                // 如果找不到校验方法，默认认为校验通过
+                var checkFunc = inputs[i][checker];
+                var state = checkFunc ? checkFunc() : true;
+                states[i] = state;
+
+                if (valid &amp;&amp; !state) {
+                    valid = false;
+                }
+                else if (!defer) {
+                    defer = lib.isPromise(state);
+                }
+            }
+
+            if (defer) {
+                return $.when.apply(null, states).then(function () {
+                    for (var i = arguments.length - 1; i >= 0; i--) {
+                        if (!arguments[i]) {
+                            return false;
+                        }
+                    }
+                    return true;
+                });
+            }
+
+            return valid;
+        },
+
+        /**
+         * 校验表单输入值有效性
+         *
+         * @return {boolean|Promise}
+         */
+        validate: function () {
+            return this.check('validate');
+        },
+
+        /**
+         * 校验表单输入值有效性，该方法跟 `validate` 区别，该方法调用输入
+         * 控件的 `checkValidity` 方法，输入控件不抛出校验相关的事件。
+         *
+         * @return {boolean|Promise}
+         */
+        checkValidity: function () {
+            return this.check('checkValidity');
+        },
+
+        /**
+         * 销毁表单控件实例
+         *
+         * @override
+         */
+        dispose: function () {
+            if (isFormElement(this.main)) {
+                this.undelegate(this.main, 'submit', this.onSubmit);
+            }
+
+            this.$parent();
+        }
+
+    });
+
+    return Form;
+});
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-BoxGroup.html">BoxGroup</a></li><li><a href="module-Button.html">Button</a></li><li><a href="module-ButtonCountdown.html">ButtonCountdown</a></li><li><a href="module-Calendar.html">Calendar</a></li><li><a href="module-City.html">City</a></li><li><a href="module-Context.html">Context</a></li><li><a href="module-Control.html">Control</a></li><li><a href="module-Cookie.html">Cookie</a></li><li><a href="module-Dialog.html">Dialog</a></li><li><a href="module-Form.html">Form</a></li><li><a href="module-FormFieldWatcher.html">FormFieldWatcher</a></li><li><a href="module-FormRelation.html">FormRelation</a></li><li><a href="module-FormSubmit.html">FormSubmit</a></li><li><a href="module-Helper.html">Helper</a></li><li><a href="module-Lazy.html">Lazy</a></li><li><a href="module-LazyImg.html">LazyImg</a></li><li><a href="module-Lazyload.html">Lazyload</a></li><li><a href="module-lib.html">lib</a></li><li><a href="module-log.html">log</a></li><li><a href="module-main.html">main</a></li><li><a href="module-Marquee.html">Marquee</a></li><li><a href="module-Mask.html">Mask</a></li><li><a href="module-Pager.html">Pager</a></li><li><a href="module-painter.html">painter</a></li><li><a href="module-Panel.html">Panel</a></li><li><a href="module-Plugin.html">Plugin</a></li><li><a href="module-Popup.html">Popup</a></li><li><a href="module-RangeSlider.html">RangeSlider</a></li><li><a href="module-Rating.html">Rating</a></li><li><a href="module-ScrollBar.html">ScrollBar</a></li><li><a href="module-Select.html">Select</a></li><li><a href="module-Slider.html">Slider</a></li><li><a href="module-SliderAnim.html">SliderAnim</a></li><li><a href="module-Tab.html">Tab</a></li><li><a href="module-TabBar.html">TabBar</a></li><li><a href="module-Tag.html">Tag</a></li><li><a href="module-TextBox.html">TextBox</a></li><li><a href="module-TextBoxAutoComplete.html">TextBoxAutoComplete</a></li><li><a href="module-TextBoxPlaceHolder.html">TextBoxPlaceHolder</a></li><li><a href="module-Tip.html">Tip</a></li><li><a href="module-ValidateTip.html">ValidateTip</a></li><li><a href="module-Validator.html">Validator</a></li><li><a href="module-ValidityRule.html">ValidityRule</a></li></ul><h3>Classes</h3><ul><li><a href="Validity.html">Validity</a></li><li><a href="ValidityState.html">ValidityState</a></li></ul><h3>Events</h3><ul><li><a href="module-Calendar.html#event:hide">hide</a></li><li><a href="module-Calendar.html#event:pick">pick</a></li><li><a href="module-Calendar.html#event:show">show</a></li><li><a href="module-City.html#event:beforeShow">beforeShow</a></li><li><a href="module-City.html#event:pick">pick</a></li><li><a href="module-Control.html#event:afterdispose">afterdispose</a></li><li><a href="module-Control.html#event:afterrender">afterrender</a></li><li><a href="module-Control.html#event:beforedispose">beforedispose</a></li><li><a href="module-Control.html#event:beforerender">beforerender</a></li><li><a href="module-Control.html#event:disable">disable</a></li><li><a href="module-Control.html#event:enable">enable</a></li><li><a href="module-Control.html#event:statechange">statechange</a></li><li><a href="module-Dialog.html#event:dispose">dispose</a></li><li><a href="module-Dialog.html#event:hide">hide</a></li><li><a href="module-Form.html#event:submit">submit</a></li><li><a href="module-FormFieldWatcher.html#event:fieldchange%25E5%259F%259F%25E8%25BE%2593%25E5%2585%25A5%25E5%258F%2598%25E5%258C%2596%25E4%25BA%258B%25E4%25BB%25B6">fieldchange 域输入变化事件</a></li><li><a href="module-log.html#event:click">click</a></li><li><a href="module-log.html#event:send">send</a></li><li><a href="module-log.html#event:start">start</a></li><li><a href="module-Pager.html#event:change">change</a></li><li><a href="module-Popup.html#event:beforeshow">beforeshow</a></li><li><a href="module-Popup.html#event:click">click</a></li><li><a href="module-Popup.html#event:hide">hide</a></li><li><a href="module-Popup.html#event:show">show</a></li><li><a href="module-RangeSlider.html#event:change">change</a></li><li><a href="module-RangeSlider.html#event:end%25E6%25BB%2591%25E5%258A%25A8%25E7%25BB%2593%25E6%259D%259F%25E4%25BA%258B%25E4%25BB%25B6">end 滑动结束事件</a></li><li><a href="module-RangeSlider.html#event:sliding%25E6%25BB%2591%25E5%259D%2597%25E6%25BB%2591%25E5%258A%25A8%25E4%25BA%258B%25E4%25BB%25B6">sliding 滑块滑动事件</a></li><li><a href="module-RangeSlider.html#event:start%25E6%25BB%2591%25E5%258A%25A8%25E5%25BC%2580%25E5%25A7%258B%25E4%25BA%258B%25E4%25BB%25B6">start 滑动开始事件</a></li><li><a href="module-Rating.html#event:change">change</a></li><li><a href="module-Rating.html#event:hover">hover</a></li><li><a href="module-ScrollBar.html#event:change">change</a></li><li><a href="module-Select.html#event:change">change</a></li><li><a href="module-Slider.html#event:change">change</a></li><li><a href="module-Tab.html#event:change">change</a></li><li><a href="module-TextBox.html#event:autocomplete">autocomplete</a></li><li><a href="module-TextBox.html#event:autocompletebeforeshow">autocompletebeforeshow</a></li><li><a href="module-TextBox.html#event:autocompleteclick">autocompleteclick</a></li><li><a href="module-TextBox.html#event:autocompletehide">autocompletehide</a></li><li><a href="module-TextBox.html#event:autocompletepick">autocompletepick</a></li><li><a href="module-TextBox.html#event:autocompleteshow">autocompleteshow</a></li><li><a href="module-Validator.html#event:aftervalidate%25E6%25A0%25A1%25E9%25AA%258C%25E5%25AE%258C%25E6%2588%2590%25E4%25BA%258B%25E4%25BB%25B6">aftervalidate 校验完成事件</a></li><li><a href="module-Validator.html#event:beforevalidate">beforevalidate</a></li><li><a href="module-Validator.html#event:invalid%25E6%25A0%25A1%25E9%25AA%258C%25E4%25B8%258D%25E9%2580%259A%25E8%25BF%2587%25E4%25BA%258B%25E4%25BB%25B6">invalid 校验不通过事件</a></li><li><a href="module-Validator.html#event:valid%25E6%25A0%25A1%25E9%25AA%258C%25E9%2580%259A%25E8%25BF%2587%25E4%25BA%258B%25E4%25BB%25B6">valid 校验通过事件</a></li><li><a href="module-Validator.html#event:validating%25E6%25A0%25A1%25E9%25AA%258C%25E4%25B8%25AD%25E4%25BA%258B%25E4%25BB%25B6%25EF%25BC%258C%25E9%2592%2588%25E5%25AF%25B9%25E5%25BC%2582%25E6%25AD%25A5%25E6%25A0%25A1%25E9%25AA%258C%25E6%2589%258D%25E6%259C%2589">validating 校验中事件，针对异步校验才有</a></li></ul><h3>Namespaces</h3><ul><li><a href="module-lib.browser.html">browser</a></li></ul><h3>Interfaces</h3><ul><li><a href="configurable.html">configurable</a></li><li><a href="observable.html">observable</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a> on Mon Aug 10 2015 16:39:52 GMT+0800 (CST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

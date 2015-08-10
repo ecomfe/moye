@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: helper/dom.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: helper/dom.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @copyright 2014 Baidu Inc. All rights reserved.
+ *
+ * @file 辅助类 DOM相关
+ * @author Leon(ludafa@outlook.com)
+ */
+
+define(function (require) {
+
+    var $ = require('jquery');
+    var lib = require('../lib');
+    var main = require('../main');
+
+    /**
+     * 将参数用`-`连接成字符串
+     *
+     * @param {...string} args 需要连接的串
+     * @return {string}
+     * @inner
+     */
+    function joinByStrike() {
+        return lib.slice(arguments).join('-');
+    }
+
+    // 自闭合的标签列表
+    var SELF_CLOSING_TAGS = {
+        area: true, base: true, br: true, col: true,
+        embed: true, hr: true, img: true, input: true,
+        keygen: true, link: true, meta: true, param: true,
+        source: true, track: true, wbr: true, command: true
+    };
+
+    return {
+
+        /**
+         * 获取控件部件相关的class数组
+         *
+         * esui简化版本
+         *
+         * 如果不传递`part`参数，则生成如下：
+         *
+         * - `ui-{type}`
+         * - `skin-{skin}`
+         * - `skin-{skin}-{type}`
+         *
+         * 如果有`part`参数，则生成如下：
+         *
+         * - `ui-{type}-{part}`
+         * - `skin-{skin}-{type}-{part}`
+         *
+         * @method module:Helper#getPartClasses
+         * @param {?string} part 部件名称
+         * @return {string[]}
+         */
+        getPartClasses: function (part) {
+
+            var control    = this.control;
+            var type       = control.type.toLowerCase();
+            var skin       = control.skin;
+            var prefix     = main.getConfig('uiClassPrefix');
+            var skinPrefix = main.getConfig('skinClassPrefix');
+            var classes    = [];
+
+            if (part) {
+                classes.push(joinByStrike(prefix, type, part));
+                if (skin) {
+                    for (var i = 0, len = skin.length; i &lt; len; i++) {
+                        skin[i] &amp;&amp; classes.push(
+                            joinByStrike(skinPrefix, skin[i], type, part)
+                        );
+                    }
+                }
+            }
+            else {
+                classes.push(joinByStrike(prefix, type));
+                if (skin) {
+                    for (i = 0, len = skin.length; i &lt; len; i++) {
+                        skin[i] &amp;&amp; classes.push(
+                            joinByStrike(skinPrefix, skin[i]),
+                            joinByStrike(skinPrefix, skin[i], type)
+                        );
+                    }
+                }
+            }
+
+            return classes;
+        },
+
+        /**
+         * 获取控件部件相关的class字符串
+         *
+         * @method module:Helper#getPartClassName
+         * @param  {string}  part 部件名称
+         * @return {string}
+         */
+        getPartClassName: function (part) {
+            return this.getPartClasses(part).join(' ');
+        },
+
+        /**
+         * 获取控件部件相关的主class字符串
+         *
+         * 如果不传递`part`参数，则生成如下：
+         *
+         * - `ui-{styleType}`
+         *
+         * 如果有`part`参数，则生成如下：
+         *
+         * - `ui-{styleType}-{part}`
+         *
+         * @method module:Helper#getPrimaryClassName
+         * @param {string} part 部件名称
+         * @return {string}
+         */
+        getPrimaryClassName: function (part) {
+            var type = this.control.type.toLowerCase();
+            return part
+                ? joinByStrike(main.getConfig('uiClassPrefix'), type, part)
+                : joinByStrike(main.getConfig('uiClassPrefix'), type);
+        },
+
+        /**
+         * 添加控件部件相关的class，具体可参考{@link lib#getPartClasses}方法
+         *
+         * @method module:Helper#addPartClasses
+         * @param {string} part 部件名称
+         * @param {(Element | string)} element 部件元素或部件名称，默认为主元素
+         */
+        addPartClasses: function (part, element) {
+
+            if (typeof element === 'string') {
+                element = this.getPart(element);
+            }
+
+            element = element || this.control.main;
+
+            if (!element) {
+                return;
+            }
+
+            var classes = this.getPartClassName(part);
+
+            $(element).addClass(classes);
+
+        },
+
+        /**
+         * 移除控件部件相关的class，具体可参考{@link lib#getPartClasses}方法
+         *
+         * @method module:Helper#removePartClasses
+         * @param {string} part 部件名称
+         * @param {(Element | string)} element 部件元素或部件名称，默认为主元素
+         */
+        removePartClasses: function (part, element) {
+
+            if (typeof element === 'string') {
+                element = this.getPart(element);
+            }
+
+            element = element || this.control.main;
+
+            if (!element) {
+                return;
+            }
+
+            var classes = this.getPartClassName(part);
+
+            $(element).removeClass(classes);
+
+        },
+
+
+        /**
+         * 获取控件状态相关的class数组
+         *
+         * 生成如下：
+         *
+         * - `ui-{type}-{state}`
+         * - `state-{state}`
+         * - `skin-{skin}-{state}`
+         * - `skin-{skin}-{type}-{state}`
+         *
+         * @method module:Helper#getStateClasses
+         * @param {string} state 状态名称
+         * @return {string[]}
+         */
+        getStateClasses: function (state) {
+            var type = this.control.type.toLowerCase();
+            var classes = [
+                joinByStrike(main.getConfig('uiClassPrefix'), type, state),
+                joinByStrike(main.getConfig('stateClassPrefix'), state)
+            ];
+
+            var skin = this.control.skin;
+            if (skin) {
+                var skinPrefix = main.getConfig('skinClassPrefix');
+                for (var i = 0, len = skin.length; i &lt; len; i++) {
+                    skin[i] &amp;&amp; classes.push(
+                        joinByStrike(skinPrefix, skin[i], state),
+                        joinByStrike(skinPrefix, skin[i], type, state)
+                    );
+                }
+
+            }
+            return classes;
+        },
+
+        /**
+         * 获取控件的状态样式字符串，具体可参考{@link lib#getStateClasses}方法
+         *
+         * @method module:Helper#getStateClassName
+         * @param {string} part 部件名称
+         * @return {string}
+         */
+        getStateClassName: function (part) {
+            return this.getStateClasses(part).join(' ');
+        },
+
+        /**
+         * 添加控件状态相关的class，具体可参考{@link lib#getStateClasses}方法
+         *
+         * @method module:Helper#addStateClasses
+         * @param {string} state 状态名称
+         */
+        addStateClasses: function (state) {
+            var element = this.control.main;
+            if (!element) {
+                return;
+            }
+            var classes = this.getStateClassName(state);
+            $(element).addClass(classes);
+        },
+
+        /**
+         * 移除控件状态相关的class，具体可参考{@link lib#getStateClasses}方法
+         *
+         * @method module:Helper#removeStateClasses
+         * @param {string} state 状态名称
+         */
+        removeStateClasses: function (state) {
+            var element = this.control.main;
+            if (!element) {
+                return;
+            }
+
+            var classes = this.getStateClassName(state);
+            $(element).removeClass(classes);
+        },
+
+        /**
+         * 获取指定部件的DOM元素
+         *
+         * @method module:Helper#getPart
+         * @param {string} part 部件名称
+         * @return {Element}
+         */
+        getPart: function (part) {
+            return lib.g(this.getPartId(part));
+        },
+
+        /**
+         * 获取用于控件DOM元素的id
+         *
+         * 控件ID: ctrl-{type}-{id}
+         * 控件部件ID: ctrl-{type}-{id}-{part}
+         *
+         * @method module:Helper#getPartId
+         * @param {string} part 部件名称，如不提供则生成控件主元素的id
+         * @return {string}
+         */
+        getPartId: function (part) {
+            var control = this.control;
+
+            return ''
+                + 'ctrl-' + control.type.toLowerCase()
+                + '-' + control.id
+                + (part ? '-' + part : '');
+        },
+
+        /**
+         * 获取部件的起始标签
+         *
+         * @method module:Helper#getPartBeginTag
+         * @param {string} part 部件名称
+         * @param {string} nodeName 部件使用的元素类型
+         * @param {Object} attributes 属性值们
+         * @return {string}
+         */
+        getPartBeginTag: function (part, nodeName, attributes) {
+
+            attributes = attributes
+                ? lib
+                    .map(attributes, function (value, name) {
+                        return name + '="' + value + '"';
+                    })
+                    .join(' ')
+                : '';
+
+            var html = ''
+                + '&lt;' + nodeName + ' '
+                // 这个用于直接取部件
+                +     'id="' + this.getPartId(part) + '" '
+                // 这里用于做部件辨识
+                +     'data-part="' + part + '"'
+                // 这个当然就是做样式啦
+                +     'class="' + this.getPartClassName(part) + '"'
+                // 附加属性
+                +     attributes
+                // 如果是自闭合标签, 那么这里不添加开始标签结束符
+                +  (SELF_CLOSING_TAGS.hasOwnProperty(nodeName) ? '' : '>');
+
+            return html;
+        },
+
+        /**
+         * 获取部件的结束标签
+         *
+         * @method module:Helper#getPartEndTag
+         * @param {string} part 部件名称
+         * @param {string} nodeName 部件使用的元素类型
+         * @return {string}
+         */
+        getPartEndTag: function (part, nodeName) {
+            var html = SELF_CLOSING_TAGS.hasOwnProperty(nodeName)
+                ? ' />'
+                : '&lt;/' + nodeName + '>';
+            return html;
+        },
+
+        /**
+         * 获取部件的HTML模板
+         *
+         * @method module:Helper#getPartHTML
+         * @param {string} part 部件名称
+         * @param {string} nodeName 部件使用的元素类型
+         * @param {string} content innerHTML
+         * @param {Object} attributes 属性值们
+         * @return {string}
+         */
+        getPartHTML: function (part, nodeName, content, attributes) {
+            nodeName = nodeName || 'div';
+            return this.getPartBeginTag(part, nodeName, attributes)
+                + (content || '')
+                + this.getPartEndTag(part, nodeName);
+        },
+
+        /**
+         * 创建一个部件元素
+         *
+         * @method module:Helper#createPart
+         * @param {string} part 部件名称
+         * @param {string=} nodeName 使用的元素类型
+         * @param {string=} content innerHTML
+         * @param {Object=} attributes 属性值们
+         * @return {Element}
+         */
+        createPart: function (part, nodeName, content, attributes) {
+            return $('&lt;' + (nodeName || 'div') + '>')
+                .attr(attributes || {})
+                .attr('id', this.getPartId(part))
+                .data('part', part)
+                .addClass(this.getPartClassName(part))
+                .html(content || '')
+                .get(0);
+        }
+
+    };
+});
+
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-BoxGroup.html">BoxGroup</a></li><li><a href="module-Button.html">Button</a></li><li><a href="module-ButtonCountdown.html">ButtonCountdown</a></li><li><a href="module-Calendar.html">Calendar</a></li><li><a href="module-City.html">City</a></li><li><a href="module-Context.html">Context</a></li><li><a href="module-Control.html">Control</a></li><li><a href="module-Cookie.html">Cookie</a></li><li><a href="module-Dialog.html">Dialog</a></li><li><a href="module-Form.html">Form</a></li><li><a href="module-FormFieldWatcher.html">FormFieldWatcher</a></li><li><a href="module-FormRelation.html">FormRelation</a></li><li><a href="module-FormSubmit.html">FormSubmit</a></li><li><a href="module-Helper.html">Helper</a></li><li><a href="module-Lazy.html">Lazy</a></li><li><a href="module-LazyImg.html">LazyImg</a></li><li><a href="module-Lazyload.html">Lazyload</a></li><li><a href="module-lib.html">lib</a></li><li><a href="module-log.html">log</a></li><li><a href="module-main.html">main</a></li><li><a href="module-Marquee.html">Marquee</a></li><li><a href="module-Mask.html">Mask</a></li><li><a href="module-Pager.html">Pager</a></li><li><a href="module-painter.html">painter</a></li><li><a href="module-Panel.html">Panel</a></li><li><a href="module-Plugin.html">Plugin</a></li><li><a href="module-Popup.html">Popup</a></li><li><a href="module-RangeSlider.html">RangeSlider</a></li><li><a href="module-Rating.html">Rating</a></li><li><a href="module-ScrollBar.html">ScrollBar</a></li><li><a href="module-Select.html">Select</a></li><li><a href="module-Slider.html">Slider</a></li><li><a href="module-SliderAnim.html">SliderAnim</a></li><li><a href="module-Tab.html">Tab</a></li><li><a href="module-TabBar.html">TabBar</a></li><li><a href="module-Tag.html">Tag</a></li><li><a href="module-TextBox.html">TextBox</a></li><li><a href="module-TextBoxAutoComplete.html">TextBoxAutoComplete</a></li><li><a href="module-TextBoxPlaceHolder.html">TextBoxPlaceHolder</a></li><li><a href="module-Tip.html">Tip</a></li><li><a href="module-ValidateTip.html">ValidateTip</a></li><li><a href="module-Validator.html">Validator</a></li><li><a href="module-ValidityRule.html">ValidityRule</a></li></ul><h3>Classes</h3><ul><li><a href="Validity.html">Validity</a></li><li><a href="ValidityState.html">ValidityState</a></li></ul><h3>Events</h3><ul><li><a href="module-Calendar.html#event:hide">hide</a></li><li><a href="module-Calendar.html#event:pick">pick</a></li><li><a href="module-Calendar.html#event:show">show</a></li><li><a href="module-City.html#event:beforeShow">beforeShow</a></li><li><a href="module-City.html#event:pick">pick</a></li><li><a href="module-Control.html#event:afterdispose">afterdispose</a></li><li><a href="module-Control.html#event:afterrender">afterrender</a></li><li><a href="module-Control.html#event:beforedispose">beforedispose</a></li><li><a href="module-Control.html#event:beforerender">beforerender</a></li><li><a href="module-Control.html#event:disable">disable</a></li><li><a href="module-Control.html#event:enable">enable</a></li><li><a href="module-Control.html#event:statechange">statechange</a></li><li><a href="module-Dialog.html#event:dispose">dispose</a></li><li><a href="module-Dialog.html#event:hide">hide</a></li><li><a href="module-Form.html#event:submit">submit</a></li><li><a href="module-FormFieldWatcher.html#event:fieldchange%25E5%259F%259F%25E8%25BE%2593%25E5%2585%25A5%25E5%258F%2598%25E5%258C%2596%25E4%25BA%258B%25E4%25BB%25B6">fieldchange 域输入变化事件</a></li><li><a href="module-log.html#event:click">click</a></li><li><a href="module-log.html#event:send">send</a></li><li><a href="module-log.html#event:start">start</a></li><li><a href="module-Pager.html#event:change">change</a></li><li><a href="module-Popup.html#event:beforeshow">beforeshow</a></li><li><a href="module-Popup.html#event:click">click</a></li><li><a href="module-Popup.html#event:hide">hide</a></li><li><a href="module-Popup.html#event:show">show</a></li><li><a href="module-RangeSlider.html#event:change">change</a></li><li><a href="module-RangeSlider.html#event:end%25E6%25BB%2591%25E5%258A%25A8%25E7%25BB%2593%25E6%259D%259F%25E4%25BA%258B%25E4%25BB%25B6">end 滑动结束事件</a></li><li><a href="module-RangeSlider.html#event:sliding%25E6%25BB%2591%25E5%259D%2597%25E6%25BB%2591%25E5%258A%25A8%25E4%25BA%258B%25E4%25BB%25B6">sliding 滑块滑动事件</a></li><li><a href="module-RangeSlider.html#event:start%25E6%25BB%2591%25E5%258A%25A8%25E5%25BC%2580%25E5%25A7%258B%25E4%25BA%258B%25E4%25BB%25B6">start 滑动开始事件</a></li><li><a href="module-Rating.html#event:change">change</a></li><li><a href="module-Rating.html#event:hover">hover</a></li><li><a href="module-ScrollBar.html#event:change">change</a></li><li><a href="module-Select.html#event:change">change</a></li><li><a href="module-Slider.html#event:change">change</a></li><li><a href="module-Tab.html#event:change">change</a></li><li><a href="module-TextBox.html#event:autocomplete">autocomplete</a></li><li><a href="module-TextBox.html#event:autocompletebeforeshow">autocompletebeforeshow</a></li><li><a href="module-TextBox.html#event:autocompleteclick">autocompleteclick</a></li><li><a href="module-TextBox.html#event:autocompletehide">autocompletehide</a></li><li><a href="module-TextBox.html#event:autocompletepick">autocompletepick</a></li><li><a href="module-TextBox.html#event:autocompleteshow">autocompleteshow</a></li><li><a href="module-Validator.html#event:aftervalidate%25E6%25A0%25A1%25E9%25AA%258C%25E5%25AE%258C%25E6%2588%2590%25E4%25BA%258B%25E4%25BB%25B6">aftervalidate 校验完成事件</a></li><li><a href="module-Validator.html#event:beforevalidate">beforevalidate</a></li><li><a href="module-Validator.html#event:invalid%25E6%25A0%25A1%25E9%25AA%258C%25E4%25B8%258D%25E9%2580%259A%25E8%25BF%2587%25E4%25BA%258B%25E4%25BB%25B6">invalid 校验不通过事件</a></li><li><a href="module-Validator.html#event:valid%25E6%25A0%25A1%25E9%25AA%258C%25E9%2580%259A%25E8%25BF%2587%25E4%25BA%258B%25E4%25BB%25B6">valid 校验通过事件</a></li><li><a href="module-Validator.html#event:validating%25E6%25A0%25A1%25E9%25AA%258C%25E4%25B8%25AD%25E4%25BA%258B%25E4%25BB%25B6%25EF%25BC%258C%25E9%2592%2588%25E5%25AF%25B9%25E5%25BC%2582%25E6%25AD%25A5%25E6%25A0%25A1%25E9%25AA%258C%25E6%2589%258D%25E6%259C%2589">validating 校验中事件，针对异步校验才有</a></li></ul><h3>Namespaces</h3><ul><li><a href="module-lib.browser.html">browser</a></li></ul><h3>Interfaces</h3><ul><li><a href="configurable.html">configurable</a></li><li><a href="observable.html">observable</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a> on Mon Aug 10 2015 16:39:52 GMT+0800 (CST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

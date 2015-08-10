@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: lib/class.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: lib/class.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @copyright 2014 Baidu Inc. All rights reserved.
+ *
+ * @file 类/继续/接口相关的小工具
+ * @author Leon(ludafa@outlook.com)
+ */
+
+define(function (require) {
+
+    var curry = require('./function').curry;
+    var type = require('./type');
+    var object = require('./object');
+
+    var METHOD_CLASS_ATTR = '__class__';
+    var METHOD_NAME_ATTR = '__name__';
+    var PROP_CLASS_POOL_ATTR = '__classess__';
+
+    var classPool = {};
+
+    /**
+     * 注册类
+     *
+     * @inner
+     * @param {Function} Class 类
+     */
+    function register(Class) {
+        var proto = Class.prototype;
+        // 如果proto中没有定义这个属性, 那么就把它当作匿名类, 忽略之
+        if (!proto.hasOwnProperty('type') &amp;&amp; !proto.hasOwnProperty('$class')) {
+            return;
+        }
+        // 如果在原型中定义了$class属性, 那么把这个类记录到工厂类中
+        var $class = proto.type || proto.$class;
+        if (classPool[$class]) {
+            throw new Error('Class "' + $class + '" is already defined');
+        }
+        classPool[$class] = Class;
+    }
+
+    /**
+     * 扩展生成子类
+     *
+     * @param {Class}  ParentClass 父类
+     * @param {Object} proto       扩展方法集合
+     * @return {Class} 新的子类
+     */
+    function extend(ParentClass, proto) {
+
+        // 构造连接prtotoype对象
+        var SubClassProto = new Function();
+        SubClassProto.prototype = ParentClass.prototype;
+        var subClassProto = new SubClassProto();
+
+        proto = proto || {};
+
+        // 将子类的原型链方法合并到链接对象
+        object.extend(subClassProto, proto);
+
+        // 新建出一个子类, 其proto是上边构造的链接对象
+        var SubClass = newClass(subClassProto);
+
+        for (var name in subClassProto) {
+            if (subClassProto.hasOwnProperty(name)
+                &amp;&amp; type.isFunction(subClassProto[name])
+            ) {
+                var method = subClassProto[name];
+                method[METHOD_CLASS_ATTR] = SubClass;
+                method[METHOD_NAME_ATTR] = name;
+            }
+        }
+
+        // 附加父类属性
+        SubClass.$parent = ParentClass;
+
+        // 如果派生出来的子类有类型, 那么把它放到父类的子类池里...
+        var subClassName = proto.type || proto.$class;
+        if (subClassName) {
+            ParentClass[PROP_CLASS_POOL_ATTR][subClassName] = SubClass;
+        }
+
+        // 返回结果
+        return SubClass;
+    }
+
+    /**
+     * 扩展类方法
+     *
+     * @inner
+     * @param {Class}  NewClass 要扩展的类
+     * @param {Object} proto    扩展的方法集
+     * @return {Class} 扩展后的类
+     */
+    function implement(NewClass, proto) {
+        if (type.isFunction(proto)) {
+            proto = proto.prototype;
+        }
+        object.extend(NewClass.prototype, proto);
+        return NewClass;
+    }
+
+    /**
+     * 执行祖先类原型链中的方法
+     *
+     * @return {*} 祖先类接口的返回值
+     */
+    function parent() {
+
+        var caller = this.$parent.caller;
+
+        var CurrentClass = caller[METHOD_CLASS_ATTR];
+
+        if (!CurrentClass) {
+            throw new Error('this class has no Parent Class');
+        }
+
+        var ParentClass = caller[METHOD_CLASS_ATTR].$parent;
+        var name = caller[METHOD_NAME_ATTR];
+
+        while (ParentClass) {
+            if (ParentClass.prototype.hasOwnProperty(name)) {
+                var parentMethod = ParentClass.prototype[name];
+                if (type.isFunction(parentMethod)) {
+                    return ParentClass.prototype[name].apply(this, arguments);
+                }
+                throw new Error('parent method is not function');
+            }
+            else {
+                ParentClass = ParentClass.$parent;
+            }
+        }
+
+        throw new Error('no parent method');
+    }
+
+    /**
+     * 获取Class的某个派生类
+     *
+     * @param  {Function} Class        类
+     * @param  {string}   subClassType 派生类名
+     * @return {Function}
+     */
+    function getClass(Class, subClassType) {
+        var pool = Class[PROP_CLASS_POOL_ATTR];
+        return pool[subClassType];
+    }
+
+    /**
+     * 获取所有的派生类
+     *
+     * @param  {Function} Class 某个类
+     * @return {Object}
+     */
+    function getAllClasses(Class) {
+        return Class[PROP_CLASS_POOL_ATTR];
+    }
+
+    /**
+     * 创建新类
+     *
+     * @method module:lib.newClass
+     * @param  {Object}   proto 类的原型对象
+     * @return {Function}       新类构造函数
+     */
+    function newClass(proto) {
+
+        var Class = function () {
+            return this.initialize
+                ? this.initialize.apply(this, arguments)
+                : this;
+        };
+
+        Class.prototype = proto || {};
+
+        // 注册到类池中
+        register(Class);
+
+        // 构造函数
+        Class.prototype.constructor = Class;
+
+        // 调用父类方法
+        Class.prototype.$parent = parent;
+
+        // 继承
+        Class.extend = curry(extend, Class);
+
+        // 接口
+        Class.implement = curry(implement, Class);
+
+        // 获取派生子类
+        Class.getClass = curry(getClass, Class);
+
+        // 获取所有的派生子类
+        Class.getAllClasses = curry(getAllClasses, Class);
+
+        // 派生子类池
+        Class[PROP_CLASS_POOL_ATTR] = {};
+
+        return Class;
+    }
+
+    return {
+
+        newClass: newClass,
+
+        /**
+         * 获取一个类
+         *
+         * @method module:lib.getClass
+         * @param  {string} className 类名
+         * @return {Function}
+         */
+        getClass: function (className) {
+            return classPool[className];
+        }
+
+    };
+
+});
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-BoxGroup.html">BoxGroup</a></li><li><a href="module-Button.html">Button</a></li><li><a href="module-ButtonCountdown.html">ButtonCountdown</a></li><li><a href="module-Calendar.html">Calendar</a></li><li><a href="module-City.html">City</a></li><li><a href="module-Context.html">Context</a></li><li><a href="module-Control.html">Control</a></li><li><a href="module-Cookie.html">Cookie</a></li><li><a href="module-Dialog.html">Dialog</a></li><li><a href="module-Form.html">Form</a></li><li><a href="module-FormFieldWatcher.html">FormFieldWatcher</a></li><li><a href="module-FormRelation.html">FormRelation</a></li><li><a href="module-FormSubmit.html">FormSubmit</a></li><li><a href="module-Helper.html">Helper</a></li><li><a href="module-Lazy.html">Lazy</a></li><li><a href="module-LazyImg.html">LazyImg</a></li><li><a href="module-Lazyload.html">Lazyload</a></li><li><a href="module-lib.html">lib</a></li><li><a href="module-log.html">log</a></li><li><a href="module-main.html">main</a></li><li><a href="module-Marquee.html">Marquee</a></li><li><a href="module-Mask.html">Mask</a></li><li><a href="module-Pager.html">Pager</a></li><li><a href="module-painter.html">painter</a></li><li><a href="module-Panel.html">Panel</a></li><li><a href="module-Plugin.html">Plugin</a></li><li><a href="module-Popup.html">Popup</a></li><li><a href="module-RangeSlider.html">RangeSlider</a></li><li><a href="module-Rating.html">Rating</a></li><li><a href="module-ScrollBar.html">ScrollBar</a></li><li><a href="module-Select.html">Select</a></li><li><a href="module-Slider.html">Slider</a></li><li><a href="module-SliderAnim.html">SliderAnim</a></li><li><a href="module-Tab.html">Tab</a></li><li><a href="module-TabBar.html">TabBar</a></li><li><a href="module-Tag.html">Tag</a></li><li><a href="module-TextBox.html">TextBox</a></li><li><a href="module-TextBoxAutoComplete.html">TextBoxAutoComplete</a></li><li><a href="module-TextBoxPlaceHolder.html">TextBoxPlaceHolder</a></li><li><a href="module-Tip.html">Tip</a></li><li><a href="module-ValidateTip.html">ValidateTip</a></li><li><a href="module-Validator.html">Validator</a></li><li><a href="module-ValidityRule.html">ValidityRule</a></li></ul><h3>Classes</h3><ul><li><a href="Validity.html">Validity</a></li><li><a href="ValidityState.html">ValidityState</a></li></ul><h3>Events</h3><ul><li><a href="module-Calendar.html#event:hide">hide</a></li><li><a href="module-Calendar.html#event:pick">pick</a></li><li><a href="module-Calendar.html#event:show">show</a></li><li><a href="module-City.html#event:beforeShow">beforeShow</a></li><li><a href="module-City.html#event:pick">pick</a></li><li><a href="module-Control.html#event:afterdispose">afterdispose</a></li><li><a href="module-Control.html#event:afterrender">afterrender</a></li><li><a href="module-Control.html#event:beforedispose">beforedispose</a></li><li><a href="module-Control.html#event:beforerender">beforerender</a></li><li><a href="module-Control.html#event:disable">disable</a></li><li><a href="module-Control.html#event:enable">enable</a></li><li><a href="module-Control.html#event:statechange">statechange</a></li><li><a href="module-Dialog.html#event:dispose">dispose</a></li><li><a href="module-Dialog.html#event:hide">hide</a></li><li><a href="module-Form.html#event:submit">submit</a></li><li><a href="module-FormFieldWatcher.html#event:fieldchange%25E5%259F%259F%25E8%25BE%2593%25E5%2585%25A5%25E5%258F%2598%25E5%258C%2596%25E4%25BA%258B%25E4%25BB%25B6">fieldchange 域输入变化事件</a></li><li><a href="module-log.html#event:click">click</a></li><li><a href="module-log.html#event:send">send</a></li><li><a href="module-log.html#event:start">start</a></li><li><a href="module-Pager.html#event:change">change</a></li><li><a href="module-Popup.html#event:beforeshow">beforeshow</a></li><li><a href="module-Popup.html#event:click">click</a></li><li><a href="module-Popup.html#event:hide">hide</a></li><li><a href="module-Popup.html#event:show">show</a></li><li><a href="module-RangeSlider.html#event:change">change</a></li><li><a href="module-RangeSlider.html#event:end%25E6%25BB%2591%25E5%258A%25A8%25E7%25BB%2593%25E6%259D%259F%25E4%25BA%258B%25E4%25BB%25B6">end 滑动结束事件</a></li><li><a href="module-RangeSlider.html#event:sliding%25E6%25BB%2591%25E5%259D%2597%25E6%25BB%2591%25E5%258A%25A8%25E4%25BA%258B%25E4%25BB%25B6">sliding 滑块滑动事件</a></li><li><a href="module-RangeSlider.html#event:start%25E6%25BB%2591%25E5%258A%25A8%25E5%25BC%2580%25E5%25A7%258B%25E4%25BA%258B%25E4%25BB%25B6">start 滑动开始事件</a></li><li><a href="module-Rating.html#event:change">change</a></li><li><a href="module-Rating.html#event:hover">hover</a></li><li><a href="module-ScrollBar.html#event:change">change</a></li><li><a href="module-Select.html#event:change">change</a></li><li><a href="module-Slider.html#event:change">change</a></li><li><a href="module-Tab.html#event:change">change</a></li><li><a href="module-TextBox.html#event:autocomplete">autocomplete</a></li><li><a href="module-TextBox.html#event:autocompletebeforeshow">autocompletebeforeshow</a></li><li><a href="module-TextBox.html#event:autocompleteclick">autocompleteclick</a></li><li><a href="module-TextBox.html#event:autocompletehide">autocompletehide</a></li><li><a href="module-TextBox.html#event:autocompletepick">autocompletepick</a></li><li><a href="module-TextBox.html#event:autocompleteshow">autocompleteshow</a></li><li><a href="module-Validator.html#event:aftervalidate%25E6%25A0%25A1%25E9%25AA%258C%25E5%25AE%258C%25E6%2588%2590%25E4%25BA%258B%25E4%25BB%25B6">aftervalidate 校验完成事件</a></li><li><a href="module-Validator.html#event:beforevalidate">beforevalidate</a></li><li><a href="module-Validator.html#event:invalid%25E6%25A0%25A1%25E9%25AA%258C%25E4%25B8%258D%25E9%2580%259A%25E8%25BF%2587%25E4%25BA%258B%25E4%25BB%25B6">invalid 校验不通过事件</a></li><li><a href="module-Validator.html#event:valid%25E6%25A0%25A1%25E9%25AA%258C%25E9%2580%259A%25E8%25BF%2587%25E4%25BA%258B%25E4%25BB%25B6">valid 校验通过事件</a></li><li><a href="module-Validator.html#event:validating%25E6%25A0%25A1%25E9%25AA%258C%25E4%25B8%25AD%25E4%25BA%258B%25E4%25BB%25B6%25EF%25BC%258C%25E9%2592%2588%25E5%25AF%25B9%25E5%25BC%2582%25E6%25AD%25A5%25E6%25A0%25A1%25E9%25AA%258C%25E6%2589%258D%25E6%259C%2589">validating 校验中事件，针对异步校验才有</a></li></ul><h3>Namespaces</h3><ul><li><a href="module-lib.browser.html">browser</a></li></ul><h3>Interfaces</h3><ul><li><a href="configurable.html">configurable</a></li><li><a href="observable.html">observable</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a> on Mon Aug 10 2015 16:39:52 GMT+0800 (CST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

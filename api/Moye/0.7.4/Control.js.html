@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: Control.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: Control.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @copyright 2014 Baidu Inc. All rights reserved.
+ *
+ * @file 控件基类
+ * @author chris(wfsr@foxmail.com)
+ * @author Leon(ludafa@outlook.com)
+ */
+
+define(function (require) {
+
+    var $ = require('jquery');
+    var lib = require('./lib');
+    var main = require('./main');
+    var Helper = require('./Helper');
+
+    var STATE_HIDDEN_NAME = 'hidden';
+    var STATE_DISABLED_NAME = 'disabled';
+    var STATE_READONLY_NAME = 'readOnly';
+
+    /**
+     * 控件基类
+     *
+     * 只可继承，不可实例化
+     *
+     * @class Control
+     * @implements observable
+     * @implements configurable
+     * @requires lib
+     * @requires Helper
+     * @requires main
+     * @exports Control
+     */
+    var Control = lib.newClass(/** @lends module:Control.prototype */{
+
+        /**
+         * @member {Element} main 控件主元素
+         * @readonly
+         */
+
+        /**
+         * @member {module:Helper} helper 小工具
+         * @protected
+         */
+
+        /**
+         * 控件类型标识
+         *
+         * @type {string}
+         * @readonly
+         * @public
+         */
+        type: 'Control',
+
+        /**
+         * 控件处于某些状态时, 忽略其某些交互
+         *
+         * TODO 暂时无用
+         *
+         * @ignore
+         * @type {string[]}
+         */
+        ignoreStates: ['disable'],
+
+        /**
+         * 将DOM元素element的eventName事件处理函数handler的作用域绑定到当前Control实例
+         *
+         * @public
+         * @method module:Control#delegate
+         * @param  {Element}  element   目标元素
+         * @param  {string}   eventName 事件名称
+         * @param  {?string}  selector  代理元素的选择器(jquery标准)
+         * @param  {?*}       data      附加数据，参见jquery的on函数所支持的data参数
+         * @param  {Function} handler   处理函数
+         * @return {module:Control}
+         */
+        delegate: function (/*element, eventName, selectors, data, handler*/) {
+            var helper = this.helper;
+            helper.delegate.apply(helper, arguments);
+            return this;
+        },
+
+        /**
+         * 取消一个代理
+         *
+         * @public
+         * @method module:Control#undelegate
+         * @param  {Element}   element   目标元素
+         * @param  {?string}   eventName 事件名称
+         * @param  {?string}   selector  代理元素的选择器(jquery标准)
+         * @param  {?Function} handler   处理函数
+         * @return {module:Control}
+         */
+        undelegate: function (/*element, eventName, selector, handler*/) {
+            var helper = this.helper;
+            helper.undelegate.apply(helper, arguments);
+            return this;
+        },
+
+        /**
+         * 控件初始化
+         *
+         * @private
+         * @param {Object} options 配置参数
+         * @protected
+         */
+        initialize: function (options) {
+
+            var helper = this.helper = new Helper(this);
+
+            helper.changeStage('NEW');
+            this.currentStates = {};
+
+            options = options || {};
+
+            // 处理配置参数中, 以onXxx开头的事件绑定
+            // 这里会把这一类的事件绑定参数给清除掉, 后边init时不会有这些参数的干扰
+            // {@link Module:lib#configurable.bindEvents}
+            this.bindEvents(options);
+
+            // 调用init接口, 进行参数的初始化
+            this.init(options);
+
+            /**
+             * 控件的主元素
+             *
+             * @type {Element}
+             * @protected
+             * @readonly
+             */
+            this.main = this.main ? lib.g(this.main) : this.createMain();
+            this.id   = this.id || lib.guid();
+
+            if (this.hasOwnProperty('states')) {
+                var states = this.states;
+                if (lib.isString(states)) {
+                    this.states = [states];
+                }
+            }
+
+            if (this.hasOwnProperty('skin')) {
+                var skin = this.skin;
+                if (lib.isString(skin)) {
+                    this.skin = [skin];
+                }
+            }
+
+            // 初始化上下文
+            helper.initContext();
+
+            // 子控件容器
+            this.children = [];
+            this.childrenIndex = {};
+            helper.initPlugins();
+            helper.changeStage('INITED');
+        },
+
+        /**
+         * 初始化参数
+         *
+         * 可以帮你把原型上的options和传递进来的参数自动合并到控件实例上
+         *
+         * @protected
+         * @param {Object} options 参数
+         */
+        init: function (options) {
+
+            if (!this.helper.isInStage('NEW')) {
+                return;
+            }
+
+            this.setOptions(options);
+        },
+
+
+        /**
+         * 渲染控件
+         *
+         * @public
+         * @method module:Control#render
+         * @fires module:Control#beforerender
+         * @fires module:Control#afterrender
+         * @return {module:Control} 当前实例
+         */
+        render: function () {
+
+            var helper = this.helper;
+
+            if (helper.isInStage('INITED')) {
+
+                /**
+                 * 开始初次渲染事件
+                 *
+                 * @event module:Control#beforerender
+                 */
+                this.fire('beforerender');
+
+                this.initStructure();
+                this.initEvents();
+
+                // 为控件主元素添加id
+                $(this.main).attr(
+                    main.getConfig('instanceAttr'),
+                    this.id
+                );
+
+                helper.addPartClasses();
+
+                if (this.states &amp;&amp; this.states.length) {
+                    for (var i = this.states.length - 1; i >= 0; i--) {
+                        this.addState(this.states[i]);
+                    }
+                }
+
+            }
+
+            // 由子控件实现
+            this.repaint();
+
+            if (helper.isInStage('INITED')) {
+
+                // 切换控件所属生命周期阶段
+                helper.changeStage('RENDERED');
+
+                /**
+                 * 完成初次渲染
+                 *
+                 * @event module:Control#afterrender
+                 */
+                this.fire('afterrender');
+            }
+
+            return this;
+
+        },
+
+        /**
+         * 初始化DOM结构
+         *
+         * @protected
+         * @method module:Control#initStructure
+         * @return {module:Control}
+         */
+        initStructure: function () {
+            return this;
+        },
+
+        /**
+         * 初始化事件绑定
+         *
+         * @protected
+         * @method module:Control#initEvents
+         * @return {module:Control}
+         */
+        initEvents: function () {
+            return this;
+        },
+
+        /**
+         * 重绘视图
+         *
+         * @protected
+         * @param {string[]} changes 发生变化的属性名们
+         * @param {Object} changesIndex 发生变化的属性名和属性值
+         * @return {module:Control}
+         */
+        repaint: function (changes, changesIndex) {
+
+            if (this.helper.isInStage('INITED')) {
+
+                // 常用几个与状态相关的属性，直接在这里给转化成状态
+                // 禁用状态
+                if (this[STATE_DISABLED_NAME]) {
+                    this.disable();
+                    delete this[STATE_DISABLED_NAME];
+                }
+
+                // 隐藏状态
+                if (this[STATE_HIDDEN_NAME]) {
+                    this.hide();
+                    delete this[STATE_HIDDEN_NAME];
+                }
+
+                // 只读状态(必须是输入控件才搞一下)
+                if (lib.isFunction(this.getValue)) {
+                    this.setReadOnly(!!this[STATE_READONLY_NAME]);
+                    delete this[STATE_READONLY_NAME];
+                }
+
+            }
+
+            return this;
+        },
+
+        /**
+         * 设置属性值
+         *
+         * 当设定的属性值与当前值不一致时，会触发repaint动作
+         *
+         * @public
+         * @method module:Control#set
+         * @param {string} name 属性名
+         * @param {*} value 属性值
+         * @return {module:Control}
+         */
+        set: function (name, value) {
+
+            var properties;
+
+            // 处理重载
+            if (lib.isObject(name)) {
+                properties = name;
+            }
+            else {
+                properties = {};
+                properties[name] = value;
+            }
+
+            // 如果不在RENDERED状态，直接赋值
+            if (!this.helper.isInStage('RENDERED')) {
+                $.extend(this, properties);
+                return this;
+            }
+
+            // 如果在RENDERED状态，检测属性值变化
+            var changes = [];
+            var changesIndex = {};
+
+            for (var key in properties) {
+                if (properties.hasOwnProperty(key)) {
+                    var newValue = properties[key];
+                    var oldValue = this[key];
+                    var isChanged = this.isPropertyChanged(key, newValue, oldValue);
+
+                    if (isChanged) {
+                        this[key] = newValue;
+                        var record = {
+                            name: key,
+                            oldValue: oldValue,
+                            newValue: newValue
+                        };
+                        changes.push(record);
+                        changesIndex[key] = record;
+                    }
+                }
+            }
+
+            // 如果有变化，那么触发repaint
+            if (changes.length) {
+                this.repaint(changes, changesIndex);
+            }
+
+            return changesIndex;
+        },
+
+        /**
+         * 返回属性值
+         *
+         * @public
+         * @method module:Control#get
+         * @param {string} name 属性名
+         * @return {*} 属性值
+         */
+        get: function (name) {
+            return this[name];
+        },
+
+        /**
+         * 判断一个属性是否发生了变化
+         *
+         * 默认算法就是判断是否完全相等
+         *
+         * @protected
+         * @method module:Control#isPropertyChanged
+         * @param {string} name 属性名
+         * @param {*} newValue 原属性值
+         * @param {*} oldValue 新属性值
+         * @return {boolean}
+         */
+        isPropertyChanged: function (name, newValue, oldValue) {
+            return newValue !==  oldValue;
+        },
+
+        /**
+         * 将控件添加到页面的某个元素中
+         *
+         * @public
+         * @method module:Control#appendTo
+         * @param {Element} wrap 被添加到的页面元素
+         * @return {module:Control}
+         */
+        appendTo: function (wrap) {
+            if (this.helper.isInStage('INITED')) {
+                this.render();
+            }
+            wrap.appendChild(this.main);
+            return this;
+        },
+
+        /**
+         * 通过 className 查找控件容器内的元素
+         *
+         * @deprecated
+         * @public
+         * @param {string} className 元素的class，只能指定单一的class，如果为空字符串或者纯空白的字符串，返回空数组。
+         * @return {Array} 获取的元素集合，查找不到或className参数错误时返回空数组
+         */
+        query: function (className) {
+            return $('.' + className, this.main).toArray();
+        },
+
+        /**
+         * 创建主素
+         *
+         * 如果在options中不指定主元素，那么会自动生成一个div元素作为其主元素。
+         * 子类可以覆盖此方法来重写
+         *
+         * @protected
+         * @return {Element} 创建后的元素
+         */
+        createMain: function () {
+            return document.createElement('div');
+        },
+
+        /**
+         * 增加状态
+         *
+         * @public
+         * @param {string} state 状态
+         * @fires module:Control#statechange
+         * @return {module:Control}
+         */
+        addState: function (state) {
+
+            if (this.hasState(state)) {
+                return this;
+            }
+
+            this.currentStates[state] = true;
+            this.helper.addStateClasses(state);
+
+
+            /**
+             * statechange事件
+             *
+             * @event module:Control#statechange
+             * @param {Object} e 事件对象
+             * @param {string} e.state  发生变化的状态
+             * @param {Object} e.action 动作名称
+             */
+            this.fire('statechange', {
+                state: state,
+                action: 'add'
+            });
+
+            return this;
+        },
+
+        /**
+         * 移除状态
+         *
+         * @public
+         * @param {string} state 状态
+         * @fires module:Control#statechange
+         * @return {module:Control}
+         */
+        removeState: function (state) {
+            var me = this;
+
+            if (!me.hasState(state)) {
+                return me;
+            }
+
+            me.currentStates[state] = false;
+            this.helper.removeStateClasses(state);
+
+            me.fire('statechange', {
+                state: state,
+                action: 'remove'
+            });
+
+            return me;
+        },
+
+        /**
+         * 切换状态
+         *
+         * @public
+         * @param {string} state 状态名
+         * @return {module:Control}
+         */
+        toggleState: function (state) {
+            this.hasState(state)
+                ? this.removeState(state)
+                : this.addState(state);
+            return this;
+        },
+
+        /**
+         * 判断控件是否处于指定状态
+         *
+         * @public
+         * @param {string} state 状态名
+         * @return {boolean}
+         */
+        hasState: function (state) {
+            return !!this.currentStates[state];
+        },
+
+        /**
+         * 显示控件
+         *
+         * @public
+         * @return {module:Control}
+         */
+        show: function () {
+            return this.removeState(STATE_HIDDEN_NAME);
+        },
+
+        /**
+         * 隐藏控件
+         *
+         * @public
+         * @return {module:Control}
+         */
+        hide: function () {
+            return this.addState(STATE_HIDDEN_NAME);
+        },
+
+        /**
+         * 切换显示/隐藏状态
+         *
+         * @public
+         * @return {module:Control}
+         */
+        toggle: function () {
+            return this.toggleState(STATE_HIDDEN_NAME);
+        },
+
+        /**
+         * 设置控件状态为禁用
+         *
+         * @fires module:Control#disable
+         * @public
+         * @return {module:Control}
+         */
+        disable: function () {
+
+            this.addState(STATE_DISABLED_NAME);
+
+            // 顺手把子控件也给禁用了
+            this.helper.disableChildren();
+
+            /**
+             * 禁用事件
+             *
+             * @event module:Control#disable
+             */
+            this.fire('disable');
+
+            return this;
+        },
+
+        /**
+         * 设置控件状态为启用
+         *
+         * @fires module:Control#enable
+         * @public
+         * @return {module:Control}
+         */
+        enable: function () {
+
+            this.removeState(STATE_DISABLED_NAME);
+
+            // 顺手把子控件也给启用了
+            this.helper.enableChildren();
+
+            /**
+             * 启用事件
+             *
+             * @event module:Control#enable
+             */
+            this.fire('enable');
+
+            return this;
+        },
+
+        /**
+         * 获取控件可用状态
+         *
+         * @public
+         * @return {boolean} 控件的可用状态值
+         */
+        isDisabled: function () {
+            return this.hasState(STATE_DISABLED_NAME);
+        },
+
+        /**
+         * 是否为只读状态
+         *
+         * @public
+         * @return {boolean}
+         */
+        isReadOnly: function () {
+            return this.hasState(STATE_READONLY_NAME);
+        },
+
+        /**
+         * 设置只读状态
+         *
+         * @public
+         * @param {boolean} isReadOnly 是否为只读
+         * @return {module:Control}
+         */
+        setReadOnly: function (isReadOnly) {
+
+            if (isReadOnly) {
+                this.addState(STATE_READONLY_NAME);
+            }
+            else {
+                this.removeState(STATE_READONLY_NAME);
+            }
+
+            return this;
+        },
+
+        /**
+         * 添加子控件
+         *
+         * @public
+         * @param {module:Control} control 控件实例
+         * @param {?string} name 子控件名
+         * @return {module:Control}
+         */
+        addChild: function (control, name) {
+
+            var children = this.children;
+            var childrenIndex = this.childrenIndex;
+
+            var oldParent = control.getParent();
+
+            if (oldParent) {
+                oldParent.removeChild(control);
+            }
+
+            control.setParent(this);
+
+            name = name || control.childName;
+
+            if (name) {
+                childrenIndex[name] = control;
+            }
+
+            // 把子控件塞到父控件的上下文中
+            control.setContext(this.context);
+
+            children.push(control);
+
+            return this;
+        },
+
+        /**
+         * 移除子控件
+         *
+         * @public
+         * @param {module:Control} control 子控件实例
+         * @return {module:Control}
+         */
+        removeChild: function (control) {
+            var children = this.children;
+            var childrenIndex = this.childrenIndex;
+
+            for (var i = children.length - 1; i >= 0; i--) {
+                if (children[i] === control) {
+                    children.splice(i, 1);
+                }
+            }
+
+            var name = control.childName;
+
+            delete childrenIndex[name];
+
+            control.setParent(null);
+
+            return this;
+        },
+
+        /**
+         * 获取子控件
+         *
+         * @public
+         * @param {string} name 子控件名
+         * @return {module:Control} 获取到的子控件
+         */
+        getChild: function (name) {
+            return this.childrenIndex[name];
+        },
+
+        /**
+         * 设置父控件
+         *
+         * @public
+         * @param {module:Control} parent 父控件
+         * @return {module:Control}
+         */
+        setParent: function (parent) {
+            this.parent = parent;
+            return this;
+        },
+
+        /**
+         * 获取父控件
+         *
+         * @public
+         * @return {module:Control}
+         */
+        getParent: function () {
+            return this.parent;
+        },
+
+        /**
+         * 批量初始化子控件
+         *
+         * @public
+         * @param {Element} wrap 容器DOM元素
+         * @return {module:Control}
+         */
+        initChildren: function () {
+            this.helper.initChildren();
+            return this;
+        },
+
+        /**
+         * 设定上下文
+         *
+         * @public
+         * @param {module:Context} context 上下文
+         * @return {module:Control}
+         */
+        setContext: function (context) {
+
+            var currentContext = this.context;
+
+            if (context === currentContext &amp;&amp; currentContext.get(this.id) === this) {
+                return;
+            }
+
+            if (currentContext) {
+                this.context.remove(this);
+            }
+
+            context.add(this);
+
+            $(this.main).attr(
+                main.getConfig('contextAttr'),
+                context.id
+            );
+
+            this.context = context;
+
+            return this;
+        },
+
+        /**
+         * 销毁控件
+         *
+         * @public
+         * @fires module:Control#beforedispose
+         * @fires module:Control#afterdispose
+         */
+        dispose: function () {
+
+            /**
+             * 即将销毁
+             *
+             * @event module:Control#beforedispose
+             */
+            this.fire('beforedispose');
+
+            // 销毁插件
+            this.helper.disposePlugins();
+
+            // 销毁子控件
+            // {@link Module:helper/children.disposeChildren()}
+            this.helper.disposeChildren();
+
+            // 销毁事件池
+            // {@link Module:lib/interface/obserable.destroyEvents()}
+            this.destroyEvents();
+
+            // 更新状态
+            this.helper.changeStage('DISPOSED');
+
+            /**
+             * 已销毁事件
+             *
+             * @event module:Control#afterdispose
+             */
+            this.fire('afterdispose');
+
+        },
+
+        /**
+         * 销毁控件并移除main元素
+         *
+         * @public
+         */
+        destroy: function () {
+            this.dispose();
+            if (this.main) {
+                $(this.main).remove();
+                this.main = null;
+            }
+        },
+
+        /**
+         * 使用插件
+         *
+         * @public
+         * @param {module:Plugin} plugin 插件
+         * @return {module:Control}
+         */
+        use: function (plugin) {
+            var plugins = this.plugins;
+
+            // 存入队列
+            if (!this.plugins) {
+                plugins = this.plugins = [];
+            }
+
+            plugin = this.helper.createPluginInstance(plugin);
+
+            plugins.push(plugin);
+
+            // 如果控件已经渲染过了，那么直接执行插件
+            // 否则控件会在渲染时，执行插件
+            if (!this.helper.isInStage('NEW')) {
+                plugin.activate(this);
+            }
+
+            return this;
+        }
+
+    }).implement(lib.observable).implement(lib.configurable);
+
+    return Control;
+});
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-BoxGroup.html">BoxGroup</a></li><li><a href="module-Button.html">Button</a></li><li><a href="module-ButtonCountdown.html">ButtonCountdown</a></li><li><a href="module-Calendar.html">Calendar</a></li><li><a href="module-City.html">City</a></li><li><a href="module-Context.html">Context</a></li><li><a href="module-Control.html">Control</a></li><li><a href="module-Cookie.html">Cookie</a></li><li><a href="module-Dialog.html">Dialog</a></li><li><a href="module-Form.html">Form</a></li><li><a href="module-FormFieldWatcher.html">FormFieldWatcher</a></li><li><a href="module-FormRelation.html">FormRelation</a></li><li><a href="module-FormSubmit.html">FormSubmit</a></li><li><a href="module-Helper.html">Helper</a></li><li><a href="module-Lazy.html">Lazy</a></li><li><a href="module-LazyImg.html">LazyImg</a></li><li><a href="module-Lazyload.html">Lazyload</a></li><li><a href="module-lib.html">lib</a></li><li><a href="module-log.html">log</a></li><li><a href="module-main.html">main</a></li><li><a href="module-Marquee.html">Marquee</a></li><li><a href="module-Mask.html">Mask</a></li><li><a href="module-Pager.html">Pager</a></li><li><a href="module-painter.html">painter</a></li><li><a href="module-Panel.html">Panel</a></li><li><a href="module-Plugin.html">Plugin</a></li><li><a href="module-Popup.html">Popup</a></li><li><a href="module-RangeSlider.html">RangeSlider</a></li><li><a href="module-Rating.html">Rating</a></li><li><a href="module-ScrollBar.html">ScrollBar</a></li><li><a href="module-Select.html">Select</a></li><li><a href="module-Slider.html">Slider</a></li><li><a href="module-SliderAnim.html">SliderAnim</a></li><li><a href="module-Tab.html">Tab</a></li><li><a href="module-TabBar.html">TabBar</a></li><li><a href="module-Tag.html">Tag</a></li><li><a href="module-TextBox.html">TextBox</a></li><li><a href="module-TextBoxAutoComplete.html">TextBoxAutoComplete</a></li><li><a href="module-TextBoxPlaceHolder.html">TextBoxPlaceHolder</a></li><li><a href="module-Tip.html">Tip</a></li><li><a href="module-ValidateTip.html">ValidateTip</a></li><li><a href="module-Validator.html">Validator</a></li><li><a href="module-ValidityRule.html">ValidityRule</a></li></ul><h3>Classes</h3><ul><li><a href="Validity.html">Validity</a></li><li><a href="ValidityState.html">ValidityState</a></li></ul><h3>Events</h3><ul><li><a href="module-Calendar.html#event:hide">hide</a></li><li><a href="module-Calendar.html#event:pick">pick</a></li><li><a href="module-Calendar.html#event:show">show</a></li><li><a href="module-City.html#event:beforeShow">beforeShow</a></li><li><a href="module-City.html#event:pick">pick</a></li><li><a href="module-Control.html#event:afterdispose">afterdispose</a></li><li><a href="module-Control.html#event:afterrender">afterrender</a></li><li><a href="module-Control.html#event:beforedispose">beforedispose</a></li><li><a href="module-Control.html#event:beforerender">beforerender</a></li><li><a href="module-Control.html#event:disable">disable</a></li><li><a href="module-Control.html#event:enable">enable</a></li><li><a href="module-Control.html#event:statechange">statechange</a></li><li><a href="module-Dialog.html#event:dispose">dispose</a></li><li><a href="module-Dialog.html#event:hide">hide</a></li><li><a href="module-Form.html#event:submit">submit</a></li><li><a href="module-FormFieldWatcher.html#event:fieldchange%25E5%259F%259F%25E8%25BE%2593%25E5%2585%25A5%25E5%258F%2598%25E5%258C%2596%25E4%25BA%258B%25E4%25BB%25B6">fieldchange 域输入变化事件</a></li><li><a href="module-log.html#event:click">click</a></li><li><a href="module-log.html#event:send">send</a></li><li><a href="module-log.html#event:start">start</a></li><li><a href="module-Pager.html#event:change">change</a></li><li><a href="module-Popup.html#event:beforeshow">beforeshow</a></li><li><a href="module-Popup.html#event:click">click</a></li><li><a href="module-Popup.html#event:hide">hide</a></li><li><a href="module-Popup.html#event:show">show</a></li><li><a href="module-RangeSlider.html#event:change">change</a></li><li><a href="module-RangeSlider.html#event:end%25E6%25BB%2591%25E5%258A%25A8%25E7%25BB%2593%25E6%259D%259F%25E4%25BA%258B%25E4%25BB%25B6">end 滑动结束事件</a></li><li><a href="module-RangeSlider.html#event:sliding%25E6%25BB%2591%25E5%259D%2597%25E6%25BB%2591%25E5%258A%25A8%25E4%25BA%258B%25E4%25BB%25B6">sliding 滑块滑动事件</a></li><li><a href="module-RangeSlider.html#event:start%25E6%25BB%2591%25E5%258A%25A8%25E5%25BC%2580%25E5%25A7%258B%25E4%25BA%258B%25E4%25BB%25B6">start 滑动开始事件</a></li><li><a href="module-Rating.html#event:change">change</a></li><li><a href="module-Rating.html#event:hover">hover</a></li><li><a href="module-ScrollBar.html#event:change">change</a></li><li><a href="module-Select.html#event:change">change</a></li><li><a href="module-Slider.html#event:change">change</a></li><li><a href="module-Tab.html#event:change">change</a></li><li><a href="module-TextBox.html#event:autocomplete">autocomplete</a></li><li><a href="module-TextBox.html#event:autocompletebeforeshow">autocompletebeforeshow</a></li><li><a href="module-TextBox.html#event:autocompleteclick">autocompleteclick</a></li><li><a href="module-TextBox.html#event:autocompletehide">autocompletehide</a></li><li><a href="module-TextBox.html#event:autocompletepick">autocompletepick</a></li><li><a href="module-TextBox.html#event:autocompleteshow">autocompleteshow</a></li><li><a href="module-Validator.html#event:aftervalidate%25E6%25A0%25A1%25E9%25AA%258C%25E5%25AE%258C%25E6%2588%2590%25E4%25BA%258B%25E4%25BB%25B6">aftervalidate 校验完成事件</a></li><li><a href="module-Validator.html#event:beforevalidate">beforevalidate</a></li><li><a href="module-Validator.html#event:invalid%25E6%25A0%25A1%25E9%25AA%258C%25E4%25B8%258D%25E9%2580%259A%25E8%25BF%2587%25E4%25BA%258B%25E4%25BB%25B6">invalid 校验不通过事件</a></li><li><a href="module-Validator.html#event:valid%25E6%25A0%25A1%25E9%25AA%258C%25E9%2580%259A%25E8%25BF%2587%25E4%25BA%258B%25E4%25BB%25B6">valid 校验通过事件</a></li><li><a href="module-Validator.html#event:validating%25E6%25A0%25A1%25E9%25AA%258C%25E4%25B8%25AD%25E4%25BA%258B%25E4%25BB%25B6%25EF%25BC%258C%25E9%2592%2588%25E5%25AF%25B9%25E5%25BC%2582%25E6%25AD%25A5%25E6%25A0%25A1%25E9%25AA%258C%25E6%2589%258D%25E6%259C%2589">validating 校验中事件，针对异步校验才有</a></li></ul><h3>Namespaces</h3><ul><li><a href="module-lib.browser.html">browser</a></li></ul><h3>Interfaces</h3><ul><li><a href="configurable.html">configurable</a></li><li><a href="observable.html">observable</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a> on Mon Aug 10 2015 17:04:33 GMT+0800 (CST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
