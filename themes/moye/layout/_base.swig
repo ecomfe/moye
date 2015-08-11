@@ -40,7 +40,7 @@
             'location': '../dep/moye',
             'main': 'main'
         }],
-        'urlArgs': 'v1'
+        'urlArgs': 'v20150811'
     });
     </script>
     {% block script %}{% endblock %}

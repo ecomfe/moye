@@ -1,27 +1,2 @@
-/**
- * @file 自然数校验器
- * @author leon<ludafa@outlook.com>
- */
-
-define(function (require) {
-
-    var ValidityState = require('../ValidityState');
-    var ValidateRule = require('../ValidateRule');
-
-    var regex = /^[\d]+$/;
-
-    ValidateRule.register('natural', {
-
-        message: {
-            invalid: '请输入整数'
-        },
-
-        check: function (value, control) {
-            var state = !value || regex.test(value);
-            return new ValidityState(state, this.getMessage(control, state));
-        }
-
-    });
-
-
-});
+/*! 2015 Baidu Inc. All Rights Reserved */
+define("moye/ui/plugin/validator/natural",["require","../ValidityState","../ValidateRule"],function(require){var t=require("../ValidityState"),e=require("../ValidateRule"),i=/^[\d]+$/;e.register("natural",{message:{invalid:"请输入整数"},check:function(e,n){var s=!e||i.test(e);return new t(s,this.getMessage(n,s))}})});
