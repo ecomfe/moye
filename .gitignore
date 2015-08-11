@@ -16,3 +16,5 @@ example-dist
 example/smarty/lib/*
 example/smarty/templates_c
 example/templates_c
+api
+public

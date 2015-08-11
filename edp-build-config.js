@@ -60,7 +60,13 @@ exports.exclude = [
     'package.json',
     'README.md',
     'Desktop.ini',
-    'Thumbs.db'
+    'Thumbs.db',
+    /^api\//,
+    /^public\//,
+    'bower.json',
+    'db.json',
+    'doc.sh',
+    'jsdoc.json'
 ];
 
 exports.injectProcessor = function ( processors ) {
