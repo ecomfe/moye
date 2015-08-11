@@ -1,0 +1,23 @@
+{
+  "opts": {
+    "template": "templates/default",
+    "encoding": "utf8",
+    "destination": "./api/",
+    "recurse": true
+  },
+  "tags": {
+    "allowUnknownTags": true,
+    "dictionaries": ["jsdoc","closure"]
+  },
+  "source": {
+    "includePattern": ".+\\.js(doc)?$",
+    "excludePattern": "(^|\\/|\\\\)_"
+  },
+  "plugins": [
+    "plugins/markdown"
+  ],
+  "templates": {
+    "cleverLinks": false,
+    "monospaceLinks": false
+  }
+}
