@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: City.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: City.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * Moye (Zhixin UI)
+ * Copyright 2014 Baidu Inc. All rights reserved.
+ *
+ * @file 国内城市选择提示层
+ * @author chris(wfsr@foxmail.com)
+ */
+
+define(function (require) {
+
+    var $ = require('jquery');
+    var lib = require('./lib');
+    var Control = require('./Control');
+    var Popup = require('./Popup');
+
+    /**
+     * 城市列表
+     *
+     * @const
+     * @type {Array}
+     */
+    var CITIES = [
+        '热门|'
+        + '上海,北京,广州,昆明,西安,成都,深圳,厦门,乌鲁木齐,南京,'
+        + '重庆,杭州,大连,长沙,海口,哈尔滨,青岛,沈阳,三亚,济南,'
+        + '武汉,郑州,贵阳,南宁,福州,天津,长春,石家庄,太原,兰州',
+        'A-G|'
+        + '安庆,阿勒泰,安康,鞍山,安顺,安阳,阿克苏,包头,蚌埠,北海,'
+        + '北京,百色,保山,博乐,长治,长春,长海,常州,昌都,朝阳,潮州,'
+        + '常德,长白山,成都,重庆,长沙,赤峰,大同,大连,达县,大足,东营,'
+        + '大庆,丹东,大理,敦煌,鄂尔多斯,恩施,二连浩特,佛山,福州,'
+        + '阜阳,富蕴,贵阳,桂林,广州,广元,赣州,格尔木,广汉,固原',
+        'H-L|'
+        + '呼和浩特,哈密,黑河,海拉尔,哈尔滨,海口,衡阳,黄山,杭州,'
+        + '邯郸,合肥,黄龙,汉中,和田,惠州,吉安,吉林,酒泉,鸡西,晋江,'
+        + '锦州,景德镇,嘉峪关,井冈山,济宁,九江,佳木斯,济南,喀什,'
+        + '昆明,康定,克拉玛依,库尔勒,喀纳斯,库车,兰州,洛阳,丽江,梁平,'
+        + '荔波,庐山,林芝,柳州,泸州,连云港,黎平,连城,拉萨,临沧,临沂',
+        'M-T|'
+        + '牡丹江,芒市,满洲里,绵阳,梅县,漠河,南京,南充,南宁,南阳,南通,'
+        + '那拉提,南昌,宁波,攀枝花,衢州,秦皇岛,庆阳,且末,齐齐哈尔,青岛,'
+        + '汕头,深圳,石家庄,三亚,沈阳,上海,思茅,鄯善,韶关,沙市,苏州,'
+        + '唐山,铜仁,通化,塔城,腾冲,台州,天水,天津,通辽,太原,吐鲁番',
+        'W-Z|'
+        + '威海,武汉,梧州,文山,无锡,潍坊,武夷山,乌兰浩特,温州,乌鲁木齐,'
+        + '芜湖,万州,乌海,兴义,西昌,厦门,香格里拉,西安,襄阳,西宁,'
+        + '锡林浩特,西双版纳,徐州,兴城,兴宁,邢台,义乌,永州,榆林,'
+        + '延安,运城,烟台,银川,宜昌,宜宾,盐城,延吉,玉树,伊宁,伊春,'
+        + '珠海,昭通,张家界,舟山,郑州,中卫,芷江,湛江,中甸,遵义'
+    ];
+
+    /**
+     * 国内城市选择控件
+     *
+     * @extends module:Control
+     * @requires lib
+     * @requires Control
+     * @requires Popup
+     * @exports City
+     * @example
+     * &amp;lt;input type="text" class="input triggers" /&amp;gt;
+     * &amp;lt;input type="button" value="click" class="triggers" /&amp;gt;
+     * new City({
+     *     triggers: '.triggers',
+     *     target: '.input'
+     *  }).render();
+     */
+    var City = Control.extend(/** @lends module:City.prototype */{
+
+
+        /**
+         * 控件类型标识
+         *
+         * @type {string}
+         * @protected
+         */
+        type: 'City',
+
+        /**
+         * 控件配置项
+         *
+         * @name module:City#options
+         * @see module:Popup#options
+         * @type {Object}
+         * @property {boolean} options.disabled 控件的不可用状态
+         * @property {(string | HTMLElement)} options.main 控件渲染容器
+         * @property {(string | HTMLElement)} options.target 计算弹出层相对位置的目标对象
+         * @property {string} options.prefix 控件class前缀，同时将作为main的class之一
+         * @property {number} options.index 默认激活的标签索引
+         * @property {string} options.activeClass 激活标签、内容的class
+         * @property {boolean} options.autoFill 是否自动填充默认城市数据(机票可用城市数据)
+         * @property {?string} options.hideCities 需要隐藏的城市
+         * @protected
+         */
+        options: {
+
+            // 默认激活的标签索引
+            index: 0,
+
+            // 激活标签、内容的class
+            activeClass: 'active',
+
+            // 是否自动填充默认城市数据(机票可用城市数据)
+            autoFill: true,
+
+            // 需要隐藏的城市
+            hideCities: null
+        },
+
+        /**
+         * 控件初始化
+         *
+         * @param {Object} options 控件配置项
+         * @see module:City#options
+         * @override
+         * @protected
+         */
+        init: function (options) {
+
+            this.$parent(options);
+
+            var main = this.main;
+
+            // 如果主元素是一个input, 那么我们在它的外层做一次包裹
+            if (main &amp;&amp; main.tagName === 'INPUT') {
+                var wrap = document.createElement('div');
+                var parent = main.parentNode;
+                if (parent) {
+                    parent.insertBefore(wrap, main);
+                }
+                wrap.appendChild(main);
+                this.input = main;
+                this.main = wrap;
+            }
+
+            this.tabs = this.autoFill
+                ? CITIES.slice()
+                : [];
+
+        },
+
+        /**
+         * 初始化城市选择控件的 DOM 结构
+         *
+         * @override
+         */
+        initStructure: function () {
+
+            var main = $(this.main);
+            var input = this.input;
+
+            if (!input) {
+                input = this.input = $('&lt;input type="text">')
+                    .appendTo(main)
+                    .get(0);
+            }
+
+            input.setAttribute('autocomplete', 'off');
+
+            if (this.name) {
+                input.name = this.name;
+            }
+
+            var popup = this.popup = new Popup({
+                target: input,
+                triggers: [input]
+            }).render();
+
+            this.helper.addPartClasses('popup', popup.main);
+        },
+
+        /**
+         * 初始化城市选择控件的事件绑定
+         *
+         * @override
+         */
+        initEvents: function () {
+            this.popup
+                .on('click', $.proxy(this._onPopupClick, this))
+                .on('show', $.proxy(this._onPopupShow, this));
+        },
+
+        /**
+         * 设置元素只读
+         *
+         * @param {boolean} isReadOnly 是否只读
+         * @public
+         */
+        setReadOnly: function (isReadOnly) {
+            this.$parent(isReadOnly);
+            this.input.readOnly = !!isReadOnly;
+        },
+
+        /**
+         * 重绘City控件
+         *
+         * @override
+         */
+        repaint: require('./painter').createRepaint(
+            Control.prototype.repaint,
+            {
+                name: 'value',
+                paint: function (conf, value) {
+                    this.setValue(value);
+                }
+            }
+        ),
+
+        /**
+         * 填充城市标签数据
+         *
+         * @param {(Array | string)} tabsOrItem 城市数组，
+         * 每项格式为 "标签|城市A,城市B,城市C" 当参数为字符类型时仅作为一个城市标签项
+         * @return {module:City} 当前 City 实例
+         * @public
+         */
+        fill: function (tabsOrItem) {
+            var tabs = this.tabs;
+
+            if (lib.isString(tabsOrItem)) {
+                tabs.push(tabsOrItem);
+            }
+            else {
+                this.tabs = tabsOrItem;
+            }
+
+            return this;
+        },
+
+        /**
+         * 选择城市
+         *
+         * @param {HTMLElement} el 点击的当前事件源对象
+         * @fires module:City#pick
+         * @private
+         */
+        _pick: function (el) {
+            var value = el.innerHTML;
+
+            var event = new $.Event('pick', {
+                target: this,
+                value: value
+            });
+
+            /**
+             * @event module:City#pick
+             * @type {Object}
+             * @property {string} value 选中的城市
+             */
+            this.fire(event);
+
+            if (event.isDefaultPrevented()) {
+                return;
+            }
+
+            var input = this.input;
+            input.value = value;
+            input.focus();
+            this.hide();
+
+            // 释放一个`change`事件
+            this.fire('change');
+        },
+
+        /**
+         * 切换标签
+         *
+         * @param {number} i 要切换到的目标标签索引
+         * @private
+         */
+        _changeTab: function (i) {
+            var labels      = this.labels;
+            var panels      = this.panels;
+            var index       = this.index;
+            var activeClass = this.helper.getPartClassName(this.activeClass);
+
+            if (i !== index) {
+
+                $(labels[index]).removeClass(activeClass);
+                $(panels[index]).removeClass(activeClass);
+
+                index = this.index = i;
+
+                $(labels[index]).addClass(activeClass);
+                $(panels[index]).addClass(activeClass);
+
+            }
+        },
+
+        /**
+         * 显示浮层
+         *
+         * @param {?HTMLElement=} target 触发显示浮层的节点
+         * @fires module:City#show 显示事件
+         * @public
+         */
+        show: function (target) {
+            this.popup.show();
+        },
+
+        /**
+         * 隐藏浮层
+         *
+         * @fires module:City#hide 隐藏事件
+         * @public
+         */
+        hide: function () {
+            this.popup.hide();
+        },
+
+        /**
+         * 设定值
+         * @param {string} value 值
+         * @return {module:City} 当前 City 实例
+         */
+        setValue: function (value) {
+            this.input.value = value || '';
+            return this;
+        },
+
+        /**
+         * 获取值
+         * @return {string}
+         */
+        getValue: function () {
+            return this.input.value;
+        },
+
+        /**
+         * 处理选单点击事件
+         *
+         * @param {Object} e Popup的`click`事件对象
+         * @fires module:City#click 点击事件
+         * @private
+         */
+        _onPopupClick: function (e) {
+
+            var target = $(e.target);
+            var tag    = target.prop('tagName');
+            var index  = target.data('idx');
+
+            var activeClassName = this.helper.getPartClassName(this.activeClass);
+
+            switch (tag) {
+                case 'A':
+                    e.preventDefault();
+                    target.hasClass(activeClassName)
+                        ? this.hide()
+                        : this._pick(e.target);
+                    break;
+                case 'LI':
+                    if (index !== this.index) {
+                        this._changeTab(index);
+                    }
+                    break;
+            }
+
+        },
+
+        /**
+         * 转发Popup的onPopupShow事件
+         *
+         * @param {Object} e `Popup`的`show`事件
+         * @fires module:City#show
+         * @private
+         */
+        _onPopupShow: function (e) {
+
+            if (this.isDisabled()) {
+                return;
+            }
+
+            var event = new $.Event('show');
+
+            /**
+             * @event module:City#beforeShow
+             * @type {Object}
+             * @property {Event} event 事件源对象
+             */
+            this.fire(event);
+
+            if (event.isDefaultPrevented()) {
+                e.preventDefault();
+                return;
+            }
+
+            if (!this.labels) {
+                var popup = this.popup;
+                popup.set('content', this._build(this.tabs));
+                var list = popup.main.getElementsByTagName('ul');
+                this.labels = list[0].getElementsByTagName('li');
+                this.panels = list[1].getElementsByTagName('li');
+            }
+        },
+
+        /**
+         * 构建选单HTML
+         *
+         * @private
+         * @param {Array.Object} tabs 标签配置
+         * @return {string}
+         */
+        _build: function (tabs) {
+            var helper  = this.helper;
+            var index   = this.index;
+            var labels  = [];
+            var panels  = [];
+
+            labels.push('&lt;ul class="' + helper.getPartClassName('labels') + '">');
+            panels.push('&lt;ul class="' + helper.getPartClassName('panels') + '">');
+
+            var comma = ',';
+            var hideCities = this.hideCities;
+            if (hideCities) {
+                hideCities = comma + hideCities.replace(/\s+/g, '') + comma;
+            }
+
+            var makeLinks = function (cities) {
+                return lib
+                    .map(cities.split(comma), function (city) {
+                        return !hideCities || !~hideCities.indexOf(comma + city + comma)
+                            ? '&lt;a href="#" title="' + city + '">' + city + '&lt;/a>'
+                            : '';
+                    })
+                    .join('');
+            };
+
+            var activeClassName = helper.getPartClassName(this.activeClass);
+
+            lib.each(this.tabs, function (tab, i) {
+                var start = '&lt;li data-idx="' + i + '" class="' + (i === index ? activeClassName : '') + '"';
+                tab = tab.split('|');
+                labels.push(start + '>' + tab[0] + '&lt;/li>');
+                panels.push(start + '>' + makeLinks(tab[1]) + '&lt;/li>');
+            });
+
+            labels.push('&lt;/ul>');
+            panels.push('&lt;/ul>');
+
+            return labels.join('') + panels.join('');
+        }
+
+    });
+
+    return City;
+});
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-BoxGroup.html">BoxGroup</a></li><li><a href="module-Button.html">Button</a></li><li><a href="module-ButtonCountdown.html">ButtonCountdown</a></li><li><a href="module-Calendar.html">Calendar</a></li><li><a href="module-City.html">City</a></li><li><a href="module-Context.html">Context</a></li><li><a href="module-Control.html">Control</a></li><li><a href="module-Cookie.html">Cookie</a></li><li><a href="module-Dialog.html">Dialog</a></li><li><a href="module-Form.html">Form</a></li><li><a href="module-FormFieldWatcher.html">FormFieldWatcher</a></li><li><a href="module-FormRelation.html">FormRelation</a></li><li><a href="module-FormSubmit.html">FormSubmit</a></li><li><a href="module-Helper.html">Helper</a></li><li><a href="module-Lazy.html">Lazy</a></li><li><a href="module-LazyImg.html">LazyImg</a></li><li><a href="module-Lazyload.html">Lazyload</a></li><li><a href="module-lib.html">lib</a></li><li><a href="module-log.html">log</a></li><li><a href="module-main.html">main</a></li><li><a href="module-Marquee.html">Marquee</a></li><li><a href="module-Mask.html">Mask</a></li><li><a href="module-Pager.html">Pager</a></li><li><a href="module-painter.html">painter</a></li><li><a href="module-Panel.html">Panel</a></li><li><a href="module-Plugin.html">Plugin</a></li><li><a href="module-Popup.html">Popup</a></li><li><a href="module-Rating.html">Rating</a></li><li><a href="module-ScrollBar.html">ScrollBar</a></li><li><a href="module-Select.html">Select</a></li><li><a href="module-Slider.html">Slider</a></li><li><a href="module-SliderAnim.html">SliderAnim</a></li><li><a href="module-Tab.html">Tab</a></li><li><a href="module-TabBar.html">TabBar</a></li><li><a href="module-Tag.html">Tag</a></li><li><a href="module-TextBox.html">TextBox</a></li><li><a href="module-TextBoxAutoComplete.html">TextBoxAutoComplete</a></li><li><a href="module-TextBoxPlaceHolder.html">TextBoxPlaceHolder</a></li><li><a href="module-Tip.html">Tip</a></li><li><a href="module-ValidateTip.html">ValidateTip</a></li><li><a href="module-Validator.html">Validator</a></li><li><a href="module-ValidityRule.html">ValidityRule</a></li></ul><h3>Classes</h3><ul><li><a href="Validity.html">Validity</a></li><li><a href="ValidityState.html">ValidityState</a></li></ul><h3>Events</h3><ul><li><a href="module-Calendar.html#event:hide">hide</a></li><li><a href="module-Calendar.html#event:pick">pick</a></li><li><a href="module-Calendar.html#event:show">show</a></li><li><a href="module-City.html#event:beforeShow">beforeShow</a></li><li><a href="module-City.html#event:pick">pick</a></li><li><a href="module-Control.html#event:afterdispose">afterdispose</a></li><li><a href="module-Control.html#event:afterrender">afterrender</a></li><li><a href="module-Control.html#event:beforedispose">beforedispose</a></li><li><a href="module-Control.html#event:beforerender">beforerender</a></li><li><a href="module-Control.html#event:disable">disable</a></li><li><a href="module-Control.html#event:enable">enable</a></li><li><a href="module-Control.html#event:statechange">statechange</a></li><li><a href="module-Dialog.html#event:dispose">dispose</a></li><li><a href="module-Dialog.html#event:hide">hide</a></li><li><a href="module-Form.html#event:submit">submit</a></li><li><a href="module-FormFieldWatcher.html#event:fieldchange%25E5%259F%259F%25E8%25BE%2593%25E5%2585%25A5%25E5%258F%2598%25E5%258C%2596%25E4%25BA%258B%25E4%25BB%25B6">fieldchange 域输入变化事件</a></li><li><a href="module-log.html#event:click">click</a></li><li><a href="module-log.html#event:send">send</a></li><li><a href="module-log.html#event:start">start</a></li><li><a href="module-Pager.html#event:change">change</a></li><li><a href="module-Popup.html#event:beforeshow">beforeshow</a></li><li><a href="module-Popup.html#event:click">click</a></li><li><a href="module-Popup.html#event:hide">hide</a></li><li><a href="module-Popup.html#event:show">show</a></li><li><a href="module-Rating.html#event:change">change</a></li><li><a href="module-Rating.html#event:hover">hover</a></li><li><a href="module-ScrollBar.html#event:change">change</a></li><li><a href="module-Select.html#event:change">change</a></li><li><a href="module-Slider.html#event:change">change</a></li><li><a href="module-Tab.html#event:change">change</a></li><li><a href="module-TextBox.html#event:autocomplete">autocomplete</a></li><li><a href="module-TextBox.html#event:autocompletebeforeshow">autocompletebeforeshow</a></li><li><a href="module-TextBox.html#event:autocompleteclick">autocompleteclick</a></li><li><a href="module-TextBox.html#event:autocompletehide">autocompletehide</a></li><li><a href="module-TextBox.html#event:autocompletepick">autocompletepick</a></li><li><a href="module-TextBox.html#event:autocompleteshow">autocompleteshow</a></li><li><a href="module-Validator.html#event:aftervalidate%25E6%25A0%25A1%25E9%25AA%258C%25E5%25AE%258C%25E6%2588%2590%25E4%25BA%258B%25E4%25BB%25B6">aftervalidate 校验完成事件</a></li><li><a href="module-Validator.html#event:beforevalidate">beforevalidate</a></li><li><a href="module-Validator.html#event:invalid%25E6%25A0%25A1%25E9%25AA%258C%25E4%25B8%258D%25E9%2580%259A%25E8%25BF%2587%25E4%25BA%258B%25E4%25BB%25B6">invalid 校验不通过事件</a></li><li><a href="module-Validator.html#event:valid%25E6%25A0%25A1%25E9%25AA%258C%25E9%2580%259A%25E8%25BF%2587%25E4%25BA%258B%25E4%25BB%25B6">valid 校验通过事件</a></li><li><a href="module-Validator.html#event:validating%25E6%25A0%25A1%25E9%25AA%258C%25E4%25B8%25AD%25E4%25BA%258B%25E4%25BB%25B6%25EF%25BC%258C%25E9%2592%2588%25E5%25AF%25B9%25E5%25BC%2582%25E6%25AD%25A5%25E6%25A0%25A1%25E9%25AA%258C%25E6%2589%258D%25E6%259C%2589">validating 校验中事件，针对异步校验才有</a></li></ul><h3>Namespaces</h3><ul><li><a href="module-lib.browser.html">browser</a></li></ul><h3>Interfaces</h3><ul><li><a href="configurable.html">configurable</a></li><li><a href="observable.html">observable</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a> on Tue Aug 11 2015 20:42:47 GMT+0800 (CST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
