@@ -904,6 +904,77 @@ Orginal Style from ethanschoonover.com/solarized (c) Jeremy Hull <sourdrums@gmai
  * @file MOYE - 按钮 - 样式
  * @author leon(leonlu@outlook.com)
  */
+/**
+ * @file MOYE - 样式依赖管理
+ * @author leon(leonlu@outlook.com)
+ */
+/**
+ * MOYE
+ * Copyright 2014 Baidu Inc. All rights reserved.
+ *
+ * @moye-file 样式变量
+ * @moye-author leon <leonlu@moye-outlook.com>
+ */
+/*-------------------
+      Base Sizes
+--------------------*/
+/*-------------------
+      Base Font Family
+--------------------*/
+/*---  Colors  ---*/
+/*---  Light Colors  ---*/
+/*---   Neutrals  ---*/
+/*-------------------
+    Emotive Colors
+--------------------*/
+/* Positive */
+/* Negative */
+/* Info */
+/* Warning */
+/*-------------------
+    Brand Colors
+--------------------*/
+/* Positive / Negative Dupes */
+/*-------------------
+        Sizes
+--------------------*/
+/*
+  To have sizing resolve to a specified pixel values adjust
+  the numerator to the desired font size and the denominator
+  to the base em size
+*/
+/*-------------------
+       Em Sizes
+--------------------*/
+/* Exact pixel values expressed in rem */
+/**
+ * @file MOYE 样式mixin工具库
+ * @author Leon(leon@outlook.com)
+ */
+/**
+ * 在旧世界, 将rem转化为px
+ * @param  {number} @prop 属性名
+ * @param  {number} @root 基准font-size
+ */
+/**
+ * 在新世界, 请rem/px转换成rem
+ * @param  {number} @prop 属性名
+ */
+/**********
+以moye-size开头的函数都是用来完成各种内置尺寸大小的
+********/
+/**
+ * 生成固定套路的高度
+ * @param  {rem} @size @moye-medium, @moye-tiny等等
+ */
+/**
+ * 生成固定套路的垂直内间距
+ * @param {rem} @size @moye-medium, @moye-tiny等等
+ */
+/**
+ * 生成固定套路的水平内间距
+ * @param  {rem} @size @moye-medium, @moye-tiny等等
+ */
 .ui-button {
   display: inline-block;
   *display: inline;
@@ -1037,8 +1108,8 @@ Orginal Style from ethanschoonover.com/solarized (c) Jeremy Hull <sourdrums@gmai
 }
 @font-face {
   font-family: "icon";
-  src: url('fonts/iconfont.eot');
-  src: url('fonts/iconfont.eot?#iefix') format('embedded-opentype'), url('fonts/iconfont.woff') format('woff'), url('fonts/iconfont.ttf') format('truetype'), url('fonts/iconfont.svg#icon') format('svg');
+  src: url('../font/iconfont.eot');
+  src: url('../font/iconfont.eot?#iefix') format('embedded-opentype'), url('../font/iconfont.woff') format('woff'), url('../font/iconfont.ttf') format('truetype'), url('../font/iconfont.svg#icon') format('svg');
 }
 .moye-icon,
 .ui-select-indicator {
