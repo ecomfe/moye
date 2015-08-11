@@ -5,7 +5,7 @@
   <subtitle><![CDATA[轻便、强大的UI组件库]]></subtitle>
   <link href="/moye/atom.xml" rel="self"/>
   <link href="http://ecomfe.github.io/moye/moye//"/>
-  <updated>2015-08-10T13:26:46.000Z</updated>
+  <updated>2015-08-11T02:56:22.000Z</updated>
   <id>http://ecomfe.github.io/moye/moye//</id>
   
   <author>
@@ -16,11 +16,36 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
-    <title><![CDATA[Form]]></title>
+    <title><![CDATA[单复选框 / BoxGroup]]></title>
+    <link href="http://ecomfe.github.io/moye/moye/component/BoxGroup.html"/>
+    <id>http://ecomfe.github.io/moye/moye/component/BoxGroup.html</id>
+    <published>2015-08-10T11:14:47.000Z</published>
+    <updated>2015-08-11T02:56:22.000Z</updated>
+    <content type="html"><![CDATA[<h3 id="复选框">复选框</h3><h4 id="普通复选框">普通复选框</h4><iframe height="268" scrolling="no" src="//codepen.io/cxtom/embed/yNwpOq/?height=268&theme-id=17729&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;">See the Pen <a href="http://codepen.io/cxtom/pen/yNwpOq/" target="_blank" rel="external">yNwpOq</a> by chenxiao (<a href="http://codepen.io/cxtom" target="_blank" rel="external">@cxtom</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+
+<figure class="highlight js"><figcaption><span>checkbox</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">require</span>([<span class="string">'moye/BoxGroup'</span>], <span class="function"><span class="keyword">function</span> (<span class="params">BoxGroup</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">new</span> BoxGroup(&#123;</span><br><span class="line">    main: <span class="built_in">document</span>.getElementById(<span class="string">'checkbox1'</span>),</span><br><span class="line">    datasource: [</span><br><span class="line">        &#123;value: <span class="number">0</span>, name: <span class="string">'不限'</span>&#125;,</span><br><span class="line">        &#123;value: <span class="number">1</span>, name: <span class="string">'中关村-上地'</span>&#125;,</span><br><span class="line">        &#123;value: <span class="number">2</span>, name: <span class="string">'亚运村'</span>&#125;,</span><br><span class="line">        &#123;value: <span class="number">3</span>, name: <span class="string">'北京南站商圈超长'</span>&#125;</span><br><span class="line">    ],</span><br><span class="line">    value: [<span class="number">1</span>, <span class="number">2</span>]</span><br><span class="line">    &#125;).render();</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<h4 id="普通单选框">普通单选框</h4><iframe height="266" scrolling="no" src="//codepen.io/cxtom/embed/Qboaqx/?height=266&theme-id=17729&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;">See the Pen <a href="http://codepen.io/cxtom/pen/Qboaqx/" target="_blank" rel="external">Qboaqx</a> by chenxiao (<a href="http://codepen.io/cxtom" target="_blank" rel="external">@cxtom</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+
+<figure class="highlight js"><figcaption><span>radio</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">require</span>([<span class="string">'moye/BoxGroup'</span>], <span class="function"><span class="keyword">function</span> (<span class="params">BoxGroup</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">new</span> BoxGroup(&#123;</span><br><span class="line">    main: <span class="built_in">document</span>.getElementById(<span class="string">'radio1'</span>),</span><br><span class="line">    boxType: <span class="string">'radio'</span>,</span><br><span class="line">    datasource: [</span><br><span class="line">        &#123;value: <span class="number">0</span>, name: <span class="string">'不限'</span>&#125;,</span><br><span class="line">        &#123;value: <span class="number">1</span>, name: <span class="string">'中关村-上地'</span>&#125;,</span><br><span class="line">        &#123;value: <span class="number">2</span>, name: <span class="string">'亚运村'</span>&#125;,</span><br><span class="line">        &#123;value: <span class="number">3</span>, name: <span class="string">'北京南站商圈超长'</span>&#125;</span><br><span class="line">    ],</span><br><span class="line">    value: [<span class="number">1</span>]</span><br><span class="line">    &#125;).render();</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<h4 id="木有图标的复选框">木有图标的复选框</h4><p>可以通过重写 getItemHTML 方法，改变每个选项的 HTML 结构</p>
+<p><strong><em> 注意 </em></strong> 我们约定每一个选项单元最外层的元素必须包含一个统一的 <code>selector</code> ， 默认是<code>[data-role=boxgroup-item]</code> ， 可以通过修改配置项 <code>itemSelector</code> 来修改。</p>
+<iframe height="266" scrolling="no" src="//codepen.io/cxtom/embed/jPJvmx/?height=266&theme-id=17729&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;">See the Pen <a href="http://codepen.io/cxtom/pen/jPJvmx/" target="_blank" rel="external">jPJvmx</a> by chenxiao (<a href="http://codepen.io/cxtom" target="_blank" rel="external">@cxtom</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
+
+<figure class="highlight js"><figcaption><span>checkbox</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">require</span>([<span class="string">'jquery'</span>,<span class="string">'moye/BoxGroup'</span>], <span class="function"><span class="keyword">function</span> (<span class="params">$, BoxGroup</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">new</span> BoxGroup(&#123;</span><br><span class="line">        main: <span class="built_in">document</span>.getElementById(<span class="string">'checkbox2'</span>),</span><br><span class="line">        icons: <span class="literal">false</span>,</span><br><span class="line">        activeClass: <span class="string">'ui-boxgroup-item-checked'</span>,</span><br><span class="line">        datasource: [</span><br><span class="line">            &#123;value: <span class="number">0</span>, name: <span class="string">'不限'</span>&#125;,</span><br><span class="line">            &#123;value: <span class="number">1</span>, name: <span class="string">'中关村-上地'</span>&#125;,</span><br><span class="line">            &#123;value: <span class="number">2</span>, name: <span class="string">'亚运村'</span>&#125;,</span><br><span class="line">            &#123;value: <span class="number">3</span>, name: <span class="string">'北京南站商圈超长'</span>&#125;</span><br><span class="line">        ],</span><br><span class="line">        value: [<span class="number">1</span>],</span><br><span class="line">        getItemHTML: <span class="function"><span class="keyword">function</span> (<span class="params">state, item</span>) </span>&#123;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">var</span> classNames = <span class="keyword">this</span>.helper.getPartClasses(<span class="string">'item'</span>);</span><br><span class="line">            <span class="keyword">var</span> index = $.inArray(item, <span class="keyword">this</span>.datasource);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (state) &#123;</span><br><span class="line">                classNames.push(<span class="keyword">this</span>.activeClass);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (index === <span class="number">0</span>) &#123;</span><br><span class="line">                classNames.push(<span class="string">'first'</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span> (index === <span class="keyword">this</span>.datasource.length - <span class="number">1</span>) &#123;</span><br><span class="line">                classNames.push(<span class="string">'last'</span>);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">return</span> <span class="string">''</span></span><br><span class="line">                + <span class="string">'&lt;label class="'</span> + classNames.join(<span class="string">' '</span>) + <span class="string">'" data-role="boxgroup-item"&gt;'</span></span><br><span class="line">                +     <span class="string">'&lt;input type="'</span> + <span class="keyword">this</span>.boxType + <span class="string">'" value="'</span> + item.value + <span class="string">'"&gt;'</span></span><br><span class="line">                +     item.name</span><br><span class="line">                + <span class="string">'&lt;/label&gt;'</span>;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;)</span><br><span class="line">    .render()</span><br><span class="line">    .on(<span class="string">'change'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">e</span>) </span>&#123;</span><br><span class="line">        $(<span class="string">'#values'</span>).html(<span class="keyword">this</span>.getValue().join(<span class="string">'，'</span>));</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>]]></content>
+    <summary type="html">
+    <![CDATA[<h3 id="复选框">复选框</h3><h4 id="普通复选框">普通复选框</h4><iframe height="268" scrolling="no" src="//codepen.io/cxtom/embed/yNwpOq/?height=268&theme-id=]]>
+    </summary>
+    
+      <category term="component" scheme="http://ecomfe.github.io/moye/moye/categories/component/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[表单 / Form]]></title>
     <link href="http://ecomfe.github.io/moye/moye/component/Form.html"/>
     <id>http://ecomfe.github.io/moye/moye/component/Form.html</id>
     <published>2015-08-09T02:41:28.000Z</published>
-    <updated>2015-08-10T13:26:46.000Z</updated>
+    <updated>2015-08-11T02:56:50.000Z</updated>
     <content type="html"><![CDATA[<h3 id="基本表单使用">基本表单使用</h3><iframe height="268" scrolling="no" src="//codepen.io/wuhy/embed/XbGNZp/?height=268&theme-id=17700&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;">See the Pen <a href="http://codepen.io/wuhy/pen/XbGNZp/" target="_blank" rel="external">Form</a> by spark (<a href="http://codepen.io/wuhy" target="_blank" rel="external">@wuhy</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
 
 <p><strong>注意：</strong> 禁用的表单项，不会出现在 <code>getData</code> 接口返回的数据里。为了能获取到对应的表单数据，需要对每个表单控件设置 <code>name</code> 属性。</p>
@@ -70,7 +95,7 @@
     <link href="http://ecomfe.github.io/moye/moye/introduction/inherits.html"/>
     <id>http://ecomfe.github.io/moye/moye/introduction/inherits.html</id>
     <published>2015-08-07T10:09:07.000Z</published>
-    <updated>2015-08-10T09:49:34.000Z</updated>
+    <updated>2015-08-11T02:52:31.000Z</updated>
     <content type="html"><![CDATA[<h1 id="继承机制">继承机制</h1><p>每个可实例化的<code>moye</code>控件都应该继承自<code>Control</code>基类。可以通过<code>Control.extend(proto)</code>方法来创建一个新的控件类。</p>
 <p>参数<code>proto</code>是一个<code>Object</code>类型对象，其所有属性都被合并到新控件的原型链对象上。因此，可以在<code>proto</code>上挂接所需要的属性或方法，控件实例可以直接访问。</p>
 <p>示例：</p>
@@ -94,7 +119,7 @@
     <link href="http://ecomfe.github.io/moye/moye/introduction/skin.html"/>
     <id>http://ecomfe.github.io/moye/moye/introduction/skin.html</id>
     <published>2015-08-07T09:46:10.000Z</published>
-    <updated>2015-08-10T09:49:34.000Z</updated>
+    <updated>2015-08-11T02:52:31.000Z</updated>
     <content type="html"><![CDATA[<h2 id="皮肤">皮肤</h2><p>皮肤机制为 <code>moye</code> 控件提供强大的样式自定义能力，可以支持 <code>自定义样式</code> 与 <code>换肤</code> / <code>风格主题</code> 。</p>
 <h3 id="功能特点：">功能特点：</h3><ol>
 <li>首先，每个控件都有一个基础样式类型: <code>ui-{type}</code>，其中<code>{type}</code>表示控件的主类型；</li>
@@ -124,7 +149,7 @@
     <link href="http://ecomfe.github.io/moye/moye/introduction/life-cycle.html"/>
     <id>http://ecomfe.github.io/moye/moye/introduction/life-cycle.html</id>
     <published>2015-08-07T08:29:55.000Z</published>
-    <updated>2015-08-10T09:49:34.000Z</updated>
+    <updated>2015-08-11T02:52:31.000Z</updated>
     <content type="html"><![CDATA[<h1 id="moye_生命周期机制">moye 生命周期机制</h1><p>控件从被创意到被销毁，有一个完整的生命周期。目前<code>moye</code>控件的生命周期机制是这样的：</p>
 <ol>
 <li><code>NEW</code> 实例刚刚被创建</li>
@@ -162,7 +187,7 @@
     <link href="http://ecomfe.github.io/moye/moye/introduction/plugin.html"/>
     <id>http://ecomfe.github.io/moye/moye/introduction/plugin.html</id>
     <published>2015-08-07T08:05:23.000Z</published>
-    <updated>2015-08-10T09:49:34.000Z</updated>
+    <updated>2015-08-11T02:52:31.000Z</updated>
     <content type="html"><![CDATA[<h2 id="moye插件机制">moye插件机制</h2><p>出于性能考虑, <code>moye</code>控件只保留最小功能集合. 许多增强功能是由<code>插件</code>来协助完成的.</p>
 <p>例如, 在<code>获取校验码</code>按钮一般情况都有一个冷却时间60秒. 点击之后60秒内是禁用的, 此时按钮文字显示冷却时间的倒计时. 此功能不方便直接写在<code>Button</code>控件中, 即可编写一个<code>插件</code>来完成.</p>
 <h3 id="使用方式">使用方式</h3><p>可以使用两种方式来激活一个控件</p>
@@ -233,7 +258,7 @@
     <link href="http://ecomfe.github.io/moye/moye/introduction/develop.html"/>
     <id>http://ecomfe.github.io/moye/moye/introduction/develop.html</id>
     <published>2015-08-07T07:59:18.000Z</published>
-    <updated>2015-08-10T09:49:34.000Z</updated>
+    <updated>2015-08-11T02:52:31.000Z</updated>
     <content type="html"><![CDATA[<h1 id="如何开发_Moye_组件">如何开发 Moye 组件</h1><h3 id="准备开发">准备开发</h3><p>目前, <code>moye</code>的开发分支是<code>feature/ng</code>, 请在此分支上进行开发.</p>
 <p><code>moye</code>基于<code>edp webserver</code>进行调试, 使用了<code>est</code>作为less mixin库, 在<code>demo</code>中需要安装一些<code>npm</code>包. 因此, 推荐下面的方法来准备开发环境.</p>
 <figure class="highlight dos"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/<span class="built_in">path</span>/to/moye</span><br><span class="line">npm install</span><br><span class="line">bower install</span><br><span class="line">edp webserver <span class="built_in">start</span></span><br></pre></td></tr></table></figure>
@@ -241,7 +266,7 @@
 <p>其中, edp werbserver请使用1.0.15@beta以上的版本, 使用这个命令来安装</p>
 <figure class="highlight coffeescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">npm</span> install -g edp-webserver<span class="property">@beta</span></span><br></pre></td></tr></table></figure>
 <p><code>bower</code>是一个前端依赖包的管理工具, 可以通过这个命令来安装</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm <span class="operator"><span class="keyword">install</span> -<span class="keyword">g</span> bower</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm <span class="keyword">install</span> -g bower</span><br></pre></td></tr></table></figure>
 <h3 id="Moye_目录结构">Moye 目录结构</h3><pre><code><span class="comment"><figure class="highlight ceylon"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Moye</span><br><span class="line">    |- dep        <span class="comment">// 外部依赖模块</span></span><br><span class="line">    |- <span class="annotation">doc</span>        <span class="comment">// 文档目录</span></span><br><span class="line">    |- example    <span class="comment">// 组件对应的示例</span></span><br><span class="line">    |- src        <span class="comment">// 组件源码，包括 LESS 与 JS</span></span><br><span class="line">    |- test       <span class="comment">// 测试用例</span></span><br></pre></td></tr></table></figure></span>
 </code></pre><ul>
 <li>doc/api 目录为 <code>jsdoc3</code> 自动生成的 API 文档。</li>
@@ -322,7 +347,7 @@
     <link href="http://ecomfe.github.io/moye/moye/introduction/best-practice.html"/>
     <id>http://ecomfe.github.io/moye/moye/introduction/best-practice.html</id>
     <published>2015-08-07T07:26:33.000Z</published>
-    <updated>2015-08-10T09:49:34.000Z</updated>
+    <updated>2015-08-11T02:52:31.000Z</updated>
     <content type="html"><![CDATA[<h2 id="初始化组件">初始化组件</h2><p>一般我们会这样来初始化组件：</p>
 <figure class="highlight html"><figcaption><span>DOM结构</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="title">div</span> <span class="attribute">id</span>=<span class="value">"container"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">div</span> <span class="attribute">data-ui-id</span>=<span class="value">"submitButton"</span>&gt;</span><span class="tag">&lt;/<span class="title">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="title">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
 <figure class="highlight js"><figcaption><span>初始化组件</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 需要哪些组件，需要在这里事先把它们加载回来，比如我们这里用到了 `Button`</span></span><br><span class="line"><span class="built_in">require</span>([<span class="string">'moye'</span>, <span class="string">'moye/Button'</span>], <span class="function"><span class="keyword">function</span> (<span class="params">moye</span>) </span>&#123;</span><br><span class="line"></span><br><span class="line">    moye.init(</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 这里指定了组件所在的容器 DOM</span></span><br><span class="line">        <span class="built_in">document</span>.body,</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 这里是初始化组件所需要的参数们</span></span><br><span class="line">        &#123;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 这个属性名与 DOM 结构上的 data-ui-id 相对应</span></span><br><span class="line">            submitButton: &#123;</span><br><span class="line"></span><br><span class="line">                <span class="comment">// 这是一个必须的参数，用来指定这个控件的类型</span></span><br><span class="line">                type: <span class="string">'Button'</span>,</span><br><span class="line">                text: <span class="string">'submit'</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    );</span><br><span class="line"></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
@@ -348,7 +373,7 @@
     <link href="http://ecomfe.github.io/moye/moye/introduction/get-started.html"/>
     <id>http://ecomfe.github.io/moye/moye/introduction/get-started.html</id>
     <published>2015-08-07T04:17:45.000Z</published>
-    <updated>2015-08-10T09:49:34.000Z</updated>
+    <updated>2015-08-11T02:52:31.000Z</updated>
     <content type="html"><![CDATA[<h2 id="安装_/_Install">安装 / Install</h2><p>通过 <code>bower</code> 进行安装</p>
 <figure class="highlight sh"><figcaption><span>通过 bower 安装 moye</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 如果你没有安装 bower，请先安装 bower 哟</span></span><br><span class="line"><span class="comment"># 如果已经安装过 bower，请跳过这一条</span></span><br><span class="line">npm install -g bower</span><br><span class="line"></span><br><span class="line"><span class="comment"># 开始安装 moye</span></span><br><span class="line">bower install moye</span><br></pre></td></tr></table></figure>
 <p>或者从 github 上直接克隆源码</p>
@@ -381,7 +406,7 @@
     <link href="http://ecomfe.github.io/moye/moye/component/Tip.html"/>
     <id>http://ecomfe.github.io/moye/moye/component/Tip.html</id>
     <published>2015-08-06T11:13:48.000Z</published>
-    <updated>2015-08-10T09:49:34.000Z</updated>
+    <updated>2015-08-11T02:52:31.000Z</updated>
     <content type="html"><![CDATA[<h1 id="Tip_组件">Tip 组件</h1><h3 id="如何标识目标">如何标识目标</h3><p>只需要给目标 DOM 添加样式类<code>tooltips</code>即可</p>
 <iframe height="763" scrolling="no" src="//codepen.io/jinzhubaofu/embed/KpJeGM/?height=763&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/KpJeGM/" target="_blank" rel="external">KpJeGM</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
 
@@ -415,7 +440,7 @@
     <link href="http://ecomfe.github.io/moye/moye/component/Tab.html"/>
     <id>http://ecomfe.github.io/moye/moye/component/Tab.html</id>
     <published>2015-08-06T10:05:14.000Z</published>
-    <updated>2015-08-10T09:49:34.000Z</updated>
+    <updated>2015-08-11T02:52:31.000Z</updated>
     <content type="html"><![CDATA[<h1 id="Tab_选项卡">Tab 选项卡</h1><h3 id="正常模式">正常模式</h3><p>点击标签可以切换</p>
 <blockquote>
 <p>可以通过阻止<code>change</code>事件对象的默认行为来阻止切换标签</p>
@@ -440,7 +465,7 @@
     <link href="http://ecomfe.github.io/moye/moye/component/Slider.html"/>
     <id>http://ecomfe.github.io/moye/moye/component/Slider.html</id>
     <published>2015-08-06T09:55:03.000Z</published>
-    <updated>2015-08-10T09:49:34.000Z</updated>
+    <updated>2015-08-11T02:52:31.000Z</updated>
     <content type="html"><![CDATA[<h1 id="Slider_轮播图">Slider 轮播图</h1><p>自动轮播</p>
 <p>设置参数<code>auto</code>为<code>true</code>, 控件会在完成<code>render</code>后开始<code>播放</code>, 即开始轮播.</p>
 <p>或者调用<code>slider.play()</code>/<code>slider.stop()</code>来开始/暂停播放</p>
@@ -465,7 +490,7 @@
     <link href="http://ecomfe.github.io/moye/moye/component/Select.html"/>
     <id>http://ecomfe.github.io/moye/moye/component/Select.html</id>
     <published>2015-08-06T09:48:56.000Z</published>
-    <updated>2015-08-10T09:49:34.000Z</updated>
+    <updated>2015-08-11T02:52:31.000Z</updated>
     <content type="html"><![CDATA[<h3 id="各种大小的下拉框">各种大小的下拉框</h3><p>虽然丑了些。。。</p>
 <iframe height="490" scrolling="no" src="//codepen.io/jinzhubaofu/embed/aOXGMZ/?height=490&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/aOXGMZ/" target="_blank" rel="external">aOXGMZ</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
 
@@ -485,7 +510,7 @@
     <link href="http://ecomfe.github.io/moye/moye/component/Rating.html"/>
     <id>http://ecomfe.github.io/moye/moye/component/Rating.html</id>
     <published>2015-08-06T09:33:37.000Z</published>
-    <updated>2015-08-10T09:49:34.000Z</updated>
+    <updated>2015-08-11T02:52:31.000Z</updated>
     <content type="html"><![CDATA[<h1 id="Rating_打分组件">Rating 打分组件</h1><p>当鼠标移动到星星上时，星星会暂时地指向鼠标所在的星星；此时移出星星，那么组件会恢复到原有值。只有在星星点击一下，值才会被固定下来，移出时不再恢复。</p>
 <iframe height="556" scrolling="no" src="//codepen.io/jinzhubaofu/embed/eNxrbm/?height=556&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/eNxrbm/" target="_blank" rel="external">eNxrbm</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
 ]]></content>
@@ -503,7 +528,7 @@
     <link href="http://ecomfe.github.io/moye/moye/component/Popup.html"/>
     <id>http://ecomfe.github.io/moye/moye/component/Popup.html</id>
     <published>2015-08-06T09:25:23.000Z</published>
-    <updated>2015-08-10T09:49:34.000Z</updated>
+    <updated>2015-08-11T02:52:31.000Z</updated>
     <content type="html"><![CDATA[<h2 id="浮层_/_Popup">浮层 / Popup</h2><p><code>Popup</code>是一个工具控件, 用来完成浮出层的功能. 经常作为其他控件的子控件组合使用, 一般不直接使用.</p>
 <p><code>Popup</code>的主要参数是<code>triggers</code>, 用以指定触发<code>Popup</code>浮层. <code>triggers</code>是一个<code>jQuery</code>可以接受的<code>css selector</code>.</p>
 <p>使用<code>target</code>属性来指定<code>Popup</code>的显示位置.</p>
@@ -533,7 +558,7 @@
     <link href="http://ecomfe.github.io/moye/moye/component/Pager.html"/>
     <id>http://ecomfe.github.io/moye/moye/component/Pager.html</id>
     <published>2015-08-06T07:16:19.000Z</published>
-    <updated>2015-08-10T09:49:34.000Z</updated>
+    <updated>2015-08-11T02:52:31.000Z</updated>
     <content type="html"><![CDATA[<h1 id="Pager">Pager</h1><h2 id="简单版本">简单版本</h2><iframe height="121" scrolling="no" src="//codepen.io/jinzhubaofu/embed/qdgoMz/?height=121&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/qdgoMz/" target="_blank" rel="external">qdgoMz</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
 
 <h2 id="设置总页面">设置总页面</h2><p>与下拉框组合使用，设置总页码</p>
@@ -650,7 +675,7 @@
     <link href="http://ecomfe.github.io/moye/moye/component/Marquee.html"/>
     <id>http://ecomfe.github.io/moye/moye/component/Marquee.html</id>
     <published>2015-08-06T06:44:37.000Z</published>
-    <updated>2015-08-10T09:49:34.000Z</updated>
+    <updated>2015-08-11T02:52:31.000Z</updated>
     <content type="html"><![CDATA[<h1 id="走马灯">走马灯</h1><p>向左滚动</p>
 <iframe height="266" scrolling="no" src="//codepen.io/jinzhubaofu/embed/vObReY/?height=266&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/vObReY/" target="_blank" rel="external">vObReY</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
 
@@ -688,7 +713,7 @@
     <link href="http://ecomfe.github.io/moye/moye/component/LazyImg.html"/>
     <id>http://ecomfe.github.io/moye/moye/component/LazyImg.html</id>
     <published>2015-08-06T06:23:57.000Z</published>
-    <updated>2015-08-10T09:49:34.000Z</updated>
+    <updated>2015-08-11T02:52:31.000Z</updated>
     <content type="html"><![CDATA[<h1 id="Lazy_懒加载">Lazy 懒加载</h1><h2 id="示例">示例</h2><iframe height="424" scrolling="no" src="//codepen.io/jinzhubaofu/embed/jPdzBw/?height=424&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/jPdzBw/" target="_blank" rel="external">jPdzBw</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
 ]]></content>
     <summary type="html">
@@ -704,7 +729,7 @@
     <link href="http://ecomfe.github.io/moye/moye/component/Dialog.html"/>
     <id>http://ecomfe.github.io/moye/moye/component/Dialog.html</id>
     <published>2015-08-06T02:34:40.000Z</published>
-    <updated>2015-08-10T09:49:34.000Z</updated>
+    <updated>2015-08-11T02:52:31.000Z</updated>
     <content type="html"><![CDATA[<h1 id="Dialog_窗口">Dialog 窗口</h1><h2 id="普通窗口">普通窗口</h2><iframe height="361" scrolling="no" src="//codepen.io/jinzhubaofu/embed/xGMWKz/?height=361&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/xGMWKz/" target="_blank" rel="external">xGMWKz</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
 
 <h2 id="会自毁的窗口">会自毁的窗口</h2><iframe height="266" scrolling="no" src="//codepen.io/jinzhubaofu/embed/mJvxbZ/?height=266&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/mJvxbZ/" target="_blank" rel="external">mJvxbZ</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
@@ -752,7 +777,7 @@
     <link href="http://ecomfe.github.io/moye/moye/component/City.html"/>
     <id>http://ecomfe.github.io/moye/moye/component/City.html</id>
     <published>2015-08-06T02:34:40.000Z</published>
-    <updated>2015-08-10T09:49:34.000Z</updated>
+    <updated>2015-08-11T02:52:31.000Z</updated>
     <content type="html"><![CDATA[<h1 id="城市控件">城市控件</h1><p>特性:</p>
 <ol>
 <li>带有初始值</li>
@@ -771,29 +796,6 @@
 <li>只能选择城市, 不可手工输入</li>
 <li>使用默认城市列表</li>
 <li>可指定<code>name</code>值, 可在直接<code>form</c]]>
-    </summary>
-    
-      <category term="component" scheme="http://ecomfe.github.io/moye/moye/categories/component/"/>
-    
-  </entry>
-  
-  <entry>
-    <title><![CDATA[文本框 / TextBox]]></title>
-    <link href="http://ecomfe.github.io/moye/moye/component/TextBox.html"/>
-    <id>http://ecomfe.github.io/moye/moye/component/TextBox.html</id>
-    <published>2015-08-05T11:29:19.000Z</published>
-    <updated>2015-08-10T09:49:34.000Z</updated>
-    <content type="html"><![CDATA[<h1 id="TextBox_文本框">TextBox 文本框</h1><p>在用户输入过程中，<code>TextBox</code>会发送<code>onChange</code>事件，可以监听这个事件来处理用户的输入，包括获取数据、校验数据；</p>
-<iframe height="174" scrolling="no" src="//codepen.io/jinzhubaofu/embed/ZGwrbQ/?height=174&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/ZGwrbQ/" target="_blank" rel="external">ZGwrbQ</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
-
-<h2 id="文本框的状态">文本框的状态</h2><iframe height="200" scrolling="no" src="//codepen.io/jinzhubaofu/embed/yNZveN/?height=200&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/yNZveN/" target="_blank" rel="external">yNZveN</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
-
-<h2 id="自动推荐">自动推荐</h2><p>下面这个示例，在用户输入的过程中，从百度加载相关的热门搜索词。</p>
-<iframe height="416" scrolling="no" src="//codepen.io/jinzhubaofu/embed/VLgQaQ/?height=416&theme-id=17600&default-tab=result" frameborder="no" allowtransparency="true" allowfullscreen="true" style="width: 100%;"><br>    See the Pen <a href="http://codepen.io/jinzhubaofu/pen/VLgQaQ/" target="_blank" rel="external">VLgQaQ</a> by leon (<a href="http://codepen.io/jinzhubaofu" target="_blank" rel="external">@jinzhubaofu</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.<br></iframe>
-]]></content>
-    <summary type="html">
-    <![CDATA[<h1 id="TextBox_文本框">TextBox 文本框</h1><p>在用户输入过程中，<code>TextBox</code>会发送<code>onChange</code>事件，可以监听这个事件来处理用户的输入，包括获取数据、校验数据；</p>
-<iframe he]]>
     </summary>
     
       <category term="component" scheme="http://ecomfe.github.io/moye/moye/categories/component/"/>
