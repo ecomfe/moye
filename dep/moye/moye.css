@@ -206,8 +206,8 @@
 }
 @font-face {
   font-family: "icon";
-  src: url('../font/iconfont.eot');
-  src: url('../font/iconfont.eot?#iefix') format('embedded-opentype'), url('../font/iconfont.woff') format('woff'), url('../font/iconfont.ttf') format('truetype'), url('../font/iconfont.svg#icon') format('svg');
+  src: url('../css/fonts/iconfont.eot');
+  src: url('../css/fonts/iconfont.eot?#iefix') format('embedded-opentype'), url('../css/fonts/iconfont.woff') format('woff'), url('../css/fonts/iconfont.ttf') format('truetype'), url('../css/fonts/iconfont.svg#icon') format('svg');
 }
 .moye-icon,
 .ui-select-indicator {
