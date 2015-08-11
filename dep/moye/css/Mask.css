@@ -1,0 +1,2 @@
+/*! 2015 Baidu Inc. All Rights Reserved */
+.ui-mask{position:fixed;_position:absolute;*zoom:1;visibility:hidden;top:0;left:0;width:100%;height:100%;background-color:#000;opacity:0;filter:alpha(opacity=0);-webkit-transition:opacity 0.3s;-moz-transition:opacity 0.3s;-ms-transition:opacity 0.3s;-o-transition:opacity 0.3s;transition:opacity 0.3s}.ui-mask-visible{visibility:visible;opacity:.6;filter:alpha(opacity=60)}

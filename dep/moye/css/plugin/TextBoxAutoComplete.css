@@ -1,0 +1,2 @@
+/*! 2015 Baidu Inc. All Rights Reserved */
+.ui-textbox{position:relative}.ui-textbox-autocomplete{position:absolute;margin-top:-1px;width:100%;top:100%;left:0;z-index:100;background-color:#fff;border:1px solid #999}.ui-textbox-autocomplete-item{overflow:hidden;text-overflow:ellipsis;-o-text-overflow:ellipsis;white-space:nowrap;display:block;padding:5px;line-height:20px;text-decoration:none;color:#333;cursor:default}.ui-textbox-autocomplete-item:hover,.ui-textbox-autocomplete-item.hover{background-color:#eaeaea}.ui-textbox-autocomplete-item em{color:#ff2900}
