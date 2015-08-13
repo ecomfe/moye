@@ -1,0 +1,136 @@
+/**
+ * MOYE
+ * Copyright 2014 Baidu Inc. All rights reserved.
+ *
+ * @file 对话窗样式
+ * @author leon <leonlu@outlook.com>
+ */
+
+@import './dep.less';
+@import './variable.less';
+@import './mixin.less';
+@import './icon.less';
+
+@import './Mask.less';
+@import './Button.less';
+
+
+.@{moye-prefix}-lightbox {
+
+    position: fixed;
+    _position: absolute;
+    top: 50%;
+    left: 50%;
+    overflow: visible;
+    display: none;
+    background: #FFF;
+    .opacity(0);
+    .transition(opacity .3s);
+    .box-shadow(0 0 5px rgba(0, 0, 0, 0.5));
+
+
+    &-visible {
+        display: block;
+        .opacity(100);
+    }
+
+    &-title {
+        position: absolute;
+        bottom: 0;
+        background-color: #000;
+        .opacity(60);
+        line-height: 20px;
+        font: bold 14px inherit;
+        color: #fff;
+        z-index: 11;
+    }
+
+    &-loading {
+        background: url('../img/loading.gif') no-repeat;
+        width: 48px;
+        height: 48px;
+        margin-top: -24px;
+        margin-left: -24px;
+        position: fixed;
+        _position: absolute;
+        top: 50%;
+        left: 50%;
+        display: none;
+    }
+
+
+    &-content {
+        position: relative;
+    }
+
+    &-close {
+        @close-width: 26px;
+        .moye-icon;
+
+        position: absolute;
+        width: @close-width;
+        height: @close-width;
+        top: -@close-width/2;
+        right: -@close-width/2;
+        padding: 0;
+        text-align: center;
+        line-height: @close-width;
+        cursor: pointer;
+        font-size: 18px;
+        background-color: #fff;
+
+        .border-radius(500em);
+        .box-shadow(0 0 5px rgba(0, 0, 0, 0.5));
+
+        &:hover {
+            color: #ccc;
+        }
+    }
+
+    &-page {
+        position: absolute;
+        right: 20px;
+        bottom: 20px;
+        line-height: 20px;
+        padding: 10px;
+        color: #fff;
+        z-index: 12;
+    }
+
+    &-image {
+        width: 100%;
+        height: 100%;
+    }
+
+    &-prev,
+    &-next {
+        @icon-width: 40px;
+        .moye-icon;
+
+        position: absolute;
+        width: @icon-width;
+        height: @icon-width;
+        top: 50%;
+        margin-top: -@icon-width/2;
+        padding: 0;
+        text-align: center;
+        line-height: @icon-width;
+        cursor: pointer;
+        font-size: 30px;
+
+        .embossed-text(#ccc);
+
+        &:hover {
+            color: #ddd;
+        }
+    }
+
+    &-prev {
+        left: 0.3em;
+    }
+
+    &-next {
+        right: 0.3em;
+    }
+
+}

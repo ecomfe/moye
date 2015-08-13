@@ -164,7 +164,9 @@ define(function (require) {
                         var item = datasource[i];
                         item.value += '';
                         var state = $.inArray(item.value, this.value) > -1;
-                        html[i] = this.getItemHTML(state, item);
+                        html[i] = $(this.getItemHTML(state, item))
+                            .attr('data-role', 'boxgroup-item')
+                            .prop('outerHTML');
                     }
 
                     main.html(html.join(''));
@@ -185,6 +187,7 @@ define(function (require) {
                     if (this.boxType.toLowerCase() === 'radio') {
                         value.length = 1;
                     }
+
                     var me = this;
                     $(this.itemSelector, main).each(function () {
                         var $this = $(this);
