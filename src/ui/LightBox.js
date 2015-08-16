@@ -119,14 +119,14 @@ define(function (require) {
                         .addClass(me.helper.getPartClassName('image'));
                     content = dom.prop('outerHTML');
 
-                    var size = privates.getSize.call(me, dom.get(0), index);
-                    element = lib.extend(element, size);
-                    var title = element.title;
-
                     // dom = me.helper.getPart('image');
                     dom = dom[0];
 
                     var showImage = function () {
+
+                        var size = privates.getSize.call(me, dom, index);
+                        element = lib.extend(element, size);
+                        var title = element.title;
 
                         me.current = index;
                         privates.showIcons.call(me);
