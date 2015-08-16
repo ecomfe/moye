@@ -4,6 +4,7 @@
  *
  * @file 单复选框组件
  * @author dengxiaohong01(dengxiaohong01@baidu.com)
+ * @author cxtom(cxtom2008@gmail.com)
  */
 
 define(function (require) {
@@ -164,9 +165,7 @@ define(function (require) {
                         var item = datasource[i];
                         item.value += '';
                         var state = $.inArray(item.value, this.value) > -1;
-                        html[i] = $(this.getItemHTML(state, item))
-                            .attr('data-role', 'boxgroup-item')
-                            .prop('outerHTML');
+                        html[i] = this.getItemHTML(state, item);
                     }
 
                     main.html(html.join(''));
@@ -187,7 +186,6 @@ define(function (require) {
                     if (this.boxType.toLowerCase() === 'radio') {
                         value.length = 1;
                     }
-
                     var me = this;
                     $(this.itemSelector, main).each(function () {
                         var $this = $(this);
