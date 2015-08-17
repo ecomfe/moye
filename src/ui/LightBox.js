@@ -548,7 +548,7 @@ define(function (require) {
          */
         onWindowResize: function () {
 
-            if (this.currentStates.visiable) {
+            if (this.currentStates.visible) {
                 var size = this.getSize(this.current);
                 this.set(size);
             }
