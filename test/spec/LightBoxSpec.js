@@ -11,12 +11,10 @@ define(function (require) {
 
     /* eslint-disable max-len */
     var images = [
-        '<a class="lightbox" href="http://www.baidu.com/img/bdlogo.png" data-title="123"></a>',
-        '<a class="lightbox" href="http://www.baidu.com/img/bdlogo.png" data-width="123"></a>',
-        '<div class="lightbox" data-url="http://www.baidu.com/img/bdlogo.png" data-height="123"></div>',
-        '<div class="lightbox" data-url="http://www.baidu.com/img/bdlogo.png" data-width="123" data-height="123"></div>',
-        '<a class="lightbox" href="#"></a>',
-        '<div class="lightbox"></div>'
+        '<div data-role="lightbox-image" data-lightbox-url="http://www.baidu.com/img/bdlogo.png" data-lightbox-title="123"></div>',
+        '<div data-role="lightbox-image" data-lightbox-url="http://www.baidu.com/img/bdlogo.png" data-lightbox-width="123"></div>',
+        '<div data-role="lightbox-image" data-lightbox-url="http://www.baidu.com/img/bdlogo.png" data-lightbox-height="123"></div>',
+        '<div data-role="lightbox-image" data-lightbox-url="http://www.baidu.com/img/bdlogo.png" data-lightbox-height="123" data-lightbox-width="123"></div>'
     ];
     /* eslint-enable max-len */
 
@@ -31,7 +29,7 @@ define(function (require) {
 
     afterEach(function () {
         lightbox.dispose();
-        $('.lightbox').remove();
+        $('[data-role="lightbox-image"]').remove();
     });
 
     /* eslint-disable max-nested-callbacks */
@@ -48,6 +46,7 @@ define(function (require) {
         });
 
         it('check prev next', function () {
+            expect(lightbox.total).toBe(4);
             lightbox.onMainClicked.call(lightbox, {currentTarget: $('.ui-lightbox-prev')[0]});
             lightbox.onMainClicked.call(lightbox, {currentTarget: $('.ui-lightbox-next')[0]});
             lightbox.onMainClicked.call(lightbox, {currentTarget: $('.ui-lightbox-next')[0]});
@@ -56,20 +55,17 @@ define(function (require) {
             });
         });
 
-        it('check select 4', function () {
-            expect(lightbox.total).toBe(4);
-            lightbox.select(4);
-            lightbox.on('change', function (e) {
-                expect(e.activeIndex).toBe(0);
+        /* eslint-disable no-loop-func */
+        for (var i = 1; i < 4; i++) {
+            it('check select ' + i, function () {
+                lightbox.select(i);
+                lightbox.on('change', function (e) {
+                    expect(e.activeIndex).toBe(i);
+                });
             });
-        });
+        }
+        /* eslint-enable no-loop-func */
 
-        it('check select 2', function () {
-            lightbox.select(2);
-            lightbox.on('change', function (e) {
-                expect(e.activeIndex).toBe(2);
-            });
-        });
 
         it('check createIcons', function () {
             lightbox.createIcons('text1');
@@ -82,7 +78,7 @@ define(function (require) {
         });
 
         it('check triggers', function () {
-            $('.lightbox').eq(0).trigger('click');
+            $('[data-role="lightbox-image"]').eq(0).trigger('click');
             lightbox.elements[0].width = 800;
             lightbox.elements[0].height = 600;
             lightbox.current = 0;
@@ -98,9 +94,9 @@ define(function (require) {
             lightbox.setHeight(200);
             lightbox.setTitle('123');
 
-            expect($(lightbox.getChild('content').main, lightbox.main).width()).toBe(100);
-            expect($(lightbox.getChild('content').main, lightbox.main).height()).toBe(200);
-            expect($(lightbox.getChild('title').main, lightbox.main).text()).toBe('123');
+            expect($(lightbox.helper.getPart('content'), lightbox.main).width()).toBe(100);
+            expect($(lightbox.helper.getPart('content'), lightbox.main).height()).toBe(200);
+            expect($(lightbox.helper.getPart('title'), lightbox.main).text()).toBe('123');
         });
 
         it('event:dispose', function () {

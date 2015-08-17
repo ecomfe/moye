@@ -1,6 +1,7 @@
 {% target: LightBox(master=base) %}
 {% content: style%}
 <link rel="stylesheet" href="../src/css/LightBox.less">
+<link rel="stylesheet" href="../src/css/Slider.less">
 <style>
   .content {
     margin: 20px 0;
@@ -14,54 +15,40 @@
 ## 普通窗口
 
 ```html
-<div class="content">
-    <a href="http://getuikit.com/docs/images/placeholder_800x600_2.jpg" class="lightbox" data-width="200" data-height="200">
-        Image1
-    </a>
-    <a href="http://getuikit.com/docs/images/placeholder_800x600_1.jpg" class="lightbox" data-title="这是一个标题">
-        Image2
-    </a>
-    <a href="http://file.ynet.com/2/1503/23/9928834.jpg" class="lightbox" >
-        <img alt="demoImg" src="http://file.ynet.com/2/1503/23/9928834.jpg" width="100" height="75">
-    </a>
+<div class="image-container">
+    <img src="http://ww4.sinaimg.cn/large/006234yQjw1euefah0d07j30u00i00xp.jpg" data-lightbox-url="http://ww4.sinaimg.cn/large/006234yQjw1euefah0d07j30u00i00xp.jpg" data-role="lightbox-image" width="200">
+    <img src="http://ww2.sinaimg.cn/large/4aa4ff9ajw1eu0qi54dbpj20u00i0adh.jpg" data-lightbox-url="http://ww2.sinaimg.cn/large/4aa4ff9ajw1eu0qi54dbpj20u00i0adh.jpg" data-role="lightbox-image" width="200">
+    <img src="http://ww4.sinaimg.cn/large/683b1fbdjw1etzx5smxzlj20u00i0wj9.jpg" data-lightbox-url="http://ww4.sinaimg.cn/large/683b1fbdjw1etzx5smxzlj20u00i0wj9.jpg" data-role="lightbox-image" data-lightbox-width="400" width="200">
 </div>
+
 ```
 
 ```js
-require(['jquery', 'ui/LightBox'], function ($, LightBox) {
+require(['ui/LightBox', 'jquery'], function (LightBox, $) {
 
-  var lightbox = new LightBox({
-    cyclic: false,
-    autoScale: true
-  }).render();
-
+    var lightbox = new LightBox({
+        cyclic: true,
+        autoScale: true
+    }).render();
 });
 ```
 <style>
-.lightbox {
-  display: block;
+.image-container * {
+  margin: 20px;
+  cursor: pointer;
 }
 </style>
-<div class="content">
-    <a href="http://getuikit.com/docs/images/placeholder_800x600_2.jpg" class="lightbox" data-width="200" data-height="200">
-        Image1
-    </a>
-    <a href="http://getuikit.com/docs/images/placeholder_800x600_1.jpg" class="lightbox" data-title="这是一个标题">
-        Image2
-    </a>
-    <a href="http://file.ynet.com/2/1503/23/9928834.jpg" class="lightbox" >
-        <img alt="demoImg" src="http://file.ynet.com/2/1503/23/9928834.jpg" width="100" height="75">
-    </a>
+<div class="image-container">
+    <img src="http://ww4.sinaimg.cn/large/006234yQjw1euefah0d07j30u00i00xp.jpg" data-lightbox-url="http://ww4.sinaimg.cn/large/006234yQjw1euefah0d07j30u00i00xp.jpg" data-role="lightbox-image" width="200">
+    <img src="http://ww2.sinaimg.cn/large/4aa4ff9ajw1eu0qi54dbpj20u00i0adh.jpg" data-lightbox-url="http://ww2.sinaimg.cn/large/4aa4ff9ajw1eu0qi54dbpj20u00i0adh.jpg" data-role="lightbox-image" width="200">
+    <img src="http://ww4.sinaimg.cn/large/683b1fbdjw1etzx5smxzlj20u00i0wj9.jpg" data-lightbox-url="http://ww4.sinaimg.cn/large/683b1fbdjw1etzx5smxzlj20u00i0wj9.jpg" data-role="lightbox-image" data-lightbox-width="400" width="200">
 </div>
-
 <script>
-require(['jquery', 'ui/LightBox'], function ($, LightBox) {
-
-  var lightbox = new LightBox({
-    cyclic: false,
-    autoScale: true
-  }).render();
-
+require(['ui/LightBox', 'jquery'], function (LightBox, $) {
+    var lightbox = new LightBox({
+        cyclic: true,
+        autoScale: true
+    }).render();
 });
 </script>
 

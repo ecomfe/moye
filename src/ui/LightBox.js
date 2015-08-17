@@ -12,296 +12,29 @@ define(function (require) {
     var lib = require('./lib');
     var Mask = require('./Mask');
     var Control = require('./Control');
-    var Panel = require('./Panel');
 
 
-    var privates = {
-
-        /**
-         * 判断url是否为图片
-         *
-         * @param  {string}  str  一个链接
-         * @return {boolean} 是否为图片
-         * @private
-         */
-        isImage: function (str) {
-            return lib.isString(str)
-                && str.match(/(^data:image\/.*,)|(\.(jp(e|g|eg)|gif|png|bmp|webp|svg)((\?|#).*)?$)/i);
-        },
-
-        /**
-         * 获取某元素应该被显示的宽高
-         *
-         * @param  {HTMLElement} dom    HTML元素DOM对象
-         * @param  {number}      index  元素的索引
-         * @return {Object}      元素显示的宽高
-         * @private
-         */
-        getSize: function (dom, index) {
-
-            var obj = {};
-            var limit = {};
-            var element = this.elements[index];
-            var fixed = {};
-
-            lib.each(
-                ['width', 'height'],
-                function (name) {
-                    obj[name] = dom[name];
-
-                    var body = $(window)[name]() * 0.9;
-                    limit[name] = Math.min(body, obj[name]);
-                    fixed[name] = element[name];
-                },
-                this
-            );
-
-            // 长宽均已经固定，直接返回
-            if (fixed.width && fixed.height) {
-                return fixed;
-            }
-
-            if (fixed.width) {
-                obj.height *= fixed.width / obj.width;
-                obj.width = fixed.width;
-            }
-            else if (fixed.height) {
-                obj.width *= fixed.height / obj.height;
-                obj.height = fixed.height;
-            }
-
-            // 按比例缩放
-            if (this.autoScale) {
-                var wProp = limit.width / obj.width;
-                var hProp = limit.height / obj.height;
-
-                if (wProp < hProp) {
-                    obj.height *= wProp;
-                    obj.width = limit.width;
-                }
-                else {
-                    obj.width *= hProp;
-                    obj.height = limit.height;
-                }
-            }
-
-            return obj;
-        },
-
-
-        /**
-         * 显示某个元素（图片）
-         *
-         * @param  {number}    index  显示元素的索引
-         * @return {Promise}
-         * @private
-         */
-        showElement: function (index) {
-            var element = this.getElement(index);
-            var type = element.type;
-            var me = this;
-            /* eslint-disable new-cap */
-            var dtd = $.Deferred();
-            /* eslint-enable new-cap */
-
-            var content = '';
-            var dom = null;
-
-            if (this.showLoading) {
-                $(this.load).show();
-            }
-
-            switch (type) {
-                case 'image':
-                    dom = $('<img>')
-                        .attr('src', element.src)
-                        .attr('id', me.helper.getPartId('image'))
-                        .addClass(me.helper.getPartClassName('image'));
-                    content = dom.prop('outerHTML');
-
-                    // dom = me.helper.getPart('image');
-                    dom = dom[0];
-
-                    var showImage = function () {
-
-                        var size = privates.getSize.call(me, dom, index);
-                        element = lib.extend(element, size);
-                        var title = element.title;
-
-                        me.current = index;
-                        privates.showIcons.call(me);
-                        me.setContent(content);
-                        me.setTitle(title);
-
-                        me.showLoading && $(me.load).hide();
-                        me.show();
-
-                        dtd.resolve();
-                    };
-
-                    if (dom.complete && dom.height !== 0) {
-                        showImage();
-                    }
-                    else {
-                        dom.onload = showImage;
-                    }
-
-                    dom.onerror = function () {
-                        me.hide();
-                        $(this.load).hide();
-                        dtd.reject();
-                    };
-
-                    break;
-            }
-
-            return dtd.promise();
-        },
-
-        /**
-         * 当触发隐藏的时候
-         *
-         * @fires module:LightBox#hide
-         * @private
-         */
-        onCloseClicked: function () {
-
-            /**
-             * @event module:LightBox#hide
-             * @type {Object}
-             * @property {DOMEvent} event 事件源对象
-             */
-            var event = this.fire('hide');
-
-            if (!event.isDefaultPrevented()) {
-                this.hide();
-            }
-
-        },
-
-        /**
-         * 当触发翻页时
-         *
-         * @param {string | number} action 当前事件 可选值：prev|next；或者是直接传入要显示的索引
-         *
-         * @fires module:LightBox#change
-         * @fires module:LightBox#afterchange
-         * @private
-         */
-        onChange: function (action) {
-
-            var total = this.total;
-            var index;
-
-            if (lib.isNumber(action)) {
-                index = action;
-            }
-            else {
-                index = action === 'next' ? this.current + 1 : this.current - 1;
-            }
-
-            if (index === this.current) {
-                return;
-            }
-
-
-            if (index < 0) {
-                index = total + index;
-            }
-            else if (index >= total) {
-                index = index - total;
-            }
-
-            /**
-             * @event module:LightBox#change
-             * @type {Object}
-             * @property {DOMEvent} event 事件源对象
-             */
-            var event = this.fire('change', {
-                activeIndex: index
-            });
-
-            if (event.isDefaultPrevented()) {
-                return;
-            }
-
-            var me = this;
-            var element = me.elements[index];
-
-            if (element) {
-                privates
-                    .showElement.call(this, index)
-                    .then(function () {
-                        me.set({
-                            width: element.width,
-                            height: element.height
-                        });
-
-                        /**
-                         * @event module:LightBox#afterchange
-                         */
-                        me.fire('afterchange', {
-                            activeIndex: index
-                        });
-                    });
-            }
-        },
-
-        /**
-         * 当触发显示时
-         *
-         * @param  {Object} e 事件对象
-         *
-         * @fires module:LightBox#show
-         * @private
-         */
-        onShow: function (e) {
-
-            e.preventDefault();
-
-            var target = $(e.currentTarget);
-            var index = this.current = target.data('index');
-            var me = this;
-
-            privates.showElement
-                .call(this, index)
-                .then(function () {
-                    me.fire('show');
-                });
-
-        },
-
-        /**
-         * 处理各个图标的显示，包括：关闭、下一页、上一页
-         *
-         * @private
-         */
-        showIcons: function () {
-
-            if (this.hideCloseIcon) {
-                $(this.helper.getPart('close')).hide();
-            }
-
-            if (this.cyclic) {
-                return;
-            }
-
-            var prev = $(this.helper.getPart('prev')).show();
-            var next = $(this.helper.getPart('next')).show();
-
-            var count = this.elements.length - 1;
-
-            if (this.current <= 0) {
-                prev.hide();
-            }
-
-            else if (this.current >= count) {
-                next.hide();
-            }
-
+    /**
+     * 获取图片的原始尺寸
+     *
+     * @param  {HTMLElement} img 图片DOM对象
+     * @return {Object}      图片的长宽
+     */
+    function getNaturalSize(img) {
+        var size = {
+            width: img.naturalWidth,
+            height: img.naturalHeight
+        };
+        if (img.naturalWidth) {
+            return size;
         }
 
-    };
+        var image = new Image();
+        image.src = img.src;
+        size.width = image.width;
+        size.height = image.height;
+        return size;
+    }
 
 
     /**
@@ -354,7 +87,7 @@ define(function (require) {
              *
              * @type {string | Array.<HTMLElement>}
              */
-            triggers: '.lightbox',
+            triggers: '[data-role="lightbox-image"]',
 
             /**
              * 元素与外边框之间的间距
@@ -440,18 +173,11 @@ define(function (require) {
             var main = this.main;
 
             lib.each(
-                [
-                    'content',
-                    'title'
-                ],
+                ['content', 'title'],
                 function (part) {
-                    if (part) {
-                        var panel = this.createPanel(part).appendTo(main);
-                        this.addChild(panel, part);
-                        helper.addPartClasses(part, panel.main);
-
-                        panel.main.style.padding = this.padding + 'px';
-                    }
+                    $(helper.createPart(part))
+                        .appendTo(main)
+                        .css('padding', this.padding + 'px');
                 },
                 this
             );
@@ -486,72 +212,48 @@ define(function (require) {
                 }).render();
             }
 
-            var me = this;
-            me.elements = [];
-            me.current = me.current || 0;
-            var triggers = $(me.triggers);
-            var count = triggers.length;
-
-            var total = 0;
-            triggers.each(function (index, element) {
-                element = $(element);
-
-                var href = element.attr('href') || element.data('url');
-                if (!href) {
-                    return;
-                }
-
-                var type;
-                if (privates.isImage(href)) {
-                    type = 'image';
-                }
-                else {
-                    // 以后可能还会有别的类型...
-                    return;
-                }
-
-                me.elements.push({
-                    src: href,
-                    width: element.data('width') || 0,
-                    height: element.data('height') || 0,
-                    type: type,
-                    title: element.attr('title')
-                        || element.data('title')
-                });
-                element.data('index', total);
-
-                total++;
-            });
-
-            this.total = total;
-
             if (this.showPage) {
                 $(this.main).append(this.helper.createPart('page', 'span'));
             }
 
-            var icons = ['close'];
-            if (count > 1) {
-                icons.push('prev');
-                icons.push('next');
-            }
+            this.initElements();
+
+            var icons = ['close', 'prev', 'next'];
             this.createIcons(icons);
 
         },
 
         /**
-         * 创建一个Panel控件
+         * 初始化元素
          *
-         * @param  {string} part 名称
-         * @return {Panel}
-         * @protected
+         * @private
          */
-        createPanel: function (part) {
-            var id = this.id + part;
-            return new Panel({
-                id: id
+        initElements: function () {
+            var me = this;
+            this.elements = [];
+            this.current = this.current || 0;
+            var triggers = $(this.triggers);
+            this.total = triggers.length;
+
+            triggers.each(function (index, element) {
+
+                element = $(element);
+
+                me.elements.push({
+                    src: element.data('lightbox-url'),
+                    width: 0,
+                    height: 0,
+                    inlineSize: {
+                        width: element.data('lightbox-width') || 0,
+                        height: element.data('lightbox-height') || 0
+                    },
+                    title: element.data('lightbox-title')
+                });
+
+                element.data('lightbox-index', index);
+
             });
         },
-
 
         /**
          * 创建组件内的图标，并会绑定相应的事件
@@ -574,7 +276,7 @@ define(function (require) {
                             'i',
                             this.getIconHTML(part),
                             {
-                                'data-action': part
+                                'data-lightbox-action': part
                             }
                         )
                     );
@@ -608,15 +310,17 @@ define(function (require) {
          */
         initEvents: function () {
 
-            this.showBound = $.proxy(privates.onShow, this);
-            this.changeBound = $.proxy(privates.onChange, this);
-
-            this.delegate(this.main, 'click', '[data-action]', this.onMainClicked);
+            this.delegate(this.main, 'click', '[data-lightbox-action]', this.onMainClicked);
 
             this.bindTriggersEvents(this.triggers);
 
             if (this.mask && this.maskClickClose) {
-                this.mask.on('click', $.proxy(privates.onCloseClicked, this));
+                this.mask.on('click', $.proxy(this.onCloseClicked, this));
+            }
+
+            if (this.autoScale) {
+                this.onWindowResize = lib.debounce.call(this, this.onWindowResize, 100);
+                this.delegate(window, 'resize', this.onWindowResize);
             }
         },
 
@@ -629,9 +333,8 @@ define(function (require) {
          * @protected
          */
         bindTriggersEvents: function (triggers) {
-            var boundTarget = $(triggers);
 
-            boundTarget.on('click', this.showBound);
+            this.delegate(document.body, 'click', triggers, this.onShow);
         },
 
         /**
@@ -642,9 +345,274 @@ define(function (require) {
          * @protected
          */
         clearTriggersEvents: function (triggers) {
-            var boundTarget = $(triggers);
 
-            boundTarget.off('click', this.showBound);
+            this.undelegate(document.body, 'click', triggers, this.onShow);
+        },
+
+        /**
+         * 获取某元素应该被显示的宽高
+         *
+         * @param  {number}      index  元素的索引
+         * @return {Object}      元素显示的宽高
+         * @private
+         */
+        getSize: function (index) {
+
+            var obj = {};
+            var limit = {};
+            var inlineSize = this.elements[index].inlineSize;
+            var realSize = this.elements[index].realSize;
+            var fixed = {};
+
+            lib.each(
+                ['width', 'height'],
+                function (name) {
+                    obj[name] = realSize[name];
+
+                    var body = $(window)[name]() * 0.8;
+                    limit[name] = Math.min(body, obj[name]);
+                    fixed[name] = inlineSize[name];
+                },
+                this
+            );
+
+            // 长宽均已经固定，直接返回
+            if (fixed.width && fixed.height) {
+                return fixed;
+            }
+
+            if (fixed.width) {
+                obj.height *= fixed.width / obj.width;
+                obj.width = fixed.width;
+            }
+            else if (fixed.height) {
+                obj.width *= fixed.height / obj.height;
+                obj.height = fixed.height;
+            }
+
+            // 按比例缩放
+            if (this.autoScale) {
+                var wProp = limit.width / obj.width;
+                var hProp = limit.height / obj.height;
+
+                if (wProp < hProp && wProp < 1) {
+                    obj.height *= wProp;
+                    obj.width = limit.width;
+                }
+                else if (hProp < wProp && hProp < 1) {
+                    obj.width *= hProp;
+                    obj.height = limit.height;
+                }
+            }
+
+            return obj;
+        },
+
+
+        /**
+         * 显示某个元素（图片）
+         *
+         * @param  {number}    index  显示元素的索引
+         * @return {Promise}
+         * @private
+         */
+        showImage: function (index) {
+
+            var element = this.getElement(index);
+            var me = this;
+            /* eslint-disable new-cap */
+            var dtd = new $.Deferred();
+            /* eslint-enable new-cap */
+
+            if (this.showLoading) {
+                $(this.load).show();
+            }
+
+            var img = this.helper.createPart('image', 'img');
+            img.src = element.src;
+            $(this.helper.getPart('content')).empty().append(img);
+
+            var onloadImage = function () {
+
+                if (!element.realSize) {
+                    element.realSize = getNaturalSize(img);
+                }
+
+                var size = me.getSize(index);
+                var title = element.title;
+
+                element = lib.extend(element, size);
+                me.current = index;
+                me.showIcons();
+                me.setTitle(title);
+
+                me.showLoading && $(me.load).hide();
+                me.show();
+
+                dtd.resolve();
+
+            };
+
+            if (img.complete) {
+                onloadImage();
+            }
+            else {
+                img.onload = onloadImage;
+            }
+
+            img.onerror = function () {
+                me.hide();
+                me.showLoading && $(this.load).hide();
+                dtd.reject();
+            };
+
+            return dtd.promise();
+        },
+
+        /**
+         * 当触发隐藏的时候
+         *
+         * @fires module:LightBox#hide
+         * @private
+         */
+        onCloseClicked: function () {
+
+            /**
+             * @event module:LightBox#hide
+             * @type {Object}
+             * @property {DOMEvent} event 事件源对象
+             */
+            var event = this.fire('hide');
+
+            if (!event.isDefaultPrevented()) {
+                this.hide();
+            }
+
+        },
+
+        /**
+         * 当触发翻页时
+         *
+         * @param {number} index 传入要显示的索引
+         *
+         * @fires module:LightBox#change
+         * @private
+         */
+        onChange: function (index) {
+
+            if (index === this.current) {
+                return;
+            }
+
+            this.initElements();
+
+            var total = this.total;
+
+            if (index < 0) {
+                index = total + index;
+            }
+            else if (index >= total) {
+                index = index - total;
+            }
+
+            /**
+             * @event module:LightBox#change
+             * @type {Object}
+             * @property {DOMEvent} event 事件源对象
+             */
+            var event = this.fire('change', {
+                activeIndex: index
+            });
+
+            if (event.isDefaultPrevented()) {
+                return;
+            }
+
+            var me = this;
+            var element = me.elements[index];
+
+            if (element) {
+                this.showImage(index).then(function () {
+                    me.set({
+                        width: element.width,
+                        height: element.height
+                    });
+                });
+            }
+        },
+
+        /**
+         * 窗口resize事件监听函数，在可视状态下
+         *
+         * @private
+         */
+        onWindowResize: function () {
+
+            if (this.currentStates.visiable) {
+                var size = this.getSize(this.current);
+                this.set(size);
+            }
+
+        },
+
+        /**
+         * 当触发显示时
+         *
+         * @param  {Object} e 事件对象
+         *
+         * @fires module:LightBox#show
+         * @private
+         */
+        onShow: function (e) {
+
+            e.preventDefault();
+
+            this.initElements();
+
+            var target = $(e.currentTarget);
+            var index = target.data('lightbox-index');
+            var me = this;
+
+            this.showImage(index)
+                .then(function () {
+                    me.fire('show');
+                });
+
+        },
+
+        /**
+         * 处理各个图标的显示，包括：关闭、下一页、上一页
+         *
+         * @private
+         */
+        showIcons: function () {
+
+            if (this.hideCloseIcon) {
+                $(this.helper.getPart('close')).hide();
+            }
+
+            var prev = $(this.helper.getPart('prev')).show();
+            var next = $(this.helper.getPart('next')).show();
+
+            if (this.total === 0) {
+                prev.hide();
+                next.hide();
+                return;
+            }
+
+            if (this.cyclic) {
+                return;
+            }
+
+            var count = this.elements.length - 1;
+
+            if (this.current <= 0) {
+                prev.hide();
+            }
+            else if (this.current >= count) {
+                next.hide();
+            }
+
         },
 
         /**
@@ -656,22 +624,24 @@ define(function (require) {
         onMainClicked: function (e) {
 
             var target = $(e.currentTarget);
-            var action = target.data('action');
+            var action = target.data('lightbox-action');
 
             // 内置的动作处理
             if (action === 'close') {
-                privates.onCloseClicked.call(this, e);
+                this.onCloseClicked(e);
                 return;
             }
 
             if (action === 'prev'
                 || action === 'next') {
 
-                this.changeBound(action);
+                var index = action === 'next' ? this.current + 1 : this.current - 1;
+
+                this.onChange(index);
                 return;
             }
 
-            // 否则我们放一个NB的事件哟
+            // 否则我们放一个自定义的事件
             this.fire(action, {
                 target: target[0]
             });
@@ -690,19 +660,21 @@ define(function (require) {
                 name: ['width', 'height'],
                 paint: function (conf, width, height) {
 
+                    var helper = this.helper;
+
                     // 按宽度和padding对标题、页码、图片进行定位
-                    $(this.getChild('title').main).css({
+                    $(helper.getPart('title')).css({
                         bottom: this.padding + 'px',
                         left: this.padding + 'px',
                         width: width - this.padding * 2 + 'px'
                     });
 
-                    $(this.helper.getPart('page')).css({
+                    $(helper.getPart('page')).css({
                         bottom: this.padding + 'px',
                         right: this.padding + 'px'
                     });
 
-                    $(this.getChild('content').main).css({
+                    $(helper.getPart('content')).css({
                         width: width + 'px',
                         height: height + 'px'
                     });
@@ -726,24 +698,15 @@ define(function (require) {
             {
                 name: ['title'],
                 paint: function (conf, title) {
-                    var panel = this.getChild('title');
+                    var part = this.helper.getPart('title');
                     if (!title) {
-                        $(panel.main).hide();
+                        $(part).hide();
                     }
-                    else if (panel) {
-                        $(panel.main).show();
-                        panel.set('content', title);
+                    else if (part) {
+                        $(part).show();
+                        part.innerHTML = title;
                     }
 
-                }
-            },
-            {
-                name: ['content'],
-                paint: function (conf, content) {
-                    var panel = this.getChild('content');
-                    if (panel) {
-                        panel.set('content', content);
-                    }
                 }
             },
             {
@@ -752,7 +715,8 @@ define(function (require) {
                     if (visible) {
                         // 切换状态, 先把自己给显示出来
                         this.addState('visible');
-                        // 然后我们利用宽高, 重置一下左/上的缩进
+
+                        // 然后我们利用获取要显示的图片的宽高，重置元素的样式
                         var element = this.getElement(this.current);
                         this.set({
                             width: element.width,
@@ -772,14 +736,18 @@ define(function (require) {
         ),
 
         /**
-         * 暴露选择某一张图（元素）的接口
+         * 暴露选择显示某一张图（元素）的接口
          *
          * @param  {number} index 元素索引
          * @return {LightBox}
          * @public
          */
         select: function (index) {
-            this.changeBound(index);
+            this.onChange(index);
+
+            if (!this.currentStates.visible) {
+                this.addState('visible');
+            }
             return this;
         },
 
@@ -819,9 +787,19 @@ define(function (require) {
 
             // 显示页码
             if (this.showPage) {
-                this.helper.getPart('page').innerHTML = (this.current + 1) + '/' + this.total;
+                this.helper.getPart('page').innerHTML = this.getPageHTML();
             }
             return this;
+        },
+
+        /**
+         * 获取页码的HTML
+         *
+         * @return {string} HTML字符串
+         * @public
+         */
+        getPageHTML: function () {
+            return (this.current + 1) + '/' + this.total;
         },
 
         /**
@@ -843,28 +821,6 @@ define(function (require) {
          */
         getElement: function (index) {
             return this.elements[index];
-        },
-
-        /**
-         * 设置dialog的主体内容，可以是HTML内容
-         *
-         * @param {string} content 内容字符串
-         * @return {LightBox}
-         * @public
-         */
-        setContent: function (content) {
-            this.set('content', content);
-            return this;
-        },
-
-        /**
-         * 返回当前窗口的内容部分
-         *
-         * @return {Element}
-         * @public
-         */
-        getContent: function () {
-            return this.helper.getPart('content');
         },
 
         /**
@@ -905,11 +861,14 @@ define(function (require) {
 
             this.clearTriggersEvents(this.triggers);
 
-            this.showBound = null;
             this.elements = [];
 
             this.undelegate(this.main, 'click', this.onMainClicked);
             $(this.main).remove();
+
+            if (this.autoScale) {
+                this.undelegate(window, 'resize', this.onWindowResize);
+            }
 
             if (this.showLoading) {
                 $(this.load).remove();
