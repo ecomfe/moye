@@ -25,7 +25,6 @@
 
 ```js
 require(['ui/LightBox', 'jquery'], function (LightBox, $) {
-
     var lightbox = new LightBox({
         cyclic: true,
         autoScale: true
@@ -40,8 +39,8 @@ require(['ui/LightBox', 'jquery'], function (LightBox, $) {
 </style>
 <div class="image-container">
     <img src="http://ww4.sinaimg.cn/large/006234yQjw1euefah0d07j30u00i00xp.jpg" data-lightbox-url="http://ww4.sinaimg.cn/large/006234yQjw1euefah0d07j30u00i00xp.jpg" data-role="lightbox-image" width="200">
-    <img src="http://ww2.sinaimg.cn/large/4aa4ff9ajw1eu0qi54dbpj20u00i0adh.jpg" data-lightbox-url="http://ww2.sinaimg.cn/large/4aa4ff9ajw1eu0qi54dbpj20u00i0adh.jpg" data-role="lightbox-image" width="200">
-    <img src="http://ww4.sinaimg.cn/large/683b1fbdjw1etzx5smxzlj20u00i0wj9.jpg" data-lightbox-url="http://ww4.sinaimg.cn/large/683b1fbdjw1etzx5smxzlj20u00i0wj9.jpg" data-role="lightbox-image" data-lightbox-width="400" width="200">
+    <img src="http://ww2.sinaimg.cn/large/4aa4ff9ajw1eu0qi54dbpj20u00i0adh.jpg" data-lightbox-url="http://ww2.sinaimg.cn/large/4aa4ff9ajw1eu0qi54dbpj20u00i0adh.jpg" data-role="lightbox-image" data-lightbox-title="大圣归来剧照" width="200">
+    <img src="http://ww4.sinaimg.cn/large/683b1fbdjw1etzx5smxzlj20u00i0wj9.jpg" data-lightbox-url="http://ww4.sinaimg2.cn/large/683b1fbdjw1etzx5smxzlj20u00i0wj9.jpg" data-role="lightbox-image" data-lightbox-width="400" width="200">
 </div>
 <script>
 require(['ui/LightBox', 'jquery'], function (LightBox, $) {

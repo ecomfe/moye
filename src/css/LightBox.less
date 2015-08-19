@@ -2,8 +2,8 @@
  * MOYE
  * Copyright 2014 Baidu Inc. All rights reserved.
  *
- * @file 对话窗样式
- * @author leon <leonlu@outlook.com>
+ * @file 查看大图组件样式
+ * @author cxtom <cxtom2008@gmail.com>
  */
 
 @import './dep.less';
@@ -12,8 +12,19 @@
 @import './icon.less';
 
 @import './Mask.less';
-@import './Button.less';
 
+@moye-lightbox-background: @moye-white;
+@moye-lightbox-padding-vertical: 10px;
+@moye-lightbox-padding-horizontal: 10px;
+@moye-lightbox-icon-width: 40px;
+@moye-lightbox-icon-height: 40px;
+@moye-lightbox-icon-color-normal: #ccc;
+@moye-lightbox-icon-color-hover: #ddd;
+@moye-lightbox-close-size: 26px;
+
+@moye-lightbox-message-width: 500px;
+@moye-lightbox-message-height: 300px;
+@moye-lightbox-message-fontSize: 24px;
 
 .@{moye-prefix}-lightbox {
 
@@ -21,13 +32,16 @@
     _position: absolute;
     top: 50%;
     left: 50%;
-    overflow: visible;
     display: none;
-    background: #FFF;
+    background: @moye-lightbox-background;
     .opacity(0);
     .transition(opacity .3s);
     .box-shadow(0 0 5px rgba(0, 0, 0, 0.5));
 
+    .moye-padding(
+        @moye-lightbox-padding-vertical,
+        @moye-lightbox-padding-horizontal
+    );
 
     &-visible {
         display: block;
@@ -37,12 +51,18 @@
     &-title {
         position: absolute;
         bottom: 0;
+        left: 0;
         background-color: #000;
         .opacity(60);
         line-height: 20px;
         font: bold 14px inherit;
         color: #fff;
         z-index: 11;
+
+        .moye-padding(
+            @moye-lightbox-padding-vertical,
+            @moye-lightbox-padding-horizontal
+        );
     }
 
     &-loading {
@@ -55,46 +75,60 @@
         _position: absolute;
         top: 50%;
         left: 50%;
-        display: none;
+        visibility: hidden;
     }
-
 
     &-content {
         position: relative;
     }
 
+    &-message {
+        width: 100%;
+        height: @moye-lightbox-message-fontSize;
+        padding: (@moye-lightbox-message-height - @moye-lightbox-message-fontSize) / 2 0;
+        line-height: 1em;
+        white-space: nowrap;
+        font-size: @moye-lightbox-message-fontSize;
+        text-align: center;
+        font-family: @moye-font-family;
+        background-color: #fbfbfb;
+        color: #aaa;
+        visibility: hidden;
+
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+
     &-close {
-        @close-width: 26px;
         .moye-icon;
 
         position: absolute;
-        width: @close-width;
-        height: @close-width;
-        top: -@close-width/2;
-        right: -@close-width/2;
+        width: @moye-lightbox-close-size;
+        height: @moye-lightbox-close-size;
+        top: 15px;
+        right: 15px;
         padding: 0;
         text-align: center;
-        line-height: @close-width;
+        line-height: @moye-lightbox-close-size;
         cursor: pointer;
-        font-size: 18px;
-        background-color: #fff;
-
-        .border-radius(500em);
-        .box-shadow(0 0 5px rgba(0, 0, 0, 0.5));
+        font-size: 20px;
+        .embossed-text(@moye-lightbox-icon-color-normal);
+        z-index: 12;
 
         &:hover {
-            color: #ccc;
+            color: @moye-lightbox-icon-color-hover;
         }
     }
 
     &-page {
         position: absolute;
-        right: 20px;
-        bottom: 20px;
+        right: 0;
+        bottom: 0;
         line-height: 20px;
         padding: 10px;
         color: #fff;
-        z-index: 12;
+        z-index: 15;
     }
 
     &-image {
@@ -104,24 +138,24 @@
 
     &-prev,
     &-next {
-        @icon-width: 40px;
         .moye-icon;
 
         position: absolute;
-        width: @icon-width;
-        height: @icon-width;
+        width: @moye-lightbox-icon-width;
+        height: @moye-lightbox-icon-height;
         top: 50%;
-        margin-top: -@icon-width/2;
+        margin-top: -@moye-lightbox-icon-height / 2;
         padding: 0;
         text-align: center;
-        line-height: @icon-width;
+        line-height: @moye-lightbox-icon-height;
         cursor: pointer;
         font-size: 30px;
+        z-index: 12;
 
-        .embossed-text(#ccc);
+        .embossed-text(@moye-lightbox-icon-color-normal);
 
         &:hover {
-            color: #ddd;
+            color: @moye-lightbox-icon-color-hover;
         }
     }
 
@@ -133,4 +167,18 @@
         right: 0.3em;
     }
 
+}
+
+
+.@{moye-prefix}-lightbox-error {
+
+    .@{moye-prefix}-lightbox-title,
+    .@{moye-prefix}-lightbox-page,
+    .@{moye-prefix}-lightbox-image {
+        visibility: hidden;
+    }
+
+    .@{moye-prefix}-lightbox-message {
+        visibility: visible;
+    }
 }
