@@ -1,2 +1,9 @@
 node_modules
 .deploy_git
+public
+db.json
+.idea
+api
+dep
+output
+test

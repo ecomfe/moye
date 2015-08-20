@@ -1,26 +1,2 @@
-/**
- * @file 手机号码校验规则
- * @author leon<ludafa@outlook.com>
- */
-
-define(function (require) {
-
-    var ValidityState = require('../ValidityState');
-    var ValidateRule = require('../ValidateRule');
-
-    var regex = /^1\d{10}$/;
-
-    ValidateRule.register('mobile', {
-
-        message: {
-            invalid: '!{title}不符合手机号码格式'
-        },
-
-        check: function (value, control) {
-            var state = !value || regex.test(value);
-            return new ValidityState(state, this.getMessage(control, state));
-        }
-
-    });
-
-});
+/*! 2015 Baidu Inc. All Rights Reserved */
+define("moye/ui/plugin/validator/mobile",["require","../ValidityState","../ValidateRule"],function(require){var t=require("../ValidityState"),e=require("../ValidateRule"),i=/^1\d{10}$/;e.register("mobile",{message:{invalid:"!{title}不符合手机号码格式"},check:function(e,n){var s=!e||i.test(e);return new t(s,this.getMessage(n,s))}})});
