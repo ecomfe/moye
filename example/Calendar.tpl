@@ -2,6 +2,7 @@
 
 {% content: style %}
 <link rel="stylesheet" href="../src/css/Calendar.less">
+<link rel="stylesheet" href="../src/css/plugin/CalendarMonthView.less">
 {% content: content %}
 
 {% filter: markdown %}
@@ -24,10 +25,15 @@ require(['ui/Calendar'], function (Calendar) {
 
 
 <script>
-require(['ui/Calendar'], function (Calendar) {
+require(['ui/Calendar', 'ui/plugin/CalendarMonthView'], function (Calendar, CalendarMonthView) {
 
   new Calendar({
-    main: document.getElementById('calendar1')
+    main: document.getElementById('calendar1'),
+    plugins: [CalendarMonthView],
+    range: {
+      begin: new Date(2015, 0, 1),
+      end: new Date(2016, 0, 1)
+    }
   }).render();
 
 });

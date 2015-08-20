@@ -51,7 +51,6 @@
         text-align: center;
         background: #fff;
         border: 1px solid #b5b5b5;
-        padding-bottom: @moye-calendar-date-gap-vertical;
     }
 
 
@@ -77,7 +76,11 @@
             .clearfix();
         }
 
-        h3 {
+        p {
+            padding-bottom: @moye-calendar-date-gap-vertical;
+        }
+
+        &-title {
             margin: 0;
             padding: 0;
             .moye-rem(line-height, @moye-small * 2);
