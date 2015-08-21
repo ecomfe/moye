@@ -464,7 +464,7 @@ define(function (require) {
                 // 包裹
                 '<li class="' + helper.getPartClassName('month') + '">',
                 // 月份标题
-                this.getMontnTitleHTML(date),
+                this.getMonthTitleHTML(date),
                 // 星期标题
                 this.getWeekTitleHTML(),
                 // 日期包裹
@@ -502,20 +502,29 @@ define(function (require) {
          * @param  {Date} date 日期
          * @return {string}
          */
-        getMontnTitleHTML: function (date) {
+        getMonthTitleHTML: function (date) {
+
+            var helper = this.helper;
+
             date = {
                 year: date.getFullYear(),
                 month: date.getMonth() + 1
             };
 
-            var title = this.lang.title.replace(
-                 /\{([^\}]+)\}/g,
-                 function ($, key) {
-                     return date[key] || '';
-                 }
+            return helper.getPartHTML(
+                'month-title',
+                'div',
+                this.lang.title.replace(
+                    /\{([^\}]+)\}/g,
+                    function ($, key) {
+                        return date[key] || '';
+                    }
+                ),
+                {
+                    'data-role': 'calendar-month-title'
+                }
             );
 
-            return '<h3>' + title + '</h3>';
         },
 
         /**
@@ -615,6 +624,14 @@ define(function (require) {
             date.setMonth(date.getMonth() + delta);
             date.setDate(1);
             this.set('month', date);
+
+            /**
+             * @event module:Calendar#page
+             */
+            this.fire('page', {
+                month: date
+            });
+
         },
 
         /**
