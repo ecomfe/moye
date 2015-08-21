@@ -1,6 +1,6 @@
 /**
  * @file moye - CalendarMonthView
- * @author kaivean(kaisey2012@163.com)
+ * @author leon(ludafa@outlook.com)
  * @module CalendarMonthView
  * @extends module:Plugin
  */
