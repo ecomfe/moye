@@ -40,7 +40,7 @@ $('#dialog').on('click', $.proxy(dialog.show, dialog));
 </div>
 
 <script>
-require(['jquery', 'ui/Dialog'], function ($, Dialog) {
+require(['jquery', 'ui/Dialog', 'ui/Button'], function ($, Dialog) {
 
   var dialog = new Dialog({
     content: ''
@@ -80,7 +80,7 @@ $('#auto-dispose').on('click', function () {
 </div>
 
 <script>
-require(['jquery', 'ui/Dialog'], function ($, Dialog) {
+require(['jquery', 'ui/Dialog', 'ui/Button'], function ($, Dialog) {
 
   var i = 0;
 
@@ -122,7 +122,7 @@ $('#footer-buttons').on('click', $.proxy(dialog.show, dialog));
 </div>
 
 <script>
-require(['jquery', 'ui/Dialog'], function ($, Dialog) {
+require(['jquery', 'ui/Dialog', 'ui/Button'], function ($, Dialog) {
   var dialog = new Dialog({
     content: '设定`buttons`参数来添加脚注中的按钮',
     title: '带按钮的窗口',
@@ -162,7 +162,7 @@ $('#footer').on('click', $.proxy(dialog.show, dialog));
 </div>
 
 <script>
-require(['jquery', 'ui/Dialog'], function ($, Dialog) {
+require(['jquery', 'ui/Dialog', 'ui/Button'], function ($, Dialog) {
   var dialog = new Dialog({
     content: '带按钮的窗口',
     title: '带按钮的窗口',
@@ -210,7 +210,7 @@ $('#alert-dialog').on('click', function () {
 </div>
 
 <script>
-require(['jquery', 'ui/Dialog'], function ($, Dialog) {
+require(['jquery', 'ui/Dialog', 'ui/Button'], function ($, Dialog) {
 
   var i = 0;
 
@@ -261,7 +261,7 @@ $('#confirm-dialog').on('click', function () {
 </div>
 
 <script>
-require(['jquery', 'ui/Dialog'], function ($, Dialog) {
+require(['jquery', 'ui/Dialog', 'ui/Button'], function ($, Dialog) {
 
   var i = 0;
   var j = 0;
