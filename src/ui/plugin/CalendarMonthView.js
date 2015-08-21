@@ -104,35 +104,65 @@ define(function (require) {
 
         },
 
+        hasIntersection: function (range1, range2) {
+            return !(range1.begin > range2.end || range1.end < range2.begin);
+        },
+
+        isValid: function (begin, end) {
+
+            var control = this.control;
+            var range = control.range;
+
+            if (!range) {
+                return true;
+            }
+
+            return this.hasIntersection(
+                {
+                    begin: control.parse(range.begin),
+                    end: control.parse(range.end)
+                },
+                {
+                    begin: begin,
+                    end: end
+                }
+            );
+
+        },
+
         getNavHTML: function (date) {
 
             var control = this.control;
             var helper = control.helper;
             var year = date.getFullYear();
 
-            var left = helper.getPartHTML(
-                'month-view-pager-left',
-                'i',
-                '<i class="moye-icon">' + control.pager.prev + '</i>',
-                {
-                    'data-role': 'pager',
-                    'data-direction': 'prev',
-                    'data-action': 'page',
-                    'data-year': year
-                }
-            );
+            var left = this.isValid(new Date(year - 1, 0, 1), new Date(year - 1, 11, 31))
+                ? helper.getPartHTML(
+                    'month-view-pager-left',
+                    'i',
+                    '<i class="moye-icon">' + control.pager.prev + '</i>',
+                    {
+                        'data-role': 'pager',
+                        'data-direction': 'prev',
+                        'data-action': 'page',
+                        'data-year': year
+                    }
+                )
+                : '';
 
-            var right = helper.getPartHTML(
-                'month-view-pager-right',
-                'i',
-                '<i class="moye-icon">' + control.pager.next + '</i>',
-                {
-                    'data-role': 'pager',
-                    'data-direction': 'next',
-                    'data-action': 'page',
-                    'data-year': year
-                }
-            );
+            var right = this.isValid(new Date(year + 1, 0, 1), new Date(year + 1, 11, 31))
+                ? helper.getPartHTML(
+                    'month-view-pager-right',
+                    'i',
+                    '<i class="moye-icon">' + control.pager.next + '</i>',
+                    {
+                        'data-role': 'pager',
+                        'data-direction': 'next',
+                        'data-action': 'page',
+                        'data-year': year
+                    }
+                )
+                : '';
 
             var title = helper.getPartHTML(
                 'month-view-title',
@@ -162,16 +192,32 @@ define(function (require) {
             var grid = lib.map(
                 lib.range(1, 13),
                 function (i) {
+
+                    var begin = new Date(year, i - 1, 1);
+                    var end = new Date(begin);
+                    end.setMonth(end.getMonth() + 1);
+                    end.setDate(0);
+
+                    var isValid = this.isValid(begin, end);
+
+                    var className = ''
+                        + helper.getPartClassName('month-view-cell')
+                        + ' '
+                        + (isValid ? '' : helper.getPartClassName('month-view-cell-disabled'));
+
+                    var action = isValid ? 'pick' : '';
+
                     return ''
                         + '<td data-month="' + i + '" '
                         +     'data-role="month-view-cell" '
-                        +     'data-action="pick"'
+                        +     'data-action="' + action + '"'
                         +     'data-year="' + year + '"'
                         +     'data-month="' + i + '"'
-                        +     'class="' + helper.getPartClassName('month-view-cell') + '">'
+                        +     'class="' + className + '">'
                         +     i + '月'
                         + '</td>';
-                }
+                },
+                this
             );
 
             // 分成4组

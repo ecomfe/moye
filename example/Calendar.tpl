@@ -31,8 +31,8 @@ require(['ui/Calendar', 'ui/plugin/CalendarMonthView'], function (Calendar, Cale
     main: document.getElementById('calendar1'),
     plugins: [CalendarMonthView],
     range: {
-      begin: new Date(2015, 0, 1),
-      end: new Date(2016, 0, 1)
+      begin: new Date(2014, 3, 1),
+      end: new Date(2016, 6, 1)
     }
   }).render();
 

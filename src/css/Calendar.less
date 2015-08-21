@@ -43,6 +43,8 @@
 @moye-calendar-date-overflow-background-color: @moye-calendar-month-background-color;
 @moye-calendar-date-overflow-color: #999;
 
+@moye-calendar-date-disabled-color: #ddd;
+
 .@{moye-prefix}-calendar {
 
     .inline-block();
@@ -144,7 +146,7 @@
 
     &-disabled,
     &-disabled:hover {
-        color: #ddd;
+        color: @moye-calendar-date-disabled-color;
         cursor: not-allowed;
         background: none;
     }
