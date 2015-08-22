@@ -25,18 +25,20 @@ define(function (require) {
     };
 
     /**
-     * 获取图片的原始尺寸，图片加载完成后调用
+     * 获取图片的原始尺寸，必须在图片加载完成后调用
      *
      * @param  {HTMLElement} img 图片DOM对象
      * @return {Object}      图片的长宽
      */
     function getNaturalSize(img) {
-        var size = {
-            width: img.naturalWidth,
-            height: img.naturalHeight
-        };
+
+        var size = {};
+
         if (img.naturalWidth) {
-            return size;
+            return {
+                width: img.naturalWidth,
+                height: img.naturalHeight
+            };
         }
 
         var image = new Image();
@@ -221,8 +223,6 @@ define(function (require) {
                 }).render();
             }
 
-            this.initElements();
-
             var icons = ['close', 'prev', 'next'];
             this.createIcons(icons);
 
@@ -234,30 +234,29 @@ define(function (require) {
          * @private
          */
         initElements: function () {
-            var me = this;
+
             this.elements = [];
             this.current = this.current || 0;
             var triggers = $(this.triggers);
             this.total = triggers.length;
 
-            triggers.each(function (index, element) {
+            this.elements = lib.map(
+                triggers,
+                function (element, index) {
 
-                element = $(element);
+                    element = $(element);
+                    element.data('lightbox-index', index);
 
-                me.elements.push({
-                    src: element.data('lightbox-url'),
-                    width: 0,
-                    height: 0,
-                    inlineSize: {
-                        width: element.data('lightbox-width') || 0,
-                        height: element.data('lightbox-height') || 0
-                    },
-                    title: element.data('lightbox-title')
-                });
-
-                element.data('lightbox-index', index);
-
-            });
+                    return {
+                        src: element.data('lightbox-url'),
+                        inlineSize: {
+                            width: element.data('lightbox-width') || 0,
+                            height: element.data('lightbox-height') || 0
+                        },
+                        title: element.data('lightbox-title')
+                    };
+                }
+            );
         },
 
         /**
@@ -397,65 +396,72 @@ define(function (require) {
          * 显示某个元素（图片）
          *
          * @param  {number}    index  显示元素的索引
-         * @return {Promise}
          * @private
          */
         showImage: function (index) {
 
             var element = this.getElement(index);
-            var me = this;
             var helper = this.helper;
-            var dtd = new $.Deferred();
 
+            helper.getPart('image').src = element.src;
+            this.removeState('error');
+
+            var size = this.getSize(index);
+            var title = element.title;
+
+            this.current = index;
+            this.showIcons();
+            this.setTitle(title);
+
+            if (this.showPage) {
+                helper.getPart('page').innerHTML = this.getPageHTML();
+            }
+
+            this.set(size);
+
+            this.showLoading && $(this.load).css('visibility', '');
+
+            if (!this.hasState('visible')) {
+                this.show();
+                this.fire('show');
+            }
+
+        },
+
+
+        /**
+         * 加载图片
+         *
+         * @param  {number}    index  加载图片的索引
+         * @return {Promise}
+         * @private
+         */
+        loadImage: function (index) {
+
+            var defer = new $.Deferred();
+
+            var element = this.getElement(index);
             this.showLoading && $(this.load).css('visibility', 'visible');
 
             var img = new Image();
             img.src = element.src;
 
-            var onloadImage = function () {
-
-                helper.getPart('image').src = element.src;
-
-                var size = me.getSize(index);
-                var title = element.title;
-
-                element = lib.extend(element, size);
-                me.current = index;
-                me.showIcons();
-                me.setTitle(title);
-
-                me.removeState('error');
-
-                if (me.showPage) {
-                    helper.getPart('page').innerHTML = me.getPageHTML();
-                }
-
-                me.showLoading && $(me.load).css('visibility', 'hidden');
-
-                if (!me.hasState('visible')) {
-                    me.show();
-                }
-
-                img.onload = img.onerror = null;
-
-                dtd.resolve();
-
-            };
-
+            // IE下若图片已缓存，有可能不会执行onload
             if (img.complete) {
-                onloadImage();
+                defer.resolve(index);
             }
             else {
-                img.onload = onloadImage;
+                img.onload = function () {
+                    defer.resolve(index);
+                };
             }
 
             img.onerror = function () {
-                img.onload = img.onerror = null;
-                me.onLoadImageError(index);
-                dtd.reject();
+                defer.reject(index);
             };
 
-            return dtd.promise();
+
+            return defer.promise();
         },
 
 
@@ -466,7 +472,7 @@ define(function (require) {
          * @fires module:LightBox#loaderror
          * @private
          */
-        onLoadImageError: function (index) {
+        showErrorMessage: function (index) {
 
             this.showLoading && $(this.load).css('visibility', 'hidden');
 
@@ -532,12 +538,11 @@ define(function (require) {
 
             var target = $(e.currentTarget);
             var index = target.data('lightbox-index');
-            var me = this;
 
-            this.showImage(index)
-                .then(function () {
-                    me.fire('show');
-                });
+            this.loadImage(index).then(
+                $.proxy(this.showImage, this),
+                $.proxy(this.showErrorMessage, this)
+            );
 
         },
 
@@ -575,12 +580,10 @@ define(function (require) {
             var element = me.elements[index];
 
             if (element) {
-                this.showImage(index).then(function () {
-                    me.set({
-                        width: element.width,
-                        height: element.height
-                    });
-                });
+                this.loadImage(index).then(
+                    $.proxy(this.showImage, this),
+                    $.proxy(this.showErrorMessage, this)
+                );
             }
         },
 
@@ -764,13 +767,6 @@ define(function (require) {
                         this.addState('visible');
                         // 开始对resize事件的监听
                         this.startResizeListener();
-
-                        // 然后我们利用获取要显示的图片的宽高，重置元素的样式
-                        var element = this.getElement(this.current);
-                        this.set({
-                            width: element.width,
-                            height: element.height
-                        });
                         // 显示遮罩
                         this.mask && this.mask.show();
                     }

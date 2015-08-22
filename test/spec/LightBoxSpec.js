@@ -14,7 +14,8 @@ define(function (require) {
         '<div data-role="lightbox-image" data-lightbox-url="http://www.baidu.com/img/bdlogo.png" data-lightbox-title="123"></div>',
         '<div data-role="lightbox-image" data-lightbox-url="http://www.baidu.com/img/bdlogo.png" data-lightbox-width="123"></div>',
         '<div data-role="lightbox-image" data-lightbox-url="http://www.baidu.com/img/bdlogo.png" data-lightbox-height="123"></div>',
-        '<div data-role="lightbox-image" data-lightbox-url="http://www.baidu.com/img/bdlogo.png" data-lightbox-height="123" data-lightbox-width="123"></div>'
+        '<div data-role="lightbox-image" data-lightbox-url="http://www.baidu.com/img/bdlogo.png" data-lightbox-height="123" data-lightbox-width="123"></div>',
+        '<div data-role="lightbox-image" data-lightbox-url="http://www.baid2u.com/img/bdlogo22.png"></div>'
     ];
     /* eslint-enable max-len */
 
@@ -40,19 +41,47 @@ define(function (require) {
             expect(lightbox.type).toBe('LightBox');
         });
 
-        it('check close', function () {
-            lightbox.onMainClicked.call(lightbox, {currentTarget: $('.ui-lightbox-close')[0]});
-            expect(lightbox.currentStates.visiable).toBeFalsy();
+        it('check show', function () {
+
+            $('[data-role="lightbox-image"]').eq(0).trigger('click');
+
+            lightbox.on('show', function () {
+                expect(lightbox.hasState('visiable')).toBeTruthy();
+                expect($('.ui-lightbox-image', lightbox.main).prop('outerHTML'))
+                    .toContain('//www.baidu.com/img/bdlogo.png');
+            });
+
+        });
+
+
+        it('check hide', function () {
+
+            $('[data-role="lightbox-image"]').eq(0).trigger('click');
+
+            lightbox.on('show', function () {
+                expect(lightbox.getCurrent()).toBe(0);
+                $('[data-lightbox-action="close"]', lightbox.main).eq(0).trigger('click');
+            });
+
+            lightbox.on('hide', function () {
+                $('[data-lightbox-action="close"]', lightbox.main).eq(0).trigger('click');
+                expect(lightbox.hasState('visiable')).toBeFalsy();
+            });
+
         });
 
         it('check prev next', function () {
-            expect(lightbox.total).toBe(4);
-            lightbox.onMainClicked.call(lightbox, {currentTarget: $('.ui-lightbox-prev')[0]});
-            lightbox.onMainClicked.call(lightbox, {currentTarget: $('.ui-lightbox-next')[0]});
-            lightbox.onMainClicked.call(lightbox, {currentTarget: $('.ui-lightbox-next')[0]});
+
+            lightbox.on('show', function () {
+                expect(lightbox.total).toBe(5);
+                $('[data-lightbox-action="next"]', lightbox.main).eq(0).trigger('click');
+            });
+
             lightbox.on('change', function (e) {
                 expect(e.activeIndex).toBe(1);
             });
+
+            $('[data-role="lightbox-image"]').eq(0).trigger('click');
         });
 
         /* eslint-disable no-loop-func */
@@ -66,6 +95,12 @@ define(function (require) {
         }
         /* eslint-enable no-loop-func */
 
+        it('check select 6' + i, function () {
+            lightbox.select(6);
+            lightbox.on('change', function (e) {
+                expect(e.activeIndex).toBe(0);
+            });
+        });
 
         it('check createIcons', function () {
             lightbox.createIcons('text1');
@@ -77,17 +112,6 @@ define(function (require) {
             });
         });
 
-        it('check triggers', function () {
-            $('[data-role="lightbox-image"]').eq(0).trigger('click');
-            lightbox.elements[0].width = 800;
-            lightbox.elements[0].height = 600;
-            lightbox.current = 0;
-            lightbox.on('show', function () {
-                expect($('.ui-lightbox-image', lightbox.main).prop('outerHTML'))
-                    .toContain('//www.baidu.com/img/bdlogo.png');
-            });
-
-        });
 
         it('check set', function () {
             lightbox.setWidth(100);
