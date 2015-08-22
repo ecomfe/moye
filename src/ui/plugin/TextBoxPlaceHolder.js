@@ -22,7 +22,14 @@ define(function (require) {
              *
              * @type {String}
              */
-            color: '#ccc'
+            color: '#ccc',
+
+            /**
+             * placeholder的zindex
+             *
+             * @type {String}
+             */
+            level: 10
 
         },
 
@@ -35,16 +42,36 @@ define(function (require) {
          */
         activate: function (textbox) {
 
+            this.control = textbox;
             var ie = lib.browser.ie;
+            var that = this;
 
-            if (!ie || ie > 8) {
-                textbox.placeholder && $(textbox.input).attr('placeholder', textbox.placeholder);
-                return;
-            }
+            textbox.repaint = require('../painter').createRepaint(textbox.repaint, {
+                name: 'placeholder',
+                paint: function (conf, placeholder) {
+
+                    if (!placeholder) {
+                        return;
+                    }
+
+                    // 更新placeholder的内容
+                    if (!ie || ie > 8) {
+                        $(textbox.input).attr('placeholder', placeholder);
+                        return;
+                    }
+
+                    this
+                        .getPlaceHolder().main
+                        .setContent(that.getPlaceHolderHTML(placeholder));
+                }
+            });
 
             textbox.getPlaceHolder = $.proxy(this.getPlaceHolder, this);
 
-            this.control     = textbox;
+            if (!ie || ie > 8) {
+                return;
+            }
+
             this.input       = textbox.input;
             var placeholder  = textbox.placeholder || $(this.input).attr('placeholder');
             this.placeholder = placeholder ? placeholder : '请输入';
@@ -52,15 +79,18 @@ define(function (require) {
             this.build();
 
             var me = this;
-            var id = textbox.id;
+            this.id = textbox.id + '-placeholder';
 
             $(this.input)
-                .on('blur.' + id, function (e) {
+                .on('blur.' + this.id, function (e) {
                     me.isNeedToShow() ? me.show() : me.hide();
                 })
-                .on('focus.' + id, function (e) {
+                .on('focus.' + this.id, function (e) {
                     me.hide();
                 });
+
+            this.$parent();
+
         },
 
         /**
@@ -73,18 +103,7 @@ define(function (require) {
             var input = $(this.input);
             var me = this;
 
-            var zIndex = input.css('zIndex') || 1;
-            zIndex = zIndex + 1;
-
-            var content = ''
-                + '<div style="'
-                +     'color:' + this.options.color + ';'
-                +     'font-size:' + input.css('fontSize') + ';'
-                +     'height:' + input.outerHeight() + 'px;'
-                +     'width:' + input.outerWidth() + 'px;'
-                +     'z-index:' + zIndex + ';'
-                +     'line-height:' + input.outerHeight() + 'px'
-                + '">' + this.placeholder + '</div>';
+            var content = this.getPlaceHolderHTML(this.placeholder);
 
             // 计算偏移
             var offsetX = parseInt(input.css('paddingLeft'), 10)
@@ -93,10 +112,12 @@ define(function (require) {
             var offsetY = -parseInt(input.outerHeight(), 10);
 
             // 生成一个popup控件, 用来展现placeholder
-            this.main = new Popup({
+            var popup = this.main = new Popup({
                 target: input,
                 mode: 'static',
                 content: content,
+                showDelay: 0,
+                hideDelay: 0,
                 offset: {
                     x: offsetX,
                     y: offsetY
@@ -105,14 +126,39 @@ define(function (require) {
             .render()
             .show()
             .on('click', function (e) {
-                me.hide();
-                me.input.focus();
+                $(me.input).trigger('focus');
+                e.stopPropagation();
             });
+
+            popup.main.style.zIndex = this.level;
 
             // 页面resize时需要重新定位
             this.main.delegate(window, 'resize', this.main.onWindowResize);
 
             return this.control;
+        },
+
+
+        /**
+         * 获取placehoder popup的html字符串
+         *
+         * @param {string} placeholder placeholder
+         * @return {string} html字符串
+         */
+        getPlaceHolderHTML: function (placeholder) {
+            var input = $(this.input);
+
+            var content = ''
+                + '<div style="'
+                +     'color:' + this.color + ';'
+                +     'font-size:' + input.css('fontSize') + ';'
+                +     'height:' + input.outerHeight() + 'px;'
+                +     'width:' + input.outerWidth() + 'px;'
+                +     'line-height:' + input.outerHeight() + 'px;'
+                +     'cursor:text'
+                + '">' + placeholder + '</div>';
+
+            return content;
         },
 
         /**
@@ -122,7 +168,7 @@ define(function (require) {
          * @return {Popup}
          */
         getPlaceHolder: function () {
-            return this.main;
+            return this;
         },
 
         /**
@@ -143,7 +189,7 @@ define(function (require) {
          * @return {TextBox}
          */
         show: function () {
-            this.main.show();
+            this.main && this.main.show();
 
             return this.control;
         },
@@ -155,7 +201,7 @@ define(function (require) {
          * @return {TextBox}
          */
         hide: function () {
-            this.main.hide();
+            this.main && this.main.hide();
 
             return this.control;
         },
@@ -168,15 +214,17 @@ define(function (require) {
          */
         inactivate: function () {
             var textbox = this.control;
-            var id = textbox.id;
 
             $(textbox.input)
-                .off('focus.' + id)
-                .off('blur.' + id);
+                .off('focus.' + this.id)
+                .off('blur.' + this.id);
 
             this.control = null;
             this.input = null;
             this.placeholder = null;
+
+            // 页面resize时需要重新定位
+            this.main.undelegate(window, 'resize', this.main.onWindowResize);
         },
 
         /**
@@ -184,6 +232,7 @@ define(function (require) {
          */
         dispose: function () {
             this.main.destroy();
+
             this.$parent();
         }
 
