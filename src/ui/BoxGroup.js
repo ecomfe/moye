@@ -4,6 +4,7 @@
  *
  * @file 单复选框组件
  * @author dengxiaohong01(dengxiaohong01@baidu.com)
+ * @author cxtom(cxtom2008@gmail.com)
  */
 
 define(function (require) {
