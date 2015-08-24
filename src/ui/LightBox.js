@@ -907,6 +907,7 @@ define(function (require) {
 
             this.undelegate(document.body, 'click', this.triggers, this.onShow);
 
+            this.elements.length = 0;
             this.elements = [];
 
             this.undelegate(this.main, 'click', this.onMainClicked);
