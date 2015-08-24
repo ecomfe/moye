@@ -48,9 +48,7 @@ define(function (require) {
                 name: 'placeholder',
                 paint: function (conf, placeholder) {
 
-                    if (!placeholder) {
-                        return;
-                    }
+                    placeholder = placeholder ? placeholder : '';
 
                     // 更新placeholder的内容
                     if (!ie || ie > 8) {
@@ -58,7 +56,14 @@ define(function (require) {
                         return;
                     }
 
-                    this.getPlaceHolder().innerHTML = placeholder;
+                    var main = this.getPlaceHolder();
+
+                    if (placeholder) {
+                        this.getPlaceHolder().innerHTML = placeholder;
+                    }
+                    else {
+                        main.style.display = 'none';
+                    }
                 }
             });
 
@@ -70,7 +75,7 @@ define(function (require) {
 
             this.input       = textbox.input;
             var placeholder  = textbox.placeholder || $(this.input).attr('placeholder');
-            this.placeholder = placeholder ? placeholder : '请输入';
+            this.placeholder = placeholder;
 
             this.build();
 
@@ -134,12 +139,15 @@ define(function (require) {
                 }
             );
 
-            var me = this;
             control.delegate(control.main, 'click', '[data-role=textbox-placeholder]', function (e) {
-                $(me.input).trigger('focus');
+                $(this.input).trigger('focus');
             });
 
             $(this.main).appendTo(control.main);
+
+            if (!this.placeholder) {
+                this.hide();
+            }
 
             return this.control;
         },
