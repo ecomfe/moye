@@ -2,7 +2,7 @@
 <header class="head">
     <div id="banner"></div>
     <div class="header">
-        <a href="{{ url_for('index.html#top') }}"  class="header-title">
+        <a href="{{ url_for('/#top') }}"  class="header-title">
             <img src="{{ url_for('css/images/logo-small.png') }}" height="25">
             <h1>{{ config.title }}</h1>
         </a>

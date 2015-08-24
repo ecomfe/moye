@@ -1,6 +1,6 @@
 <nav class="article-nav">
 
-  <a class="article-nav-logo" href="{{url_for('index.html')}}">
+  <a class="article-nav-logo" href="{{url_for('/')}}">
     <img src="{{ url_for('img/moye.png') }}" alt="moye" /> Moye
   </a>
 

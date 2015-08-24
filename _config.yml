@@ -12,8 +12,8 @@ timezone:
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
-url: http://ecomfe.github.io/moye
-root: /moye/
+url: http://moye.baidu.com
+root: /
 permalink: :category/:title.html
 permalink_defaults: :category/:title.html
 
@@ -64,13 +64,6 @@ pagination_dir: page
 ## Plugins: http://hexo.io/plugins/
 ## Themes: http://hexo.io/themes/
 theme: moye
-
-# Deployment
-## Docs: http://hexo.io/docs/deployment.html
-deploy:
-  type: git
-  repository: git@github.com:ecomfe/moye.git
-  branch: gh-pages
 
 yasr:
   axis: true              # Enables Axis (Recommends Nib)
