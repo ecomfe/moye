@@ -7,10 +7,10 @@ define(function (require) {
 
     var $     = require('jquery');
     // var conf  = require('common/conf');
-    var Tab   = require('moye/ui/Tab');
-    var Pager = require('moye/ui/Pager');
-    var lib   = require('moye/ui/lib');
-    var Select = require('moye/ui/Select');
+    var Tab   = require('moye/Tab');
+    var Pager = require('moye/Pager');
+    var lib   = require('moye/lib');
+    var Select = require('moye/Select');
 
     require('highlight');
     window.hljs.initHighlighting();

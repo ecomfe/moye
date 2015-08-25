@@ -1,2 +1,2 @@
 /*! 2015 Baidu Inc. All Rights Reserved */
-define("moye/ui/plugin/ValidityState",["require"],function(require){function t(t,e){this.state=t,this.message=e||""}return t.prototype.getMessage=function(){return this.message},t.prototype.getState=function(){return this.state},t.prototype.setMessage=function(t){this.message=t},t.prototype.setState=function(t){this.state=t},t});
+define("moye/plugin/ValidityState",["require"],function(require){function t(t,e){this.state=t,this.message=e||""}return t.prototype.getMessage=function(){return this.message},t.prototype.getState=function(){return this.state},t.prototype.setMessage=function(t){this.message=t},t.prototype.setState=function(t){this.state=t},t});

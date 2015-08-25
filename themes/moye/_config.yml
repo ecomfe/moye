@@ -1,7 +1,9 @@
 # Header
 menu:
-  Home: index.html
-  所有组件: component/Button.html
+    Home: index.html
+    所有组件: component/Button.html
+    api: '/api'
+
 rss: /atom.xml
 
 # Content

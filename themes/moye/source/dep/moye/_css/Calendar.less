@@ -43,6 +43,8 @@
 @moye-calendar-date-overflow-background-color: @moye-calendar-month-background-color;
 @moye-calendar-date-overflow-color: #999;
 
+@moye-calendar-date-disabled-color: #ddd;
+
 .@{moye-prefix}-calendar {
 
     .inline-block();
@@ -51,7 +53,6 @@
         text-align: center;
         background: #fff;
         border: 1px solid #b5b5b5;
-        padding-bottom: @moye-calendar-date-gap-vertical;
     }
 
 
@@ -77,7 +78,11 @@
             .clearfix();
         }
 
-        h3 {
+        p {
+            padding-bottom: @moye-calendar-date-gap-vertical;
+        }
+
+        &-title {
             margin: 0;
             padding: 0;
             .moye-rem(line-height, @moye-small * 2);
@@ -141,7 +146,7 @@
 
     &-disabled,
     &-disabled:hover {
-        color: #ddd;
+        color: @moye-calendar-date-disabled-color;
         cursor: not-allowed;
         background: none;
     }

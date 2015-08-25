@@ -1,6 +1,6 @@
-@import './variable.less';
-@import './dep.less';
-@import './icon.less';
+@import (reference) "./variable.less";
+@import (reference) "./dep.less";
+@import "./icon.less";
 
 // 默认基本样式
 
@@ -14,60 +14,43 @@
 @moye-boxgroup-label-default-bgcolor: #149FD6;
 @moye-boxgroup-label-default-color: #fff;
 
-.inline-block() {
-    display: inline-block;
-    *display: inline;
-    *zoom: 1;
-}
+// icon的高宽度
+@moye-boxgroup-label-icon-font-size: @default-font-size;
 
 .@{moye-prefix}-boxgroup {
+
     input {
        display: none;
     }
-    label {
+
+    &-item {
+
         .inline-block();
-        padding: 0 10px;
+
         height: @moye-boxgroup-label-height;
         line-height: @moye-boxgroup-label-height;
         margin-right: @moye-boxgroup-label-margin-right;
-        .icon {
-            &:extend(.moye-icon);
+
+        .moye-icon {
+            .inline-block();
             margin-right: 5px;
-            float: left;
-            cursor: pointer;
+            font-size: @moye-boxgroup-label-icon-font-size;
         }
-        .icon-on {
+
+        .moye-icon-checked {
             display: none;
         }
-    }
-    .checked {
-        background-color: @moye-boxgroup-label-default-bgcolor;
-        color: @moye-boxgroup-label-default-color;
-        .icon-un{
-            display: none;
+
+        &-checked {
+            .moye-icon-unchecked {
+                display: none;
+            }
+
+            .moye-icon-checked {
+                .inline-block();
+            }
         }
-        .icon-on {
-            display: inline;
-        }
+
     }
-    .default {
-        text-align: center;
-        .icon {
-            display: none;
-        }
-    }
-    .checkbox-tick {
-        background: none;
-        color: #000;
-        .icon-on {
-            color: #ff4142;
-        }
-    }
-    .radio-point {
-        background: none;
-        color: #000;
-        .icon-on {
-            color: @moye-boxgroup-label-default-bgcolor;
-        }
-    }
+
 }

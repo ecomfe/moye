@@ -1,2 +1,2 @@
 /*! 2015 Baidu Inc. All Rights Reserved */
-define("moye/ui/plugin/validator/maxlength",["require","../ValidityState","../ValidateRule"],function(require){var t=require("../ValidityState"),e=require("../ValidateRule");e.register("maxlength",{check:function(e,i){var n=this.maxLength,s=(e+"").length<=n;return new t(s,this.getMessage(i,s))},message:{invalid:"!{title}长度不能超过!{maxLength}"}})});
+define("moye/plugin/validator/maxlength",["require","../ValidityState","../ValidateRule"],function(require){var t=require("../ValidityState"),e=require("../ValidateRule");e.register("maxlength",{check:function(e,i){var n=this.maxLength,r=(e+"").length<=n;return new t(r,this.getMessage(i,r))},message:{invalid:"!{title}不能超过!{maxLength}"}})});

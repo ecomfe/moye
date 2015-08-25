@@ -1,2 +1,2 @@
 /*! 2015 Baidu Inc. All Rights Reserved */
-define("moye/ui/plugin/Plugin",["require","../lib"],function(require){var t=require("../lib"),e=t.newClass({$class:"Plugin",options:{},initialize:function(e){t.extend(this,this.options,e)},activate:function(t){this.active=!0},inactivate:function(){this.active=!1},isActivated:function(){return!!this.active},dispose:function(){}});return e});
+define("moye/plugin/Plugin",["require","../lib"],function(require){var t=require("../lib"),e=t.newClass({$class:"Plugin",options:{},initialize:function(e){t.extend(this,this.options,e)},activate:function(t){this.active=!0},inactivate:function(){this.active=!1},isActivated:function(){return!!this.active},dispose:function(){}});return e});

@@ -37,10 +37,10 @@
         },
         'packages': [{
             'name': 'moye',
-            'location': '../dep/moye',
+            'location': '../dep/moye/ui',
             'main': 'main'
         }],
-        'urlArgs': 'v20150811'
+        'urlArgs': 'v20150824'
     });
     </script>
     {% block script %}{% endblock %}

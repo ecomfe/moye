@@ -1,2 +1,2 @@
 /*! 2015 Baidu Inc. All Rights Reserved */
-define("moye/ui/plugin/validator/natural",["require","../ValidityState","../ValidateRule"],function(require){var t=require("../ValidityState"),e=require("../ValidateRule"),i=/^[\d]+$/;e.register("natural",{message:{invalid:"请输入整数"},check:function(e,n){var s=!e||i.test(e);return new t(s,this.getMessage(n,s))}})});
+define("moye/plugin/validator/natural",["require","../ValidityState","../ValidateRule"],function(require){var t=require("../ValidityState"),e=require("../ValidateRule"),i=/^[\d]+$/;e.register("natural",{message:{invalid:"请输入整数"},check:function(e,n){var r=!e||i.test(e);return new t(r,this.getMessage(n,r))}})});
