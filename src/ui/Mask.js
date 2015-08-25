@@ -9,6 +9,13 @@ define(function (require) {
     var Control = require('./Control');
     var lib     = require('./lib');
 
+    var FIXED_POSTION = {
+        right: 0,
+        bottom: 0,
+        left: 0,
+        top: 0
+    };
+
     /**
      * 当前已经生成的Mask个数
      *
@@ -22,11 +29,10 @@ define(function (require) {
      */
     var Mask = Control.extend({
 
-
         type: 'mask',
 
         options: {
-            level: 1
+            level: 10
         },
 
         init: function (options) {
@@ -35,16 +41,40 @@ define(function (require) {
         },
 
         initStructure: function () {
+
+            var level = this.level;
+
+            if (lib.browser.ie6) {
+
+                var html = this.helper.getPartHTML(
+                    'ie6frame',
+                    'iframe',
+                    '',
+                    {
+                        src: 'about:blank',
+                        frameborder: '0',
+                        style: ''
+                            + 'z-index:' + (level - 1) + ';'
+                            + 'display:none;'
+                            + 'filter:alpha(opacity=0);'
+                    }
+                );
+
+                this.ie6frame = $(html).appendTo(document.body).get(0);
+
+            }
+
             $(this.main)
                 .appendTo(document.body)
-                .css('zIndex', this.level);
+                .css('zIndex', level);
+
         },
 
         initEvents: function () {
-            this.delegate(this.main, 'click', this._onClick);
+            this.delegate(this.main, 'click', this.onClick);
         },
 
-        _onClick: function (e) {
+        onClick: function (e) {
             this.fire(e);
         },
 
@@ -56,19 +86,34 @@ define(function (require) {
             {
                 name: ['visible'],
                 paint: function (conf, visible) {
-                    if (visible) {
-                        this.addState('visible');
-                        lib.fixed(this.main, {
-                            right: 0,
-                            bottom: 0,
-                            left: 0,
-                            top: 0
+
+                    if (!visible) {
+                        $(this.ie6frame).hide();
+                        this.removeState('visible');
+                        return;
+                    }
+
+                    var ie = lib.browser.ie;
+                    var ie6frame;
+                    var main = $(this.main);
+
+                    if (ie === 6) {
+                        ie6frame = $(this.ie6frame).show();
+                        lib.fixed(ie6frame[0], FIXED_POSTION);
+                        lib.fixed(main[0], FIXED_POSTION);
+                    }
+
+                    if (ie < 9) {
+                        setTimeout(function () {
+                            ie6frame && ie6frame.toggleClass('shit');
+                            main.toggleClass('shit');
                         });
                     }
-                    else {
-                        this.removeState('visible');
-                    }
+
+                    this.addState('visible');
+
                 }
+
             }
         ),
 
@@ -76,18 +121,22 @@ define(function (require) {
          * 显示一个遮罩层
          *
          * @public
+         * @return {module:Mask}
          */
         show: function () {
             this.set('visible', true);
+            return this;
         },
 
         /**
          * 隐藏一个遮罩层
          *
          * @public
+         * @return {module:Mask}
          */
         hide: function () {
             this.set('visible', false);
+            return this;
         },
 
         /**
@@ -98,6 +147,9 @@ define(function (require) {
         dispose: function () {
             this.$parent();
             $(this.main).remove();
+            if (this.ie6frame) {
+                $(this.ie6frame).remove();
+            }
             currentMaskCount--;
         }
 
