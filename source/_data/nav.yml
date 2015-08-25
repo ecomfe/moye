@@ -88,6 +88,11 @@
         title: "BoxGroup"
         link: component/BoxGroup.html
 
+      -
+        text: "查看大图 / LightBox"
+        title: "LightBox"
+        link: component/LightBox.html
+
   -
     text: "简介"
     data:
