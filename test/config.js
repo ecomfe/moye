@@ -31,6 +31,11 @@ function getConfig(config) {
                 pattern: 'test/spec/DialogSpec.js',
                 included: false
             },
+            'src/css/LightBox.less',
+            {
+                pattern: 'test/spec/LightBoxSpec.js',
+                included: false
+            },
             'src/css/Select.less',
             {
                 pattern: 'test/spec/SelectSpec.js',
