@@ -17,14 +17,9 @@ img {
 
 {%/filter%}
 <div class="content">
-  <div id="scrollbar" class="ecl-ui-scrollbar ecl-ui-scrollbar-position-mode">
-    <div class="ecl-ui-scrollbar-track">
-      <i id="ecl-ui-scrollbar-thumb" class="ecl-ui-scrollbar-thumb"></i>
-    </div>
-    <div class="ecl-ui-scrollbar-panel">
+  <div id="scrollbar" class="ui-scrollbar">
+    <div data-role="scrollbar-content">
       <div style="background:#CCC">
-      <div id="ecl-ui-scrollbar-main" class="ecl-ui-scrollbar-main">
-        <div style="background:#CCC">
           <p>猪!你的鼻子有两个孔,感冒时的你还挂着鼻涕牛牛. </p>
           <p>猪!你有着黑漆漆的眼,望呀望呀望也看不到边. </p>
           <p>猪!你的耳朵是那么大,呼扇呼扇也听不到我在骂你傻. </p>
@@ -63,11 +58,9 @@ img {
           <p>见到漂亮姑娘就嘻嘻哈哈 </p>
           <p>不会脸红不会害怕 </p>
           <p>你很象她</p>
-        </div>
       </div>
     </div>
   </div>
-
 </div>
 <div class="content">
   <button id="scrollToBegin">滚动到开头</button>
@@ -105,28 +98,25 @@ require(['ui/lib', 'ui/ScrollBar', 'jquery'], function (lib, ScrollBar, $) {
 {%/filter%}
 
 <div class="content">
-  <div id="ecl-ui-scrollbar-horizontal" class="ecl-ui-scrollbar ecl-ui-scrollbar-horizontal">
-    <div class="ecl-ui-scrollbar-panel">
-      <div id="ecl-ui-scrollbar-main1" style="white-space:nowrap">
+  <div id="scrollbar-horizontal" class="ui-scrollbar">
+    <div data-role="scrollbar-content">
+      <div style="white-space:nowrap">
         <div style="background:#CCC">
-          猪!你的鼻子有两个孔,感冒时的你还挂着鼻涕牛牛. 
-          猪!你有着黑漆漆的眼,望呀望呀望也看不到边. 
-          猪!你的耳朵是那么大,呼扇呼扇也听不到我在骂你傻. 
-          猪!你的尾巴是卷又卷,原来跑跑跳跳还离不开它 
-          哦~~~ 
+          猪!你的鼻子有两个孔,感冒时的你还挂着鼻涕牛牛.
+          猪!你有着黑漆漆的眼,望呀望呀望也看不到边.
+          猪!你的耳朵是那么大,呼扇呼扇也听不到我在骂你傻.
+          猪!你的尾巴是卷又卷,原来跑跑跳跳还离不开它
+          哦~~~
         </div>
         <div>
-          猪!你的鼻子有两个孔,感冒时的你还挂着鼻涕牛牛. 
-          猪!你有着黑漆漆的眼,望呀望呀望也看不到边. 
-          猪!你的耳朵是那么大,呼扇呼扇也听不到我在骂你傻. 
-          猪!你的尾巴是卷又卷,原来跑跑跳跳还离不开它 
-          哦~~~ 
+          猪!你的鼻子有两个孔,感冒时的你还挂着鼻涕牛牛.
+          猪!你有着黑漆漆的眼,望呀望呀望也看不到边.
+          猪!你的耳朵是那么大,呼扇呼扇也听不到我在骂你傻.
+          猪!你的尾巴是卷又卷,原来跑跑跳跳还离不开它
+          哦~~~
        </p>
        </div>
       </div>
-    </div>
-    <div class="ecl-ui-scrollbar-track">
-      <i id="ecl-ui-scrollbar-thumb1" class="ecl-ui-scrollbar-thumb"></i>
     </div>
   </div>
 </div>
@@ -145,11 +135,9 @@ require(['ui/lib', 'ui/ScrollBar', 'jquery'], function (lib, ScrollBar, $) {
 <script>
 require(['ui/lib', 'ui/ScrollBar', 'jquery'], function (lib, ScrollBar, $) {
   var scrollbar = new ScrollBar({
-    main: 'scrollbar',
-    disabled: 0,
-    mode: 'position'
+      main: document.getElementById('scrollbar')
   });
-  
+
   scrollbar.render();
 
   $('#scrollToBegin').on('click', function () {
@@ -165,7 +153,7 @@ require(['ui/lib', 'ui/ScrollBar', 'jquery'], function (lib, ScrollBar, $) {
   });
 
   new ScrollBar({
-    main: $('#ecl-ui-scrollbar-horizontal')[0],
+    main: $('#scrollbar-horizontal')[0],
     direction: 'horizontal'
   }).render();
 
