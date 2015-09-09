@@ -134,28 +134,29 @@ require(['ui/lib', 'ui/ScrollBar', 'jquery'], function (lib, ScrollBar, $) {
 {% content: script %}
 <script>
 require(['ui/lib', 'ui/ScrollBar', 'jquery'], function (lib, ScrollBar, $) {
-  var scrollbar = new ScrollBar({
-      main: document.getElementById('scrollbar')
-  });
+    var scrollbar = new ScrollBar({
+        main: document.getElementById('scrollbar')
+    });
 
-  scrollbar.render();
+    scrollbar.render();
 
-  $('#scrollToBegin').on('click', function () {
-    scrollbar.scrollTo('begin');
-  });
+    $('#scrollToBegin').on('click', function () {
+      scrollbar.scrollTo('begin');
+    });
 
-  $('#scrollToEnd').on('click', function () {
-    scrollbar.scrollTo('end');
-  });
+    $('#scrollToEnd').on('click', function () {
+      scrollbar.scrollTo('end');
+    });
 
-  $('#scrollToMid').on('click', function () {
-    scrollbar.scrollTo(0.5);
-  });
+    $('#scrollToMid').on('click', function () {
+      scrollbar.scrollTo(0.5);
+    });
 
-  new ScrollBar({
-    main: $('#scrollbar-horizontal')[0],
-    direction: 'horizontal'
-  }).render();
+    new ScrollBar({
+        main: $('#scrollbar-horizontal')[0],
+        direction: 'horizontal',
+        hoverShow: false
+    }).render();
 
 });
 </script>

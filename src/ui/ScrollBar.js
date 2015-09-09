@@ -17,7 +17,7 @@ define(function (require) {
      *
      * @type {string}
      */
-    var wheelEvent = lib.browser.firefox ? 'DOMMouseScroll' : 'mousewheel';
+    var WHEEL_EVENT_NAME = lib.browser.firefox ? 'DOMMouseScroll' : 'mousewheel';
 
     /**
      * 设置文本不能拖选
@@ -72,9 +72,6 @@ define(function (require) {
          * @property {(string | HTMLElement)} options.main 主元素
          * @property {Number} options.wheelspeed 滚动速度，百分比，越大滚动越快
          * @property {string} options.direction 滚动方向
-         * @property {string} options.mode 使用的模式(`scroll` or `position`)，
-         * scrollTop模式or style.top模式
-         * 使用的css是不一样的,默认scrollTop模式
          * @property {boolean} options.preventWheelScroll
          * 如果true会始终阻止滚轮滚动页面，及时当前面板已经滚动到头
          * 此处会防止因面板较短导致的页面频繁滚动
@@ -82,6 +79,8 @@ define(function (require) {
          * 是否自动调整thumb的高度，以适应滚动内容的大小
          * @property {boolean} options.minThumbSize
          * 自动调整thumb高度时，最小的thumb高度(px)
+         * @property {boolean} options.hoverShow
+         * 如果true，则鼠标移动进入才显示滚动条
          * @private
          */
         options: {
@@ -104,6 +103,7 @@ define(function (require) {
             // 最小的thumb高度,px
             minThumbSize: 30,
 
+            // 鼠标移动进入才显示滚动条
             hoverShow: true
         },
 
@@ -185,9 +185,12 @@ define(function (require) {
             this
                 .delegate(this.thumb, 'mousedown', this.onThumbdown)
                 .delegate(this.track, 'mousedown', this.onTrackMouseDown)
-                .delegate(this.main, wheelEvent, this.onMouseWheel)
-                .delegate(this.main, 'mouseenter', this.onMainEnter)
-                .delegate(this.main, 'mouseleave', this.onMainLeave);
+                .delegate(this.main, WHEEL_EVENT_NAME, this.onMouseWheel);
+
+            if (this.hoverShow) {
+                this.delegate(this.main, 'mouseenter', this.onMainEnter);
+                this.delegate(this.main, 'mouseleave', this.onMainLeave);
+            }
 
         },
 
@@ -196,9 +199,12 @@ define(function (require) {
             this
                 .undelegate(this.thumb, 'mousedown', this.onThumbdown)
                 .undelegate(this.track, 'mousedown', this.onTrackMouseDown)
-                .undelegate(this.main, wheelEvent, this.onMouseWheel)
-                .undelegate(this.main, 'mouseenter', this.onMainEnter)
-                .undelegate(this.main, 'mouseleave', this.onMainLeave);
+                .undelegate(this.main, WHEEL_EVENT_NAME, this.onMouseWheel);
+
+            if (this.hoverShow) {
+                this.undelegate(this.main, 'mouseenter', this.onMainEnter);
+                this.undelegate(this.main, 'mouseleave', this.onMainLeave);
+            }
 
         },
 
@@ -315,8 +321,8 @@ define(function (require) {
             this.delegate(document.body, 'mousemove', this.onMousemove);
             this.delegate(document.body, 'mouseup', this.onMouseup);
 
-            this.mouseDown = true;
-            this.mouseLeave = false;
+            this.isMouseDown = true;
+            this.isMouseLeave = false;
         },
 
         /**
@@ -356,10 +362,10 @@ define(function (require) {
             this.undelegate(document.body, 'mouseup', this.onMouseup);
 
 
-            if (this.mouseLeave) {
+            if (this.isMouseLeave) {
                 this.onMainLeave();
             }
-            this.mouseDown = false;
+            this.isMouseDown = false;
 
         },
 
@@ -413,8 +419,8 @@ define(function (require) {
          * @private
          */
         onMainEnter: function () {
-            if (this.mouseDown) {
-                this.mouseLeave = false;
+            if (this.isMouseDown) {
+                this.isMouseLeave = false;
             }
             else {
                 $(this.track).fadeIn(150);
@@ -427,8 +433,8 @@ define(function (require) {
          * @private
          */
         onMainLeave: function () {
-            if (this.mouseDown) {
-                this.mouseLeave = true;
+            if (this.isMouseDown) {
+                this.isMouseLeave = true;
             }
             else {
                 $(this.track).fadeOut(150);
@@ -468,7 +474,7 @@ define(function (require) {
              * @event  module:ScrollBar#change
              * @property {Number} position 当前的滚动比例
              */
-            this.fire('change', event);
+            this.fire('scroll', event);
         },
 
         /**

@@ -48,10 +48,10 @@ define(function (require) {
                 name: 'placeholder',
                 paint: function (conf, placeholder) {
 
-                    placeholder = placeholder ? placeholder : '';
+                    placeholder = placeholder || '';
 
                     // 更新placeholder的内容
-                    if (!ie || ie > 8) {
+                    if (!ie || ie > 9) {
                         $(textbox.input).attr('placeholder', placeholder);
                         return;
                     }
@@ -59,7 +59,7 @@ define(function (require) {
                     var main = this.getPlaceHolder();
 
                     if (placeholder) {
-                        this.getPlaceHolder().innerHTML = placeholder;
+                        main.innerHTML = placeholder;
                     }
                     else {
                         main.style.display = 'none';
@@ -69,7 +69,7 @@ define(function (require) {
 
             textbox.getPlaceHolder = $.proxy(this.getPlaceHolder, this);
 
-            if (!ie || ie > 8) {
+            if (!ie || ie > 9) {
                 return;
             }
 
