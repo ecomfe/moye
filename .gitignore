@@ -17,3 +17,5 @@ example/smarty/lib/*
 example/smarty/templates_c
 example/templates_c
 .edpproj
+api
+public
