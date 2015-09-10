@@ -98,33 +98,20 @@ define(function (require) {
          *
          * @public
          * @method module:lib.format
-         * @param  {string}    format 字符串格式化模板
-         * @param  {...Object} args   最多不超过5个数据源
+         * @param  {string} template 字符串格式化模板
+         * @param  {Object|function(string):string} data 要格式化的模板数据源或自定义数据获取方法
          * @return {string}
          */
-        format: (function () {
-            var map = {
-                '!': 1,
-                '@': 2,
-                '#': 3,
-                '$': 4,
-                '%': 5
-            };
-            return function (template, a, b, c, d, e) {
-                var args = arguments;
-                return template.replace(/(!|@|#|\$|%)\{([\w]+)\}/g, function (all, source, prop) {
-                    source = args[map[source]];
-                    if (source == null) {
-                        return '';
-                    }
-                    prop = source[prop];
-                    if (prop == null) {
-                        return '';
-                    }
-                    return prop;
-                });
-            };
-        })()
+        format: function (template, data) {
+            var isFunc = $.isFunction(data);
+            return template.replace(/(!|\$)\{([\w]+)\}/g, function (all, source, prop) {
+                prop = isFunc ? data(prop) : data[prop];
+                if (prop == null) {
+                    return '';
+                }
+                return prop;
+            });
+        }
 
     };
 });
