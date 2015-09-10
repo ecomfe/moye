@@ -26,14 +26,11 @@ define(function (require) {
     var exports = {};
 
     var types = [
-        'Null',
-        'Undefined',
         'String',
         'Array',
         'Function',
         'Number',
         'Date',
-        'Object',
         'Boolean',
         'RegExp'
     ];
@@ -125,6 +122,52 @@ define(function (require) {
     });
 
     /**
+     * 目标是否为一个未定义的变量
+     *
+     * 由于在es3规范中，Object.toString对undefined作用的结果是[object Object]
+     * 所以不能按上边那些类型进行处理
+     *
+     * @public
+     * @method module:lib.isObject
+     * @param {*} obj 待判断的变量
+     * @return {boolean}
+     */
+    exports.isObject = function (obj) {
+        var type = typeof obj;
+        return type === 'function' || type === 'object' && !!type;
+    };
+
+    /**
+     * 目标是否为一个未定义的变量
+     *
+     * 由于在es3规范中，Object.toString对undefined作用的结果是[object Object]
+     * 所以不能按上边那些类型进行处理
+     *
+     * @public
+     * @method module:lib.isUndefined
+     * @param {*} obj 待判断的变量
+     * @return {boolean}
+     */
+    exports.isUndefined = function (obj) {
+        return obj === void 0;
+    };
+
+    /**
+     * 目标是否为null
+     *
+     * 由于在es3规范中，Object.toString对null作用的结果是[object Object]
+     * 所以不能按上边那些类型进行处理
+     *
+     * @public
+     * @method module:lib.isNull
+     * @param {*} obj 待判断的变量
+     * @return {boolean}
+     */
+    exports.isNull = function (obj) {
+        return obj === null;
+    };
+
+    /**
      * 判断一个对象是不是NaN
      *
      * @public
@@ -133,7 +176,9 @@ define(function (require) {
      * @return {boolean}
      */
     exports.isNaN = function (obj) {
-        return Number.isNaN(obj);
+
+        // 由于 isNaN(void 0) 的结果为true, 因此先判断obj是否为数字。
+        return exports.isNumber(obj) && isNaN(obj);
     };
 
     /**
