@@ -230,7 +230,7 @@ define(function (require) {
                     'input',
                     'input',
                     '',
-                    {type: 'hidden', value: this.value}
+                    {type: 'hidden', value: this.value, name: this.name || ''}
                 )
                 + helper.getPartHTML(
                     'label',

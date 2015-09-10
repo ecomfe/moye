@@ -113,7 +113,9 @@ require(['ui/Select'], function (Select) {
       {value: 3, name: '劲松潘家园'},
       {value: 4, name: '亚运村'},
       {value: 5, name: '北京南站商圈超长'}
-    ]
+    ],
+    name: 'select',
+    value: '1'
   }).render();
 
 });

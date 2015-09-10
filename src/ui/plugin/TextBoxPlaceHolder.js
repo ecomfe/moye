@@ -9,7 +9,6 @@ define(function (require) {
 
     var lib  = require('../lib');
     var Plugin = require('./Plugin');
-    var Popup = require('../Popup');
 
     var TextBoxPlaceHolder = Plugin.extend(/** @lends module:TextBoxPlaceHolder.prototype */{
 
@@ -22,7 +21,14 @@ define(function (require) {
              *
              * @type {String}
              */
-            color: '#ccc'
+            color: '#ccc',
+
+            /**
+             * placeholder的zindex
+             *
+             * @type {String}
+             */
+            level: 10
 
         },
 
@@ -35,32 +41,57 @@ define(function (require) {
          */
         activate: function (textbox) {
 
+            this.control = textbox;
             var ie = lib.browser.ie;
 
-            if (!ie || ie > 8) {
-                textbox.placeholder && $(textbox.input).attr('placeholder', textbox.placeholder);
-                return;
-            }
+            textbox.repaint = require('../painter').createRepaint(textbox.repaint, {
+                name: 'placeholder',
+                paint: function (conf, placeholder) {
+
+                    placeholder = placeholder || '';
+
+                    // 更新placeholder的内容
+                    if (!ie || ie > 9) {
+                        $(textbox.input).attr('placeholder', placeholder);
+                        return;
+                    }
+
+                    var main = this.getPlaceHolder();
+
+                    if (placeholder) {
+                        main.innerHTML = placeholder;
+                    }
+                    else {
+                        main.style.display = 'none';
+                    }
+                }
+            });
 
             textbox.getPlaceHolder = $.proxy(this.getPlaceHolder, this);
 
-            this.control     = textbox;
+            if (!ie || ie > 9) {
+                return;
+            }
+
             this.input       = textbox.input;
             var placeholder  = textbox.placeholder || $(this.input).attr('placeholder');
-            this.placeholder = placeholder ? placeholder : '请输入';
+            this.placeholder = placeholder;
 
             this.build();
 
             var me = this;
-            var id = textbox.id;
+            this.id = textbox.id + '-placeholder';
 
             $(this.input)
-                .on('blur.' + id, function (e) {
+                .on('blur.' + this.id, function (e) {
                     me.isNeedToShow() ? me.show() : me.hide();
                 })
-                .on('focus.' + id, function (e) {
+                .on('focus.' + this.id, function (e) {
                     me.hide();
                 });
+
+            this.$parent();
+
         },
 
         /**
@@ -70,47 +101,53 @@ define(function (require) {
          * @return {TextBox}
          */
         build: function () {
-            var input = $(this.input);
-            var me = this;
+            var $input = $(this.input);
+            var control = this.control;
 
-            var zIndex = input.css('zIndex') || 1;
-            zIndex = zIndex + 1;
+            var $control = $(control.main);
+            var position = $control.css('position');
 
-            var content = ''
-                + '<div style="'
-                +     'color:' + this.options.color + ';'
-                +     'font-size:' + input.css('fontSize') + ';'
-                +     'height:' + input.outerHeight() + 'px;'
-                +     'width:' + input.outerWidth() + 'px;'
-                +     'z-index:' + zIndex + ';'
-                +     'line-height:' + input.outerHeight() + 'px'
-                + '">' + this.placeholder + '</div>';
+            if (position === 'static' || position === 'inherit') {
+                $control.css('position', 'relative');
+            }
 
             // 计算偏移
-            var offsetX = parseInt(input.css('paddingLeft'), 10)
-                        + parseInt(input.css('borderLeftWidth'), 10);
+            var offsetX = parseInt($input.css('paddingLeft'), 10)
+                        + parseInt($input.css('borderLeftWidth'), 10)
+                        + $input.position().left;
 
-            var offsetY = -parseInt(input.outerHeight(), 10);
+            var offsetY = $input.position().top
+                        + parseInt($input.css('borderTopWidth'), 10);
 
-            // 生成一个popup控件, 用来展现placeholder
-            this.main = new Popup({
-                target: input,
-                mode: 'static',
-                content: content,
-                offset: {
-                    x: offsetX,
-                    y: offsetY
+            var styles = ''
+                +     'position: absolute;'
+                +     'top: ' + offsetY + 'px;'
+                +     'left: ' + offsetX + 'px;'
+                +     'color:' + this.color + ';'
+                +     'font-size:' + $input.css('fontSize') + ';'
+                +     'height:' + $input.outerHeight() + 'px;'
+                +     'width:' + $input.outerWidth() + 'px;'
+                +     'line-height:' + $input.outerHeight() + 'px;'
+                +     'z-index:' + this.level + ';'
+                +     'cursor:text';
+
+            this.main = control.helper.createPart(
+                'placeholder', 'div', this.placeholder,
+                {
+                    'style': styles,
+                    'data-role': 'textbox-placeholder'
                 }
-            })
-            .render()
-            .show()
-            .on('click', function (e) {
-                me.hide();
-                me.input.focus();
+            );
+
+            control.delegate(control.main, 'click', '[data-role=textbox-placeholder]', function (e) {
+                $(this.input).trigger('focus');
             });
 
-            // 页面resize时需要重新定位
-            this.main.delegate(window, 'resize', this.main.onWindowResize);
+            $(this.main).appendTo(control.main);
+
+            if (!this.placeholder) {
+                this.hide();
+            }
 
             return this.control;
         },
@@ -143,7 +180,7 @@ define(function (require) {
          * @return {TextBox}
          */
         show: function () {
-            this.main.show();
+            this.main && $(this.main).show();
 
             return this.control;
         },
@@ -155,7 +192,7 @@ define(function (require) {
          * @return {TextBox}
          */
         hide: function () {
-            this.main.hide();
+            this.main && $(this.main).hide();
 
             return this.control;
         },
@@ -168,23 +205,17 @@ define(function (require) {
          */
         inactivate: function () {
             var textbox = this.control;
-            var id = textbox.id;
 
             $(textbox.input)
-                .off('focus.' + id)
-                .off('blur.' + id);
+                .off('focus.' + this.id)
+                .off('blur.' + this.id);
+
+            textbox.undelegate(textbox.main, 'click', '[data-role=textbox-placeholder]');
 
             this.control = null;
             this.input = null;
             this.placeholder = null;
-        },
 
-        /**
-         * 销毁
-         */
-        dispose: function () {
-            this.main.destroy();
-            this.$parent();
         }
 
     });
