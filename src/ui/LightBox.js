@@ -403,7 +403,9 @@ define(function (require) {
             var element = this.getElement(index);
             var helper = this.helper;
 
-            helper.getPart('image').src = element.src;
+            var src = element.src;
+
+            helper.getPart('image').src = src;
             this.removeState('error');
 
             var size = this.getSize(index);
@@ -907,8 +909,10 @@ define(function (require) {
 
             this.undelegate(document.body, 'click', this.triggers, this.onShow);
 
-            this.elements.length = 0;
-            this.elements = [];
+            if (this.elements) {
+                this.elements.length = 0;
+                this.elements = [];
+            }
 
             this.undelegate(this.main, 'click', this.onMainClicked);
 
