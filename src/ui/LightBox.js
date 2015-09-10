@@ -268,7 +268,7 @@ define(function (require) {
         createIcons: function (icons) {
 
             if (lib.isString(icons)) {
-                icons = [].push(icons);
+                icons = [icons];
             }
 
             lib.each(
@@ -403,9 +403,7 @@ define(function (require) {
             var element = this.getElement(index);
             var helper = this.helper;
 
-            var src = element.src;
-
-            helper.getPart('image').src = src;
+            helper.getPart('image').src = element.src;
             this.removeState('error');
 
             var size = this.getSize(index);
@@ -599,10 +597,10 @@ define(function (require) {
             var total = this.total;
 
             if (index < 0) {
-                index = total + index;
+                index = total + index % total;
             }
             else if (index >= total) {
-                index = index - total;
+                index = index % total;
             }
 
             return index;
