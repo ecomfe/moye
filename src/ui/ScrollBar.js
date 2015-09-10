@@ -17,7 +17,7 @@ define(function (require) {
      *
      * @type {string}
      */
-    var wheelEvent = lib.browser.firefox ? 'DOMMouseScroll' : 'mousewheel';
+    var WHEEL_EVENT_NAME = lib.browser.firefox ? 'DOMMouseScroll' : 'mousewheel';
 
     /**
      * 设置文本不能拖选
@@ -47,10 +47,8 @@ define(function (require) {
      * @example
      *
      * var scrollbar = new ScrollBar({
-     *     main: lib.g('ecl-ui-scrollbar-main'),
-     *     thumb: lib.g('ecl-ui-scrollbar-thumb'),
-     *     disabled: 0
-     *});
+     *     main: document.getElementById('scrollbar1');
+     * });
      *
      *
      */
@@ -72,17 +70,8 @@ define(function (require) {
          * @type {Object}
          * @property {boolean} options.disabled 是否禁用组件
          * @property {(string | HTMLElement)} options.main 主元素
-         * @property {(string | HTMLElement)} options.panel 需要滚动的元素，
-         * 如果不设则按class规则查找`options.prefix` + `panel`
-         * @property {(string | HTMLElement)} options.thumb 滚动条按钮元素
-         * 如果不设则按class规则查找`options.prefix` + `thumb` ，
-         * 并且将thumb父级元素作为track
          * @property {Number} options.wheelspeed 滚动速度，百分比，越大滚动越快
          * @property {string} options.direction 滚动方向
-         * @property {string} options.prefix class默认前缀
-         * @property {string} options.mode 使用的模式(`scroll` or `position`)，
-         * scrollTop模式or style.top模式
-         * 使用的css是不一样的,默认scrollTop模式
          * @property {boolean} options.preventWheelScroll
          * 如果true会始终阻止滚轮滚动页面，及时当前面板已经滚动到头
          * 此处会防止因面板较短导致的页面频繁滚动
@@ -90,6 +79,8 @@ define(function (require) {
          * 是否自动调整thumb的高度，以适应滚动内容的大小
          * @property {boolean} options.minThumbSize
          * 自动调整thumb高度时，最小的thumb高度(px)
+         * @property {boolean} options.hoverShow
+         * 如果true，则鼠标移动进入才显示滚动条
          * @private
          */
         options: {
@@ -97,17 +88,11 @@ define(function (require) {
             // 需要滚动的元素
             panel: '',
 
-            // 组件控制的滑动按钮
-            thumb: '',
-
             // 滚轮速度
             wheelspeed: 0.05,
 
             // 滑动门方向`horizontal` or `vertical`
             direction: 'vertical',
-
-            // 使用的模式，scrollTop模式or style.top模式，使用的css是不一样的
-            mode: '',
 
             // 如果true会始终阻止滚轮滚动页面，即使当前已经滚动到头
             preventWheelScroll: false,
@@ -116,7 +101,10 @@ define(function (require) {
             autoThumbSize: true,
 
             // 最小的thumb高度,px
-            minThumbSize: 30
+            minThumbSize: 30,
+
+            // 鼠标移动进入才显示滚动条
+            hoverShow: true
         },
 
         /**
@@ -132,53 +120,122 @@ define(function (require) {
 
             this.curPos = 0;
 
-            this.bindEvents(privates);
-
             // 当前滚动坐标
-            this.xAxis = opt.direction === 'horizontal';
+            this.xAxis = this.direction === 'horizontal';
 
             var sizeProp = this.xAxis ? 'Width' : 'Height';
             this.offsetProp = 'offset' + sizeProp;
             this.clientProp = 'client' + sizeProp;
             this.scrollProp = 'scroll' + sizeProp;
             this.scrollDirection = 'scroll' + (this.xAxis ? 'Left' : 'Top');
-            this.posMode = opt.mode === 'position';
 
-            // 滚动主元素
-            this.main = lib.g(opt.main);
-
-            // 需要滚动的元素
-            if (!opt.panel) {
-                this.panel = $('.' + privates.getClass.call(this, 'panel'), this.main)[0];
-            }
-            else {
-                this.panel = lib.g(opt.panel);
-            }
-
-            // 滚动条按钮
-            if (!opt.thumb) {
-                this.thumb = $('.' + privates.getClass.call(this, 'thumb'), this.main)[0];
-            }
-            else {
-                this.thumb = lib.g(opt.thumb);
-            }
-
-            // 滚动条
-            this.track = this.thumb.offsetParent;
-
-            var bound = this._bound;
-
-            $(this.thumb).on('mousedown', bound.onThumbdown);
-            $(this.track).on('mouseup', bound.onTrackUp);
-            $(this.panel).on(wheelEvent, bound.onMouseWheel);
-            $(this.main)
-                .on('mouseenter', bound.onMainEnter)
-                .on('mouseleave', bound.onMainLeave);
+            // this.onThumbdown = lib.throttle.call(this, this.onThumbdown, 50);
+            // this.onMouseup = lib.throttle.call(this, this.onMouseup, 50);
 
         },
 
+        initStructure: function () {
+
+            var main = this.main;
+            var helper = this.helper;
+
+            if (this.xAxis) {
+                $(main).addClass(helper.getPartClassName('horizontal'));
+            }
+
+            // 需要滚动的元素
+            var panel = $('[data-role="scrollbar-content"]', main)[0];
+
+            if (panel) {
+                $(panel)
+                    .attr('id', helper.getPartId('body'))
+                    .data('part', 'body')
+                    .addClass(helper.getPartClassName('body'));
+            }
+            else {
+                panel = helper.createPart('body', 'div', this.content || '', {
+                    'data-role': 'scrollbar-content'
+                });
+
+                $(main).append(panel);
+            }
+
+            this.panel = panel;
+
+            this.track = helper.createPart('track', 'div', '', {
+                'data-role': 'scrollbar-track'
+            });
+            $(main).append(this.track);
+
+            this.thumb = helper.createPart('thumb', 'div', '', {
+                'data-role': 'scrollbar-thumb'
+            });
+            $(this.track).append(this.thumb);
+
+            this.refresh();
+
+            if (this.hoverShow) {
+                this.track.style.display = 'none';
+            }
+
+        },
+
+        startMouseListener: function () {
+
+            this
+                .delegate(this.thumb, 'mousedown', this.onThumbdown)
+                .delegate(this.track, 'mousedown', this.onTrackMouseDown)
+                .delegate(this.main, WHEEL_EVENT_NAME, this.onMouseWheel);
+
+            if (this.hoverShow) {
+                this.delegate(this.main, 'mouseenter', this.onMainEnter);
+                this.delegate(this.main, 'mouseleave', this.onMainLeave);
+            }
+
+        },
+
+        stopMouseListener: function () {
+
+            this
+                .undelegate(this.thumb, 'mousedown', this.onThumbdown)
+                .undelegate(this.track, 'mousedown', this.onTrackMouseDown)
+                .undelegate(this.main, WHEEL_EVENT_NAME, this.onMouseWheel);
+
+            if (this.hoverShow) {
+                this.undelegate(this.main, 'mouseenter', this.onMainEnter);
+                this.undelegate(this.main, 'mouseleave', this.onMainLeave);
+            }
+
+        },
+
+
+        /**
+         * 重绘Button控件
+         *
+         * @override
+         */
+        repaint: require('./painter').createRepaint(
+            Control.prototype.repaint,
+            {
+                name: ['disable'],
+                paint: function (conf, disable) {
+                    if (disable) {
+                        this.addState('disable');
+
+                        this.stopMouseListener();
+                    }
+                    else {
+                        this.removeState('disable');
+
+                        this.startMouseListener();
+                    }
+                }
+            }
+        ),
+
         /**
          * 滚动到指定位置
+         *
          * @param { ( Number | string ) } pos 滚动的距离，
          * 可以设置·begin· or ·end· 或者百分比
          * @return {module:ScrollBar} 本对象
@@ -199,7 +256,9 @@ define(function (require) {
             else {
                 pos = pos * 1 || 0;
             }
-            privates.setScrollPercent.call(this, pos);
+            this.setScrollPercent(pos);
+
+            return this;
         },
 
         /**
@@ -216,11 +275,11 @@ define(function (require) {
             this.scrollRatio = this.main[this.clientProp] / this.panelSize;
 
             var act = this.scrollRatio >= 1
-                ? 'addClass'
-                : 'removeClass';
+                ? 'addState'
+                : 'removeState';
 
             // 设置祖先元素为禁用
-            $(this.main)[act](privates.getClass.call(this, 'noscroll'));
+            this[act]('noscroll');
 
             // 滑块轨道的大小
             var trackLen = this.track[this.clientProp];
@@ -228,58 +287,42 @@ define(function (require) {
             if (this.options.autoThumbSize && this.scrollRatio < 1) {
 
                 var thumbSize = Math.max(
-                this.options.minThumbSize, this.scrollRatio * trackLen);
+                    this.options.minThumbSize,
+                    this.scrollRatio * trackLen
+                );
 
-                this.thumb.style[
-                    this.xAxis
-                    ? 'width'
-                    : 'height'
-                ] = thumbSize + 'px';
+                this.thumb.style[this.xAxis ? 'width' : 'height'] = thumbSize + 'px';
             }
 
             this.trackSize = trackLen - this.thumb[this.offsetProp];
 
             this.scrollTo(this.curPos);
-            this._disabled = this.scrollRatio >= 1;
+            this.setEnabled(this.scrollRatio < 1);
 
             return this;
         },
 
         /**
-         * 绘制控件
-         *
-         * @override
-         * @public
-         */
-        render: function () {
-            if (!this.options.main) {
-                throw new Error('invalid main');
-            }
-
-            this.refresh();
-            return this;
-        },
-
-        /**
-         * 按下导航条的按钮时处理
+         * 按下滚动条的按钮时处理
          *
          * @param {HTMLEvent} e dom事件
          * @private
          */
         onThumbdown: function (e) {
-            if (this._disabled) {
-                return;
-            }
-            setTextNoSelect(true, privates.getClass.call(this, 'noselect'));
+
+            setTextNoSelect(true, this.helper.getStateClassName('noselect'));
 
             this.mouseStart = this.xAxis
                 ? (e.pageX || e.clientX)
                 : (e.pageY || e.clientY);
+
             this.thumbStart = parseInt(this.thumb.style[this.xAxis ? 'left' : 'top'], 10) || 0;
 
-            $(document)
-                .on('mousemove', this._bound.onMousemove)
-                .on('mouseup', this._bound.onMouseup);
+            this.delegate(document.body, 'mousemove', this.onMousemove);
+            this.delegate(document.body, 'mouseup', this.onMouseup);
+
+            this.isMouseDown = true;
+            this.isMouseLeave = false;
         },
 
         /**
@@ -289,18 +332,19 @@ define(function (require) {
          * @private
          */
         onMousemove: function (e) {
+
             // 如果滚动条可用
             if (this.scrollRatio < 1) {
 
                 var moveLength = (
-                    this.xAxis
-                        ? (e.pageX || e.clientX)
-                        : (e.pageY || e.clientY)
+                        this.xAxis
+                            ? (e.pageX || e.clientX)
+                            : (e.pageY || e.clientY)
                     )
                     - this.mouseStart;
 
                 this.thumbPos = Math.min(this.trackSize, Math.max(0, this.thumbStart + moveLength));
-                privates.setScrollPercent.call(this, this.thumbPos / this.trackSize);
+                this.setScrollPercent(this.thumbPos / this.trackSize);
             }
         },
 
@@ -310,11 +354,19 @@ define(function (require) {
          * @param {HTMLEvent} e dom事件
          * @private
          */
-        onMouseup: function () {
-            setTextNoSelect(false, privates.getClass.call(this, 'noselect'));
-            $(document)
-                .off('mousemove', this._bound.onMousemove)
-                .off('mouseup', this._bound.onMouseup);
+        onMouseup: function (e) {
+
+            setTextNoSelect(false, this.helper.getStateClassName('noselect'));
+
+            this.undelegate(document.body, 'mousemove', this.onMousemove);
+            this.undelegate(document.body, 'mouseup', this.onMouseup);
+
+
+            if (this.isMouseLeave) {
+                this.onMainLeave();
+            }
+            this.isMouseDown = false;
+
         },
 
         /**
@@ -323,13 +375,14 @@ define(function (require) {
          * @param {HTMLEvent} e dom事件
          * @private
          */
-        onTrackUp: function (e) {
-            if (this._disabled || e.target !== this.track) {
+        onTrackMouseDown: function (e) {
+
+            if (e.target !== this.track) {
                 return;
             }
-            var pos = Math.min(
-            this.trackSize, this.xAxis ? e.offsetX : e.offsetY);
-            privates.setScrollPercent.call(this, pos / this.trackSize);
+
+            var pos = Math.min(this.trackSize, this.xAxis ? e.offsetX : e.offsetY);
+            this.setScrollPercent(pos / this.trackSize);
         },
 
         /**
@@ -339,9 +392,7 @@ define(function (require) {
          * @private
          */
         onMouseWheel: function (e) {
-            if (this._disabled) {
-                return;
-            }
+
             var origin  = e.originalEvent || e;
             var delta   = origin.wheelDelta ? (origin.wheelDelta / 120) : -(origin.detail / 3);
             var percent = delta * this.options.wheelspeed;
@@ -351,8 +402,8 @@ define(function (require) {
                 percent = 2 * this.scrollRatio;
             }
 
-            var percent = this.curPos - percent;
-            privates.setScrollPercent.call(this, percent);
+            percent = this.curPos - percent;
+            this.setScrollPercent(percent);
             // 在滚动范围内取消默认行为
             if (this.options.preventWheelScroll
                 || (percent >= 0.005 && percent <= 0.995)
@@ -368,7 +419,12 @@ define(function (require) {
          * @private
          */
         onMainEnter: function () {
-            $(this.main).addClass(privates.getClass.call(this, 'over'));
+            if (this.isMouseDown) {
+                this.isMouseLeave = false;
+            }
+            else {
+                $(this.track).fadeIn(150);
+            }
         },
 
         /**
@@ -377,13 +433,18 @@ define(function (require) {
          * @private
          */
         onMainLeave: function () {
-            $(this.main).removeClass(privates.getClass.call(this, 'over'));
+            if (this.isMouseDown) {
+                this.isMouseLeave = true;
+            }
+            else {
+                $(this.track).fadeOut(150);
+            }
         },
 
         /**
          * 设置滚动的位置
          *
-         * @param {Number} pos 设置滚动的位置比例
+         * @param {number} pos 设置滚动的位置比例
          * @private
          * @fires module:ScrollBar#event
          */
@@ -401,12 +462,8 @@ define(function (require) {
             this.thumb.style[axis] = Math.round(pos * this.trackSize) + 'px';
 
             var top = Math.round(pos * this.panelSize * (1 - this.scrollRatio));
-            if (this.posMode) {
-                this.panel.style[axis] = (-top) + 'px';
-            }
-            else {
-                this.panel[this.scrollDirection] = top;
-            }
+
+            this.panel.style[axis] = (-top) + 'px';
 
             this.curPos = pos;
             var event = {
@@ -417,19 +474,7 @@ define(function (require) {
              * @event  module:ScrollBar#change
              * @property {Number} position 当前的滚动比例
              */
-            this.fire('change', event);
-        },
-
-        /**
-         * 根据名字构建的css class名称
-         *
-         * @param {string} name 模块名字
-         * @return {string} 构建的class名称
-         * @private
-         */
-        getClass: function (name) {
-            name = name ? '-' + name : '';
-            return this.options.prefix + name;
+            this.fire('scroll', event);
         },
 
         /**
@@ -439,29 +484,9 @@ define(function (require) {
          * @public
          */
         setEnabled: function (enabled) {
-            var disabled = !enabled;
-            var act = disabled ? 'addClass' : 'removeClass';
-            // 设置祖先元素为禁用
-            $(this.main)[act](privates.getClass.call(this, 'disable'));
-            this._disabled = disabled;
-        },
 
-        /**
-         * 设置启用
-         *
-         * @override
-         */
-        enable: function () {
-            this.setEnabled(true);
-        },
+            this.set('disable', !enabled);
 
-        /**
-         * 设置禁用
-         *
-         * @override
-         */
-        disable: function () {
-            this.setEnabled(false);
         },
 
         /**
@@ -473,24 +498,13 @@ define(function (require) {
          */
         dispose: function () {
 
-            var bound = this._bound;
+            $(document.body).removeClass(this.helper.getStateClassName('noselect'));
 
-            $(document.body).removeClass(privates.getClass.call(this, 'noselect'));
-            $(this.thumb).off('mousedown', bound.onThumbdown);
-            $(this.track).off('mouseup', bound.onTrackUp);
-            $(this.panel).off(wheelEvent, bound.onMouseWheel);
+            this.stopMouseListener();
 
-            $(document)
-                .off('mousemove', bound.onMousemove)
-                .off('mouseup', bound.onMouseup);
+            this.panel = this.thumb = this.track = null;
 
-            $(this.main)
-                .off('mouseenter', bound.onMainEnter)
-                .off('mouseleave', bound.onMainLeave);
-
-            this.main = this.panel = this.thumb = this.track = null;
-
-            this.parent();
+            this.$parent();
         }
     });
 

@@ -12,6 +12,8 @@
 @moye-scrollbar-width: 500px;
 @moye-scrollbar-height: 300px;
 @moye-scrollbar-thumb-size: 10px;
+@moye-scrollbar-thumb-color: #eee;
+@moye-scrollbar-track-color: #333;
 
 
 //禁止选择文本
@@ -27,81 +29,53 @@
     width: @moye-scrollbar-width;
     border: 2px solid #DDD;
     height: @moye-scrollbar-height;
+    overflow: hidden;
+    position: relative;
 
-    &-panel {
-        margin-right:10px;
-        width: @moye-scrollbar-width - @moye-scrollbar-thumb-size;
-        height: @moye-scrollbar-height;
-        overflow: hidden;
+    &-body {
+        width: @moye-scrollbar-width;
+        position: relative;
     }
 
     &-track {
-        float: right;
-        position: relative;
+        position: absolute;
         width: @moye-scrollbar-thumb-size;
         height: @moye-scrollbar-height;
-        background: #EEE;
-    }
-
-    &-thumb {
-        *font-size:0;
-        position: absolute;
-        top:0;
-        width: @moye-scrollbar-thumb-size;
-        height: @moye-scrollbar-thumb-size*3;
-        background: #333;
-        cursor: default;
-    }
-
-    &-noscroll &-track{
-        display: none;
-    }
-
-    &-noscroll &-panel{
-        margin-right:0;
-    }
-
-    &-disable &-thumb{
-        background: #EEE;
-    }
-
-
-    &-position-mode {
-        position: relative;
-        height: @moye-scrollbar-height;
-        overflow: hidden;
-    }
-
-    &-position-mode &-panel {
-        width: @moye-scrollbar-width - @moye-scrollbar-thumb-size;
-        position: absolute;
-        height: auto;
-    }
-
-    &-position-mode &-track {
-        float: none;
-        position: absolute;
+        background-color: @moye-scrollbar-track-color;
+        .border-radius(4px);
+        top: 0;
         right: 0;
     }
 
-    //水平滚动样式
-    &-horizontal &-panel{
-        width: @moye-scrollbar-width;
-        margin-right: 0;
-        height: @moye-scrollbar-height - @moye-scrollbar-thumb-size;
+    &-thumb {
+        width: @moye-scrollbar-thumb-size;
+        height: @moye-scrollbar-thumb-size*3;
+        background-color: @moye-scrollbar-thumb-color;
+        .border-radius(4px);
+        cursor: default;
+        position: absolute;
+        top: 0;
     }
 
+}
 
-    &-horizontal &-track{
-        float: none;
+.@{moye-prefix}-scrollbar-horizontal {
+    .@{moye-prefix}-scrollbar-body {
+        width: @moye-scrollbar-width;
+        height: @moye-scrollbar-height;
+    }
+    .@{moye-prefix}-scrollbar-track {
         width: @moye-scrollbar-width;
         height: @moye-scrollbar-thumb-size;
+        top: auto;
+        right: auto;
+        left: 0;
+        bottom: 0;
     }
-
-    &-horizontal &-thumb{
-        left:0;
+    .@{moye-prefix}-scrollbar-thumb {
+        top: auto;
+        left: 0;
         width: @moye-scrollbar-thumb-size*3;
         height: @moye-scrollbar-thumb-size;
     }
-
 }
