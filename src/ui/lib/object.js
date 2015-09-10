@@ -78,36 +78,31 @@ define(function (require) {
      */
     exports.clone = function clone(source) {
 
-        var isObject = TYPE.isObject(source);
+        var type = $.type(source);
 
-        // 不是object或者数组就算了，没啥好复制的
-        if (!TYPE.isArray(source) && !isObject) {
+        // 对于数组, 对其内部每个元素都clone一下
+        if (type === 'array') {
+            return array.map([].slice.call(source), clone);
+        }
+
+        // 不是object算了，没啥好复制的
+        // 并且，不复制复杂对象. 原因是复杂对象根本没有办法这样复制啊。
+        if (type !== 'object' || !$.isPlainObject(source)) {
             return source;
         }
 
-        // 这里不复制复杂对象. 原因是复杂对象根本没有办法这样复制啊。
-        if (isObject && !$.isPlainObject(source)) {
-            return source;
-        }
-
-        var cloned = source;
-
-        // 对于数组, 对其内部每个元素都clone一下.
-        if (TYPE.isArray(source)) {
-            cloned = array.map([].slice.call(source), clone);
-            return cloned;
-        }
         // 不是PlainObject的统一不拷贝
         // 每个属性都给clone一下.
-        if (TYPE.isObject(source)) {
-            cloned = {};
-            for (var name in source) {
-                if (source.hasOwnProperty(name)) {
-                    cloned[name] = clone(source[name]);
-                }
+        var cloned = {};
+
+        for (var name in source) {
+            if (source.hasOwnProperty(name)) {
+                cloned[name] = clone(source[name]);
             }
         }
+
         return cloned;
+
     };
 
     /**
@@ -145,7 +140,7 @@ define(function (require) {
                 continue;
             }
 
-            /*eslint guard-for-in: 0*/
+            /* eslint guard-for-in: 0 */
             for (var name in source) {
 
                 var sourceValue = source[name];
