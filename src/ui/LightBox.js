@@ -268,7 +268,7 @@ define(function (require) {
         createIcons: function (icons) {
 
             if (lib.isString(icons)) {
-                icons = [].push(icons);
+                icons = [icons];
             }
 
             lib.each(
@@ -597,10 +597,10 @@ define(function (require) {
             var total = this.total;
 
             if (index < 0) {
-                index = total + index;
+                index = total + index % total;
             }
             else if (index >= total) {
-                index = index - total;
+                index = index % total;
             }
 
             return index;
@@ -907,8 +907,10 @@ define(function (require) {
 
             this.undelegate(document.body, 'click', this.triggers, this.onShow);
 
-            this.elements.length = 0;
-            this.elements = [];
+            if (this.elements) {
+                this.elements.length = 0;
+                this.elements = [];
+            }
 
             this.undelegate(this.main, 'click', this.onMainClicked);
 

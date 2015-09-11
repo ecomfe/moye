@@ -29,7 +29,8 @@ define(function (require) {
 
 
     afterEach(function () {
-        lightbox.dispose();
+        lightbox.hide();
+        lightbox.destroy();
         $('[data-role="lightbox-image"]').remove();
     });
 
@@ -41,74 +42,147 @@ define(function (require) {
             expect(lightbox.type).toBe('LightBox');
         });
 
-        it('check show', function () {
+        it('check show事件', function () {
 
-            $('[data-role="lightbox-image"]').eq(0).trigger('click');
+            var onShowSpy = jasmine.createSpy('onShowSpy');
+            lightbox.on('show', onShowSpy);
 
-            lightbox.on('show', function () {
-                expect(lightbox.hasState('visiable')).toBeTruthy();
-                expect($('.ui-lightbox-image', lightbox.main).prop('outerHTML'))
-                    .toContain('//www.baidu.com/img/bdlogo.png');
+            runs(function () {
+                $('[data-role="lightbox-image"]').eq(0).click();
+            });
+
+            waitsFor(function () {
+                return lightbox.hasState('visible');
+            });
+
+            runs(function () {
+                expect(onShowSpy).toHaveBeenCalled();
+                expect(lightbox.total).toBe(5);
             });
 
         });
 
 
-        it('check hide', function () {
+        it('check hide事件', function () {
 
-            $('[data-role="lightbox-image"]').eq(0).trigger('click');
+            var onHideSpy = jasmine.createSpy('onHideSpy');
 
             lightbox.on('show', function () {
-                expect(lightbox.getCurrent()).toBe(0);
-                $('[data-lightbox-action="close"]', lightbox.main).eq(0).trigger('click');
+                expect(lightbox.getCurrent()).toBe(1);
             });
 
             lightbox.on('hide', function () {
-                $('[data-lightbox-action="close"]', lightbox.main).eq(0).trigger('click');
+                onHideSpy();
                 expect(lightbox.hasState('visiable')).toBeFalsy();
             });
 
+            runs(function () {
+                $('[data-role="lightbox-image"]').eq(1).click();
+            });
+
+            // 等待图片加载
+            waitsFor(function () {
+                return lightbox.hasState('visible');
+            });
+
+            runs(function () {
+                $('[data-lightbox-action="close"]', lightbox.main).click();
+            });
+
+            waitsFor(function () {
+                return !lightbox.hasState('visible');
+            });
+
+            runs(function () {
+                expect(onHideSpy).toHaveBeenCalled();
+            });
+
         });
 
-        it('check prev next', function () {
+        it('check change事件 next按钮', function () {
+
+            var onChangeSpy = jasmine.createSpy('onChangeSpy');
 
             lightbox.on('show', function () {
-                expect(lightbox.total).toBe(5);
-                $('[data-lightbox-action="next"]', lightbox.main).eq(0).trigger('click');
-            });
+                runs(function () {
+                    $('[data-lightbox-action="next"]', lightbox.main).click();
+                });
 
-            lightbox.on('change', function (e) {
-                expect(e.activeIndex).toBe(1);
-            });
-
-            $('[data-role="lightbox-image"]').eq(0).trigger('click');
-        });
-
-        /* eslint-disable no-loop-func */
-        for (var i = 1; i < 4; i++) {
-            it('check select ' + i, function () {
-                lightbox.select(i);
-                lightbox.on('change', function (e) {
-                    expect(e.activeIndex).toBe(i);
+                waitsFor(function () {
+                    return lightbox.helper.getPart('image').height > 0;
                 });
             });
-        }
-        /* eslint-enable no-loop-func */
 
-        it('check select 6' + i, function () {
-            lightbox.select(6);
-            lightbox.on('change', function (e) {
-                expect(e.activeIndex).toBe(0);
+            lightbox.on('change', onChangeSpy);
+
+            runs(function () {
+                $('[data-role="lightbox-image"]').eq(2).click();
+            });
+
+            // 等待图片加载
+            waitsFor(function () {
+                return lightbox.hasState('visible');
+            });
+
+            runs(function () {
+                expect(onChangeSpy).toHaveBeenCalled();
             });
         });
 
-        it('check createIcons', function () {
-            lightbox.createIcons('text1');
-            expect(!!$('.ui-lightbox-text1')).toBeTruthy();
 
-            lightbox.onMainClicked.call(lightbox, {currentTarget: $('.ui-lightbox-text1')[0]});
-            lightbox.on('text1', function (e) {
-                expect(!!e).toBeTruthy();
+        it('check select 8', function () {
+
+            runs(function () {
+                lightbox.select(8);
+            });
+            // 等待图片加载
+            waitsFor(function () {
+                return lightbox.hasState('visible');
+            });
+
+            runs(function () {
+                expect(lightbox.current).toBe(3);
+            });
+        });
+
+        it('loaderror事件', function () {
+            var onErrorSpy = jasmine.createSpy('onErrorSpy');
+            lightbox.on('loaderror', onErrorSpy);
+
+            runs(function () {
+                $('[data-role="lightbox-image"]').eq(4).click();
+            });
+
+            waitsFor(function () {
+                return lightbox.hasState('error');
+            });
+
+            runs(function () {
+                expect(onErrorSpy).toHaveBeenCalled();
+            });
+        });
+
+        it('check createIcons 自定义事件', function () {
+
+            var onText1Spy = jasmine.createSpy('onText1Spy');
+            lightbox.on('text1', onText1Spy);
+
+            lightbox.createIcons('text1');
+            expect($('.ui-lightbox-text1', lightbox.main).length).toBe(1);
+            expect($(lightbox.helper.getPart('text1')).data('lightbox-action')).toBe('text1');
+
+            runs(function () {
+                $(lightbox.helper.getPart('text1')).click();
+            });
+
+            var start = Date.now();
+
+            waitsFor(function () {
+                return Date.now() - start > 100;
+            }, '', 1000);
+
+            runs(function () {
+                expect(onText1Spy).toHaveBeenCalled();
             });
         });
 
@@ -123,12 +197,7 @@ define(function (require) {
             expect($(lightbox.helper.getPart('title'), lightbox.main).text()).toBe('123');
         });
 
-        it('event:dispose', function () {
-            lightbox.on('dispose', function () {
-                expect(!!lightbox.main).toBeFalsy();
-            });
-        });
-
     });
+
 
 });
