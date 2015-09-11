@@ -494,7 +494,13 @@ define(function (require) {
 
         initialize: function (slider, options) {
             this.$parent(slider, options);
-            slider.helper.addPartClasses('stage-opactiy');
+
+            // 绝对定位时候，默认展现是最后一张图片，这里重置为第一张图片
+            var me = this;
+            slider.on('afterrender', function () {
+                me.beforeSwitch(0, -1);
+                slider.helper.addPartClasses('stage-opactiy');
+            })
         },
 
         /**
@@ -503,37 +509,30 @@ define(function (require) {
          * @param {number} index 指定的索引
          * @protected
          */
-        beforeSwitch: function (index) {
-
+        beforeSwitch: function (index, lastIndex) {
             var slider = this.slider;
             var helper = slider.helper;
             var childNodes = $(slider.stage).children();
-            var l = childNodes.length;
+            var topClass = helper.getPartClassName('top');
+            var coverClass = helper.getPartClassName('cover');
 
-            if (lib.isUndefined(this.index)) {
-                this.index = l - 1;
+            if (!lib.isUndefined(this.coverIndex)) {
+                $(childNodes[this.coverIndex])
+                    .removeClass(coverClass);
             }
 
-            if (lib.isUndefined(this.lastIndex)) {
-                this.lastIndex = l - 1;
+            if (lastIndex >= 0) {
+                this.coverIndex = lastIndex;
+                $(childNodes[lastIndex])
+                    .addClass(coverClass)
+                    .removeClass(topClass);
             }
-
-            // 还原当前元素
-            this.setOpacity(childNodes[this.index], 1);
-
-            // 移出顶层元素
-            $(childNodes[this.index]).removeClass(helper.getPartClassName('top'));
-            // 将顶层元素作为背景
-            $(childNodes[this.lastIndex]).removeClass(helper.getPartClassName('cover'));
-            // 移出背景元素
-            $(childNodes[this.index]).addClass(helper.getPartClassName('cover'));
-
-            this.lastIndex = this.index;
 
             // 设置当前元素
-            $(childNodes[this.index = index]).addClass(helper.getPartClassName('top'));
-
-            this.setOpacity(this.curElement = childNodes[index], 0);
+            $(childNodes[index]).addClass(topClass);
+            if (lastIndex >= 0) {
+                this.setOpacity(this.curElement = childNodes[index], 0);
+            }
         },
 
         /**
