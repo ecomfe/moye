@@ -170,12 +170,22 @@ define(function (require) {
 
         initStructure: function () {
 
-            var content = this.content = this.content || this.main.innerHTML;
+            var main = $(this.main);
+            var content = this.content;
 
-            $(this.main)
+            // 如果有在 JS 中指定了 content，那么把它刷新到 main 元素
+            // 否则不刷新 main 的 innerHTML。
+            // 这样调整的原因是在 ie 和 chrome 上，main.innerHTML = main.innerHTML 是有差异的。
+            // 在 chrome 上会重新渲染，但在 ie 上并不会，导致如果外部对 popup 做了一些奇怪的事情，
+            // 比如 jquery 给 dom 添加标识这样的事情，就会导致难以追踪的 bug，比如 click 事件绑定不触发。
+            // 这样也可以节省性能开销
+            if (content) {
+                main.html(content);
+            }
+
+            main
                 .css('left', '-2000px')
-                .appendTo(document.body)
-                .html(content);
+                .appendTo(document.body);
 
         },
 
@@ -229,7 +239,7 @@ define(function (require) {
 
         /**
          * 设定挂靠的Element
-         * 
+         *
          * @param {Element} target 挂靠元素
          * @return {Popup}
          */
@@ -542,7 +552,7 @@ define(function (require) {
 
         /**
          * 浮层哟, 被点击了呢~
-         * 
+         *
          * @fires module:Popup#click 浮层点击事件
          * @param {Event} e 点击事件
          */
