@@ -91,9 +91,11 @@ define(function (require) {
             /**
              * 显示的内容
              *
-             * @type {string}
+             * 当 content 设置为 null 时，使用 innerHTML 作为其内容
+             *
+             * @type {?string}
              */
-            content: '',
+            content: null,
 
             /**
              * 弹出层显示在 trigger 的相对位置
@@ -179,7 +181,7 @@ define(function (require) {
             // 在 chrome 上会重新渲染，但在 ie 上并不会，导致如果外部对 popup 做了一些奇怪的事情，
             // 比如 jquery 给 dom 添加标识这样的事情，就会导致难以追踪的 bug，比如 click 事件绑定不触发。
             // 这样也可以节省性能开销
-            if (content) {
+            if (content !== null) {
                 main.html(content);
             }
 
@@ -218,7 +220,11 @@ define(function (require) {
             {
                 name: 'content',
                 paint: function (conf, content) {
-                    this.setContent(content);
+
+                    if (content !== null) {
+                        this.setContent(content);
+                    }
+
                 }
             },
             function (changes, changesIndex) {
