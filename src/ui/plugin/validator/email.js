@@ -9,7 +9,7 @@ define(function (require) {
     var ValidityState = require('../ValidityState');
     var ValidateRule = require('../ValidateRule');
 
-    var reg = /^[\w\u4e00-\u9fa5._-]+@[\w\u4e00-\u9fa5]+\.[\w\u4e00-\u9fa5]+$/;
+    var reg = /^[\w\u4e00-\u9fa5._-]+@[\w\u4e00-\u9fa5]+(\.[\w\u4e00-\u9fa5]+){1,2}$/;
 
     ValidateRule.register('email', {
         check: function (value, control) {
