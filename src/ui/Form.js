@@ -218,11 +218,24 @@ define(function (require) {
          * @return {Array.<Control>}
          */
         getInputControls: function () {
+
             var controls = [];
             var context = this.context;
 
-            var children = this.children || [];
-            $.each(children, function (idx, control) {
+            var children = this.children;
+
+            // 广度优先遍历探索所有的 input control
+            children = children ? children.slice() : [];
+
+            while (children.length) {
+
+                var control = children.shift();
+
+                // 必须与form在同一上下文中
+                if (control.context !== context) {
+                    continue;
+                }
+
                 if (
                     // 是一个控件
                     control
@@ -231,13 +244,14 @@ define(function (require) {
                     // 是一个输入控件 TODO: 对于输入控件行为约束规范，需要在开发文档明确，
                     // 保证所有输入控件都按照这里判断标准实现
                     && lib.isFunction(control.getValue)
-                    // 与form在同一上下文中
-                    && control.context === context
                 ) {
                     controls.push(control);
                 }
-                // TODO 考虑有些组件是容器组件比如Panel，可能需要递归遍历
-            });
+                else if (control.children) {
+                    children = children.concat(control.children);
+                }
+
+            }
 
             return controls;
         },
