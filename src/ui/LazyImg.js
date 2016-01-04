@@ -134,6 +134,8 @@ define(function (require) {
             var main = this.main = lib.g(options.main) || $('.' + options.main)[0];
 
             this.imgs = options.imgs || $('img', main).toArray();
+            
+            $.extend(this.options, options);
 
             Lazy.add(main, $.proxy(privates.load, this), options.offset);
 
