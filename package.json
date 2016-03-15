@@ -1,6 +1,6 @@
 {
     "name": "Moye",
-    "version": "2.0.10",
+    "version": "2.0.11",
     "description": "知心UI组件库",
     "devDependencies": {
         "etpl": "^2.1.0-rc",
@@ -59,7 +59,9 @@
     },
     "scripts": {
         "doc": "grunt jsdoc",
-        "test": "grunt test"
+        "init": "npm install && bower install",
+        "test": "edp test start",
+        "sample": "edp webserver start"
     },
     "repository": "git://github.com/ecomfe/Moye.git",
     "bugs": "https://github.com/ecomfe/Moye/issues",

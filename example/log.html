@@ -4,6 +4,7 @@
 <meta charset="utf-8" />
 <title>中间页log</title>
 <script src="http://s1.bdstatic.com/r/www/cache/ecom/esl/1-6-8/esl.js"></script>
+<script src="./js/jquery-1.10.2.min.js"></script>
 </head>
 <body>
     <div id="area1" class="result-op" data-click="{'a':1, 'srcid': 16873, 'p1':1, 'y':'FD9FFD6B'}">
@@ -26,12 +27,16 @@
 
 <script>
 (function () {
+
+    define('jquery', window.jQuery);
+
     require.config({
       baseUrl: '../src/ui'
     });
 
     require(['log'], function (log) {
         log.config({data:{a: 0, e: 1, y: 'x'}})
+        log.config({data: {extend: 1}})
         log.start();
 
         log.live({
