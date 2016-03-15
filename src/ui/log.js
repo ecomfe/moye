@@ -465,7 +465,7 @@ define(function (require) {
      * 工具详情的具体链接 http://wiki.baidu.com/pages/viewpage.action?pageId=40195676
      * 根据工具要求，需要暴露一个和options一样的全局变量__logInfo__
      * 方便使用浏览器插件工具查看点击日志统计
-     * 
+     *
      * @type {Object}
      */
     window.__logInfo__ = options;
@@ -591,7 +591,7 @@ define(function (require) {
          * @return {module:log} log
          */
         config: function (ops) {
-            $.extend(options, ops);
+            $.extend(true, options, ops);
 
             return this;
         },

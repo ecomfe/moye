@@ -8,7 +8,7 @@ define(function (require) {
 
     var $   = require('jquery');
     var log = require('ui/log');
-    
+
 
     var container;
 
@@ -122,6 +122,16 @@ define(function (require) {
             log.on('click', onClick);
             $(container.getElementsByTagName('div')[0]).trigger('click');
             log.un('click', onClick);
+
+            var onClick1 = function (json) {
+                var data = json.data;
+                expect(data.foo).toBe('bar');
+                expect(data.foo1).toBe('bar1');
+            };
+            log.config({ data: { foo1: 'bar1' } });
+            log.on('click', onClick1);
+            $(container.getElementsByTagName('div')[0]).trigger('click');
+            log.un('click', onClick1);
         });
 
         it('手动继承，批量填充: fill', function () {
