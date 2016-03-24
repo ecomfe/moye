@@ -52,6 +52,10 @@ define(function (require) {
                 delete list[index];
             };
 
+            if (data.rsv) {
+                data.rsv = lib.stringify(data.rsv);
+            }
+
             var url = options.action + $.param(data);
 
             // 新规范无时间戳字段上报，自动加上以防止缓存
@@ -86,7 +90,7 @@ define(function (require) {
 
         var rsvData = el.getAttribute('data-rsv');
         if (rsvData) {
-            data.rsv = $.extend(data, { rsv: parseJSON(rsvData) });
+            data.rsv = $.extend({}, data.rsv, parseJSON(rsvData));
         }
 
         var i = 0;
@@ -105,7 +109,7 @@ define(function (require) {
 
             rsvData = el.getAttribute('data-rsv');
             if (rsvData) {
-                data.rsv = $.extend(parseJSON(rsvData), data.rsv);
+                data.rsv = $.extend({}, data.rsv, parseJSON(rsvData));
             }
 
             if (el.href) {

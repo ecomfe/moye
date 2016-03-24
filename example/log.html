@@ -11,7 +11,7 @@
         统计区域一：<br />
         <input type="button" value="无data-click配置" />
         <input type="button" value="无data-click配置" />
-        <div data-click="{a:2, b: 2}"><input type="button" value="父节点有data-click配置" /></div>
+        <div data-rsv="{rsv1:1}" data-click="{a:2, b: 2}"><input type="button" value="父节点有data-click配置" /></div>
         <a href="http://www.baidu.com/?a=b&amp;c=d" target="_blank"  data-click="{a:3, c: 2}">baidu - 当前节点有data-click配置</a>
     </div>
 
@@ -35,7 +35,7 @@
     });
 
     require(['log'], function (log) {
-        log.config({data:{a: 0, e: 1, y: 'x'}})
+        log.config({data:{a: 0, e: 1, y: 'x', rsv: {rsv:1}}})
         log.config({data: {extend: 1}})
         log.start();
 
