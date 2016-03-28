@@ -132,6 +132,47 @@ define(function (require) {
             return initialValue;
         },
 
+
+        /**
+         * 数组的 filter 方法
+         *
+         * 现代浏览器中数组 filter 方法静态化
+         * @method module:lib.filter
+         * @param {Array} obj 待处理的数组或类数组
+         * @param {Function} iterator 迭代方法
+         * @param {Object=} bind 迭代方法中绑定的 this
+         * @return {Array} filter 处理后的原数组
+         */
+        filter: function (obj, iterator, bind) {
+            var result = [];
+            for (var i = 0, l = obj.length; i < l; i++) {
+                if (i in obj && iterator.call(bind, obj[i], i, obj)) {
+                    result.push(obj[i]);
+                }
+            }
+            return result;
+        },
+
+        /**
+         * 查询数组中指定元素的索引位置
+         *
+         * @method module:lib.indexOf
+         * @param {Array} source 需要查询的数组
+         * @param {*} item 查询项
+         * @param {number} from 初始的查询位置
+         * @return {number} 指定元素的索引位置，查询不到时返回-1
+         */
+        indexOf: function (source, item, from) {
+            var length = this.length >>> 0;
+            var i = (from < 0) ? Math.max(0, length + from) : from || 0;
+            for (; i < length; i++){
+                if (source[i] === item) {
+                    return i;
+                }
+            }
+            return -1;
+        },
+
         /**
          * es5的keys函数
          *

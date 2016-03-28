@@ -67,6 +67,7 @@ define(function (require) {
          * @method module:Plugin#dispose
          */
         dispose: function () {
+            this.control = null;
         }
 
     });

@@ -50,7 +50,7 @@ define(function (require) {
             this.$parent(options);
             var input = options.input
                 ? $(options.input)
-                : $(this.main).find('input');
+                : $(this.main).find('input, textarea');
             this.value = options.value || input.val();
             this.input = input[0];
         },

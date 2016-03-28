@@ -356,14 +356,6 @@ define(function (require) {
 
                 });
             });
-        },
-
-        /**
-         * @override
-         */
-        dispose: function () {
-            this.control = null;
-            this.$parent();
         }
 
     });
