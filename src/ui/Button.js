@@ -8,6 +8,7 @@ define(function (require) {
     var $       = require('jquery');
     var Control = require('./Control');
     var painter = require('./painter');
+    var lib = require('./lib');
 
     /**
      * 按钮组件
@@ -121,7 +122,13 @@ define(function (require) {
          * @public
          */
         setText: function (text) {
-            this.main.innerHTML = text;
+            // iE 9 以下 按钮需要设置`value`属性，不然会报错
+            if (this.main.tagName === 'INPUT' && lib.browser.ie < 9) {
+                this.main.value = text;
+            }
+            else {
+                this.main.innerHTML = text;
+            }
             return this;
         },
 
@@ -159,6 +166,7 @@ define(function (require) {
          */
         dispose: function () {
             this.undelegate(this.main, 'click', this.onClick);
+            this.$parent();
         }
 
     });

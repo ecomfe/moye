@@ -56,6 +56,7 @@ define(function (require) {
          */
         dispose: function () {
             this.target = null;
+            this.$parent();
         },
 
         /**
